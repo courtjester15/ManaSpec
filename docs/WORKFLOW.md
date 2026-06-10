@@ -31,6 +31,18 @@ When working on ManaSpec, use context in this order:
 6. Update `docs/DECISIONS.md` only when a meaningful choice was made.
 7. Leave old dated notes alone unless deliberately archiving or migrating them.
 
+## Git Checkpoints
+
+ManaSpec now uses Git for recovery points and version history.
+
+- Commit before risky refactors or data-model changes.
+- Commit after each coherent workflow fix or doc update.
+- Use branches for experiments that may need to be abandoned or compared.
+- Use tags for meaningful app versions such as alpha, beta, or release milestones.
+- Do not create new dated release-copy folders for normal checkpoints.
+- Treat existing `releases/` folders as legacy snapshots until they are removed in a deliberate cleanup commit.
+- Keep `archive/` only for reference material that is still useful outside Git history.
+
 ## AI Usage Rules
 
 - Do not ask AI to read every note by default.
