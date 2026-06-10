@@ -1,0 +1,68 @@
+📊 Dashboard Spec (v0.1 — Portfolio + Radar + Targets)
+🧱 Layout Goal
+
+Single dashboard view showing 8 core tables max.
+Everything must fit into a fast-scanning grid (no deep nesting).
+
+🟢 CORE LAYERS (MVP)
+1. Portfolio Movers Up
+top gainers in current holdings
+day + week toggle
+sorted by % change
+2. Portfolio Movers Down
+top losers in current holdings
+day + week toggle
+sorted by % change
+3. Radar Positive
+bullish signals from tracked universe
+momentum / breakout / volume expansion (basic v1)
+4. Radar Negative
+bearish signals from tracked universe
+breakdown / weakness / reversal down signals
+🚨 TARGET LAYER (ALERTS / OUTCOMES)
+5. Price Targets Hit (Up)
+positions hitting upside targets
+partial or full target completion
+mark as “target reached”
+6. Stop / Downside Targets Hit
+stop losses triggered
+downside target zones reached
+major drawdown events
+7. Target Zones Approaching
+near-hit targets (within threshold %)
+warning / proximity alerts
+“watch closely” state
+8. Time-Based Targets / Events
+earnings dates
+catalyst windows
+scheduled events affecting positions
+🧠 DESIGN RULES
+Dashboard must remain single-screen scanable
+No table should exceed ~5–10 rows visible at once
+Everything else scrolls internally per table (not page scroll)
+All data is filtered views of same underlying signal engine
+⚙️ DATA MODEL INTENT (important for later refactor)
+
+All 8 tables should be derivable from:
+
+Positions dataset
+Radar signal dataset
+Alert engine dataset
+Target definition dataset
+
+No table-specific logic long term.
+
+🚧 FUTURE (DO NOT BUILD YET — LAYER 3)
+
+Reserved expansion layer:
+
+Reaccumulation / compression states
+Bottoming / reversal detection
+Stale / overdue capital flags
+Structural trend state classification
+⚠️ DESIGN WARNING
+
+If dashboard starts feeling cluttered:
+
+collapse Targets (5–8) into one “Alerts” panel first
+prioritize Portfolio + Radar above everything else

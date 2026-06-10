@@ -1,0 +1,146 @@
+/*
+====================================
+TABLES
+====================================
+
+ManaSpec-native table-like surfaces.
+====================================
+*/
+
+.portfolio-table {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.portfolio-table-header,
+.portfolio-table-row {
+  display: grid;
+  grid-template-columns: 48px 50px minmax(180px, 2fr) 72px 44px 66px 78px 66px 70px 68px 68px 68px 64px minmax(150px, auto);
+  align-items: center;
+  min-width: 1140px;
+}
+
+.portfolio-table-header {
+  min-height: var(--row-h);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.portfolio-table-header > span,
+.portfolio-sort-btn {
+  min-width: 0;
+  margin: 0;
+  padding: 0 var(--row-pad-x);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: var(--row-h);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.portfolio-sort-btn {
+  width: 100%;
+  height: var(--row-h);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.portfolio-sort-btn:hover,
+.portfolio-sort-btn.active {
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.portfolio-table-body {
+  display: grid;
+}
+
+.portfolio-table-row {
+  min-height: var(--row-h);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.portfolio-table-row:last-child {
+  border-bottom: 0;
+}
+
+.portfolio-table-row:hover {
+  background: var(--row-hover);
+}
+
+.portfolio-table-row > span,
+.portfolio-table-row > button,
+.portfolio-table-row > input,
+.portfolio-table-row > .row-actions {
+  min-width: 0;
+  margin: 0;
+  padding: 5px var(--row-pad-x);
+}
+
+.portfolio-table-row > span {
+  overflow: hidden;
+  line-height: 22px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portfolio-table-row .center {
+  text-align: center;
+}
+
+.portfolio-plan-input {
+  width: calc(100% - 8px);
+  height: var(--control-h-sm);
+  justify-self: center;
+  padding: 2px 6px;
+  background: var(--surface);
+  color: var(--text-strong);
+  font-size: 12px;
+}
+
+.portfolio-table-row .row-actions {
+  justify-content: flex-end;
+}
+
+.portfolio-table-row .row-actions .danger:hover {
+  border-color: rgba(248, 113, 113, 0.34);
+  background: rgba(248, 113, 113, 0.12);
+  color: var(--text-strong);
+}
+
+.value-positive {
+  color: var(--good);
+}
+
+.value-negative {
+  color: var(--bad);
+}
+
+.printing-row {
+  color: var(--text);
+}
+
+.printing-header {
+  color: var(--muted);
+}
+
+.finish-action {
+  color: var(--text);
+}
+
+.finish-action.muted {
+  color: var(--muted-2);
+}

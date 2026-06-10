@@ -1,0 +1,384 @@
+🧠 ManaSpec — Updated Roadmap Snapshot (Post-Architecture Shift)
+🟢 Major milestone achieved
+
+ManaSpec is no longer:
+
+a collection tracker
+a spreadsheet clone
+a “cards app”
+
+It now has:
+
+modular architecture
+state-driven rendering
+stable workflow systems
+extensible pricing foundations
+trader-oriented UX direction
+
+You crossed from:
+
+“feature coding”
+
+into:
+
+“system design”
+
+🧱 Current Architecture (Stable Foundation)
+📁 Core Modules (DONE / IN PLACE)
+🟢 Persistence
+
+storage.js
+
+localStorage save/load
+specs
+cash
+future-ready for snapshots/history
+🟢 Shared State
+
+state.js
+
+lightweight global state layer
+render coordination
+future signal/watchlist integration point
+🟢 Trading Engine
+
+trading.js
+
+buy/sell/delete
+portfolio mutations
+cash handling
+position updates
+🟢 Portfolio System
+
+portfolio.js
+
+Tabulator integration
+rendering layer
+portfolio table interaction
+future dashboard data source
+🟢 Search System
+
+search.js
+
+Scryfall fuzzy search
+card selection flow
+printing inspection entry point
+🟢 Printings System
+
+printings.js
+
+oracle-based print fetch
+state-driven sorting
+header-click sorting UX
+arrow indicators
+stable render/event lifecycle
+🟢 Pricing System
+
+pricing.js
+
+Scryfall pricing refresh
+cached per-spec updates
+future abstraction point for TCG/Cardmarket/etc.
+🟢 Summary System
+
+summary.js
+
+cash
+invested capital
+unrealized gains/losses
+total equity layer
+🟢 App Orchestration
+
+app.js
+
+bootstrapping only
+orchestration layer
+no business logic dumping ground anymore
+🔥 Architectural Decisions That Changed The Project
+1. Terminal-style interaction direction
+
+Dropdown-heavy UI abandoned.
+
+Replaced with:
+
+header-click sorting
+fast workflows
+lower friction interaction
+
+ManaSpec now behaves more like:
+
+a lightweight trading terminal
+
+than:
+
+a form-driven web app
+
+2. State-driven render architecture
+
+Core pattern established:
+
+state → render → interaction → state update → re-render
+
+This is now the foundation for:
+
+watchlists
+alerts
+dashboard signals
+opportunity systems
+3. Pricing abstraction direction established
+
+Critical future decision:
+
+App systems should ask:
+
+“what is the current price?”
+
+NOT:
+
+“where specifically does this price come from?”
+
+This enables future:
+
+TCGPlayer integration
+Cardmarket integration
+cached pricing
+historical snapshots
+blended market logic
+arbitrage systems
+
+Without rewriting business logic.
+
+4. ManaSpec product identity clarified
+
+ManaSpec is NOT:
+
+inventory software
+collection nostalgia software
+rapid flip/day-trading software
+
+ManaSpec IS becoming:
+
+a long-horizon MTG speculation intelligence terminal
+
+Focused on:
+
+conviction specs
+print-level precision
+decision tracking
+market signal interpretation
+long-term learning loops
+📊 Current Core Workflow
+Find card
+→ inspect printings
+→ evaluate versions
+→ execute spec
+→ monitor over time
+→ review thesis/results
+
+This is now the app’s central loop.
+
+🚧 Updated Feature Priorities
+🟡 Phase 2 — Terminal UX Layer (CURRENT)
+✅ DONE
+modular refactor
+stable rendering lifecycle
+printings sorting system
+pricing refresh system
+portfolio engine
+equity calculations
+🔜 Remaining
+cleaner printing inspection UX
+foil/nonfoil clarity
+set filtering
+improved table interactions
+execution links (TCG/eBay/etc.)
+🧠 Phase 3 — Spec Intelligence Layer (NEXT MAJOR PHASE)
+1. Watchlists
+
+Track ideas without ownership.
+
+Purpose:
+
+monitor opportunities
+observe movement
+track conviction ideas over time
+2. Spec Thesis / Notes System
+
+Now considered HIGH priority.
+
+Each spec should support:
+
+thesis
+catalyst
+timeframe
+concerns
+reprint risk
+exit reasoning
+
+This transforms ManaSpec from:
+
+“tracker”
+
+into:
+
+“decision journal”
+
+3. Snapshot Price History
+
+Not full charting yet.
+
+Just:
+
+buy price
+current price
+7d / 30d snapshots
+movement tracking
+
+Enough for:
+
+trend recognition
+thesis validation
+signal generation
+4. Targets / Time Signals
+
+Lightweight trader cognition layer.
+
+Examples:
+
+buy target reached
+sell target reached
+hold window approaching
+overdue review reminder
+
+NOT:
+
+hyperactive realtime alerts
+5. Dashboard / Command Center
+
+Not “homepage fluff.”
+
+Purpose:
+
+specs needing review
+target hits
+recent movement
+biggest winners/losers
+watchlist changes
+recent activity
+future divergence/arbitrage signals
+
+This becomes:
+
+the trader cockpit
+
+6. Activity / Decision History
+
+Track:
+
+buys
+sells
+thesis changes
+target changes
+major pricing events
+
+Critical for long-term learning.
+
+💰 Pricing Roadmap (Refined)
+🟢 Current
+
+Scryfall pricing:
+
+completely acceptable for beta
+stable
+fast
+low maintenance
+
+Good enough for:
+
+long-term specs
+movement observation
+portfolio tracking
+🟡 v1.5 — TCGPlayer Integration
+
+Likely implementation:
+
+lightweight Node proxy/server
+HTML parsing/scraping layer
+cached pricing refreshes
+
+Purpose:
+
+more realistic market pricing
+better print precision
+improved execution confidence
+
+Expected maintenance:
+
+occasional selector fixes
+low-frequency upkeep
+acceptable for hobby/private scale
+🔮 v2 — Multi-Market Intelligence
+
+Potential future sources:
+
+TCGPlayer
+Cardmarket
+Card Kingdom
+Hareruya (optional/niche)
+
+Purpose is NOT:
+
+“more price columns”
+
+Purpose IS:
+
+regional market divergence analysis
+
+Examples:
+
+US vs EU mispricing
+JP lagging signals
+bling arbitrage opportunities
+regional demand shifts
+🧭 Long-Term Product Direction
+
+ManaSpec is evolving toward:
+
+a multi-market MTG speculation intelligence system
+
+Where the real value comes from:
+
+signal interpretation
+conviction tracking
+print-level analysis
+regional pricing inefficiencies
+long-term decision improvement
+
+NOT:
+
+perfect realtime trading execution
+🧠 Most Important Meta-Observation
+
+You are no longer primarily building:
+
+pages
+tables
+components
+
+You are building:
+
+workflows
+cognition systems
+market signals
+trader decision structures
+
+That is why the project now feels more like:
+
+systems
+flows
+state machines
+intelligence layers
+
+instead of:
+
+frontend widgets.

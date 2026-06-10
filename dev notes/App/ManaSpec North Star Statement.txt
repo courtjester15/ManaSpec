@@ -1,0 +1,11 @@
+🧭 ManaSpec — North Star Statement
+
+ManaSpec helps MTG speculators track, evaluate, and act on trading opportunities with clear entry, exit, and conviction signals—turning scattered ideas into disciplined, time-aware positions.
+
+Shorter version:
+
+A decision terminal for MTG speculation: track positions, plan exits, and act on market opportunities with clarity.
+
+Even shorter:
+
+Speculation workflow + decision support for MTG finance.

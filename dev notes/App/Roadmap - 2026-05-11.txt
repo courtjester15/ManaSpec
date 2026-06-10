@@ -1,0 +1,197 @@
+🧠 ManaSpec — Current State (Post-Refactor Snapshot)
+🟢 Big milestone achieved
+
+You’ve successfully moved from:
+
+“single-file 400-line app.js mess”
+
+to:
+
+modular frontend architecture (light SPA style, no framework)
+
+That’s not cosmetic — that’s the point where debugging and features stop fighting each other.
+
+🧱 Architecture (what you have now)
+📁 Module separation (DONE / IN PLACE)
+🟢 Core persistence
+storage.js
+localStorage load/save (specs, cash)
+state.js
+shared app state foundation (light global state layer)
+🟢 Trading system
+trading.js
+buy / sell / delete logic
+portfolio mutation rules
+cash handling
+🟢 Portfolio system
+portfolio.js
+Tabulator table setup
+row rendering / display layer
+🟢 Search system
+search.js
+Scryfall fuzzy search
+card selection entry point
+triggers printings flow
+🟢 Printings system (JUST FIXED TONIGHT)
+printings.js
+printing fetch (oracle-based)
+sorting engine (state-driven)
+header click sorting (NO dropdown anymore)
+render loop fixed
+arrow indicators added
+correct DOM timing model implemented
+🟢 Summary system
+summary.js
+cash / invested / value / P&L calculation
+total equity integration (cleaned after earlier bug loop)
+🟢 Pricing system
+pricing.js
+periodic refresh of Scryfall pricing
+updates currentPrice per spec
+🟢 App entry
+app.js
+now reduced to orchestration only (bootstrapping modules)
+🔥 Key architectural decisions made (important)
+1. ❌ Removed dropdown sorting entirely
+
+Replaced with:
+
+header-click sorting (terminal-style interaction)
+
+✔ faster
+✔ more intuitive for “spec traders”
+✔ removes UI clutter
+
+2. 🧠 State-driven printings system introduced
+
+Instead of:
+
+re-passing sortMode around
+
+You now use:
+
+printSortState = { key, dir }
+
+✔ single source of truth
+✔ predictable UI updates
+
+3. 🔁 Render loop pattern established
+
+Every system now follows:
+
+state → render → user action → state update → re-render
+
+This is now your core frontend architecture.
+
+4. ⚠️ DOM timing rule learned (critical win)
+
+You hit (and fixed) the big JS trap:
+
+“querySelector before DOM exists = silent failure”
+
+Now you consistently:
+
+render HTML first
+then attach events
+5. 💰 Financial model stabilized
+
+You now have:
+
+cash
+invested value
+market value
+P/L
+total equity (cash + holdings)
+
+This is now your “terminal header layer”
+
+📊 What the app is now
+
+Not a tracker.
+
+Not a collection manager.
+
+It is now closer to:
+
+a lightweight MTG speculation execution terminal
+
+Core loop:
+
+find card
+inspect printings
+choose version
+execute buy/sell spec
+monitor value changes
+🚧 What is STILL intentionally NOT done
+
+These are not missing, they are deliberately deferred:
+
+1. Watchlist system (next major feature)
+tracking cards without owning
+price movement observation
+alert triggers
+2. Alerts / targets system
+buy target price
+sell target price
+time-based holds
+3. Fees / realism layer
+buy fees (5–10%)
+sell fees (10–20%)
+net ROI calculations
+4. Dashboard / “market view”
+movers (day/week/month)
+watchlist highlights
+recent activity
+“opportunity feed”
+5. Printings enhancements (mid-priority)
+set filtering (Amonkhet subsets etc.)
+foil vs non-foil comparison
+cheap-to-expensive bias view
+“trap detection” (overpriced prints)
+🎯 Product direction (refined mission statement)
+
+If we condense everything you’ve built + intent:
+
+ManaSpec helps MTG speculators identify, execute, and track high-probability card trades with real-time pricing, printing-level precision, and terminal-style speed.
+
+(Not a collection tracker. Not inventory. Not portfolio nostalgia.)
+
+🧭 Where you are in roadmap terms
+✅ Phase 1 — Foundation (DONE)
+modularization
+state system
+trading engine
+portfolio display
+search + printing flow
+🟡 Phase 2 — Terminal UX (IN PROGRESS)
+printings sorting system ✔ DONE
+clean header-driven UI ✔ DONE
+pricing refresh system ✔ DONE-ish
+summary/equity layer ✔ DONE
+🔜 Phase 3 — Spec Intelligence Layer (NEXT)
+watchlists
+alerts
+targets (buy/sell/time)
+fees realism
+dashboard signals
+🔮 Phase 4 — “Trader Intelligence”
+printing comparison intelligence
+market anomaly detection
+trend detection (movers/shakers)
+opportunity ranking system
+🧠 One important meta-observation
+
+You are now past “building features”.
+
+You are now building:
+
+decision structure for traders
+
+That’s why everything started feeling more like:
+
+“systems”
+“signals”
+“state”
+“flows”
+
+Not UI components anymore.

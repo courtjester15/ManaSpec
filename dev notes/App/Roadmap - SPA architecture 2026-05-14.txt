@@ -1,0 +1,198 @@
+🧠 ManaSpec — UI Architecture Reset (Dev Note)
+🟢 What we learned tonight (critical)
+The SPA attempt was too early
+→ caused DOM timing issues + module initialization chaos
+Search is NOT a global module
+→ it belongs to the Portfolio workflow
+Summary is NOT portfolio-specific
+→ it is a global app state component
+You don’t need routing yet
+→ you need a stable single-page workflow first
+🧱 Correct Mental Model (NEW)
+
+ManaSpec is NOT:
+
+a page-based app
+a collection of screens
+a SPA with routing
+
+ManaSpec IS:
+
+a single-page trading terminal with workflow zones
+
+🟢 Final View Structure (what we are building toward)
+
+We define these as “views” (not implemented yet as routing):
+
+1. Dashboard (Home)
+
+Purpose: awareness / decision overview
+
+Contains:
+
+top 2–3 charts (portfolio + performance)
+alerts (targets hit, major moves)
+watchlist movement summary
+recent activity snapshot
+
+👉 “What matters right now?”
+
+2. Portfolio (Core Workflow)
+
+Purpose: execution + positions
+
+Contains:
+
+search
+printings
+add spec flow
+Tabulator holdings table
+trading actions (buy/sell)
+
+👉 “What am I holding / buying?”
+
+3. Watchlists
+
+Purpose: ideas / potential specs
+
+Contains:
+
+tracked cards (no position)
+price movement tracking
+optional notes later
+
+👉 “What should I watch?”
+
+4. Signals / Targets (IMPORTANT MID TERM)
+
+Purpose: decision triggers
+
+Contains:
+
+target hits
+% moves
+reprint risk signals (later)
+entry/exit alerts
+
+👉 “Why should I act?”
+
+5. Thesis (Decision Memory)
+
+Purpose: reasoning layer
+
+Contains:
+
+why you bought something
+catalysts
+conviction notes
+exit reasoning
+
+👉 “Why did I do this?”
+
+6. History (Learning System)
+
+Purpose: past actions
+
+Contains:
+
+buys/sells
+outcomes
+performance over time
+
+👉 “What worked?”
+
+🧭 NEW UI ARCHITECTURE (IMPORTANT)
+🟢 index.html becomes:
+
+STATIC SHELL ONLY
+
+It will contain:
+
+Toolbar (future navigation)
+Summary Bar (global state)
+View Container (active view target)
+index.html = frame
+🟢 app.js becomes:
+
+lightweight controller only
+
+Responsibilities:
+
+boot modules
+initialize portfolio workflow
+(later) switch views
+🟢 modules become:
+
+workflow components, NOT pages
+
+BUT IMPORTANT RULE:
+
+✔ search belongs to Portfolio
+✔ printings belongs to Portfolio
+✔ trading belongs to Portfolio
+✔ summary belongs to global shell
+
+🧱 Folder Structure (final target direction)
+/js
+  /core
+    state.js
+    storage.js
+    app.js
+
+  /modules
+    /portfolio
+      search.js
+      printings.js
+      trading.js
+      portfolioTable.js
+
+    /watchlists
+    /signals
+    /thesis
+    /history
+
+  /ui
+    summary.js
+🟢 Tonight’s actual goal (what we were trying to do)
+
+You are NOT finishing features.
+
+You are establishing:
+
+👉 “stable mental + file architecture foundation”
+
+So future work becomes:
+
+predictable
+non-breaking
+incremental
+🚧 Immediate NEXT STEP (tomorrow / next session)
+
+Once you confirm this structure, we will do:
+
+Phase 1 (safe stabilization)
+fix index.html into true shell
+ensure summary works globally
+ensure portfolio workflow still works 100%
+Phase 2 (organization)
+move search + printings into portfolio grouping
+clean folder structure
+eliminate duplicate responsibilities
+Phase 3 (new views introduction)
+dashboard view (light placeholder)
+watchlists (simple storage + UI)
+🧠 Key Insight (most important takeaway)
+
+You are not building:
+
+“a UI with features”
+
+You are building:
+
+“a trading cognition system with workflow zones”
+
+That’s why:
+
+search belongs inside portfolio
+summary is global
+views are conceptual, not technical (yet)

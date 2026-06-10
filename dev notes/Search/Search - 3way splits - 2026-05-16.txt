@@ -1,0 +1,131 @@
+1. Core problem you’re feeling
+
+Right now search is trying to do too many jobs:
+
+find cards
+filter portfolio
+navigate positions
+act as global system search
+
+That’s why it feels off.
+
+2. Clean split (DO THIS FIRST)
+You only need 2 search contexts
+A) Global Search (App-level)
+Purpose:
+
+“Find anything in ManaSpec”
+
+Scope:
+
+cards
+positions
+transactions
+
+Behavior:
+
+routes user to correct module
+does NOT show deep filtering UI
+
+Example:
+
+“Sol Ring” → takes you to card search / positions / etc
+B) Module Search (Context-specific)
+1. Positions Search
+
+Scope:
+
+ONLY current holdings
+
+Filters:
+
+card name
+set
+maybe profit/loss later
+
+Behavior:
+
+just filters positions table
+
+NO Scryfall behavior here.
+
+2. Transactions Search
+
+Scope:
+
+ledger only
+
+Filters:
+
+date
+set
+price
+type (buy/sell)
+
+Behavior:
+
+filters rows only
+3. Card Search (THIS is the important one)
+
+Scope:
+
+Scryfall data only
+
+Purpose:
+
+selecting a card + printing
+
+This is where:
+
+printings
+sorting
+advanced search
+lives
+3. Key rule (this fixes your confusion)
+
+Search does NOT cross contexts
+Each search belongs to ONE domain
+
+So:
+
+Positions search ≠ Card search ≠ Transactions search
+
+They are not interchangeable.
+
+4. What changes immediately in UI
+Portfolio page becomes:
+Positions module:
+has its own small filter/search bar
+NO Scryfall logic here
+Card Search becomes its own flow:
+dedicated entry point (modal or page)
+only used when BUYING / adding transactions
+Transactions:
+simple filtering only
+no card discovery logic
+5. Why this fixes everything
+
+Right now your system is drifting because:
+
+Scryfall search + portfolio + transactions are all overlapping
+
+This separation enforces:
+
+predictable behavior
+simpler UI logic
+easier Codex implementation
+less accidental feature creep
+6. Final mental model (important)
+
+Think of it like this:
+
+Global search = router
+Positions search = filter view
+Transactions search = audit tool
+Card search = acquisition tool
+5-line Codex notes (tight)
+Split search into 3 domains: Positions, Transactions, Card Search
+Global search only routes, never filters deeply
+Positions search only filters holdings (no Scryfall)
+Transactions search only filters ledger
+Card search is isolated flow used only for BUY/SELL + Scryfall + printings

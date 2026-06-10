@@ -1,0 +1,140 @@
+ManaSpec CSS Upgrade (Minimal Modern Layer)
+1. Core vibe (what you’re aiming for)
+clean trader terminal → modern fintech dashboard hybrid
+still minimal
+but with intentional hierarchy
+
+Think:
+
+Bloomberg Terminal × Notion × Apple Financial UI (lite)
+
+2. Base styling upgrades
+Typography (BIGGEST WIN)
+
+Stop everything feeling like plain HTML.
+
+body {
+  font-family: Inter, system-ui, sans-serif;
+  background: #0b0f14;
+  color: #e6edf3;
+  line-height: 1.4;
+}
+
+Key upgrades:
+
+Inter or system font
+slightly off-white text (not pure white)
+tighter line height
+Titles hierarchy
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+h2 {
+  font-size: 16px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+h3 {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+This alone makes it feel “real.”
+
+3. Layout spacing (fix the “raw list” feeling)
+.container {
+  padding: 16px;
+}
+
+.section {
+  margin-bottom: 16px;
+}
+
+.card, .row {
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+Keep spacing tight but structured.
+
+4. Subtle surfaces (critical upgrade)
+
+Instead of flat text:
+
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+This gives:
+
+depth without “app redesign”
+modern dashboard feel
+still very lightweight
+5. Hover states (this makes it feel alive)
+.row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+}
+
+Instant UX upgrade.
+
+6. Key UI accents (VERY subtle)
+
+Pick ONE accent color (don’t overdo it yet):
+
+:root {
+  --accent: #7dd3fc; /* soft cyan */
+}
+
+Use it for:
+
+active filters
+selected items
+key values
+7. Portfolio list styling (your main win)
+.portfolio-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+This is what turns “list” into “system.”
+
+8. What this DOES NOT do (important)
+no redesign
+no framework
+no heavy components
+no over-engineering
+
+Just:
+
+visual hierarchy + subtle structure
+
+9. Why this matters for YOUR app specifically
+
+Your app is:
+
+data-dense
+trader-oriented
+list-heavy
+decision-focused
+
+So UI goal is NOT beauty.
+
+It is:
+
+“I can scan 200 items in 3 seconds and understand value”
+
+That comes from:
+
+spacing
+grouping
+typography
+contrast control

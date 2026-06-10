@@ -1,0 +1,85 @@
+ManaSpec Dev Note — Portfolio UI Scaling (v0.1)
+Problem
+
+Portfolio is currently a flat list. As data grows, it becomes hard to navigate, compare, and act on items.
+
+Goal
+
+Turn portfolio from a static list into a scalable, structured viewing system without changing core data model yet.
+
+Immediate UI Requirements
+1. Pagination (or “Load More”)
+Default page size: 25 items
+Optional: 50 / 100 selector later
+Must support:
+next / previous navigation
+total item count display
+
+Purpose:
+
+prevent UI overload
+keep rendering fast
+enable scalable dataset growth
+2. Sorting System
+
+Add a global sort control for portfolio view:
+
+Minimum options:
+
+Value (high → low)
+Quantity
+Name (A → Z)
+Recently added
+Recently updated
+
+Purpose:
+
+enable quick trader-style scanning
+reduce manual searching
+3. Tag System (foundation layer)
+
+Introduce lightweight tagging support in data model:
+
+Initial tags (simple, non-structured):
+
+spec
+reserved_list
+foil
+staple
+commander
+land
+artifact
+high_value
+mover
+
+Purpose:
+
+enable filtering + grouping later
+no UI complexity required yet (data layer first)
+4. Grouping (first UI grouping pass)
+
+Implement one basic grouping mode:
+
+Type-based grouping
+
+Lands
+Creatures
+Artifacts
+Enchantments
+Instants/Sorceries
+Planeswalkers
+
+Purpose:
+
+improve readability
+introduce structural organization over flat list
+Future (do not implement yet)
+advanced filtering system (tag-based UI chips)
+multiple display modes (table / compact / card)
+financial grouping (reserved list, movers, spec buckets)
+virtualization (for large datasets)
+Core Principle
+
+Keep data simple. Add structure through views, not duplication.
+
+Portfolio becomes a dynamic lens over one dataset, not multiple separate systems.

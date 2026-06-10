@@ -1,0 +1,47 @@
+EASY / EARLY SIGNALS (build these first)
+
+These are high signal, low complexity, very trackable:
+
+1. Price Movement Signals
+% change (1D / 7D)
+gap up / gap down
+new local high / low
+
+👉 baseline signal engine
+
+2. Volume / Activity Spike
+volume > X day average
+unusual activity flag
+“attention spike”
+
+👉 this replaces a lot of weak “seller list” value
+
+3. Portfolio Movement Signals
+biggest position gains/losses
+contribution to P&L (simple version)
+“what is affecting me today”
+4. Target State Changes
+target hit (up/down)
+target nearly hit (within % threshold)
+stop triggered
+
+👉 this becomes your “truth events layer”
+
+5. New Entry / New Activity
+asset becomes active in radar for first time
+first spike detected after dormancy
+
+👉 super easy, very powerful early signal
+
+🟡 NEXT STEP SIGNALS (still v1, but later)
+6. Trend State Flip
+uptrend → neutral
+neutral → downtrend
+simple moving average crossover logic
+7. Volatility Expansion / Contraction
+range compression
+sudden expansion
+“something is about to happen” indicator
+8. Multi-Day Strength / Weakness
+consistent gain streak
+consistent decline streak

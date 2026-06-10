@@ -1,0 +1,52 @@
+ManaSpec Search System — Fix Plan
+1. Remove current portfolio-wide search bar
+Delete the full-width search bar inside the Portfolio page/module
+It is incorrectly acting as a global control inside a local context
+Portfolio should NOT own global search UI
+2. Introduce a single Global Search (App-level)
+
+Location: App Shell (persistent UI)
+
+One global search bar only
+Always visible (top header / top bar)
+
+Purpose:
+
+Search across entire ManaSpec system
+Not tied to any single module (portfolio, items, logs, etc.)
+
+Behavior:
+
+Global scope only
+Routes or filters results across modules
+Does NOT live inside Portfolio or any page
+3. Define Local Search vs Filter Pattern
+Local Filters (Portfolio + other modules)
+Small, contextual filters only
+Examples:
+filter by tag
+sort (price, date, etc.)
+narrow current dataset
+Must NOT be styled or behave like a global search bar
+4. Introduce Search Architecture Concept (lightweight)
+
+Split search into:
+
+GlobalSearchBar (UI)
+app-level component in shell
+SearchService (logic)
+shared query handling
+future indexing / cross-module search
+LocalFilterBar (UI)
+per module filtering only
+portfolio uses this instead of search bar
+5. Key Rule (important)
+
+If it changes what page/data source you are in → Global Search
+If it changes what you see inside current page → Local Filter
+
+6. Outcome Goal
+Portfolio becomes clean (no fake “global feeling” search bar)
+One consistent global search entry point
+No duplicated or conflicting search UI patterns
+Clear separation between navigation-level intent vs filtering intent

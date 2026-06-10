@@ -1,0 +1,137 @@
+ManaSpec Dev Note — Search + Summary Architecture Decision
+🟢 Core Decision
+
+Search is NOT a view.
+
+Search is a global capability with multiple entry points, and it always resolves into a workflow context (never a destination).
+
+🔍 SEARCH SYSTEM DESIGN
+🧭 Role
+
+Search is the entry layer into conviction creation.
+
+It is used to:
+
+discover cards
+evaluate printings
+initiate a potential spec
+feed Portfolio execution
+
+It does NOT:
+
+exist as a standalone page
+maintain its own navigation state
+compete with Portfolio / Dashboard views
+🟢 Architecture
+1. Search Engine (Core Logic Layer)
+
+Shared function used everywhere:
+
+Scryfall query
+result normalization
+card formatting
+pricing attach (optional)
+return structured results
+/search (logic only)
+2. Global Entry Point (Always Available)
+
+Light UI trigger in toolbar:
+
+search input OR icon
+future: Cmd+K palette
+
+Purpose:
+
+instant lookup from anywhere in app
+
+3. Portfolio Search (Execution Mode)
+
+Full workflow integration:
+
+search results
+printings panel
+add spec flow
+direct trade actions
+
+Purpose:
+
+convert idea → position
+
+🟡 Key Rule
+
+Search always leads to action or inspection — never ends in search.
+
+📊 SUMMARY SYSTEM DESIGN
+🧭 Role
+
+Summary is the global state reflection layer.
+
+It is NOT tied to Portfolio.
+
+It represents:
+
+overall cash
+invested capital
+current value
+total P/L
+equity snapshot
+🟢 Architecture
+1. Global UI Component
+always visible
+lives in shell (index.html)
+updated by state changes
+summaryBar = global overlay component
+2. Data Source
+
+Summary pulls from:
+
+state.specs
+state.cash
+pricing updates
+trading events
+
+NOT from UI modules.
+
+🟡 Key Rule
+
+Summary reflects the system state — it does not belong to any single view.
+
+🧠 SYSTEM RELATIONSHIP
+Search → creates intent
+Portfolio → executes intent
+Summary → reflects outcomes
+Watchlists → stores intent
+Thesis → explains intent
+History → records intent
+🟢 DESIGN PRINCIPLE LOCK-IN
+1. No “Search Page”
+
+Search is a tool, not a destination.
+
+2. No “Portfolio-only awareness”
+
+Search must be globally accessible.
+
+3. No duplicated logic
+
+Search engine is shared across:
+
+toolbar
+portfolio workflow
+4. Summary is global truth layer
+
+Never embedded inside a module.
+
+🧭 Long-term direction
+
+This sets up ManaSpec as:
+
+a conviction-driven trading terminal
+
+Where:
+
+search = signal intake
+portfolio = execution engine
+summary = system health
+thesis = reasoning memory
+history = learning loop

@@ -1,0 +1,94 @@
+ManaSpec — Portfolio + Buy/Sell Architecture (FINAL)
+1. Core Rule (CRITICAL)
+Portfolio is NOT manually editable state
+Portfolio is ALWAYS derived from Transactions (ledger)
+2. Data Model
+Transactions (source of truth)
+
+Each record:
+
+card name
+set (Scryfall)
+date
+type: BUY / SELL
+quantity
+price
+optional fees later
+
+This is immutable history.
+
+Positions (computed view)
+
+Derived from Transactions:
+
+current quantity
+avg buy price (cost basis)
+total invested
+unrealized gain/loss (later)
+
+Positions are NEVER edited directly.
+
+3. UI Structure
+Portfolio Module = "Positions View"
+
+Shows:
+
+holdings table only
+grouped by card
+set
+qty
+avg buy price
+derived metrics
+
+NO buy/sell logic inside here (only optional shortcuts)
+
+Transactions Module
+
+Shows full ledger:
+
+every buy/sell event
+sortable by date, set, price
+audit/history view
+4. BUY / SELL SYSTEM (IMPORTANT)
+Buy/Sell is NOT a portfolio action
+
+It is:
+
+“Create a Transaction event”
+
+Where Buy/Sell lives in UI
+Primary location:
+Transactions module (main action area)
+Secondary access (optional UX shortcut):
+In Positions table row:
+“Buy”
+“Sell”
+BUT:
+these only open a transaction modal
+they do NOT edit positions directly
+Buy/Sell Flow
+User clicks BUY or SELL
+Opens modal pre-filled:
+card name
+set (Scryfall)
+User inputs:
+quantity
+price
+date (default now)
+System creates transaction
+Positions auto-recalculate
+5. Design Principle
+
+BUY/SELL = event creation
+POSITIONS = computed result
+TRANSACTIONS = truth ledger
+
+6. Navigation (recommended)
+Positions (default “Portfolio” view)
+Transactions (ledger/history)
+Watchlist (future)
+Radar (future)
+7. Key Constraint
+Never allow editing positions directly
+Never allow deleting without trace in ledger
+All changes must go through Transactions

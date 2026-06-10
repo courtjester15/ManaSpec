@@ -1,0 +1,104 @@
+/*
+====================================
+COMPONENTS
+====================================
+
+Panels, rows, lists, modals, metrics, and status elements.
+====================================
+*/
+
+.radar-search-panel,
+.card-filter-panel,
+.metric-card,
+.scan-panel,
+.module-form,
+.module-row,
+.note-card,
+.signal-panel,
+.admin-panel,
+.detail-metric,
+.signal-slot,
+.detail-copy,
+.empty-state,
+.panel-list,
+.card-art-panel,
+.help-panel,
+.detail-actions a {
+  border-color: var(--border);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.panel-heading h4,
+.scan-panel h4,
+.signal-panel h4,
+.admin-panel h4,
+.detail-section-heading h4,
+.metric-card strong,
+.module-row strong,
+.signal-row strong,
+.radar-row strong {
+  color: var(--text-strong);
+}
+
+.panel-heading p,
+.metric-card span,
+.module-row span,
+.scan-row span,
+.signal-row span,
+.note-card header span,
+.empty-state,
+.bulk-set-actions span,
+.detail-section-heading span {
+  color: var(--muted);
+}
+
+.link-action,
+.search-card-name {
+  color: var(--text);
+}
+
+.link-action:hover,
+.search-card-name:hover {
+  color: var(--accent);
+}
+
+.status-pill {
+  border-color: rgba(125, 211, 252, 0.24);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.app-notice {
+  border-color: rgba(125, 211, 252, 0.26);
+  background: rgba(125, 211, 252, 0.1);
+  color: var(--text);
+}
+
+.scan-row,
+.module-row,
+.signal-row,
+.note-card,
+.printing-row,
+.bulk-set-row {
+  border-color: var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.scan-row:hover,
+.module-row:hover,
+.signal-row:hover,
+.printing-row:hover,
+.bulk-set-row:hover {
+  background: var(--row-hover);
+}
+
+.value-positive {
+  color: var(--good);
+}
+
+.value-negative {
+  color: var(--bad);
+}

@@ -1,0 +1,71 @@
+🧠 ManaSpec — CURRENT STATE (v0.8.1-alpha)
+✔ What you have now (real, not theoretical)
+🧱 Core architecture
+storage.js → localStorage persistence
+state.js → runtime state (specs, cash)
+trading.js → buy/sell/delete engine
+portfolio.js → Tabulator UI table
+search.js → Scryfall search + printings
+summary.js → totals + P/L + equity
+pricing.js → live price refresh
+app.js → bootstrap / glue layer
+⚙️ Core system behavior
+Data flow
+search → addSpec → state → trading → portfolio → summary → pricing refresh
+State model
+specs[] = all positions
+qty = 0 = watch item (implicit watchlist)
+cash = liquid balance
+buyPrice = cost basis
+currentPrice = live snapshot
+📊 UI structure
+Header (summary bar)
+Cash
+Invested
+Value
+Total Equity (cash + holdings)
+P/L %
+Main table (Tabulator)
+full portfolio view
+buy/sell/delete actions
+live price updates
+Search panel
+fuzzy card search
+printing selection
+addSpec flow
+⚠️ KNOWN DESIGN LIMITS (important)
+no formal watchlist system yet (qty=0 hack)
+no history/logs yet
+no charts
+no hotkeys
+pricing is snapshot-based (not historical)
+DOM is still tightly coupled to JS (normal at this stage)
+🧭 NEXT ROADMAP (REAL PRIORITIES)
+🟢 PHASE 2 — UX CLEANUP (NEXT)
+1. Printings improvement (HIGH PRIORITY)
+sort by:
+price (low → high)
+set release order
+add filter:
+“cheapest print only”
+faster selection UX
+2. Watchlist separation (important UX step)
+explicit:
+WATCHED
+OWNED
+instead of hidden qty = 0 logic
+3. Interaction clarity
+make click behavior obvious
+add lightweight feedback:
+“added to watchlist”
+“bought 1 copy”
+“sold position”
+🟡 PHASE 3 — POWER FEATURES
+price history snapshots
+trade history log
+portfolio timeline
+performance tracking over time
+🔵 PHASE 4 — SPA HARDENING
+keyboard shortcuts (/ search, enter select)
+view separation (tabs: portfolio / search / history)
+optional Electron/Tauri desktop version

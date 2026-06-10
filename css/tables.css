@@ -1,0 +1,475 @@
+/*
+====================================
+TABLES
+====================================
+
+Shared financial table system.
+Every money-oriented module starts with:
+Card | Set | # | Rarity | Color | price-like columns | module columns.
+====================================
+*/
+
+.ms-table {
+  --table-row-h: 27px;
+  --table-control-h: 20px;
+  --table-cell-pad-x: 7px;
+  --col-card: 250px;
+  --col-set: 54px;
+  --col-number: 54px;
+  --col-rarity: 52px;
+  --col-color: 52px;
+  --col-price: 70px;
+  --col-qty: 44px;
+  --col-date: 78px;
+  --col-type: 74px;
+  --col-actions: 130px;
+  width: 100%;
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: visible;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.ms-table {
+  scrollbar-color: rgba(147, 164, 177, 0.45) var(--surface);
+  scrollbar-width: thin;
+}
+
+.ms-table::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+.ms-table::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+.ms-table::-webkit-scrollbar-thumb {
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  background: rgba(147, 164, 177, 0.45);
+}
+
+.ms-table__body {
+  display: grid;
+}
+
+.ms-table__header,
+.ms-table__row {
+  display: grid;
+  grid-template-columns: var(--table-columns);
+  align-items: center;
+  min-width: var(--table-min-width, 960px);
+}
+
+.ms-table__header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  min-height: var(--table-row-h);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.ms-table__row {
+  height: var(--table-row-h);
+  min-height: var(--table-row-h);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ms-table__row:last-child {
+  border-bottom: 0;
+}
+
+.ms-table__row:hover {
+  background: var(--row-hover);
+}
+
+.ms-table__header > *,
+.ms-table__row > * {
+  min-width: 0;
+  margin: 0;
+  padding: 3px var(--table-cell-pad-x);
+  border-right: 1px solid rgba(255, 255, 255, 0.035);
+  box-sizing: border-box;
+}
+
+.ms-table__header > *:last-child,
+.ms-table__row > *:last-child {
+  border-right: 0;
+}
+
+.ms-table__header > * {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--table-row-h);
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.ms-table__header .ms-table__head-cell,
+.ms-table__header .ms-table__sort,
+.ms-table__header .ms-table__cell--center,
+.ms-table__header .ms-table__cell--number,
+.ms-table__header .ms-table__cell--money,
+.ms-table__header .ms-table__cell--actions {
+  justify-content: center;
+  text-align: center;
+}
+
+.ms-table__row > span,
+.ms-table__row > button.link-action {
+  overflow: hidden;
+  line-height: 19px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-table__row > .ms-table__cell:not(.ms-table__cell--center):not(.ms-table__cell--number):not(.ms-table__cell--money):not(.ms-table__cell--actions) {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.ms-table__row > button.link-action.ms-table__cell:not(.ms-table__cell--center):not(.ms-table__cell--number):not(.ms-table__cell--money):not(.ms-table__cell--actions) {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.ms-table__cell--center,
+.ms-table__cell--center > * {
+  justify-content: center;
+  text-align: center;
+}
+
+.ms-table__cell--number,
+.ms-table__cell--money,
+.ms-table__cell--number > *,
+.ms-table__cell--money > * {
+  justify-content: flex-end;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-table__cell--actions {
+  justify-content: center;
+  text-align: center;
+}
+
+.ms-table__sort {
+  width: 100%;
+  height: var(--table-row-h);
+  min-height: var(--table-row-h);
+  margin: 0;
+  padding: 0 var(--table-cell-pad-x);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  text-align: center;
+  justify-content: center;
+}
+
+.ms-table__sort.ms-table__cell--center {
+  justify-content: center;
+  text-align: center;
+}
+
+.ms-table__sort:hover,
+.ms-table__sort.active {
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.ms-table__input,
+.quick-plan-input {
+  width: calc(100% - 8px);
+  height: var(--table-control-h) !important;
+  min-height: var(--table-control-h) !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+  align-self: center;
+  justify-self: center;
+  border-width: 1px;
+  box-sizing: border-box;
+  background: var(--surface);
+  color: var(--text-strong);
+  font-size: 12px;
+  line-height: var(--table-control-h);
+}
+
+.ms-table__input[type="number"] {
+  padding-right: 1px !important;
+}
+
+.ms-table__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: calc(100% - 8px);
+  height: var(--table-control-h);
+  min-height: var(--table-control-h);
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: var(--table-control-h);
+}
+
+.ms-table__input-wrap .ms-table__input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  justify-self: auto;
+}
+
+.ms-table__input-wrap span {
+  flex: 0 0 auto;
+}
+
+.ms-table__stepper {
+  display: grid;
+  grid-template-columns: 18px minmax(20px, 1fr) 18px;
+  gap: 2px;
+  align-items: center;
+  width: calc(100% - 6px);
+  height: var(--table-control-h);
+  min-height: var(--table-control-h);
+  margin: 0 auto;
+}
+
+.ms-table__stepper-btn {
+  width: 18px !important;
+  height: var(--table-control-h) !important;
+  min-height: var(--table-control-h) !important;
+  padding: 0 !important;
+  border-color: var(--border-strong);
+  background: var(--panel-strong);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.ms-table__stepper-btn:hover {
+  border-color: rgba(125, 211, 252, 0.32);
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.ms-table__stepper-input {
+  width: 100%;
+  height: var(--table-control-h) !important;
+  min-height: var(--table-control-h) !important;
+  margin: 0 !important;
+  padding: 0 2px !important;
+  border-width: 1px;
+  box-sizing: border-box;
+  background: var(--surface);
+  color: var(--text-strong);
+  font-size: 11px;
+  line-height: var(--table-control-h);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-table button,
+.ms-table input,
+.ms-table select {
+  margin: 0;
+}
+
+.ms-table .row-actions {
+  flex-wrap: nowrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.ms-table .row-actions button {
+  height: var(--table-control-h) !important;
+  min-height: var(--table-control-h) !important;
+  padding: 0 6px !important;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ms-table .status-pill {
+  min-width: 34px;
+  min-height: 18px;
+  padding: 1px 6px;
+  align-items: center;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.ms-table__cell--actions .row-actions {
+  justify-content: center;
+}
+
+.ms-table--positions {
+  --table-min-width: 1180px;
+  --table-columns:
+    var(--col-card)
+    var(--col-set)
+    var(--col-number)
+    var(--col-rarity)
+    var(--col-color)
+    var(--col-price)
+    var(--col-price)
+    var(--col-qty)
+    var(--col-date)
+    72px
+    66px
+    66px
+    70px
+    78px
+    var(--col-actions);
+}
+
+.ms-table--radar {
+  --table-min-width: 1040px;
+  --table-columns:
+    var(--col-card)
+    var(--col-set)
+    var(--col-number)
+    var(--col-rarity)
+    var(--col-color)
+    var(--col-price)
+    var(--col-date)
+    62px
+    56px
+    56px
+    var(--col-price)
+    106px;
+}
+
+.ms-table--ledger {
+  --table-min-width: 900px;
+  --table-columns:
+    var(--col-card)
+    var(--col-set)
+    var(--col-number)
+    var(--col-rarity)
+    var(--col-color)
+    var(--col-price)
+    var(--col-qty)
+    82px
+    var(--col-date)
+    var(--col-type);
+}
+
+.ms-table--history {
+  --table-min-width: 1020px;
+  --table-columns:
+    var(--col-card)
+    var(--col-set)
+    var(--col-number)
+    var(--col-rarity)
+    var(--col-color)
+    var(--col-price)
+    var(--col-date)
+    var(--col-type)
+    minmax(280px, 2fr);
+}
+
+.ms-table--plan {
+  --table-min-width: 1040px;
+  --table-columns:
+    var(--col-card)
+    var(--col-set)
+    var(--col-number)
+    var(--col-rarity)
+    var(--col-color)
+    var(--col-price)
+    var(--col-price)
+    var(--col-price)
+    62px
+    var(--col-type)
+    var(--col-actions);
+}
+
+.printing-header,
+.printing-row {
+  display: grid;
+  grid-template-columns: 44px 56px minmax(150px, 1fr) minmax(210px, 1.35fr) 112px 112px;
+  gap: 6px;
+  align-items: center;
+  min-width: 680px;
+}
+
+.printing-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  min-height: var(--row-h);
+  padding: 0 var(--row-pad-x);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.printing-header [data-sort] {
+  cursor: pointer;
+}
+
+.printing-header [data-sort]:hover {
+  color: var(--text-strong);
+}
+
+.printing-row {
+  padding: 2px var(--row-pad-x);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.printing-row:hover {
+  background: var(--row-hover);
+}
+
+.finish-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  min-width: 0;
+  color: var(--text);
+}
+
+.finish-action.muted {
+  justify-content: center;
+  color: var(--muted-2);
+}
+
+.value-positive {
+  color: var(--good);
+}
+
+.value-negative {
+  color: var(--bad);
+}
+
+@media (max-width: 900px) {
+  .ms-table {
+    max-height: none;
+  }
+}

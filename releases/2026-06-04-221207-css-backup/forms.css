@@ -1,0 +1,146 @@
+/*
+====================================
+FORMS
+====================================
+
+Shared controls, filters, buttons, inputs, and checkboxes.
+====================================
+*/
+
+input,
+select,
+textarea {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text-strong);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.9;
+}
+
+button,
+.toolbar-tab,
+.search-row-action,
+.row-actions button,
+.filter-reset-btn,
+.help-open-btn,
+.help-close-btn {
+  border-color: var(--border-strong);
+  background: var(--panel-strong);
+  color: var(--text);
+}
+
+button:hover,
+.toolbar-tab:hover,
+.search-row-action:hover,
+.row-actions button:hover,
+.filter-reset-btn:hover {
+  border-color: rgba(125, 211, 252, 0.32);
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.toolbar-tab.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.radar-search-controls,
+.card-filter-controls {
+  gap: 6px;
+}
+
+.compact-heading {
+  align-items: center;
+}
+
+.compact-heading h4 {
+  flex: 0 0 auto;
+}
+
+.radar-search-controls input,
+.radar-search-controls select,
+.card-filter-controls input,
+.card-filter-controls select,
+.signal-add-form input,
+.signal-add-form button {
+  height: var(--control-h);
+  font-size: 13px;
+}
+
+.row-actions button,
+.filter-reset-btn {
+  min-height: var(--control-h-sm);
+  border-radius: var(--radius-sm);
+  line-height: 1;
+}
+
+.card-filter-controls {
+  grid-template-columns: minmax(160px, 1fr) 96px 108px 92px 82px 82px auto 92px 96px;
+  align-items: center;
+}
+
+.filter-control {
+  display: block;
+  margin: 0;
+}
+
+.filter-control span {
+  display: none;
+}
+
+.filter-control input,
+.filter-control select {
+  width: 100%;
+}
+
+.inline-check {
+  min-height: var(--control-h);
+  padding: 5px 8px;
+  border-color: var(--border-strong);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.inline-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+.money-input,
+input[type="number"] {
+  padding-right: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.quick-plan-form {
+  grid-template-columns: 64px 64px 48px auto;
+}
+
+.quick-plan-form input,
+.quick-plan-form button,
+.target-plan-form input,
+.target-plan-form button {
+  height: var(--control-h-sm);
+  font-size: 12px;
+}
+
+.signal-quick-input,
+.target-plan-form input {
+  background: var(--surface);
+  color: var(--text-strong);
+}
+
+@media (max-width: 900px) {
+  .card-filter-controls,
+  .radar-search-controls,
+  .signal-add-form {
+    grid-template-columns: 1fr;
+  }
+}

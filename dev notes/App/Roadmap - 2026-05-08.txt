@@ -1,0 +1,75 @@
+🧠 Updated Roadmap (based on everything we discussed)
+🟢 v0.8.x — CURRENT (what you have)
+
+Core system stable:
+
+search + printings
+portfolio tracking
+buy/sell engine
+cash + P/L + equity
+pricing snapshots
+localStorage persistence
+modular JS architecture
+
+Goal:
+
+stabilize and remove UX confusion
+
+🟡 v0.9.x — “Speculation UX Layer” (NEXT REAL PHASE)
+1. Printings Intelligence (HIGH PRIORITY)
+sort by price / supply / set
+filter subsets (set, archetype, premium types)
+compare printings (ROI potential view)
+highlight “underpriced versions”
+2. Watchlist → REAL SYSTEM
+
+Replace qty = 0 hack with:
+
+WATCHING
+ACTIVE
+EXITED
+
+Add:
+
+intent tagging (why you care about it)
+3. Fees + Real Profit Model
+buy fees (shipping/tax estimate)
+sell fees (TCG/eBay friction)
+net profit vs raw profit toggle
+4. Alerts Engine (light version first)
+hit target buy price
+hit target sell price
+% movement alert (e.g. +20% day/week)
+“watchlist waking up” alert
+5. Dashboard (first real “terminal feel” feature)
+
+Widgets:
+
+top movers (owned + watched)
+best performers
+worst drag
+“recent activity”
+“needs attention”
+market snapshots
+🔵 v1.0-beta — “REAL USABLE TOOL”
+1. Position lifecycle system
+thesis notes
+target exits
+hold duration tracking
+2. Print + liquidity awareness
+listing depth indicator (if available)
+quick external market links (TCG/eBay/Scryfall)
+3. Entry discipline tools
+conviction levels
+planned entry zones
+alert-based entry triggers
+4. Portfolio intelligence
+realized vs unrealized P/L
+capital efficiency
+dead money detection
+🟣 v1.0+ — “POWER USER TOOL”
+historical performance tracking
+strategy tagging (archetypes/themes)
+trend detection layer
+advanced dashboard customization
+optional desktop wrapper (Electron/Tauri)

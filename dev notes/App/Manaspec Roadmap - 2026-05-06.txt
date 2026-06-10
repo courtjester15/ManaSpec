@@ -1,0 +1,172 @@
+🧾 ManaSpec — Dev Notes (Alpha State)
+🧠 Project Summary
+
+ManaSpec is an MTG speculation trading terminal built with:
+
+Vanilla HTML / CSS / JS
+Tabulator (portfolio UI)
+Scryfall API (cards + pricing only)
+localStorage (state persistence)
+Core Purpose
+
+Simulate and track MTG buy/sell positions:
+
+speculation tracking
+portfolio P/L
+cash management
+price-based decision support
+
+Not a collection tracker — a trading tool.
+
+⚙️ CORE SYSTEM (ALPHA COMPLETE)
+🧱 Data Model (Spec Object)
+{
+  id,
+  name,
+  set_code,
+  set_name,
+  collector_number,
+  qty,
+  buyPrice,        // avg cost basis
+  currentPrice,    // live snapshot
+  pl,
+  buyDate,
+  foil (planned)
+}
+💰 Trading Engine
+BUY
+decreases cash
+increases qty
+recalculates avg buyPrice
+sets buyDate on first purchase
+SELL
+increases cash at currentPrice
+decreases qty
+removes entry if qty = 0
+DELETE
+removes position entirely
+📊 Pricing System
+Scryfall API provides:
+USD current price
+periodic refresh updates all holdings
+portfolio values recalculated on refresh
+🔍 Search Flow
+fuzzy search:
+/cards/named?fuzzy=
+select card → fetch oracle data
+fetch printings:
+oracleid search
+user selects printing → becomes spec entry
+📈 Portfolio UI
+
+Tabulator grid includes:
+
+set / collector #
+card name
+set name
+quantity
+buy price (avg cost)
+current price
+P/L ($)
+P/L (%)
+Summary Bar
+cash
+invested
+portfolio value
+total P/L
+💾 Persistence
+
+localStorage keys:
+
+specs
+cash
+
+Save system:
+
+updates state → writes to storage → refreshes UI
+🧠 KEY DESIGN DECISIONS
+Watchlist Model
+qty = 0 = watch item
+no separate watchlist table yet
+Price Model
+currentPrice = live snapshot
+buyPrice = averaged cost basis
+Execution Model
+fully client-side
+no backend
+API only used for data retrieval
+🚀 ROADMAP
+🟢 PHASE 1 — UX CLARITY (NEXT PRIORITY)
+
+Goal: eliminate confusion for first-time usage
+
+Focus:
+
+clarify click behavior (search → add vs view)
+differentiate watchlist vs owned clearly
+improve action feedback (buy/sell/add)
+simplify printing selection flow
+🟡 PHASE 2 — INTERACTION LAYER
+
+Goal: speed + “pro terminal feel”
+
+Features:
+
+keyboard shortcuts
+/ focus search
+Enter select
+arrow navigation
+keyboard control for:
+search results
+printings list
+table rows
+🔵 PHASE 3 — INTELLIGENCE LAYER
+
+Goal: make it a real trading system
+
+Add:
+
+explicit watchlist system
+buy/sell history logs
+portfolio history snapshots
+price history per card
+trend charts
+🟣 PHASE 4 — ARCHITECTURE UPGRADE (OPTIONAL)
+
+Goal: persistence + scalability
+
+Options:
+
+JSON export/import system (recommended first)
+OR Electron/Tauri wrapper:
+real filesystem saves
+auto-save without localStorage limits
+⚠️ CURRENT LIMITATIONS
+no file-based persistence (only localStorage)
+no historical tracking
+watchlist is implicit
+UI decision flow still ambiguous
+no keyboard workflow yet
+🧭 CURRENT STATUS
+You are here:
+
+✔ Alpha complete (core trading loop works)
+✔ Portfolio system functional
+✔ Pricing integrated
+✔ Save/load stable
+
+➡ Next stage is NOT building new features
+➡ Next stage is making it feel like a real trading tool
+
+🎯 NEXT DEVELOPMENT FOCUS
+
+Primary goal:
+
+Make interaction flow intuitive and unambiguous
+
+Specifically:
+
+clarify click actions everywhere
+reduce “what just happened?” moments
+separate watch vs owned cleanly
+prepare structure for hotkeys layer

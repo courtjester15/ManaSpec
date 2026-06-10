@@ -1,0 +1,18 @@
+ManaSpec/
+│
+├── index.html
+├── README.md
+│
+├── css/
+│   └── style.css
+│
+├── js/
+│   ├── app.js
+│   ├── config.js
+│   ├── state.js
+│   ├── trading.js
+│   ├── storage.js
+│   ├── api.js
+│   ├── ui.js
+│   ├── portfolio.js
+│   └── pricing.js
