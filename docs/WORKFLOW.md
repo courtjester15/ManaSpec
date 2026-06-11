@@ -10,7 +10,7 @@ ManaSpec development separates three things:
 - Execution: code changes based on current specs.
 - State: what is true now.
 
-The docs in this folder represent current state. Dated notes are memory.
+The docs in this folder represent current state. `dev notes/inbox/` is for raw daily notes and beta observations; `dev notes/archive/` is memory.
 
 ## Source Of Truth Order
 
@@ -19,7 +19,7 @@ When working on ManaSpec, use context in this order:
 1. [README](README.md) for product shape, module lineup, data model, and implementation rules.
 2. [Roadmap](ROADMAP.md) for current phase, next work, and deferred work.
 3. [Decisions](DECISIONS.md) when rationale matters.
-4. Historical `dev notes/` only if a current doc points there or the user asks for history.
+4. `dev notes/inbox/` for current raw observations, or `dev notes/archive/` only if a current doc points there or the user asks for history.
 
 ## Work Loop
 
@@ -29,7 +29,7 @@ When working on ManaSpec, use context in this order:
 4. Verify the app still works.
 5. Update [README](README.md) or [ROADMAP.md](ROADMAP.md) if behavior or priorities changed.
 6. Update `docs/DECISIONS.md` only when a meaningful choice was made.
-7. Leave old dated notes alone unless deliberately archiving or migrating them.
+7. Put new raw notes in `dev notes/inbox/`, then promote durable behavior, priorities, or decisions into active docs.
 
 ## Git Checkpoints
 
@@ -49,7 +49,7 @@ ManaSpec now uses Git for recovery points and version history.
 - Point AI to the relevant README section and roadmap phase whenever possible.
 - Use this folder for current behavior and constraints.
 - Use `docs/DECISIONS.md` for rationale and tradeoffs.
-- Use old notes as reference, not authority.
+- Use `dev notes/inbox/` and `dev notes/archive/` as reference, not authority.
 - If old notes conflict with active docs, active docs win.
 
 ## Change Size

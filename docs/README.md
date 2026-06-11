@@ -2,7 +2,7 @@
 
 This folder is the active source of truth for ManaSpec.
 
-The older `dev notes/` folder contains dated planning history. Use it only when intentionally researching past reasoning. Do not treat old notes as active instructions.
+The `dev notes/` folder contains raw daily notes and historical planning memory. Use `dev notes/inbox/` for current brainstorming and beta observations, and `dev notes/archive/` for older reference notes. Do not treat dev notes as active instructions.
 
 ## Start Here
 

@@ -123,9 +123,9 @@ Future transaction history should be able to represent methods such as `BUY`, `O
 
 ## Docs
 
-### Active docs beat dated notes
+### Active docs beat dev notes
 
-Dated notes in `dev notes/` are valuable project history, but active docs under `docs/` define current behavior and priorities.
+Raw notes in `dev notes/inbox/` and historical notes in `dev notes/archive/` are valuable project memory, but active docs under `docs/` define current behavior and priorities.
 
 ### Keep the docs lightweight
 

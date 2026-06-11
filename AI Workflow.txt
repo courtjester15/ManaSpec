@@ -47,18 +47,19 @@ DECISIONS.md = why things are the way they are
 - tradeoffs
 - choices that should not be relitigated casually
 
-archive = memory
+dev notes/inbox = raw current notes
+dev notes/archive = memory
 
-- old drafts
-- outdated ideas
-- dated notes
+- daily brainstorming
+- beta observations
+- old drafts and outdated ideas
 
 Key rules:
 
 - Do not ask AI to read the whole repo or all notes by default.
 - Point AI to one module and its spec whenever possible.
 - Active docs in docs/ win over historical notes.
-- Historical notes in dev notes/ are reference only.
+- Notes in dev notes/inbox/ and dev notes/archive/ are reference only.
 - Update spec.md when behavior changes.
 - Update docs/DECISIONS.md when a meaningful choice is made.
 
@@ -66,5 +67,5 @@ Mental model:
 
 - spec.md = reality
 - DECISIONS.md = reasoning
-- archive/dev notes = memory
+- dev notes = memory and raw intake
 - AI = executes current reality, not history
