@@ -37,7 +37,7 @@ function renderSignalsList() {
   if (!container) return;
 
   if (!signals.length) {
-    container.innerHTML = `<div class="empty-state">No signals yet. Add target, stop, movement, or catalyst triggers here.</div>`;
+    container.innerHTML = `<div class="empty-state">No manual signal records yet. Target alerts are generated from Radar and Positions plans.</div>`;
     return;
   }
 
@@ -103,7 +103,6 @@ function renderNoPlanSignalTable() {
       if (action === "art") openSignalArtPreview(row);
       if (action === "detail") openCardDetail(row.id, row.source);
       if (action === "view") setActiveView(row.source === "portfolio" ? "portfolio" : "radar");
-      if (action === "save") saveQuickSignalPlanFromRow(row, event.target.closest(".ms-table__row"));
     },
   });
 }
@@ -116,16 +115,13 @@ function getNoPlanSignalColumns() {
     { label: "Rarity", align: "center", value: row => row.rarity || "-" },
     { label: "Color", align: "center", value: row => row.color || "-" },
     { label: "Now", align: "money", value: row => row.currentPrice ? money(row.currentPrice) : "-" },
-    { label: "Entry", align: "money", type: "input", name: "entryTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*" placeholder="Entry"', value: row => formatSignalPlanTarget(row.entryTarget) },
-    { label: "Exit", align: "money", type: "input", name: "exitTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*" placeholder="Exit"', value: row => formatSignalPlanTarget(row.exitTarget) },
-    { label: "Hold", align: "center", type: "input", name: "holdMonths", inputAttrs: 'inputmode="numeric" pattern="[0-9]*" placeholder="Mo"', value: row => formatSignalHoldMonths(row.holdTime) },
     { label: "Source", align: "center", value: row => row.source === "portfolio" ? "Positions" : "Radar" },
     {
       label: "Actions",
       align: "actions",
       type: "actions",
       actions: [
-        { label: "Save", action: "save" },
+        { label: "Detail", action: "detail" },
         { label: "View", action: "view" },
       ],
     },
@@ -216,60 +212,6 @@ function initSignalActions() {
     });
   });
 
-  document.querySelectorAll("[data-quick-plan]").forEach(form => {
-    form.querySelectorAll("input, button").forEach(control => {
-      control.addEventListener("click", event => event.stopPropagation());
-    });
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-      saveQuickSignalPlan(form);
-    });
-  });
-}
-
-function saveQuickSignalPlanFromRow(row, rowEl) {
-  if (!rowEl || typeof savePlanForTrackedCard !== "function") return;
-  const values = getStandardRowInputValues(rowEl);
-
-  savePlanForTrackedCard(row.id, {
-    entryTarget: parseWholeDollarInput(values.entryTarget),
-    exitTarget: parseWholeDollarInput(values.exitTarget),
-    holdTime: formatHoldTime(parseHoldMonthsInput(values.holdMonths)),
-  });
-
-  if (typeof showAppNotice === "function") {
-    showAppNotice(`${row.name} plan saved.`);
-  }
-
-  renderSignalsView();
-}
-
-function getStandardRowInputValues(rowEl) {
-  const values = {};
-  rowEl.querySelectorAll("[data-ms-input]").forEach(input => {
-    values[input.dataset.msInput] = input.value;
-  });
-  return values;
-}
-
-function saveQuickSignalPlan(form) {
-  const cardId = form.dataset.quickPlan;
-  if (!cardId || typeof savePlanForTrackedCard !== "function") return;
-
-  const formData = new FormData(form);
-  const item = getTrackedSignalCards().find(card => card.id === cardId);
-
-  savePlanForTrackedCard(cardId, {
-    entryTarget: parseWholeDollarInput(formData.get("entryTarget")),
-    exitTarget: parseWholeDollarInput(formData.get("exitTarget")),
-    holdTime: formatHoldTime(parseHoldMonthsInput(formData.get("holdMonths"))),
-  });
-
-  if (typeof showAppNotice === "function" && item) {
-    showAppNotice(`${item.name} plan saved.`);
-  }
-
-  renderSignalsView();
 }
 
 function formatSignalPlanTarget(value) {

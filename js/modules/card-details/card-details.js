@@ -10,10 +10,11 @@ Live item check panel for price, movement, and market signals.
 let activeCardDetail = null;
 
 async function openCardDetail(cardId, source = "portfolio") {
-  const item = findTrackedCard(cardId);
+  const tracked = findTrackedCardSource(cardId, source);
+  const item = tracked?.item;
   if (!item) return;
 
-  activeCardDetail = { cardId, source };
+  activeCardDetail = { cardId, source: tracked.source };
   renderCardDetailShell(item);
 
   try {
@@ -27,16 +28,27 @@ async function openCardDetail(cardId, source = "portfolio") {
 
     syncCardMetadata(item, card);
     syncTrackedCardPrice(item, card);
-    renderCardDetail(item, card, source);
+    renderCardDetail(item, card, tracked.source);
   } catch (err) {
     console.error(err);
     renderCardDetailError(item, "Live check failed.");
   }
 }
 
-function findTrackedCard(cardId) {
-  return specs.find(spec => spec.id === cardId)
-    || radar.find(item => item.id === cardId);
+function findTrackedCard(cardId, source) {
+  return findTrackedCardSource(cardId, source)?.item || null;
+}
+
+function findTrackedCardSource(cardId, preferredSource) {
+  const position = specs.find(spec => spec.id === cardId);
+  const radarItem = radar.find(item => item.id === cardId);
+
+  if (preferredSource === "radar" && radarItem) return { item: radarItem, source: "radar" };
+  if (preferredSource === "portfolio" && position) return { item: position, source: "portfolio" };
+  if (position) return { item: position, source: "portfolio" };
+  if (radarItem) return { item: radarItem, source: "radar" };
+
+  return null;
 }
 
 function getScryfallCardId(item) {
@@ -364,11 +376,15 @@ function renderOracleSection(card) {
 function saveTargetPlan(event, item, card, source) {
   event.preventDefault();
 
-  savePlanForTrackedCard(item.id, {
-    entryTarget: parseWholeDollarInput(document.getElementById("entryTargetInput").value),
-    exitTarget: parseWholeDollarInput(document.getElementById("exitTargetInput").value),
-    holdTime: formatHoldTime(parseHoldMonthsInput(document.getElementById("holdTimeInput").value)),
-  });
+  savePlanForTrackedCard(
+    item.id,
+    {
+      entryTarget: parseWholeDollarInput(document.getElementById("entryTargetInput").value),
+      exitTarget: parseWholeDollarInput(document.getElementById("exitTargetInput").value),
+      holdTime: formatHoldTime(parseHoldMonthsInput(document.getElementById("holdTimeInput").value)),
+    },
+    source
+  );
 
   if (typeof showAppNotice === "function") {
     showAppNotice(`${item.name} plan saved.`);
@@ -715,7 +731,7 @@ function buildEvaluationItem(label, value, detail, tone) {
   return { label, value, detail, tone };
 }
 
-function savePlanForTrackedCard(cardId, plan) {
+function savePlanForTrackedCard(cardId, plan, source = activeCardDetail?.source) {
   const normalized = {
     entryTarget: Number(plan.entryTarget || 0),
     exitTarget: Number(plan.exitTarget || 0),
@@ -724,8 +740,19 @@ function savePlanForTrackedCard(cardId, plan) {
 
   const pairedPosition = specs.find(spec => spec.id === cardId);
   const pairedRadar = radar.find(radarItem => radarItem.id === cardId);
+  const targets = [];
 
-  [pairedPosition, pairedRadar].filter(Boolean).forEach(item => {
+  if (source === "portfolio" && pairedPosition) {
+    targets.push(pairedPosition);
+  } else if (source === "radar" && pairedRadar) {
+    targets.push(pairedRadar);
+  } else if (pairedPosition && !pairedRadar) {
+    targets.push(pairedPosition);
+  } else if (pairedRadar && !pairedPosition) {
+    targets.push(pairedRadar);
+  }
+
+  targets.forEach(item => {
     item.entryTarget = normalized.entryTarget;
     item.exitTarget = normalized.exitTarget;
     item.holdTime = normalized.holdTime;

@@ -291,13 +291,11 @@ function buyRadarItem(id) {
     logTransaction(position, "BUY", buyQty, price);
   }
 
-  radar = radar.filter(radarItem => radarItem.id !== id);
-
   updatePL();
   save();
   saveRadarState(radar);
 
   if (typeof showAppNotice === "function") {
-    showAppNotice(`Bought ${buyQty} ${item.name} for ${money(totalCost)} and moved it to Positions.`);
+    showAppNotice(`Bought ${buyQty} ${item.name} for ${money(totalCost)}. Radar will keep watching it.`);
   }
 }

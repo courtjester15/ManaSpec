@@ -223,7 +223,7 @@ Current behavior:
 - Local Radar and Positions filters include reset actions and plan-state filters.
 - Local Radar and Positions filters use visible labels so filter meaning is clear while scanning.
 - Radar filter heading shows the current idea count and filtered count.
-- Buying from Radar buys the planned quantity, defaults to 1, and moves the card into Positions.
+- Buying from Radar buys the planned quantity, defaults to 1, creates or updates the card in Positions, and keeps the Radar item watched.
 - Existing owned positions are backfilled into opening `BUY` transactions when no ledger quantity already covers them.
 
 Current limitations:
@@ -263,7 +263,7 @@ Current behavior:
 - Radar items are stored separately from owned Positions.
 - Radar rows show current price, added date, planned quantity, market observation summary fields, and actions.
 - Duplicate exact printings are blocked within Radar.
-- Buying from Radar uses the planned quantity, defaults to 1, creates or updates an owned Position, logs a transaction when available, and currently removes the Radar item.
+- Buying from Radar uses the planned quantity, defaults to 1, creates or updates an owned Position, logs a transaction when available, and keeps the Radar item watched.
 - Removing from Radar only removes the watched idea and does not affect owned Positions.
 
 Workflow rule:
@@ -334,7 +334,7 @@ Current behavior:
 - Target panels show exit hits, entry hits, approaching targets, and tracked cards with no plan.
 - Target states are based on local `entryTarget`, `exitTarget`, month-based `holdTime`, ownership, elapsed hold time, and current price snapshots.
 - Target signal rows can open card detail or jump to Radar/Positions.
-- No Plan signal rows include quick entry target, exit target, and hold-month fields so missing plans can be filled in place.
+- No Plan signal rows show tracked cards without plan data and link back to the source workflow for edits.
 
 Current limitations:
 
