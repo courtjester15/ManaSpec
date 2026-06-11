@@ -39,12 +39,18 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Compact Positions table default for laptop-height scan workflows.
 - Filter reset controls for local Radar and Positions filters.
 - Optional entry target, exit target, and hold-time fields on tracked cards.
+- Radar entry target editing directly from the Radar table.
+- Radar planned quantity editing directly from the Radar table.
+- Radar buy flow creates or updates a Position while keeping the Radar item watched.
 - Optional target and hold-time columns in the Positions scan table.
 - Inline target and hold-time editing from the Positions scan table.
+- Positions sell workflow supports a chosen quantity or all copies.
 - Plan-state filters for planned, unplanned, hit, and approaching cards.
 - Dashboard target panels backed by local target fields.
 - Signals target panels backed by local Radar and Positions target fields.
 - Signals quick actions for opening card detail or jumping to Radar/Positions.
+- Signals is now a read-only attention layer for plan data; plan edits happen in Radar, Positions, or Card Detail.
+- Card Detail saves plan edits to the source that opened the printing instead of cross-writing Radar and Positions.
 - Transaction ledger filters for text and buy/sell type.
 - History filters for text and event type.
 - Radar set-number search for exact Scryfall printing lookup.
@@ -54,6 +60,7 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Compact card-detail Market Evaluation from observable/local data only.
 - Scryfall EDHREC rank shown as a compact EDH presence signal in card detail.
 - Navigation zones wired for dashboard, watchlists, signals, thesis, and history.
+- Table layout restored after Radar Entry and Positions Sell Qty columns.
 
 ### Now
 
@@ -66,12 +73,27 @@ Current discipline: do not expand sideways until the core singles workflow has b
 
 ### Next
 
-- Run a catalog-first manual test pass across the current core workflow.
-- Capture observations before fixing: bugs, confusing UX, missing workflow pieces, nice-to-haves, and deferred ideas.
-- Review the catalog and choose the smallest beta-critical fixes.
-- Clean up card detail as the emerging command center for Plan, Market Check, Card Data, and Actions.
-- Add local data export/import before relying more heavily on localStorage.
-- Draft the transaction migration path before changing the storage model.
+1. Signals deep-linking
+   - Jump to the exact Radar idea or Position from a signal.
+   - Prefer highlight, temporary filter, or scroll-to-card over broad module navigation.
+
+2. Card Detail command center pass
+   - Re-test opening from Radar, Positions, Signals, Transactions, History, and Thesis.
+   - Tighten Plan, Thesis, Market Check, Market Evaluation, Card Data, and Actions without expanding scope.
+   - Update Help in the same pass.
+
+3. Data safety
+   - Add JSON export/import from Admin before relying more heavily on localStorage.
+   - Make backup/restore understandable before deeper ledger work.
+
+4. Ledger migration plan
+   - Draft the transaction migration path before changing the storage model.
+   - Preserve existing localStorage data while defining computed Positions from transactions.
+
+5. UX polish candidates from beta notes
+   - Replace layout-shifting app notices with toast notifications.
+   - Replace browser-native sell confirmation with an app-styled workflow.
+   - Simplify Radar search mode selection toward unified smart search.
 
 ## 1.0 Beta Track
 
@@ -80,35 +102,46 @@ Goal: turn the current alpha into a usable product, not a wider prototype.
 ### Beta Gates
 
 1. Catalog pass
-   - Manually test the current workflow without fixing during the pass.
-   - Record what works, what breaks, what is confusing, and what feels missing.
-   - Classify each note before deciding whether it belongs in beta.
+   - [x] Manually test the current workflow and capture first beta notes.
+   - [x] Record what works, what breaks, what is confusing, and what feels missing.
+   - [x] Classify first notes before deciding what belongs in beta.
+   - [ ] Repeat after current fixes and capture the next batch of notes.
 
 2. Core loop fixes
-   - Fix only issues that block or confuse the main singles workflow.
-   - Keep Radar, Positions, Transactions, Signals, Thesis, History, and card detail coherent.
-   - Avoid sealed product, bulk import, backend work, and new integrations during this gate.
+   - [x] Define module ownership for Radar, Positions, Signals, Card Detail, and Transactions.
+   - [x] Make Radar keep watched items after purchase.
+   - [x] Make Radar entry target editable directly in Radar.
+   - [x] Support planned quantity from Radar buy flow.
+   - [x] Support chosen-quantity and sell-all exits from Positions.
+   - [x] Remove Signals plan editing so Signals behaves as an attention layer.
+   - [x] Make Card Detail plan saves source-specific.
+   - [ ] Deep-link Signals to exact Radar/Position rows.
+   - [ ] Re-test Transactions, History, and Dashboard after another complete core-loop pass.
 
-3. Card detail command center
-   - Tighten card detail into a compact working panel.
-   - Keep Plan, Thesis, Market Check, Market Evaluation, Card Data, and Actions visible but not crowded.
-   - Update help copy in the same pass.
+3. Card Detail command center
+   - [ ] Tighten card detail into a compact working panel.
+   - [ ] Keep Plan, Thesis, Market Check, Market Evaluation, Card Data, and Actions visible but not crowded.
+   - [ ] Confirm opening from Radar, Positions, Signals, Transactions, History, and Thesis.
+   - [ ] Update help copy in the same pass.
 
 4. Data safety
-   - Add JSON export/import from Admin.
-   - Make backup/restore understandable before deeper ledger or storage changes.
-   - Treat localStorage as user data that must be portable.
+   - [ ] Add JSON export/import from Admin.
+   - [ ] Make backup/restore understandable before deeper ledger or storage changes.
+   - [ ] Treat localStorage as user data that must be portable.
 
 5. Ledger foundation
-   - Write the migration plan before changing storage behavior.
-   - Preserve current `specs`, `radar`, `transactions`, `thesisNotes`, market observations, cash, and price snapshots.
-   - Move toward transactions as the source of truth and Positions as a computed view.
-   - Keep historical owned-spec backfill in view, but do not build it before export/import and transaction safety are clear.
+   - [ ] Write the migration plan before changing storage behavior.
+   - [ ] Preserve current `specs`, `radar`, `transactions`, `thesisNotes`, market observations, cash, and price snapshots.
+   - [ ] Move toward transactions as the source of truth and Positions as a computed view.
+   - [ ] Keep historical owned-spec backfill in view, but do not build it before export/import and transaction safety are clear.
 
 6. Beta polish and freeze
-   - Tighten labels, empty states, confirmations, disabled states, table scan behavior, and Help.
-   - Smoke test the complete beta path.
-   - Version the app as `v1.0.0-beta` only after the core loop is reliable.
+   - [x] Restore table layout integrity after Radar/Positions column changes.
+   - [ ] Replace layout-shifting notices with toast notifications.
+   - [ ] Replace native sell confirmation with an app-styled workflow.
+   - [ ] Tighten labels, empty states, confirmations, disabled states, table scan behavior, and Help.
+   - [ ] Smoke test the complete beta path.
+   - [ ] Version the app as `v1.0.0-beta` only after the core loop is reliable.
 
 ### Scope Lock Until Beta
 
@@ -152,10 +185,13 @@ Capture notes in this format:
    - Search by name in Radar.
    - Search by set number, using examples like `FIN 123`, `FIN #123`, `FIN123`, and `MH3 123`.
    - Add an idea to Radar.
+   - Set entry target in Radar.
    - Set planned quantity in Radar.
-   - Buy from Radar into Positions and confirm it leaves Radar.
+   - Buy from Radar into Positions and confirm it remains watched in Radar.
    - Buy one more from Positions.
    - Sell one from Positions.
+   - Sell a chosen quantity from Positions.
+   - Sell all remaining copies from Positions when intentionally testing close behavior.
    - Delete only if testing destructive behavior intentionally.
    - Edit `Target` and `Hold` inline in Positions.
    - Open card detail from Radar, Positions, Signals, Transactions, and History when possible.
@@ -185,13 +221,20 @@ Capture notes in this format:
    - Update the relevant help topic in the same pass.
    - Current experiment: narrower side-drawer width before deciding whether to collapse forms/sections by default.
 
-4. Ledger migration sketch
+4. Current open beta notes
+   - Signals deep-linking: jump to the exact Radar idea or Position instead of only switching modules.
+   - Signals hierarchy: make each signal communicate why it appears and what action is expected.
+   - Global notifications: replace layout-shifting save notices with toast notifications.
+   - Radar search UX: reduce search-mode confusion, likely by moving toward unified smart search.
+   - Positions sell confirmation: replace browser-native confirm with an app-styled workflow.
+
+5. Ledger migration sketch
    - Write the plan before changing storage.
    - Define how current `specs` become computed positions from transaction events.
    - Preserve current localStorage data while introducing any future ledger behavior.
    - Keep a future real database as a learning/storage upgrade, not the next immediate dependency.
 
-5. Optional quality-of-life candidate
+6. Optional quality-of-life candidate
    - Sketch a separate import workflow for spreadsheet or binder input if bulk adding becomes important.
    - Keep this framed as owned-spec backfill, not collection import.
    - Assume the user may provide cleaned parsed rows from GPT or a spreadsheet before ManaSpec has a full parser.
