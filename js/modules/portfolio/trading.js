@@ -46,22 +46,29 @@ function buySpec(positionOrEvent, maybeCell) {
   }
 }
 
-function sellSpec(positionOrEvent, maybeCell) {
+function sellSpec(positionOrEvent, maybeCell, requestedQuantity = 1) {
+  if (typeof maybeCell === "number") {
+    requestedQuantity = maybeCell;
+    maybeCell = null;
+  }
+
   const s = getSpec(positionOrEvent, maybeCell);
   if (!s) return;
   if (s.qty <= 0) return;
 
   const price = Number(s.currentPrice || s.buyPrice || 0);
+  const sellQty = Math.min(Number(s.qty || 0), Math.max(1, Number(requestedQuantity || 1)));
+  const total = price * sellQty;
 
-  if (!confirm(`Sell 1 ${s.name} for ${money(price)}? This will log a SELL transaction and reduce the position quantity.`)) {
+  if (!confirm(`Sell ${sellQty} ${s.name} for ${money(total)}? This will log a SELL transaction and reduce the position quantity.`)) {
     return;
   }
 
-  s.qty -= 1;
-  cash += price;
+  s.qty -= sellQty;
+  cash += total;
 
   if (typeof logTransaction === "function") {
-    logTransaction(s, "SELL", 1, price);
+    logTransaction(s, "SELL", sellQty, price);
   }
 
   if (s.qty === 0) {
@@ -73,7 +80,7 @@ function sellSpec(positionOrEvent, maybeCell) {
 
   if (typeof showAppNotice === "function") {
     const suffix = s.qty === 0 ? " Position is now closed." : "";
-    showAppNotice(`Sold 1 ${s.name} for ${money(price)}.${suffix}`);
+    showAppNotice(`Sold ${sellQty} ${s.name} for ${money(total)}.${suffix}`);
   }
 }
 

@@ -20,7 +20,7 @@ function renderRadarView(options = {}) {
     <section class="radar-view">
       <div class="view-heading">
         <h3>Radar</h3>
-        <p>Watch ideas before money is committed. Buying moves the planned quantity into Positions.</p>
+        <p>Watch ideas before money is committed. Buying creates or updates a Position while Radar keeps watching.</p>
       </div>
 
       <section class="radar-search-panel">
@@ -109,6 +109,7 @@ function renderRadarItems() {
     },
     onInputChange: (field, item, value) => {
       if (field === "plannedQty") saveRadarPlannedQty(item.id, value);
+      if (field === "entryTarget") saveRadarEntryTarget(item.id, value);
     },
   });
 }
@@ -122,6 +123,7 @@ function getRadarTableColumns() {
     { label: "Color", sortKey: "color", align: "center", value: getColorLabel },
     { label: "Price", sortKey: "currentPrice", align: "money", value: item => money(item.currentPrice), title: item => item.priceUpdatedAt ? `Updated ${new Date(item.priceUpdatedAt).toLocaleDateString()}` : "No refresh" },
     { label: "Added", sortKey: "addedDate", align: "center", value: item => formatRadarAddedDate(item.addedDate), title: item => formatRadarAddedTitle(item.addedDate) },
+    { label: "Entry", sortKey: "entryTarget", align: "money", type: "input", name: "entryTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*" placeholder="Entry"', value: item => formatRadarEntryTarget(item.entryTarget) },
     { label: "Want", sortKey: "plannedQty", align: "center", type: "stepper", name: "plannedQty", min: 1, step: 1, value: getRadarPlannedQty },
     { label: "Sellers", sortKey: "sellers", align: "center", value: item => getRadarMarketValue(item, "currentSellers") },
     { label: "Qty", sortKey: "marketQty", align: "center", value: item => getRadarMarketValue(item, "currentQuantity") },
@@ -154,6 +156,7 @@ function getSortedRadarRows(rows) {
 function getRadarSortValue(item, field) {
   if (field === "color") return getColorLabel(item);
   if (field === "addedDate") return getRadarAddedTimestamp(item.addedDate);
+  if (field === "entryTarget") return Number(item.entryTarget || 0);
   if (field === "plannedQty") return getRadarPlannedQty(item);
   if (field === "sellers") return getRadarMarketValue(item, "currentSellers", 0);
   if (field === "marketQty") return getRadarMarketValue(item, "currentQuantity", 0);
@@ -229,6 +232,25 @@ function saveRadarPlannedQty(id, value) {
 
   item.plannedQty = Math.max(1, Number(value || 1));
   saveRadarState(radar);
+}
+
+function formatRadarEntryTarget(value) {
+  const number = Number(value || 0);
+  return number > 0 ? Math.round(number) : "";
+}
+
+function saveRadarEntryTarget(id, value) {
+  const item = radar.find(radarItem => radarItem.id === id);
+  if (!item) return;
+
+  item.entryTarget = typeof parseWholeDollarInput === "function"
+    ? parseWholeDollarInput(value)
+    : Number(String(value || "").replace(/[^\d]/g, "") || 0);
+  saveRadarState(radar);
+
+  if (typeof showAppNotice === "function") {
+    showAppNotice(`${item.name} entry target saved.`);
+  }
 }
 
 function removeRadarItem(id) {

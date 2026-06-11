@@ -17,6 +17,7 @@ let portfolioSort = {
   field: "name",
   direction: "asc",
 };
+let positionSellQtyById = {};
 
 function renderPortfolioView() {
   document.getElementById("viewContainer").innerHTML = `
@@ -60,10 +61,18 @@ function renderPortfolioRows() {
     onAction: (action, item) => {
       if (action === "art") openPositionArtPreview(item);
       if (action === "buy") buySpec(item);
-      if (action === "sell") sellSpec(item);
+      if (action === "sell") sellSpec(item, null, getPositionSellQty(item));
+      if (action === "sellAll") sellSpec(item, null, Number(item.qty || 0));
       if (action === "delete") deleteSpec(item);
     },
-    onInputChange: (field, item, value) => savePositionPlanEdit(item.id, field, value),
+    onInputChange: (field, item, value, event) => {
+      if (field === "sellQty") {
+        savePositionSellQty(item.id, value, event);
+        return;
+      }
+
+      savePositionPlanEdit(item.id, field, value);
+    },
   });
 }
 
@@ -83,6 +92,7 @@ function getPortfolioTableColumns() {
     { label: "P/L %", sortKey: "plPct", align: "money", className: item => getGainLossClass(getPositionPlPct(item)), value: item => formatPercent(getPositionPlPct(item)) },
     { label: "Target", sortKey: "exitTarget", align: "money", type: "input", name: "exitTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*"', value: item => formatPlanInputValue(item.exitTarget) },
     { label: "Hold", sortKey: "holdTime", align: "center", type: "inputWithSuffix", name: "holdTime", inputAttrs: 'inputmode="numeric" pattern="[0-9]*"', suffix: "mo", value: item => getHoldMonthsInputValue(item.holdTime) },
+    { label: "Sell Qty", align: "center", type: "stepper", name: "sellQty", min: 1, step: 1, value: getPositionSellQty },
     {
       label: "Actions",
       align: "actions",
@@ -90,6 +100,7 @@ function getPortfolioTableColumns() {
       actions: [
         { label: "Buy", action: "buy" },
         { label: "Sell", action: "sell" },
+        { label: "All", action: "sellAll" },
         { label: "Del", action: "delete", className: "danger" },
       ],
     },
@@ -167,6 +178,26 @@ function getPositionPlPct(spec) {
   const now = Number(spec.currentPrice || 0);
   if (!buy) return 0;
   return ((now - buy) / buy) * 100;
+}
+
+function getPositionSellQty(spec) {
+  const ownedQty = Math.max(1, Number(spec.qty || 0));
+  const savedQty = Number(positionSellQtyById[spec.id] || 1);
+  return Math.min(ownedQty, Math.max(1, savedQty));
+}
+
+function savePositionSellQty(id, value, event) {
+  const spec = getPortfolioItem(id);
+  if (!spec) return;
+
+  const ownedQty = Math.max(1, Number(spec.qty || 0));
+  const requestedQty = Number(String(value || "").replace(/[^\d]/g, "") || 1);
+  const nextQty = Math.min(ownedQty, Math.max(1, requestedQty));
+  positionSellQtyById[id] = nextQty;
+
+  if (event?.target) {
+    event.target.value = String(nextQty);
+  }
 }
 
 function getPortfolioRows() {

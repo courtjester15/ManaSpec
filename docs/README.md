@@ -189,6 +189,7 @@ Ownership model:
 The positions workflow supports:
 
 - Buying and selling from the holdings table.
+- Selling one, a chosen quantity, or all copies from an owned position.
 - Viewing position value and P/L.
 - Filtering owned positions by card metadata and price bands.
 - Setting optional exit target and estimated hold time from card detail.
@@ -224,6 +225,7 @@ Current behavior:
 - Local Radar and Positions filters use visible labels so filter meaning is clear while scanning.
 - Radar filter heading shows the current idea count and filtered count.
 - Buying from Radar buys the planned quantity, defaults to 1, creates or updates the card in Positions, and keeps the Radar item watched.
+- Radar entry target is editable directly from the Radar table.
 - Existing owned positions are backfilled into opening `BUY` transactions when no ledger quantity already covers them.
 
 Current limitations:
@@ -262,6 +264,7 @@ Current behavior:
 - Printing rows can add exact paper or foil versions to Radar.
 - Radar items are stored separately from owned Positions.
 - Radar rows show current price, added date, planned quantity, market observation summary fields, and actions.
+- Radar rows show and edit entry target as part of pre-purchase planning.
 - Duplicate exact printings are blocked within Radar.
 - Buying from Radar uses the planned quantity, defaults to 1, creates or updates an owned Position, logs a transaction when available, and keeps the Radar item watched.
 - Removing from Radar only removes the watched idea and does not affect owned Positions.
