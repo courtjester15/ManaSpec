@@ -23,6 +23,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   --col-date: 78px;
   --col-type: 74px;
   --col-actions: 130px;
+  --col-actions-wide: 162px;
   width: 100%;
   max-height: none;
   overflow-x: auto;
@@ -323,7 +324,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 }
 
 .ms-table--positions {
-  --table-min-width: 1180px;
+  --table-min-width: 1328px;
   --table-columns:
     var(--col-card)
     var(--col-set)
@@ -339,11 +340,12 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     66px
     70px
     78px
-    var(--col-actions);
+    72px
+    var(--col-actions-wide);
 }
 
 .ms-table--radar {
-  --table-min-width: 1040px;
+  --table-min-width: 1116px;
   --table-columns:
     var(--col-card)
     var(--col-set)
@@ -352,11 +354,12 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     var(--col-color)
     var(--col-price)
     var(--col-date)
+    70px
     62px
     56px
     56px
     var(--col-price)
-    106px;
+    120px;
 }
 
 .ms-table--ledger {
