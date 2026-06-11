@@ -76,9 +76,10 @@ Primary zones:
 
 Current workflow direction:
 
-- Radar is for ideas before money is committed.
-- Positions is for owned money and compact trade management.
-- Signals is for what needs attention now.
+- Radar is for discovery, watchlist tracking, entry planning, and planned quantity before money is committed.
+- Positions is for owned holdings, exit planning, and active position management.
+- Signals is a read-only attention layer for alerts, reminders, and deep-links back to Radar or Positions.
+- Card Detail is the unified editor for a specific printing and edits canonical plan data.
 - Transactions and History are for what happened and what can be audited later.
 - Thesis is for why the user cared and what would change the plan.
 
@@ -144,6 +145,15 @@ Rules:
 
 Card detail is the command center for a tracked printing.
 
+Ownership model:
+
+- Card Detail is the unified editor for one specific printing.
+- Card Detail may edit canonical plan data for that printing.
+- Card Detail does not own separate planning state.
+- When opened from Radar, plan edits apply to the watched idea.
+- When opened from Positions, plan edits apply to the owned position.
+- Card Detail should preserve context instead of forcing the user to re-find the card after an edit.
+
 Current behavior:
 
 - Card detail opens from Radar, Positions, and Signals.
@@ -169,17 +179,24 @@ Market evaluation rules:
 
 Purpose: show owned positions and support active holding management.
 
+Ownership model:
+
+- Positions owns cards after money is committed.
+- Positions owns quantity, average entry, current value, P/L, exit planning, hold tracking, buy-more, sell, close, and correction/delete workflows.
+- Positions does not own card discovery or pre-entry watchlist planning.
+- Entry planning may be visible for context, but pre-purchase entry intent belongs to Radar until a position exists.
+
 The positions workflow supports:
 
 - Buying and selling from the holdings table.
 - Viewing position value and P/L.
 - Filtering owned positions by card metadata and price bands.
-- Setting optional entry target, exit target, and estimated hold time from card detail.
+- Setting optional exit target and estimated hold time from card detail.
 - Scanning optional exit target and estimated hold time directly in the Positions table.
 - Editing optional exit target and hold time inline from the Positions table.
 - Setting a planned buy quantity on Radar ideas before buying.
 
-Radar owns card discovery, printing selection, watch ideas, and buy candidates before ownership.
+Radar owns card discovery, printing selection, watch ideas, entry planning, and planned quantity before ownership.
 
 Current implementation files:
 
@@ -224,6 +241,36 @@ Near-term requirements:
 - Avoid changing the data model until a ledger migration plan exists.
 
 Long-term rule: Positions should become a computed view from transaction events.
+
+### Radar
+
+Radar is the pre-purchase workspace.
+
+Ownership model:
+
+- Radar owns card discovery.
+- Radar owns exact printing selection before purchase.
+- Radar owns the watchlist.
+- Radar owns entry planning before money is committed.
+- Radar owns planned quantity before purchase.
+- Radar does not own active position management after a purchase.
+- Radar should support specs that are being watched, staged, or scaled into rather than only immediate buys.
+
+Current behavior:
+
+- Search finds card identities and exact printings through Scryfall.
+- Printing rows can add exact paper or foil versions to Radar.
+- Radar items are stored separately from owned Positions.
+- Radar rows show current price, added date, planned quantity, market observation summary fields, and actions.
+- Duplicate exact printings are blocked within Radar.
+- Buying from Radar uses the planned quantity, defaults to 1, creates or updates an owned Position, logs a transaction when available, and currently removes the Radar item.
+- Removing from Radar only removes the watched idea and does not affect owned Positions.
+
+Workflow rule:
+
+- A Radar item can become a Position, but the app must make the watchlist lifecycle clear.
+- The intended long-term workflow should let the user understand whether a purchased card remains watched, moves fully to Positions, or stays in Radar for continued scaling/monitoring.
+- Radar should not become a general collection import surface.
 
 ### Search
 
@@ -273,6 +320,14 @@ Deferred bulk import:
 
 Signals surfaces target-state awareness from local Radar and Positions data.
 
+Ownership model:
+
+- Signals is a read-only attention layer.
+- Signals owns alerts, reminders, target-state awareness, and navigation back to the source workflow.
+- Signals does not own entry, exit, hold, quantity, thesis, transaction, or position state.
+- Signals should deep-link to the relevant Radar idea or Position whenever possible.
+- Any quick edit shown in Signals is a shortcut to canonical Radar or Positions plan data, not Signals-owned data.
+
 Current behavior:
 
 - Manual signal records can still be added.
@@ -285,6 +340,12 @@ Current limitations:
 
 - Signals do not yet create transaction actions.
 - Signals do not use external listing count or unusual-activity data.
+- Signals navigation currently jumps to the module rather than always preserving exact card context.
+
+Workflow rule:
+
+- Signals should answer: what needs attention, why, and where should the user go next?
+- Signals should not become a data-entry module except for narrow shortcuts that save back to the canonical source.
 
 ### Thesis
 
@@ -305,6 +366,14 @@ Rules:
 ### Transactions
 
 Transactions are the planned source of truth for buy and sell activity. They answer: what actually happened?
+
+Ownership model:
+
+- Transactions own the durable record of buys, sells, openings, corrections, and future acquisition methods.
+- Transactions should become append-first and auditable.
+- Transactions do not own watchlist intent or thesis.
+- Positions should eventually be computed from transaction history rather than manually maintained as independent truth.
+- History presents transaction and activity records for review; it should not be the source of transaction truth.
 
 Current state:
 

@@ -77,3 +77,25 @@ Before calling a task done:
 - Any new rule or workflow is documented.
 - The roadmap status still makes sense.
 - No old note has silently become the new source of truth.
+
+## Workflow Ownership Rules
+
+Radar
+- Discovery
+- Watchlist
+- Entry planning
+- Planned quantity
+
+Positions
+- Owned holdings
+- Exit planning
+- Position management
+
+Signals
+- Read-only attention layer
+- Alerts and reminders
+- Deep-links to Radar or Positions
+
+Card Detail
+- Unified editor for a specific printing
+- Edits canonical plan data
