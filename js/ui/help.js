@@ -48,7 +48,7 @@ const helpTopics = {
       "Entry Hits are Radar ideas at or below the entry target.",
       "Approaching means the current price is close to a target or the hold is nearly due.",
       "Use No Plan rows to find cards that need planning, then open Detail or jump to the source workflow.",
-      "Use Detail to review the card, or jump back to Radar/Positions.",
+      "Use Detail to review the card, or View to filter Radar/Positions to the exact source row.",
     ],
   },
   tcgPaste: {

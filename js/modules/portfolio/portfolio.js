@@ -18,7 +18,7 @@ let portfolioSort = {
   direction: "asc",
 };
 
-function renderPortfolioView() {
+function renderPortfolioView(options = {}) {
   document.getElementById("viewContainer").innerHTML = `
     <section class="portfolio-workflow">
       <div class="view-heading">
@@ -33,6 +33,9 @@ function renderPortfolioView() {
   `;
 
   initCardFilters("portfolio", refreshPortfolioTable);
+  if (options.filterToId) {
+    setExactCardFilter("portfolio", options.filterToId, options.filterLabel || "");
+  }
   refreshPortfolioTable();
 }
 

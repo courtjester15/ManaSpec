@@ -7,6 +7,8 @@ Shared local filters for Radar ideas and owned Positions.
 ====================================
 */
 
+let exactCardFilterByPrefix = {};
+
 function renderCardFilterControls(idPrefix, title, options = {}) {
   return `
     <section class="card-filter-panel">
@@ -89,7 +91,7 @@ function renderCardFilterControls(idPrefix, title, options = {}) {
           </select>
         </label>
         ${renderTablePageSizeControl(idPrefix)}
-        <button type="button" class="filter-reset-btn" id="${idPrefix}FilterReset">Reset</button>
+        <button type="button" class="filter-reset-btn" id="${idPrefix}FilterReset">Clear</button>
       </div>
     </section>
   `;
@@ -100,8 +102,14 @@ function initCardFilters(idPrefix, onChange) {
   if (!panel) return;
 
   panel.querySelectorAll(".filter-control input, .filter-control select, .inline-check input").forEach(control => {
-    control.addEventListener("input", onChange);
-    control.addEventListener("change", onChange);
+    control.addEventListener("input", () => {
+      clearExactCardFilter(idPrefix);
+      onChange();
+    });
+    control.addEventListener("change", () => {
+      clearExactCardFilter(idPrefix);
+      onChange();
+    });
   });
 
   initTablePageSizeControl(idPrefix, onChange);
@@ -119,6 +127,8 @@ function resetCardFilters(idPrefix) {
   const panel = document.querySelector(`[data-filter-prefix="${idPrefix}"]`);
   if (!panel) return;
 
+  clearExactCardFilter(idPrefix);
+
   panel.querySelectorAll(".filter-control input, .filter-control select, .inline-check input").forEach(control => {
     if (control.type === "checkbox") {
       control.checked = false;
@@ -129,10 +139,25 @@ function resetCardFilters(idPrefix) {
   });
 }
 
+function setExactCardFilter(idPrefix, cardId, label = "") {
+  exactCardFilterByPrefix[idPrefix] = cardId || "";
+
+  const textInput = document.getElementById(`${idPrefix}FilterText`);
+  if (textInput && label) {
+    textInput.value = label;
+  }
+}
+
+function clearExactCardFilter(idPrefix) {
+  delete exactCardFilterByPrefix[idPrefix];
+}
+
 function applyCardFilters(items, idPrefix) {
   const state = getCardFilterState(idPrefix);
 
   return items.filter(item => {
+    if (state.exactId && item.id !== state.exactId) return false;
+
     const textHaystack = [
       item.name,
       item.set_code,
@@ -168,6 +193,7 @@ function getCardFilterState(idPrefix) {
     reserved: Boolean(document.getElementById(`${idPrefix}FilterReserved`)?.checked),
     reprint: document.getElementById(`${idPrefix}FilterReprint`)?.value || "",
     plan: document.getElementById(`${idPrefix}FilterPlan`)?.value || "",
+    exactId: exactCardFilterByPrefix[idPrefix] || "",
   };
 }
 

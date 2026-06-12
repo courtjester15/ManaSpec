@@ -64,6 +64,9 @@ function renderRadarView(options = {}) {
     limit: 5,
   });
   initCardFilters("radar", renderRadarItems);
+  if (options.filterToId) {
+    setExactCardFilter("radar", options.filterToId, options.filterLabel || "");
+  }
   renderRadarItems();
 }
 

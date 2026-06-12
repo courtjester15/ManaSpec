@@ -135,7 +135,7 @@ function setActiveView(viewName, options = {}) {
   }
 
   if (viewName === "portfolio") {
-    renderPortfolioView();
+    renderPortfolioView(options);
     focusTrackedRow(options.focusId, "portfolio");
     refreshPrices();
     return;
@@ -206,7 +206,12 @@ function focusTrackedRow(cardId, source) {
 }
 
 function openTrackedSource(source, cardId) {
-  setActiveView(source === "portfolio" ? "portfolio" : "radar", { focusId: cardId });
+  const item = typeof findTrackedCard === "function" ? findTrackedCard(cardId, source) : null;
+  setActiveView(source === "portfolio" ? "portfolio" : "radar", {
+    focusId: cardId,
+    filterToId: cardId,
+    filterLabel: item?.name || "",
+  });
 }
 
 function initNavigation() {
