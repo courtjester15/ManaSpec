@@ -251,7 +251,7 @@ function saveCardThesis(event, item, card, source) {
   }
 
   if (typeof showAppNotice === "function") {
-    showAppNotice(`${item.name} thesis saved.`);
+    showAppNotice(`${item.name} thesis saved.`, "save");
   }
 
   renderCardDetail(item, card, source);
@@ -387,7 +387,7 @@ function saveTargetPlan(event, item, card, source) {
   );
 
   if (typeof showAppNotice === "function") {
-    showAppNotice(`${item.name} plan saved.`);
+    showAppNotice(`${item.name} plan saved.`, "save");
   }
 
   renderCardDetail(item, card, source);

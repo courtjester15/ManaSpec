@@ -269,6 +269,11 @@ App shell, header, workbar, summary, and view headings.
   border-color: rgba(147, 164, 177, 0.32);
 }
 
+.app-toast.save {
+  border-color: rgba(125, 211, 252, 0.26);
+  background: rgba(125, 211, 252, 0.1);
+}
+
 .app-toast.warning {
   border-color: rgba(251, 191, 36, 0.35);
   color: var(--warning);

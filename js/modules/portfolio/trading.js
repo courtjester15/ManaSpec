@@ -17,12 +17,12 @@ function buySpec(positionOrEvent, maybeCell) {
   const price = Number(s.currentPrice);
 
   if (!price) {
-    alert("Price not loaded yet");
+    showAppNotice("Price not loaded yet.", "warning");
     return;
   }
 
   if (cash < price) {
-    alert("Not enough cash");
+    showAppNotice("Not enough cash for this buy.", "warning");
     return;
   }
 

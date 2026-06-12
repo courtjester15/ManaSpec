@@ -263,7 +263,7 @@ function savePositionPlanEdit(id, field, value) {
   refreshPortfolioTable();
 
   if (typeof showAppNotice === "function") {
-    showAppNotice(`${spec.name} ${field === "exitTarget" ? "target" : "hold"} saved.`);
+    showAppNotice(`${spec.name} ${field === "exitTarget" ? "target" : "hold"} saved.`, "save");
   }
 }
 

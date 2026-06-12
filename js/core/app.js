@@ -42,6 +42,13 @@ function money(n) {
 function showAppNotice(message, tone = "success") {
   const stack = document.getElementById("toastStack");
   if (!stack) return;
+  const durationByTone = {
+    trade: 5200,
+    warning: 5200,
+    save: 2800,
+    info: 3600,
+    success: 3800,
+  };
 
   const toast = document.createElement("div");
   toast.className = `app-toast ${tone}`;
@@ -57,7 +64,7 @@ function showAppNotice(message, tone = "success") {
 
   toast.querySelector("button").addEventListener("click", dismiss);
   stack.appendChild(toast);
-  window.setTimeout(dismiss, tone === "trade" ? 5200 : 3800);
+  window.setTimeout(dismiss, durationByTone[tone] || durationByTone.success);
 }
 
 function requestAppConfirmation(options = {}) {

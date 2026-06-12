@@ -254,7 +254,7 @@ function saveRadarEntryTarget(id, value) {
   saveRadarState(radar);
 
   if (typeof showAppNotice === "function") {
-    showAppNotice(`${item.name} entry target saved.`);
+    showAppNotice(`${item.name} entry target saved.`, "save");
   }
 }
 
@@ -282,12 +282,12 @@ function buyRadarItem(id) {
   const buyQty = getRadarPlannedQty(item);
   const totalCost = price * buyQty;
   if (!price) {
-    alert("Price not loaded yet");
+    showAppNotice("Price not loaded yet.", "warning");
     return;
   }
 
   if (cash < totalCost) {
-    alert("Not enough cash");
+    showAppNotice("Not enough cash for this buy.", "warning");
     return;
   }
 
