@@ -583,7 +583,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .detail-main-grid {
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.9fr);
+  grid-template-columns: minmax(0, 0.86fr) minmax(260px, 1fr);
   gap: 4px;
   align-items: stretch;
 }
@@ -596,6 +596,10 @@ Panels, rows, lists, modals, metrics, and status elements.
 .detail-grid {
   grid-template-columns: repeat(3, minmax(56px, 1fr));
   margin-bottom: 0;
+}
+
+.overview-grid {
+  grid-template-columns: repeat(6, minmax(48px, 1fr));
 }
 
 .signal-grid {
@@ -616,7 +620,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .evaluation-grid {
-  grid-template-columns: repeat(2, minmax(104px, 1fr));
+  grid-template-columns: repeat(3, minmax(86px, 1fr));
 }
 
 .detail-metric,
@@ -831,7 +835,14 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .oracle-section {
-  opacity: 0.8;
+  opacity: 0.92;
+}
+
+.oracle-section .detail-copy[open] p {
+  max-height: none;
+  overflow: visible;
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 .signal-section:has(.market-paste-details[open]),

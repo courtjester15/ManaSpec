@@ -715,16 +715,26 @@ function evaluateFreshness(observation) {
 
   const ageMs = Date.now() - new Date(observation.checkedAt).getTime();
   const ageDays = Math.max(0, Math.floor(ageMs / 86400000));
+  const label = formatFreshnessAgeLabel(ageDays);
 
   if (ageDays <= 1) {
-    return buildEvaluationItem("Freshness", "Fresh", `${ageDays || "today"} day old`, "good");
+    return buildEvaluationItem("Freshness", label, "", "good");
   }
 
   if (ageDays <= 7) {
-    return buildEvaluationItem("Freshness", "Recent", `${ageDays} days old`, "neutral");
+    return buildEvaluationItem("Freshness", label, "", "neutral");
   }
 
-  return buildEvaluationItem("Freshness", "Stale", `${ageDays} days old`, "watch");
+  return buildEvaluationItem("Freshness", label, "", "watch");
+}
+
+function formatFreshnessAgeLabel(ageDays) {
+  if (ageDays <= 0) return "Updated Today";
+  if (ageDays === 1) return "1 Day Old";
+  if (ageDays < 7) return `${ageDays} Days Old`;
+
+  const weeks = Math.max(1, Math.round(ageDays / 7));
+  return weeks === 1 ? "1 Week Old" : `${weeks} Weeks Old`;
 }
 
 function buildEvaluationItem(label, value, detail, tone) {
