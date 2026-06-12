@@ -226,7 +226,11 @@ button[disabled] {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--row-gap);
+  gap: 5px;
+}
+
+.signal-actions {
+  flex-wrap: wrap;
 }
 
 .row-actions button,

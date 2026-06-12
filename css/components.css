@@ -398,9 +398,9 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .signal-panel {
-  min-height: 92px;
-  max-height: 104px;
-  padding: 7px;
+  min-height: 112px;
+  max-height: 142px;
+  padding: 8px;
 }
 
 .signal-panel--wide {
@@ -440,9 +440,12 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .signal-row {
   grid-template-columns: minmax(120px, 1fr) auto;
-  gap: 6px;
-  align-items: start;
-  padding: 4px 0;
+  gap: 8px;
+  align-items: center;
+  padding: 6px;
+  margin-bottom: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
 }
 
 .signal-row strong,
@@ -456,7 +459,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .signal-row strong {
-  font-size: 11px;
+  margin-bottom: 2px;
+  font-size: 12px;
 }
 
 .signal-row span {

@@ -7,6 +7,11 @@ Early target and alert tracking layer.
 ====================================
 */
 
+let signalsSort = {
+  field: "name",
+  direction: "asc",
+};
+
 function renderSignalsView() {
   document.getElementById("viewContainer").innerHTML = `
     <section class="module-view">
@@ -90,14 +95,16 @@ function renderNoPlanSignalPanel() {
 }
 
 function renderNoPlanSignalTable() {
-  const rows = paginateStandardRows(getSignalTargetRows("unplanned", Infinity), "signals");
+  const rows = paginateStandardRows(getSortedSignalRows(getSignalTargetRows("unplanned", Infinity)), "signals");
 
   renderStandardTable(document.getElementById("noPlanSignalTable"), {
     tableClass: "ms-table--plan signal-plan-table",
     rows,
     columns: getNoPlanSignalColumns(),
+    sortState: signalsSort,
     emptyText: "No cards here.",
     getRowId: row => row.id,
+    onSort: setSignalsSort,
     onRowClick: row => openCardDetail(row.id, row.source),
     onAction: (action, row, event) => {
       if (action === "art") openSignalArtPreview(row);
@@ -109,13 +116,13 @@ function renderNoPlanSignalTable() {
 
 function getNoPlanSignalColumns() {
   return [
-    { label: "Card", type: "link", action: "art", value: row => row.name, title: row => row.name },
-    { label: "Set", align: "center", value: row => row.setCode || "-", title: row => row.setName || "" },
-    { label: "#", align: "center", value: row => row.collectorNumber ? `#${String(row.collectorNumber).padStart(3, "0")}` : "-" },
-    { label: "Rarity", align: "center", value: row => row.rarity || "-" },
-    { label: "Color", align: "center", value: row => row.color || "-" },
-    { label: "Now", align: "money", value: row => row.currentPrice ? money(row.currentPrice) : "-" },
-    { label: "Source", align: "center", value: row => row.source === "portfolio" ? "Positions" : "Radar" },
+    { label: "Card", sortKey: "name", type: "link", action: "art", value: row => row.name, title: row => row.name },
+    { label: "Set", sortKey: "setCode", align: "center", value: row => row.setCode || "-", title: row => row.setName || "" },
+    { label: "#", sortKey: "collectorNumber", align: "center", value: row => row.collectorNumber ? `#${String(row.collectorNumber).padStart(3, "0")}` : "-" },
+    { label: "Rarity", sortKey: "rarity", align: "center", value: row => row.rarity || "-" },
+    { label: "Color", sortKey: "color", align: "center", value: row => row.color || "-" },
+    { label: "Now", sortKey: "currentPrice", align: "money", value: row => row.currentPrice ? money(row.currentPrice) : "-" },
+    { label: "Source", sortKey: "source", align: "center", value: row => row.source === "portfolio" ? "Positions" : "Radar" },
     {
       label: "Actions",
       align: "actions",
@@ -126,6 +133,16 @@ function getNoPlanSignalColumns() {
       ],
     },
   ];
+}
+
+function setSignalsSort(field) {
+  const defaultDirection = ["name", "setCode", "collectorNumber", "rarity", "color", "source"].includes(field) ? "asc" : "desc";
+  updateStandardSort(signalsSort, field, defaultDirection);
+  renderNoPlanSignalTable();
+}
+
+function getSortedSignalRows(rows) {
+  return sortRowsByField(rows, signalsSort, row => row[signalsSort.field]);
 }
 
 function openSignalArtPreview(row) {
