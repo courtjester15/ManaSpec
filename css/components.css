@@ -580,11 +580,12 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .detail-main-stack {
   align-content: start;
+  gap: 5px;
 }
 
 .detail-main-grid {
-  grid-template-columns: minmax(0, 0.86fr) minmax(260px, 1fr);
-  gap: 4px;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr);
+  gap: 6px;
   align-items: stretch;
 }
 
@@ -599,7 +600,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .overview-grid {
-  grid-template-columns: repeat(6, minmax(48px, 1fr));
+  grid-template-columns: repeat(3, minmax(70px, 1fr));
+  gap: 4px;
 }
 
 .signal-grid {
@@ -635,8 +637,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .detail-metric,
 .signal-slot {
-  min-height: 30px;
-  padding: 2px 4px;
+  min-height: 34px;
+  padding: 4px 6px;
 }
 
 .detail-metric span,
@@ -666,7 +668,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .evaluation-item strong {
   display: block;
   color: var(--text-strong);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -674,7 +676,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .detail-command-section {
-  padding: 4px;
+  padding: 6px;
   margin-top: 2px;
   border: 1px solid rgba(255, 255, 255, 0.065);
   border-radius: var(--radius-sm);
@@ -691,7 +693,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   gap: 6px;
   align-items: baseline;
   min-height: 17px;
-  margin-bottom: 3px;
+  margin-bottom: 5px;
 }
 
 .evaluation-item {
@@ -736,7 +738,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 3px;
+  gap: 5px;
 }
 
 .market-paste-actions {
@@ -751,12 +753,12 @@ Panels, rows, lists, modals, metrics, and status elements.
 .detail-actions a {
   display: inline-flex;
   align-items: center;
-  min-height: 19px;
-  padding: 1px 5px;
+  min-height: 22px;
+  padding: 2px 7px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 9px;
+  font-size: 10px;
   line-height: 1;
   text-decoration: none;
 }
@@ -770,6 +772,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .market-link-actions {
   flex-wrap: wrap;
+  margin-top: 2px;
+  margin-bottom: 3px;
 }
 
 .market-paste-panel,
@@ -778,7 +782,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .bulk-set-results,
 .card-thesis-list {
   display: grid;
-  gap: 3px;
+  gap: 5px;
 }
 
 .market-observation-preview .empty-state.compact {

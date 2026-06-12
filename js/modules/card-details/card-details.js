@@ -162,15 +162,15 @@ function renderPlanSection(item, targetState) {
       <form class="target-plan-form" id="targetPlanForm">
         <label>
           Entry $
-          <input id="entryTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${formatTargetInputNumber(item.entryTarget)}" placeholder="Entry $">
+          <input id="entryTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${formatTargetInputNumber(item.entryTarget)}">
         </label>
         <label>
           Exit $
-          <input id="exitTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${formatTargetInputNumber(item.exitTarget)}" placeholder="Exit $">
+          <input id="exitTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${formatTargetInputNumber(item.exitTarget)}">
         </label>
         <label>
           Hold
-          <input id="holdTimeInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${formatHoldInputNumber(item.holdTime)}" placeholder="Months">
+          <input id="holdTimeInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${formatHoldInputNumber(item.holdTime)}">
         </label>
         <span class="plan-added-date">Added ${formatAddedDate(item.addedDate)}</span>
         <button type="submit">Save Plan</button>
