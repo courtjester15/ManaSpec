@@ -31,7 +31,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .help-drawer,
 .card-detail-modal,
-.card-art-preview {
+.card-art-preview,
+.app-confirm-dialog {
   display: none;
   position: fixed;
   inset: 0;
@@ -46,15 +47,21 @@ Panels, rows, lists, modals, metrics, and status elements.
   z-index: 80;
 }
 
+.app-confirm-dialog {
+  z-index: 110;
+}
+
 .help-drawer.open,
 .card-detail-modal.open,
-.card-art-preview.open {
+.card-art-preview.open,
+.app-confirm-dialog.open {
   display: block;
 }
 
 .help-backdrop,
 .card-detail-backdrop,
-.card-art-backdrop {
+.card-art-backdrop,
+.app-confirm-backdrop {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
@@ -62,7 +69,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .help-panel,
 .card-detail-panel,
-.card-art-panel {
+.card-art-panel,
+.app-confirm-panel {
   position: absolute;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
@@ -151,6 +159,39 @@ Panels, rows, lists, modals, metrics, and status elements.
   width: min(360px, calc(100vw - 28px));
   padding: 8px;
   transform: translateX(-50%);
+}
+
+.app-confirm-panel {
+  top: 50%;
+  left: 50%;
+  display: grid;
+  gap: 12px;
+  width: min(420px, calc(100vw - 28px));
+  padding: 14px;
+  transform: translate(-50%, -50%);
+}
+
+.app-confirm-panel header {
+  display: block;
+}
+
+.app-confirm-panel h3 {
+  margin: 0 0 6px;
+  color: var(--text-strong);
+  font-size: 16px;
+}
+
+.app-confirm-panel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.app-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .card-art-panel header {

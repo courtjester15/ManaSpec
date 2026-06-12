@@ -40,16 +40,69 @@ function money(n) {
 }
 
 function showAppNotice(message, tone = "success") {
-  const notice = document.getElementById("appNotice");
-  if (!notice) return;
+  const stack = document.getElementById("toastStack");
+  if (!stack) return;
 
-  notice.textContent = message;
-  notice.className = `app-notice show ${tone}`;
+  const toast = document.createElement("div");
+  toast.className = `app-toast ${tone}`;
+  toast.innerHTML = `
+    <span>${escapeHtml(message)}</span>
+    <button type="button" aria-label="Dismiss notification">Dismiss</button>
+  `;
 
-  window.clearTimeout(showAppNotice.timeoutId);
-  showAppNotice.timeoutId = window.setTimeout(() => {
-    notice.className = "app-notice";
-  }, 3200);
+  const dismiss = () => {
+    toast.classList.add("closing");
+    window.setTimeout(() => toast.remove(), 160);
+  };
+
+  toast.querySelector("button").addEventListener("click", dismiss);
+  stack.appendChild(toast);
+  window.setTimeout(dismiss, 3800);
+}
+
+function requestAppConfirmation(options = {}) {
+  const dialog = document.getElementById("appConfirmDialog");
+  if (!dialog) return Promise.resolve(false);
+
+  return new Promise(resolve => {
+    const tone = options.tone || "warning";
+    dialog.className = `app-confirm-dialog open ${tone}`;
+    dialog.setAttribute("aria-hidden", "false");
+    dialog.innerHTML = `
+      <div class="app-confirm-backdrop" data-confirm-action="cancel"></div>
+      <section class="app-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="appConfirmTitle">
+        <header>
+          <div>
+            <h3 id="appConfirmTitle">${escapeHtml(options.title || "Confirm action")}</h3>
+            <p>${escapeHtml(options.message || "")}</p>
+          </div>
+        </header>
+        <div class="app-confirm-actions">
+          <button type="button" data-confirm-action="cancel">${escapeHtml(options.cancelLabel || "Cancel")}</button>
+          <button type="button" class="${tone === "danger" ? "danger" : ""}" data-confirm-action="confirm">${escapeHtml(options.confirmLabel || "Confirm")}</button>
+        </div>
+      </section>
+    `;
+
+    const close = confirmed => {
+      dialog.className = "app-confirm-dialog";
+      dialog.setAttribute("aria-hidden", "true");
+      dialog.innerHTML = "";
+      document.removeEventListener("keydown", onKeydown);
+      resolve(confirmed);
+    };
+
+    const onKeydown = event => {
+      if (event.key === "Escape") close(false);
+    };
+
+    dialog.querySelectorAll("[data-confirm-action]").forEach(control => {
+      control.addEventListener("click", () => close(control.dataset.confirmAction === "confirm"));
+    });
+
+    document.addEventListener("keydown", onKeydown);
+    dialog.querySelector("[data-confirm-action='cancel']")?.focus();
+  });
 }
 
 function setActiveView(viewName, options = {}) {
@@ -68,12 +121,14 @@ function setActiveView(viewName, options = {}) {
 
   if (viewName === "portfolio") {
     renderPortfolioView();
+    focusTrackedRow(options.focusId, "portfolio");
     refreshPrices();
     return;
   }
 
   if (viewName === "radar") {
     renderRadarView(options);
+    focusTrackedRow(options.focusId, "radar");
     refreshPrices();
     return;
   }
@@ -103,6 +158,40 @@ function setActiveView(viewName, options = {}) {
     return;
   }
 
+}
+
+function focusTrackedRow(cardId, source) {
+  if (!cardId) return;
+
+  const tableId = source === "portfolio" ? "portfolioTable" : "radarList";
+  const filterPrefix = source === "portfolio" ? "portfolio" : "radar";
+  let row = document.getElementById(tableId)?.querySelector(`[data-row-id="${escapeAttribute(cardId)}"]`);
+
+  if (!row) {
+    resetCardFilters(filterPrefix);
+    if (source === "portfolio" && typeof refreshPortfolioTable === "function") refreshPortfolioTable();
+    if (source === "radar" && typeof renderRadarItems === "function") renderRadarItems();
+    row = document.getElementById(tableId)?.querySelector(`[data-row-id="${escapeAttribute(cardId)}"]`);
+
+    if (row && typeof showAppNotice === "function") {
+      showAppNotice("Filters reset to show the selected card.", "info");
+    }
+  }
+
+  if (!row) {
+    if (typeof showAppNotice === "function") {
+      showAppNotice("Selected card is not visible in this table yet.", "warning");
+    }
+    return;
+  }
+
+  row.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+  row.classList.add("ms-table__row--focused");
+  window.setTimeout(() => row.classList.remove("ms-table__row--focused"), 2600);
+}
+
+function openTrackedSource(source, cardId) {
+  setActiveView(source === "portfolio" ? "portfolio" : "radar", { focusId: cardId });
 }
 
 function initNavigation() {

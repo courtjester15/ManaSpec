@@ -60,28 +60,33 @@ function sellSpec(positionOrEvent, maybeCell, requestedQuantity = 1) {
   const sellQty = Math.min(Number(s.qty || 0), Math.max(1, Number(requestedQuantity || 1)));
   const total = price * sellQty;
 
-  if (!confirm(`Sell ${sellQty} ${s.name} for ${money(total)}? This will log a SELL transaction and reduce the position quantity.`)) {
-    return;
-  }
+  requestAppConfirmation({
+    title: "Confirm Sale",
+    message: `Sell ${sellQty} ${s.name} for ${money(total)}? This will log a SELL transaction and reduce the position quantity.`,
+    confirmLabel: sellQty === Number(s.qty || 0) ? "Sell All" : "Sell",
+    tone: "danger",
+  }).then(confirmed => {
+    if (!confirmed) return;
 
-  s.qty -= sellQty;
-  cash += total;
+    s.qty -= sellQty;
+    cash += total;
 
-  if (typeof logTransaction === "function") {
-    logTransaction(s, "SELL", sellQty, price);
-  }
+    if (typeof logTransaction === "function") {
+      logTransaction(s, "SELL", sellQty, price);
+    }
 
-  if (s.qty === 0) {
-    specs = specs.filter(x => x.id !== s.id);
-  }
+    if (s.qty === 0) {
+      specs = specs.filter(x => x.id !== s.id);
+    }
 
-  updatePL();
-  save();
+    updatePL();
+    save();
 
-  if (typeof showAppNotice === "function") {
-    const suffix = s.qty === 0 ? " Position is now closed." : "";
-    showAppNotice(`Sold ${sellQty} ${s.name} for ${money(total)}.${suffix}`);
-  }
+    if (typeof showAppNotice === "function") {
+      const suffix = s.qty === 0 ? " Position is now closed." : "";
+      showAppNotice(`Sold ${sellQty} ${s.name} for ${money(total)}.${suffix}`);
+    }
+  });
 }
 
 function deleteSpec(positionOrEvent, maybeCell) {

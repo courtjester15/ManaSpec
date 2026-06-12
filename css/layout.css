@@ -221,31 +221,66 @@ App shell, header, workbar, summary, and view headings.
   min-height: 0;
 }
 
-.app-notice {
-  display: none;
-  margin: 8px 0;
-  padding: 8px 10px;
-  border: 1px solid rgba(125, 211, 252, 0.26);
+.toast-stack {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 120;
+  display: grid;
+  gap: 8px;
+  width: min(360px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.app-toast {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid rgba(125, 211, 252, 0.28);
   border-radius: var(--radius);
-  background: rgba(125, 211, 252, 0.1);
+  background: var(--surface-2);
   color: var(--text);
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.4);
   font-size: 13px;
   font-weight: 500;
+  pointer-events: auto;
+  animation: toast-enter 140ms ease-out;
 }
 
-.app-notice.show {
-  display: block;
+.app-toast.closing {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 140ms ease, transform 140ms ease;
 }
 
-.app-notice.info {
+.app-toast.info {
   border-color: rgba(147, 164, 177, 0.32);
-  background: rgba(147, 164, 177, 0.1);
 }
 
-.app-notice.warning {
+.app-toast.warning {
   border-color: rgba(251, 191, 36, 0.35);
-  background: rgba(251, 191, 36, 0.1);
   color: var(--warning);
+}
+
+.app-toast button {
+  height: var(--control-h-sm);
+  min-height: var(--control-h-sm);
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 900px) {

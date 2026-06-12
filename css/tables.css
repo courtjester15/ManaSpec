@@ -96,6 +96,12 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   background: var(--row-hover);
 }
 
+.ms-table__row--focused {
+  outline: 2px solid rgba(125, 211, 252, 0.72);
+  outline-offset: -2px;
+  background: rgba(125, 211, 252, 0.14);
+}
+
 .ms-table__header > *,
 .ms-table__row > * {
   min-width: 0;

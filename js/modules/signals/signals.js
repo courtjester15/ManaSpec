@@ -63,7 +63,7 @@ function renderTargetSignalPanel(title, rows) {
           <div class="signal-actions">
             <span class="status-pill">${row.status}</span>
             <button type="button" data-signal-action="detail" data-card-id="${row.id}" data-source="${row.source}">Detail</button>
-            <button type="button" data-signal-action="view" data-source="${row.source}">${row.source === "portfolio" ? "Positions" : "Radar"}</button>
+            <button type="button" data-signal-action="view" data-card-id="${row.id}" data-source="${row.source}">${row.source === "portfolio" ? "Positions" : "Radar"}</button>
           </div>
         </div>
       `).join("")
@@ -102,7 +102,7 @@ function renderNoPlanSignalTable() {
     onAction: (action, row, event) => {
       if (action === "art") openSignalArtPreview(row);
       if (action === "detail") openCardDetail(row.id, row.source);
-      if (action === "view") setActiveView(row.source === "portfolio" ? "portfolio" : "radar");
+      if (action === "view") openTrackedSource(row.source, row.id);
     },
   });
 }
@@ -207,7 +207,7 @@ function initSignalActions() {
       }
 
       if (action === "view") {
-        setActiveView(source === "portfolio" ? "portfolio" : "radar");
+        openTrackedSource(source, cardId);
       }
     });
   });
