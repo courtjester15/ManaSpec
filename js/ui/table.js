@@ -105,11 +105,12 @@ function renderStandardTableCell(row, index, column) {
   const classes = ["ms-table__cell", getStandardAlignClass(column.align), extraClass]
     .filter(Boolean)
     .join(" ");
-  const title = column.title ? ` title="${msEscapeAttr(column.title(row, index))}"` : "";
+  const tooltipValue = column.title ? column.title(row, index) : "";
+  const tooltip = tooltipValue ? ` data-ms-tooltip="${msEscapeAttr(tooltipValue)}"` : "";
 
   if (column.type === "link") {
     return `
-      <button type="button" class="link-action ${classes}" data-ms-action="${msEscapeAttr(column.action || "primary")}" data-ms-row="${index}"${title}>
+      <button type="button" class="link-action ${classes}" data-ms-action="${msEscapeAttr(column.action || "primary")}" data-ms-row="${index}"${tooltip}>
         ${msEscapeHtml(column.value ? column.value(row, index) : "")}
       </button>
     `;
@@ -166,7 +167,7 @@ function renderStandardTableCell(row, index, column) {
   }
 
   const value = column.html ? column.html(row, index) : msEscapeHtml(column.value ? column.value(row, index) : "");
-  return `<span class="${classes}"${title}>${value}</span>`;
+  return `<span class="${classes}"${tooltip}>${value}</span>`;
 }
 
 function bindStandardTableEvents(container, rows, config) {

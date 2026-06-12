@@ -15,6 +15,11 @@ textarea {
   color: var(--text-strong);
 }
 
+input,
+select {
+  line-height: var(--control-h);
+}
+
 input::placeholder,
 textarea::placeholder {
   color: var(--muted);
@@ -187,6 +192,19 @@ button[disabled] {
   font-size: 13px;
 }
 
+.global-search-bar input {
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 36px;
+}
+
+.radar-search-controls input,
+.radar-search-controls select {
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: var(--control-h);
+}
+
 .row-actions button,
 .filter-reset-btn,
 .signal-actions button,
@@ -329,6 +347,13 @@ button[disabled] {
   color: var(--text);
   font-size: 12px;
   white-space: nowrap;
+}
+
+.radar-search-controls .inline-check {
+  display: grid;
+  grid-template-columns: 16px auto;
+  justify-content: start;
+  line-height: var(--control-h);
 }
 
 .inline-check input {
