@@ -145,9 +145,16 @@ function updatePortfolioCount() {
   const shown = getStandardTableShownCount(filteredRows, "portfolio");
   const filtered = filteredRows.length;
   const total = specs.filter(spec => Number(spec.qty || 0) > 0).length;
-  countEl.innerText = filtered > shown
-    ? `${shown} shown / ${filtered} of ${total}`
-    : `Showing ${filtered} of ${total}`;
+  if (filtered < total) {
+    countEl.innerText = shown < filtered
+      ? `Showing ${shown} of ${filtered} filtered / ${total} total`
+      : `Showing ${filtered} filtered / ${total} total`;
+    return;
+  }
+
+  countEl.innerText = shown < total
+    ? `Showing ${shown} of ${total} positions`
+    : `Showing ${total} ${total === 1 ? "position" : "positions"}`;
 }
 
 function getPortfolioItem(id) {
