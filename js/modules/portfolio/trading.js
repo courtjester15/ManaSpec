@@ -57,16 +57,57 @@ function sellSpec(positionOrEvent, maybeCell, requestedQuantity = 1) {
   if (s.qty <= 0) return;
 
   const price = Number(s.currentPrice || s.buyPrice || 0);
-  const sellQty = Math.min(Number(s.qty || 0), Math.max(1, Number(requestedQuantity || 1)));
-  const total = price * sellQty;
+  const ownedQty = Number(s.qty || 0);
+  const initialQty = Math.min(ownedQty, Math.max(1, Number(requestedQuantity || 1)));
 
   requestAppConfirmation({
     title: "Confirm Sale",
-    message: `Sell ${sellQty} ${s.name} for ${money(total)}? This will log a SELL transaction and reduce the position quantity.`,
-    confirmLabel: sellQty === Number(s.qty || 0) ? "Sell All" : "Sell",
+    message: `${s.name} at ${money(price)} each. This will log a SELL transaction and reduce the position quantity.`,
+    bodyHtml: `
+      <div class="sell-confirm-grid">
+        <label>
+          <span>Quantity to sell</span>
+          <input id="sellConfirmQty" type="number" min="1" max="${ownedQty}" step="1" value="${initialQty}">
+        </label>
+        <div class="sell-confirm-total">
+          <span>Estimated Total</span>
+          <strong id="sellConfirmTotal">${money(price * initialQty)}</strong>
+        </div>
+      </div>
+      <div class="sell-confirm-options">
+        <button type="button" data-sell-qty="1">Sell 1</button>
+        <button type="button" data-sell-qty="${ownedQty}">Sell All ${ownedQty}</button>
+      </div>
+    `,
+    confirmLabel: "Sell",
     tone: "danger",
+    onOpen: dialog => {
+      const input = dialog.querySelector("#sellConfirmQty");
+      const total = dialog.querySelector("#sellConfirmTotal");
+      const clampQty = value => Math.min(ownedQty, Math.max(1, Number(value || 1)));
+      const updateTotal = () => {
+        input.value = String(clampQty(input.value));
+        total.textContent = money(price * Number(input.value || 1));
+      };
+
+      input.addEventListener("input", updateTotal);
+      dialog.querySelectorAll("[data-sell-qty]").forEach(button => {
+        button.addEventListener("click", () => {
+          input.value = String(clampQty(button.dataset.sellQty));
+          updateTotal();
+        });
+      });
+      input.focus();
+      input.select();
+    },
+    getResult: dialog => ({
+      quantity: Math.min(ownedQty, Math.max(1, Number(dialog.querySelector("#sellConfirmQty")?.value || 1))),
+    }),
   }).then(confirmed => {
     if (!confirmed) return;
+
+    const sellQty = confirmed.quantity;
+    const total = price * sellQty;
 
     s.qty -= sellQty;
     cash += total;

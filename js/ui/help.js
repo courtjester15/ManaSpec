@@ -35,7 +35,7 @@ const helpTopics = {
     intro: "Positions is for owned cards and compact trade management.",
     steps: [
       "Use +1 to buy one more copy at the current price.",
-      "Set Sell Qty, then use Sell or All to record exits and log a transaction.",
+      "Use Sell to choose one copy, all copies, or a custom quantity before confirming the exit.",
       "Edit Target and Hold inline when you have a plan.",
       "Delete removes the position without logging a transaction, so use it only for corrections.",
     ],

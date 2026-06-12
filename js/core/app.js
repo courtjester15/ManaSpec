@@ -77,6 +77,7 @@ function requestAppConfirmation(options = {}) {
             <p>${escapeHtml(options.message || "")}</p>
           </div>
         </header>
+        ${options.bodyHtml ? `<div class="app-confirm-body">${options.bodyHtml}</div>` : ""}
         <div class="app-confirm-actions">
           <button type="button" data-confirm-action="cancel">${escapeHtml(options.cancelLabel || "Cancel")}</button>
           <button type="button" class="${tone === "danger" ? "danger" : ""}" data-confirm-action="confirm">${escapeHtml(options.confirmLabel || "Confirm")}</button>
@@ -96,12 +97,26 @@ function requestAppConfirmation(options = {}) {
       if (event.key === "Escape") close(false);
     };
 
+    if (typeof options.onOpen === "function") {
+      options.onOpen(dialog);
+    }
+
     dialog.querySelectorAll("[data-confirm-action]").forEach(control => {
-      control.addEventListener("click", () => close(control.dataset.confirmAction === "confirm"));
+      control.addEventListener("click", () => {
+        if (control.dataset.confirmAction !== "confirm") {
+          close(false);
+          return;
+        }
+
+        const result = typeof options.getResult === "function" ? options.getResult(dialog) : true;
+        close(result);
+      });
     });
 
     document.addEventListener("keydown", onKeydown);
-    dialog.querySelector("[data-confirm-action='cancel']")?.focus();
+    if (!dialog.contains(document.activeElement)) {
+      dialog.querySelector("[data-confirm-action='cancel']")?.focus();
+    }
   });
 }
 

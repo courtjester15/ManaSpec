@@ -60,7 +60,7 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Compact card-detail Market Evaluation from observable/local data only.
 - Scryfall EDHREC rank shown as a compact EDH presence signal in card detail.
 - Navigation zones wired for dashboard, watchlists, signals, thesis, and history.
-- Table layout restored after Radar Entry and Positions Sell Qty columns.
+- Table layout restored after Radar Entry and Positions sell workflow changes.
 
 ### Now
 
