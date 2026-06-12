@@ -321,6 +321,6 @@ function buyRadarItem(id) {
   saveRadarState(radar);
 
   if (typeof showAppNotice === "function") {
-    showAppNotice(`Bought ${buyQty} ${item.name} for ${money(totalCost)}. Radar will keep watching it.`);
+    showAppNotice(`Bought ${buyQty} ${item.name} for ${money(totalCost)}. Radar will keep watching it.`, "trade");
   }
 }

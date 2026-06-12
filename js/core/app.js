@@ -57,7 +57,7 @@ function showAppNotice(message, tone = "success") {
 
   toast.querySelector("button").addEventListener("click", dismiss);
   stack.appendChild(toast);
-  window.setTimeout(dismiss, 3800);
+  window.setTimeout(dismiss, tone === "trade" ? 5200 : 3800);
 }
 
 function requestAppConfirmation(options = {}) {

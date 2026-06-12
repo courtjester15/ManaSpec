@@ -42,7 +42,7 @@ function buySpec(positionOrEvent, maybeCell) {
   save();
 
   if (typeof showAppNotice === "function") {
-    showAppNotice(`Bought 1 ${s.name} for ${money(price)}.`);
+    showAppNotice(`Bought 1 ${s.name} for ${money(price)}.`, "trade");
   }
 }
 
@@ -125,7 +125,7 @@ function sellSpec(positionOrEvent, maybeCell, requestedQuantity = 1) {
 
     if (typeof showAppNotice === "function") {
       const suffix = s.qty === 0 ? " Position is now closed." : "";
-      showAppNotice(`Sold ${sellQty} ${s.name} for ${money(total)}.${suffix}`);
+      showAppNotice(`Sold ${sellQty} ${s.name} for ${money(total)}.${suffix}`, "trade");
     }
   });
 }
