@@ -37,14 +37,16 @@ function renderRadarView(options = {}) {
             <option value="oracle">Oracle</option>
             <option value="type">Type</option>
           </select>
-          <label class="inline-check">
-            <input id="searchFoilOnly" type="checkbox">
-            Foil
-          </label>
-          <label class="inline-check">
-            <input id="searchIncludeDigital" type="checkbox">
-            Digital
-          </label>
+          <div class="radar-search-toggle-group" aria-label="Search filters">
+            <label class="inline-check">
+              <input id="searchFoilOnly" type="checkbox">
+              Foil
+            </label>
+            <label class="inline-check">
+              <input id="searchIncludeDigital" type="checkbox">
+              Digital
+            </label>
+          </div>
         </div>
 
         <div class="add-card-results">

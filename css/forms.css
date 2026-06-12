@@ -164,11 +164,15 @@ button[disabled] {
 
 .radar-search-controls {
   display: grid;
-  grid-template-columns: minmax(260px, 420px) 112px auto auto;
-  align-items: center;
+  grid-template-columns: minmax(280px, 430px) 112px max-content;
+  align-items: stretch;
   justify-content: start;
   width: fit-content;
   max-width: 100%;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .compact-heading {
@@ -350,10 +354,36 @@ button[disabled] {
 }
 
 .radar-search-controls .inline-check {
-  display: grid;
+  display: inline-grid;
   grid-template-columns: 16px auto;
-  justify-content: start;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   line-height: var(--control-h);
+}
+
+.radar-search-toggle-group {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  align-items: center;
+  height: var(--control-h);
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.radar-search-toggle-group .inline-check + .inline-check {
+  border-left: 1px solid var(--border);
+}
+
+.radar-search-toggle-group .inline-check:has(input:checked) {
+  background: var(--accent-soft);
+  color: var(--text-strong);
 }
 
 .inline-check input {
