@@ -204,6 +204,8 @@ button[disabled] {
 
 .radar-search-controls input,
 .radar-search-controls select {
+  display: block;
+  margin: 0;
   padding-top: 0;
   padding-bottom: 0;
   line-height: var(--control-h);

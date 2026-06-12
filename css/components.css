@@ -986,14 +986,17 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .radar-search-panel {
+  display: grid;
+  align-items: center;
+  gap: 7px;
   width: fit-content;
   max-width: 920px;
-  padding: 8px;
+  padding: 10px 10px 11px;
   margin-bottom: 2px;
 }
 
 .radar-search-panel .panel-heading {
-  margin-bottom: 6px;
+  margin-bottom: 0;
 }
 
 .panel-list {
