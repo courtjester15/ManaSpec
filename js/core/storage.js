@@ -11,36 +11,60 @@ Handles:
 */
 
 // Load state
+function loadJsonValue(key, fallback) {
+  const rawValue = localStorage.getItem(key);
+  if (rawValue === null) return fallback;
+
+  try {
+    return JSON.parse(rawValue);
+  } catch (err) {
+    console.warn(`Could not parse localStorage key "${key}". Using fallback value.`, err);
+    return fallback;
+  }
+}
+
+function loadJsonArray(key) {
+  const value = loadJsonValue(key, []);
+  if (Array.isArray(value)) return value;
+
+  console.warn(`localStorage key "${key}" was not an array. Using empty list.`);
+  return [];
+}
+
 function loadSpecs() {
-  return JSON.parse(localStorage.getItem("specs") || "[]");
+  return loadJsonArray("specs");
 }
 
 function loadRadar() {
-  return JSON.parse(localStorage.getItem("radar") || "[]");
+  return loadJsonArray("radar");
 }
 
 function loadSignals() {
-  return JSON.parse(localStorage.getItem("signals") || "[]");
+  return loadJsonArray("signals");
 }
 
 function loadThesisNotes() {
-  return JSON.parse(localStorage.getItem("thesisNotes") || "[]");
+  return loadJsonArray("thesisNotes");
 }
 
 function loadTransactions() {
-  return JSON.parse(localStorage.getItem("transactions") || "[]");
+  return loadJsonArray("transactions");
 }
 
 function loadCash(startingCash) {
-  return parseFloat(localStorage.getItem("cash") || startingCash);
+  const startingValue = Number(startingCash || 0);
+  const fallback = Number.isFinite(startingValue) ? startingValue : 0;
+  const value = parseFloat(localStorage.getItem("cash"));
+  return Number.isFinite(value) ? value : fallback;
 }
 
 function loadPriceRefreshStatus() {
-  return JSON.parse(localStorage.getItem("priceRefreshStatus") || "null");
+  const status = loadJsonValue("priceRefreshStatus", null);
+  return status && typeof status === "object" ? status : null;
 }
 
 function loadMarketObservations() {
-  return JSON.parse(localStorage.getItem("marketObservations") || "[]");
+  return loadJsonArray("marketObservations");
 }
 
 // Save state

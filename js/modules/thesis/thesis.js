@@ -86,11 +86,11 @@ function renderThesisList() {
   container.innerHTML = thesisNotes.map(note => `
     <article class="note-card">
       <header>
-        <strong>${note.cardName || "General thesis"}</strong>
-        <span>${formatThesisMeta(note)}</span>
+        <strong>${escapeHtml(note.cardName || "General thesis")}</strong>
+        <span>${escapeHtml(formatThesisMeta(note))}</span>
       </header>
-      <p>${note.thesis}</p>
-      ${note.cardId ? `<button type="button" class="note-link-btn" data-thesis-card="${note.cardId}">Open Card</button>` : ""}
+      <p>${escapeHtml(note.thesis)}</p>
+      ${note.cardId ? `<button type="button" class="note-link-btn" data-thesis-card="${escapeAttribute(note.cardId)}">Open Card</button>` : ""}
     </article>
   `).join("");
 

@@ -17,17 +17,17 @@ function updateTotals() {
   let value = 0;
 
   specs.forEach(s => {
-    invested += s.buyPrice * s.qty;
-    value += s.currentPrice * s.qty;
+    invested += toFiniteNumber(s.buyPrice) * toFiniteNumber(s.qty);
+    value += toFiniteNumber(s.currentPrice) * toFiniteNumber(s.qty);
   });
 
   const pl = value - invested;
   const plPercent = invested > 0 ? (pl / invested) * 100 : 0;
 
-  const totalEquity = cash + value;
+  const totalEquity = toFiniteNumber(cash) + value;
 
   // CASH / CORE METRICS
-  document.getElementById("cash").innerText = cash.toFixed(2);
+  document.getElementById("cash").innerText = toFiniteNumber(cash).toFixed(2);
   document.getElementById("invested").innerText = invested.toFixed(2);
   document.getElementById("value").innerText = value.toFixed(2);
 
@@ -47,7 +47,7 @@ function updateTotals() {
 
 function updatePL() {
   specs.forEach(s => {
-    s.pl = ((s.currentPrice - s.buyPrice) * s.qty).toFixed(2);
+    s.pl = ((toFiniteNumber(s.currentPrice) - toFiniteNumber(s.buyPrice)) * toFiniteNumber(s.qty)).toFixed(2);
   });
 }
 
@@ -63,5 +63,15 @@ function renderPriceRefreshStatus() {
   }
 
   const checkedAt = new Date(status.checkedAt);
-  statusEl.innerText = `Prices checked ${checkedAt.toLocaleString()} (${status.updatedCount || 0} cards)`;
+  if (Number.isNaN(checkedAt.getTime())) {
+    statusEl.innerText = "Prices: last check time unavailable";
+    return;
+  }
+
+  statusEl.innerText = `Prices checked ${checkedAt.toLocaleString()} (${toFiniteNumber(status.updatedCount)} cards)`;
+}
+
+function toFiniteNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
 }

@@ -14,7 +14,30 @@ Handles:
 ====================================
 */
 
-async function refreshPrices() {
+const PRICE_REFRESH_FRESH_MS = 6 * 60 * 60 * 1000;
+let priceRefreshInFlight = null;
+
+async function refreshPrices(options = {}) {
+  if (priceRefreshInFlight) return priceRefreshInFlight;
+
+  if (!options.force && isPriceRefreshFresh()) {
+    renderPriceRefreshStatus();
+    return {
+      skipped: true,
+      reason: "fresh",
+    };
+  }
+
+  priceRefreshInFlight = runPriceRefresh();
+
+  try {
+    return await priceRefreshInFlight;
+  } finally {
+    priceRefreshInFlight = null;
+  }
+}
+
+async function runPriceRefresh() {
   const startedAt = new Date();
   let updatedCount = 0;
 
@@ -71,6 +94,12 @@ async function refreshPrices() {
   saveRadarState(radar);
   savePriceRefreshStatus(startedAt, updatedCount);
   updateTotals();
+
+  return {
+    skipped: false,
+    checkedAt: startedAt.toISOString(),
+    updatedCount,
+  };
 }
 
 function getScryfallUsdPrice(card, position) {
@@ -97,4 +126,16 @@ function savePriceRefreshStatus(date, updatedCount) {
   if (typeof renderPriceRefreshStatus === "function") {
     renderPriceRefreshStatus();
   }
+}
+
+function isPriceRefreshFresh(now = Date.now()) {
+  const status = typeof loadPriceRefreshStatus === "function"
+    ? loadPriceRefreshStatus()
+    : null;
+  if (!status?.checkedAt) return false;
+
+  const checkedAt = new Date(status.checkedAt).getTime();
+  if (!Number.isFinite(checkedAt)) return false;
+
+  return now - checkedAt < PRICE_REFRESH_FRESH_MS;
 }

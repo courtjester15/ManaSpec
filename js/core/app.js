@@ -36,7 +36,8 @@ function getSpec(positionOrEvent, maybeCell) {
 }
 
 function money(n) {
-  return `$${Number(n || 0).toFixed(2)}`;
+  const number = Number(n);
+  return `$${Number.isFinite(number) ? number.toFixed(2) : "0.00"}`;
 }
 
 function showAppNotice(message, tone = "success") {

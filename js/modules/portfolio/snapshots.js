@@ -16,7 +16,17 @@ function getSnapshotDate() {
 }
 
 function loadPriceSnapshots() {
-  return JSON.parse(localStorage.getItem(PRICE_SNAPSHOT_KEY) || "[]");
+  if (typeof loadJsonArray === "function") {
+    return loadJsonArray(PRICE_SNAPSHOT_KEY);
+  }
+
+  try {
+    const snapshots = JSON.parse(localStorage.getItem(PRICE_SNAPSHOT_KEY) || "[]");
+    return Array.isArray(snapshots) ? snapshots : [];
+  } catch (err) {
+    console.warn("Could not parse price snapshots. Using empty list.", err);
+    return [];
+  }
 }
 
 function savePriceSnapshots(snapshots) {

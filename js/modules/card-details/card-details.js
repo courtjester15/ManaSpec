@@ -59,7 +59,7 @@ function renderCardDetailShell(item) {
   ensureCardDetailModal();
   document.getElementById("cardDetailBody").innerHTML = `
     <div class="detail-loading">
-      <strong>${item.name}</strong>
+      <strong>${escapeHtml(item.name)}</strong>
       <span>Checking live card data...</span>
     </div>
   `;
@@ -68,8 +68,8 @@ function renderCardDetailShell(item) {
 function renderCardDetailError(item, message) {
   document.getElementById("cardDetailBody").innerHTML = `
     <div class="detail-loading">
-      <strong>${item.name}</strong>
-      <span>${message}</span>
+      <strong>${escapeHtml(item.name)}</strong>
+      <span>${escapeHtml(message)}</span>
     </div>
   `;
 }
@@ -145,7 +145,7 @@ function renderCardDetailHeader(item) {
   return `
     <header class="detail-header">
       <div class="detail-title-block">
-        <h3>${item.name}</h3>
+        <h3>${escapeHtml(item.name)}</h3>
       </div>
       <button type="button" class="detail-close" id="closeCardDetail">Close</button>
     </header>
@@ -157,20 +157,20 @@ function renderPlanSection(item, targetState) {
     <section class="detail-command-section">
       <div class="detail-section-heading">
         <h4>Plan</h4>
-        <span>${formatCompactStatus(targetState.label)}</span>
+        <span>${escapeHtml(formatCompactStatus(targetState.label))}</span>
       </div>
       <form class="target-plan-form" id="targetPlanForm">
         <label>
           Entry $
-          <input id="entryTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${formatTargetInputNumber(item.entryTarget)}">
+          <input id="entryTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.entryTarget))}">
         </label>
         <label>
           Exit $
-          <input id="exitTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${formatTargetInputNumber(item.exitTarget)}">
+          <input id="exitTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.exitTarget))}">
         </label>
         <label>
           Hold
-          <input id="holdTimeInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${formatHoldInputNumber(item.holdTime)}">
+          <input id="holdTimeInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${escapeDetailAttribute(formatHoldInputNumber(item.holdTime))}">
         </label>
         <span class="plan-added-date">Added ${formatAddedDate(item.addedDate)}</span>
         <button type="submit">Save Plan</button>
@@ -208,10 +208,10 @@ function renderLinkedThesisNote(note) {
   return `
     <article class="linked-thesis-note">
       <header>
-        <strong>${note.conviction}</strong>
+        <strong>${escapeHtml(note.conviction)}</strong>
         <span>${new Date(note.createdAt).toLocaleDateString()}</span>
       </header>
-      <p>${note.thesis}</p>
+      <p>${escapeHtml(note.thesis)}</p>
     </article>
   `;
 }
@@ -224,7 +224,7 @@ function renderActionsSection(marketLinks) {
         <span>Open exact market and reference pages</span>
       </div>
       <div class="detail-actions">
-        ${marketLinks.map(link => `<a href="${link.href}" target="_blank" rel="noopener">${link.label}</a>`).join("")}
+        ${marketLinks.map(link => `<a href="${escapeDetailAttribute(link.href)}" target="_blank" rel="noopener">${escapeHtml(link.label)}</a>`).join("")}
       </div>
     </section>
   `;
@@ -274,10 +274,10 @@ function renderMarketCheckSection(item, latestTcg, marketLinks = []) {
       </div>
       <div class="market-paste-panel">
         <div class="detail-actions market-link-actions">
-          ${marketLinks.map(link => `<a href="${link.href}" target="_blank" rel="noopener">${link.label}</a>`).join("")}
+          ${marketLinks.map(link => `<a href="${escapeDetailAttribute(link.href)}" target="_blank" rel="noopener">${escapeHtml(link.label)}</a>`).join("")}
         </div>
         <details class="market-paste-details ${marketCheckCta.state}">
-          <summary>${marketCheckCta.label}</summary>
+          <summary>${escapeHtml(marketCheckCta.label)}</summary>
           <textarea id="tcgPricePaste" placeholder="Paste the TCGplayer Price Points block here..."></textarea>
           <div class="market-paste-actions">
             <button type="button" id="saveTcgObservation">Save Check</button>
@@ -320,7 +320,7 @@ function renderMarketEvaluationSection(item, observation, owned) {
     <section class="detail-command-section">
       <div class="detail-section-heading">
         <h4>Market Evaluation</h4>
-        <span>${evaluation.summary}</span>
+        <span>${escapeHtml(evaluation.summary)}</span>
       </div>
       <div class="evaluation-grid">
         ${evaluation.items.map(renderEvaluationItem).join("")}
@@ -332,9 +332,9 @@ function renderMarketEvaluationSection(item, observation, owned) {
 function renderEvaluationItem(item) {
   return `
     <div class="evaluation-item ${item.tone}">
-      <span>${item.label}</span>
-      <strong>${item.value}</strong>
-      ${item.detail ? `<small>${item.detail}</small>` : ""}
+      <span>${escapeHtml(item.label)}</span>
+      <strong>${escapeHtml(item.value)}</strong>
+      ${item.detail ? `<small>${escapeHtml(item.detail)}</small>` : ""}
     </div>
   `;
 }
@@ -354,7 +354,7 @@ function renderCardDataSection(item, card) {
 
   return `
     <section class="card-data-strip">
-      ${chips.map(chip => `<span>${chip}</span>`).join("")}
+      ${chips.map(chip => `<span>${escapeHtml(chip)}</span>`).join("")}
     </section>
   `;
 }
@@ -365,9 +365,9 @@ function renderOracleSection(card) {
       <details class="detail-copy">
         <summary>
           <span>Oracle</span>
-          <strong>${card.type_line || "Card text"}</strong>
+          <strong>${escapeHtml(card.type_line || "Card text")}</strong>
         </summary>
-        <p>${card.oracle_text || "No oracle text available."}</p>
+        <p>${escapeHtml(card.oracle_text || "No oracle text available.")}</p>
       </details>
     </section>
   `;
@@ -892,8 +892,8 @@ function formatOptionalMoney(value) {
 function renderDetailMetric(label, value) {
   return `
     <div class="detail-metric">
-      <span>${label}</span>
-      <strong>${value}</strong>
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
     </div>
   `;
 }
@@ -901,8 +901,8 @@ function renderDetailMetric(label, value) {
 function renderSignalSlot(label, value) {
   return `
     <div class="signal-slot">
-      <span>${label}</span>
-      <strong>${value}</strong>
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
     </div>
   `;
 }

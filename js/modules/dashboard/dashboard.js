@@ -57,8 +57,8 @@ function renderDashboardView() {
 function renderMetricCard(label, value) {
   return `
     <div class="metric-card">
-      <span>${label}</span>
-      <strong>${value}</strong>
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
     </div>
   `;
 }
@@ -67,32 +67,32 @@ function renderScanPanel(title, rows) {
   const body = rows.length
     ? rows.map(row => `
         <div class="scan-row">
-          <strong>${row.title}</strong>
-          <span>${row.detail}</span>
+          <strong>${escapeHtml(row.title)}</strong>
+          <span>${escapeHtml(row.detail)}</span>
         </div>
       `).join("")
     : `<div class="empty-state compact">No data yet</div>`;
 
   return `
     <section class="scan-panel">
-      <h4>${title}</h4>
+      <h4>${escapeHtml(title)}</h4>
       ${body}
     </section>
   `;
 }
 
 function getOwnedPositions() {
-  return specs.filter(spec => Number(spec.qty || 0) > 0);
+  return specs.filter(spec => getDashboardNumber(spec.qty) > 0);
 }
 
 function getInvestedValue() {
   return getOwnedPositions()
-    .reduce((sum, spec) => sum + Number(spec.buyPrice || 0) * Number(spec.qty || 0), 0);
+    .reduce((sum, spec) => sum + getDashboardNumber(spec.buyPrice) * getDashboardNumber(spec.qty), 0);
 }
 
 function getPortfolioValue() {
   return getOwnedPositions()
-    .reduce((sum, spec) => sum + Number(spec.currentPrice || 0) * Number(spec.qty || 0), 0);
+    .reduce((sum, spec) => sum + getDashboardNumber(spec.currentPrice) * getDashboardNumber(spec.qty), 0);
 }
 
 function getTopPositions(direction) {
@@ -108,13 +108,13 @@ function getTopPositions(direction) {
 }
 
 function getPositionGainLoss(spec) {
-  return (Number(spec.currentPrice || 0) - Number(spec.buyPrice || 0)) * Number(spec.qty || 0);
+  return (getDashboardNumber(spec.currentPrice) - getDashboardNumber(spec.buyPrice)) * getDashboardNumber(spec.qty);
 }
 
 function formatPositionMove(spec) {
   const gainLoss = getPositionGainLoss(spec);
-  const buy = Number(spec.buyPrice || 0);
-  const now = Number(spec.currentPrice || 0);
+  const buy = getDashboardNumber(spec.buyPrice);
+  const now = getDashboardNumber(spec.currentPrice);
   const pct = buy ? ((now - buy) / buy) * 100 : 0;
 
   return `${gainLoss >= 0 ? "G" : "R"} ${formatSignedMoney(gainLoss)} / ${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
@@ -161,4 +161,11 @@ function formatTargetDetail(item, state) {
   ].filter(Boolean);
 
   return pieces.join(" / ");
+}
+
+function getDashboardNumber(value) {
+  if (typeof toFiniteNumber === "function") return toFiniteNumber(value);
+
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
 }

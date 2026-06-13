@@ -14,17 +14,22 @@ Handles:
 function buySpec(positionOrEvent, maybeCell) {
   const s = getSpec(positionOrEvent, maybeCell);
   if (!s) return;
-  const price = Number(s.currentPrice);
+  const price = getTradeNumber(s.currentPrice);
 
   if (!price) {
     showAppNotice("Price not loaded yet.", "warning");
     return;
   }
 
+  cash = getTradeNumber(cash, startingCash);
+
   if (cash < price) {
     showAppNotice("Not enough cash for this buy.", "warning");
     return;
   }
+
+  s.qty = getTradeNumber(s.qty);
+  s.buyPrice = getTradeNumber(s.buyPrice);
 
   if (s.qty === 0) {
     s.buyDate = new Date().toISOString();
@@ -54,11 +59,12 @@ function sellSpec(positionOrEvent, maybeCell, requestedQuantity = 1) {
 
   const s = getSpec(positionOrEvent, maybeCell);
   if (!s) return;
+  s.qty = getTradeNumber(s.qty);
   if (s.qty <= 0) return;
 
-  const price = Number(s.currentPrice || s.buyPrice || 0);
-  const ownedQty = Number(s.qty || 0);
-  const initialQty = Math.min(ownedQty, Math.max(1, Number(requestedQuantity || 1)));
+  const price = getTradeNumber(s.currentPrice || s.buyPrice);
+  const ownedQty = getTradeNumber(s.qty);
+  const initialQty = Math.min(ownedQty, Math.max(1, getTradeNumber(requestedQuantity, 1)));
 
   requestAppConfirmation({
     title: "Confirm Sale",
@@ -84,10 +90,10 @@ function sellSpec(positionOrEvent, maybeCell, requestedQuantity = 1) {
     onOpen: dialog => {
       const input = dialog.querySelector("#sellConfirmQty");
       const total = dialog.querySelector("#sellConfirmTotal");
-      const clampQty = value => Math.min(ownedQty, Math.max(1, Number(value || 1)));
+      const clampQty = value => Math.min(ownedQty, Math.max(1, getTradeNumber(value, 1)));
       const updateTotal = () => {
         input.value = String(clampQty(input.value));
-        total.textContent = money(price * Number(input.value || 1));
+        total.textContent = money(price * getTradeNumber(input.value, 1));
       };
 
       input.addEventListener("input", updateTotal);
@@ -101,7 +107,7 @@ function sellSpec(positionOrEvent, maybeCell, requestedQuantity = 1) {
       input.select();
     },
     getResult: dialog => ({
-      quantity: Math.min(ownedQty, Math.max(1, Number(dialog.querySelector("#sellConfirmQty")?.value || 1))),
+      quantity: Math.min(ownedQty, Math.max(1, getTradeNumber(dialog.querySelector("#sellConfirmQty")?.value, 1))),
     }),
   }).then(confirmed => {
     if (!confirmed) return;
@@ -150,4 +156,11 @@ function resetCash() {
   cash = startingCash;
   localStorage.setItem("cash", cash);
   updateTotals();
+}
+
+function getTradeNumber(value, fallback = 0) {
+  if (typeof toFiniteNumber === "function") return toFiniteNumber(value, fallback);
+
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
 }
