@@ -33,7 +33,7 @@ ManaSpec is not a collection tracker, inventory nostalgia tool, prediction engin
 ## Current Stack
 
 - Vanilla HTML/CSS/JavaScript.
-- Tabulator for the holdings table.
+- ManaSpec-native table rendering through `js/ui/table.js`.
 - Scryfall API for card identity, printings, and pricing snapshots.
 - localStorage for persistence.
 - No backend.
@@ -47,18 +47,15 @@ Active app styling is layered through `css/style.css`.
 Current files:
 
 - `base.css`: design tokens, colors, typography defaults, and app-wide primitives.
-- `legacy.css`: preserved pre-consolidation stylesheet. Keep this as the safety layer while styles migrate into core files.
 - `layout.css`: app shell, header, workbar, summary, and view headings.
 - `forms.css`: inputs, selects, buttons, checkboxes, filters, and shared form controls.
 - `components.css`: panels, rows, lists, metrics, notices, modals, and reusable UI pieces.
-- `tables.css`: Tabulator and table-like picker styling.
-- `modules.css`: module-specific finishing rules for Radar, Positions, Signals, Card Detail, and related surfaces.
+- `tables.css`: native table, row, pagination, and picker styling.
 
 Rules:
 
 - Prefer shared tokens from `base.css` over new raw colors.
 - Put reusable styling in `forms.css`, `components.css`, or `tables.css` before adding module-specific overrides.
-- Keep `legacy.css` as a fallback until the active UI has been fully migrated and smoke tested.
 - Positions and Radar should share the same dark terminal visual language.
 
 ## App Shape
@@ -69,14 +66,15 @@ Primary zones:
 
 - Dashboard: awareness and what matters now.
 - Positions: owned holdings only. Radar handles card discovery and watch ideas before purchase.
-- Watchlists: ideas without ownership.
+- Radar: ideas without ownership, exact printing discovery, entry planning, and planned buy quantity.
 - Signals: targets, price movement, and action triggers.
 - Thesis: reasoning, catalysts, conviction, and exit logic.
+- Transactions: buy/sell ledger events and audit data.
 - History: buys, sells, outcomes, and learning.
 
 Current workflow direction:
 
-- Radar is for discovery, watchlist tracking, entry planning, and planned quantity before money is committed.
+- Radar is for discovery, watched ideas, entry planning, and planned quantity before money is committed.
 - Positions is for owned holdings, exit planning, and active position management.
 - Signals is a read-only attention layer for alerts, reminders, and deep-links back to Radar or Positions.
 - Card Detail is the unified editor for a specific printing and edits canonical plan data.
@@ -103,15 +101,15 @@ Current implementation:
 - `#summaryBar` is a compact global account widget in the app header.
 - `#viewContainer` receives the active workflow view.
 - `js/ui/help.js` provides a contextual help drawer.
-- Dashboard, Watchlists, Signals, Thesis, and History have navigation entries and placeholder views.
-- Positions and Radar are the active singles workflows.
+- Dashboard, Radar, Positions, Signals, Thesis, Transactions, History, and Admin have active navigation entries.
+- Radar and Positions are the primary singles workflows.
 
 Rules:
 
 - Keep `index.html` mostly static.
 - Do not put feature logic in `index.html`.
 - Keep `app.js` focused on bootstrapping, navigation, and glue.
-- Summary is global app UI, not portfolio-specific UI.
+- Summary is global app UI, not Positions-specific UI.
 - Global card search sits in the main workbar beside module navigation.
 - Views are workflow zones, not full routed pages yet.
 
@@ -119,9 +117,32 @@ DOM conventions:
 
 - Summary IDs: `cash`, `invested`, `value`, `totalEquity`, `totalPL`.
 - Active view mount: `viewContainer`.
-- Positions table mount: `table`.
+- Positions table mount: `portfolioTable`.
+- Radar table/list mount: `radarList`.
 - Radar card search: `searchBox`, `searchResults`, `printingsView`.
 - Help drawer: `helpDrawer`.
+
+### Current Script Order
+
+ManaSpec currently uses ordered global scripts from `index.html`. Do not convert to ES modules until module dependencies are documented well enough to migrate safely.
+
+Current order:
+
+1. `js/core/storage.js`: localStorage load/save helpers.
+2. `js/core/state.js`: global arrays, cash state, and startup migrations/backfills.
+3. Metadata, filters, table, and Dashboard helpers.
+4. Positions/Radar modules: trading, table rendering, printing search, Radar, Transactions, Signals, Thesis, History, Admin, and Card Detail.
+5. Global UI/status helpers: summary and help.
+6. Price snapshots and pricing refresh.
+7. `js/core/app.js`: navigation, universal search, boot, and initial render.
+
+Dependency rules:
+
+- `storage.js` must load before `state.js`.
+- `state.js` must load before modules that read `specs`, `radar`, `signals`, `thesisNotes`, `transactions`, or `cash`.
+- `js/ui/table.js` must load before modules that call shared table render, sort, or pagination helpers.
+- Card Detail depends on tracked card state, thesis helpers, market observation storage, target helpers, and price snapshots when available.
+- `app.js` stays last because it calls `initApp()` immediately.
 
 ### Help
 
@@ -183,7 +204,7 @@ Ownership model:
 
 - Positions owns cards after money is committed.
 - Positions owns quantity, average entry, current value, P/L, exit planning, hold tracking, buy-more, sell, close, and correction/delete workflows.
-- Positions does not own card discovery or pre-entry watchlist planning.
+- Positions does not own card discovery or pre-entry Radar planning.
 - Entry planning may be visible for context, but pre-purchase entry intent belongs to Radar until a position exists.
 
 The positions workflow supports:
@@ -252,7 +273,7 @@ Ownership model:
 
 - Radar owns card discovery.
 - Radar owns exact printing selection before purchase.
-- Radar owns the watchlist.
+- Radar owns watched ideas before purchase.
 - Radar owns entry planning before money is committed.
 - Radar owns planned quantity before purchase.
 - Radar does not own active position management after a purchase.
@@ -271,8 +292,8 @@ Current behavior:
 
 Workflow rule:
 
-- A Radar item can become a Position, but the app must make the watchlist lifecycle clear.
-- The intended long-term workflow should let the user understand whether a purchased card remains watched, moves fully to Positions, or stays in Radar for continued scaling/monitoring.
+- A Radar item can become a Position, but the app must make the Radar lifecycle clear.
+- The intended long-term workflow should let the user understand whether a purchased card remains watched in Radar, moves fully to Positions, or stays in Radar for continued scaling/monitoring.
 - Radar should not become a general collection import surface.
 
 ### Search
@@ -282,14 +303,14 @@ Search must be context-specific. Different search boxes should not secretly perf
 Search domains:
 
 - Card Search: Scryfall card discovery and printing selection.
-- Portfolio Search: local holdings and watched specs only.
+- Local Search: local Radar ideas and owned Positions only.
 - Transaction Search: future ledger/history filtering.
 - Global Search: future app-level routing to the right workflow.
 
 Rules:
 
-- Card search is not portfolio filtering.
-- Portfolio search is not Scryfall discovery.
+- Card search is not local Positions/Radar filtering.
+- Local table filtering is not Scryfall discovery.
 - Transaction search is not card discovery.
 - Global search routes; it should not become a deep filtering UI.
 
@@ -374,7 +395,7 @@ Ownership model:
 
 - Transactions own the durable record of buys, sells, openings, corrections, and future acquisition methods.
 - Transactions should become append-first and auditable.
-- Transactions do not own watchlist intent or thesis.
+- Transactions do not own Radar intent or thesis.
 - Positions should eventually be computed from transaction history rather than manually maintained as independent truth.
 - History presents transaction and activity records for review; it should not be the source of transaction truth.
 
@@ -401,7 +422,7 @@ Migration requirements:
 - Preserve existing `specs` data.
 - Convert owned positions into opening buy transactions where possible.
 - Preserve watched specs separately from owned positions.
-- Do not remove current portfolio behavior until derived positions are verified.
+- Do not remove current Positions behavior until derived positions are verified.
 
 Rules:
 
@@ -436,9 +457,9 @@ Relevant fields:
 - `foil`
 - `currentPrice`
 
-### Watched Spec
+### Radar Item
 
-Current implementation uses `qty = 0` to represent a watched spec. This is a temporary bridge until explicit watchlists exist.
+Radar items are stored separately from owned Positions in `radar`. They represent exact printings being watched or staged before purchase.
 
 Radar and Positions tracked cards can also carry optional planning fields:
 
@@ -546,7 +567,7 @@ Likely sealed approach:
 - User can track specs without spreadsheets.
 - User can clearly separate watched ideas from owned positions.
 - User can record buys and sells cleanly.
-- User can see portfolio P/L and total equity.
+- User can see Positions P/L and total equity.
 - User can define and monitor entry/exit targets.
 - User can review past trades and thesis quality.
 

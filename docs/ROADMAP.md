@@ -11,12 +11,11 @@ It is not a collection tracker, inventory nostalgia tool, or prediction engine.
 - App Shell: stable frame, navigation, global summary, active view mount.
 - Radar: card discovery, printing selection, watch ideas, and buy candidates.
 - Positions: owned holdings, buy more, sell, delete, filters, and P/L.
-- Search: split by domain so card discovery, local portfolio filtering, transaction filtering, and future global routing stay distinct.
+- Search: split by domain so card discovery, local Positions/Radar filtering, transaction filtering, and future global routing stay distinct.
 - Transactions: planned source of truth for buys and sells.
-- Watchlists: planned explicit home for ideas without ownership.
-- Signals: planned target and price movement awareness.
-- Thesis: planned user-authored reasoning, catalysts, conviction, and exit logic.
-- History: planned transaction and outcome review.
+- Signals: target and price movement awareness.
+- Thesis: user-authored reasoning, catalysts, conviction, and exit logic.
+- History: transaction and outcome review.
 
 ## Current Phase: Alpha Stabilization
 
@@ -29,13 +28,13 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Vanilla app shell with module navigation buttons.
 - Global summary bar for cash, invested value, portfolio value, equity, and P/L.
 - Radar workflow with Scryfall search and printing selection.
-- Positions workflow with Tabulator holdings table.
-- Portfolio code separated into search, printings, trading, pricing, snapshots, and table modules.
+- Positions workflow with ManaSpec-native holdings table.
+- Positions/Radar code separated into search, printings, trading, pricing, snapshots, and table modules under the existing `js/modules/portfolio/` path.
 - Basic buy/sell/delete actions.
 - Clear feedback after add, buy, sell, delete, and Radar remove actions.
 - Confirmation copy for sell, delete, and Radar remove actions.
 - Scryfall price refresh for current holdings.
-- Pagination and portfolio count display.
+- Pagination and Positions count display.
 - Compact Positions table default for laptop-height scan workflows.
 - Filter reset controls for local Radar and Positions filters.
 - Optional entry target, exit target, and hold-time fields on tracked cards.
@@ -59,7 +58,7 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Thesis view support for linked and general notes.
 - Compact card-detail Market Evaluation from observable/local data only.
 - Scryfall EDHREC rank shown as a compact EDH presence signal in card detail.
-- Navigation zones wired for dashboard, watchlists, signals, thesis, and history.
+- Navigation zones wired for dashboard, radar, positions, signals, thesis, transactions, history, and admin.
 - Table layout restored after Radar Entry and Positions sell workflow changes.
 
 ### Now
@@ -159,7 +158,7 @@ Do not expand these areas until the beta gates above are complete:
 
 Keep ManaSpec vanilla-first unless a library clearly removes repeated infrastructure work.
 
-- Tabulator: likely candidate for serious data grids such as Positions, Radar, Transactions, History, and Signals tables. Review after the catalog pass, or proof-test on one table if table polish keeps consuming time.
+- Data-grid library: possible future candidate if native table helpers stop being enough for Positions, Radar, Transactions, History, and Signals. Review only after beta needs prove it.
 - Dexie.js: likely candidate when moving from localStorage to IndexedDB. Use only after the ledger shape is clear.
 - Day.js: useful candidate for buy dates, added dates, hold windows, stale checks, sorting, and readable timestamps.
 - Fuse.js: possible candidate for local fuzzy search across Radar, Positions, Transactions, Thesis, and History.
@@ -262,11 +261,11 @@ Goal: move from direct position mutation toward transaction history.
 
 Important rule: long term, positions are computed views. Transactions are the source of truth.
 
-## Phase 3: Watchlists And Targets
+## Phase 3: Radar And Targets
 
 Goal: separate ideas from owned positions and add decision triggers.
 
-- Create explicit watchlist data and UI.
+- Keep Radar as the explicit home for ideas without ownership.
 - Add optional entry targets.
 - Add optional exit targets.
 - Add target-zone states such as hit, near hit, and stop triggered.
@@ -276,8 +275,8 @@ Goal: separate ideas from owned positions and add decision triggers.
 
 Goal: turn tracked data into fast decision awareness.
 
-- Portfolio movers up/down.
-- Watchlist movers.
+- Position movers up/down.
+- Radar movers.
 - Target hits and approaching targets.
 - Basic radar signals for price movement and unusual activity when data supports it.
 - Dashboard remains a dense scan view, not a marketing page or decorative home screen.

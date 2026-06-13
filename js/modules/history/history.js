@@ -12,6 +12,8 @@ let historySort = {
   direction: "desc",
 };
 
+const HISTORY_EVENT_LIMIT = 50;
+
 function renderHistoryView() {
   document.getElementById("viewContainer").innerHTML = `
     <section class="module-view">
@@ -101,8 +103,7 @@ function buildHistoryEvents() {
 
   return [...txEvents, ...radarEvents, ...thesisEvents]
     .filter(event => event.date)
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 50);
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 function initHistoryFilters() {
@@ -129,9 +130,14 @@ function renderHistoryList() {
   const container = document.getElementById("historyList");
   if (!container) return;
 
-  const filteredEvents = getSortedHistoryEvents(getFilteredHistoryEvents());
-  const events = paginateStandardRows(filteredEvents, "history");
-  updateHistoryFilterCount(getStandardTableShownCount(filteredEvents, "history"), filteredEvents.length);
+  const matchingEvents = getSortedHistoryEvents(getFilteredHistoryEvents());
+  const cappedEvents = matchingEvents.slice(0, HISTORY_EVENT_LIMIT);
+  const events = paginateStandardRows(cappedEvents, "history");
+  updateHistoryFilterCount(
+    getStandardTableShownCount(cappedEvents, "history"),
+    cappedEvents.length,
+    matchingEvents.length
+  );
 
   if (!buildHistoryEvents().length) {
     container.innerHTML = `<div class="empty-state">No history yet.</div>`;
@@ -184,12 +190,13 @@ function getHistoryFilterState() {
   };
 }
 
-function updateHistoryFilterCount(shownCount, filteredCount = shownCount) {
+function updateHistoryFilterCount(shownCount, filteredCount = shownCount, matchingCount = filteredCount) {
   const el = document.getElementById("historyFilterCount");
   if (!el) return;
   const total = buildHistoryEvents().length;
   const shownText = filteredCount > shownCount ? `${shownCount} shown / ` : "";
-  el.innerText = `${shownText}${filteredCount} of ${total} events`;
+  const cappedText = matchingCount > filteredCount ? `${filteredCount} of ${matchingCount} matching / ` : "";
+  el.innerText = `${shownText}${cappedText}${total} events`;
 }
 
 function getHistoryTableColumns() {

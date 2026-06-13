@@ -82,7 +82,7 @@ Before calling a task done:
 
 Radar
 - Discovery
-- Watchlist
+- Watched ideas
 - Entry planning
 - Planned quantity
 

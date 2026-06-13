@@ -66,27 +66,27 @@ Cash, invested value, market value, total equity, and P/L belong to the app shel
 
 They should remain visible outside the portfolio workflow.
 
-## Portfolio
+## Positions
 
-### Portfolio is the active workflow
+### Radar and Positions are the active workflow
 
-For alpha, Portfolio is the only complete workflow. Other module buttons already exist so Dashboard, Watchlists, Signals, Thesis, and History have stable places to land.
+For alpha, Radar and Positions are the active singles workflow. Radar owns discovery and pre-purchase planning; Positions owns cards after money is committed.
 
-### Portfolio is not the long-term source of truth
+### Positions are not the long-term source of truth
 
 Current alpha mutates position state directly because it is simple and working.
 
-Long term, buy and sell should create transaction events. Portfolio should show computed positions.
+Long term, buy and sell should create transaction events. Positions should show computed holdings.
 
-### `qty = 0` is temporary watch behavior
+### Radar stores watched ideas separately
 
-Using zero quantity as a watch item is acceptable during alpha, but explicit watchlists should replace it.
+Watched ideas belong in `radar`, not as zero-quantity rows in Positions. Buying from Radar can create or update an owned Position while keeping the Radar item available for continued watching or scaling.
 
 ### Printing-level identity matters
 
 The same card can behave differently across printings, sets, foil states, and collector numbers.
 
-Portfolio entries should preserve printing identity.
+Tracked entries should preserve printing identity.
 
 ## Search
 
@@ -95,11 +95,11 @@ Portfolio entries should preserve printing identity.
 Search should be context-specific:
 
 - Card Search: Scryfall discovery and printing selection.
-- Portfolio Search: local holdings and watched specs only.
+- Local Search: local Radar ideas and owned Positions only.
 - Transaction Search: future ledger/history filtering.
 - Global Search: future routing to the right workflow.
 
-Card Search currently belongs inside the Portfolio workflow because adding a spec starts there.
+Card Search currently belongs inside Radar because adding a spec starts as a watched idea before purchase.
 
 ## Transactions
 
@@ -113,7 +113,7 @@ Until then, current portfolio state is useful but not auditable.
 
 Long term, buy and sell are not direct edits to portfolio rows.
 
-They create events. Portfolio rows are the computed result of those events.
+They create events. Positions rows are the computed result of those events.
 
 ### Acquisition method is part of transaction history
 
