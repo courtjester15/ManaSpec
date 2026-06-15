@@ -52,6 +52,23 @@ ManaSpec now uses Git for recovery points and version history.
 - Use `dev notes/inbox/` and `dev notes/archive/` as reference, not authority.
 - If old notes conflict with active docs, active docs win.
 
+## Browser Testing
+
+When performing UI QA, browser inspection, console debugging, or regression testing:
+
+- Use the Codex in-app Browser when available.
+- Test against a localhost URL rather than a file:// URL.
+- If browser automation is needed, start a temporary local HTTP server and test through localhost.
+
+Example:
+
+http://localhost:8000/index.html
+
+Notes:
+- Browser automation may fail against file:// URLs even when the app works normally.
+- Temporary localhost server scripts are development helpers and should not be committed unless intentionally added to the project.
+- Prefer browser inspection and console validation over screenshot-only debugging when available.
+
 ## Change Size
 
 Prefer narrow, durable steps:
@@ -74,6 +91,7 @@ Keep docs flat until the app earns more structure.
 Before calling a task done:
 
 - The app behavior matches the relevant README section.
+- For UI-facing changes, verify behavior through the Codex in-app Browser on localhost when browser automation is available.
 - Any new rule or workflow is documented.
 - The roadmap status still makes sense.
 - No old note has silently become the new source of truth.

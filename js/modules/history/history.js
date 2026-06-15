@@ -144,7 +144,7 @@ function renderHistoryList() {
     return;
   }
 
-  if (!filteredEvents.length) {
+  if (!matchingEvents.length) {
     container.innerHTML = `<div class="empty-state">No history events match the current filters.</div>`;
     return;
   }
@@ -195,8 +195,10 @@ function updateHistoryFilterCount(shownCount, filteredCount = shownCount, matchi
   if (!el) return;
   const total = buildHistoryEvents().length;
   const shownText = filteredCount > shownCount ? `${shownCount} shown / ` : "";
-  const cappedText = matchingCount > filteredCount ? `${filteredCount} of ${matchingCount} matching / ` : "";
-  el.innerText = `${shownText}${cappedText}${total} events`;
+  const matchText = matchingCount > filteredCount
+    ? `${filteredCount} of ${matchingCount} matching / ${total} events`
+    : `${filteredCount} of ${total} events`;
+  el.innerText = `${shownText}${matchText}`;
 }
 
 function getHistoryTableColumns() {
