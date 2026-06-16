@@ -265,6 +265,16 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   padding-right: 1px !important;
 }
 
+.ms-table__input.ms-table__cell--center {
+  text-align: center;
+}
+
+.ms-table__input.ms-table__cell--money,
+.ms-table__input.ms-table__cell--number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .ms-table__input-wrap {
   display: flex;
   align-items: center;

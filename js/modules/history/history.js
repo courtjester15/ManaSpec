@@ -140,12 +140,22 @@ function renderHistoryList() {
   );
 
   if (!buildHistoryEvents().length) {
-    container.innerHTML = `<div class="empty-state">No history yet.</div>`;
+    renderStandardTable(container, {
+      tableClass: "ms-table--history",
+      rows: [],
+      columns: getHistoryTableColumns(),
+      emptyText: "No history yet.",
+    });
     return;
   }
 
   if (!matchingEvents.length) {
-    container.innerHTML = `<div class="empty-state">No history events match the current filters.</div>`;
+    renderStandardTable(container, {
+      tableClass: "ms-table--history",
+      rows: [],
+      columns: getHistoryTableColumns(),
+      emptyText: "No history events match the current filters.",
+    });
     return;
   }
 

@@ -81,20 +81,22 @@ function renderRadarItems() {
   updateRadarCount(getStandardTableShownCount(filteredRadar, "radar"), filteredRadar.length);
 
   if (!radar.length) {
-    container.innerHTML = `
-      <div class="empty-state">
-        Search above and add exact printings to start tracking specs on Radar.
-      </div>
-    `;
+    renderStandardTable(container, {
+      tableClass: "ms-table--radar",
+      rows: [],
+      columns: getRadarTableColumns(),
+      emptyText: "Search above and add exact printings to start tracking specs on Radar.",
+    });
     return;
   }
 
   if (!filteredRadar.length) {
-    container.innerHTML = `
-      <div class="empty-state">
-        No Radar ideas match the current filters.
-      </div>
-    `;
+    renderStandardTable(container, {
+      tableClass: "ms-table--radar",
+      rows: [],
+      columns: getRadarTableColumns(),
+      emptyText: "No Radar ideas match the current filters.",
+    });
     return;
   }
 

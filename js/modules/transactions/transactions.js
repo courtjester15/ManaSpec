@@ -62,12 +62,22 @@ function renderTransactionsList() {
   updateTransactionFilterCount(getStandardTableShownCount(filteredRows, "transactions"), filteredRows.length);
 
   if (!transactions.length) {
-    container.innerHTML = `<div class="empty-state">No transactions logged yet. This is a scaffold until buy/sell flows write ledger events.</div>`;
+    renderStandardTable(container, {
+      tableClass: "ms-table--ledger",
+      rows: [],
+      columns: getTransactionTableColumns(),
+      emptyText: "No transactions logged yet. This is a scaffold until buy/sell flows write ledger events.",
+    });
     return;
   }
 
   if (!filteredRows.length) {
-    container.innerHTML = `<div class="empty-state">No transactions match the current filters.</div>`;
+    renderStandardTable(container, {
+      tableClass: "ms-table--ledger",
+      rows: [],
+      columns: getTransactionTableColumns(),
+      emptyText: "No transactions match the current filters.",
+    });
     return;
   }
 
