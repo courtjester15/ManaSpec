@@ -360,6 +360,79 @@ Panels, rows, lists, modals, metrics, and status elements.
   grid-template-columns: repeat(4, minmax(190px, 1fr));
 }
 
+.signal-bucket-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 8px;
+}
+
+.signal-bucket-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+  align-items: start;
+  min-width: 0;
+  height: auto;
+  min-height: 76px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+  text-align: left;
+}
+
+.signal-bucket-card:hover,
+.signal-bucket-card.active {
+  border-color: rgba(125, 211, 252, 0.36);
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.signal-bucket-card span,
+.signal-bucket-card small,
+.signal-bucket-card em {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signal-bucket-card span {
+  color: var(--text-strong);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.signal-bucket-card strong {
+  color: var(--text-strong);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.signal-bucket-card small,
+.signal-bucket-card em {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.15;
+}
+
+.signal-table-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 94px;
+  gap: 8px;
+  align-items: center;
+}
+
+.signal-table-header h4 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 14px;
+  font-weight: 650;
+}
+
 .admin-grid {
   grid-template-columns: repeat(4, minmax(190px, 1fr));
 }
@@ -531,6 +604,25 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .tx-pill.sell {
   background: rgba(248, 113, 113, 0.14);
+}
+
+.signal-pill.action {
+  background: rgba(248, 113, 113, 0.14);
+  color: #fecaca;
+}
+
+.signal-pill.approaching {
+  background: rgba(251, 191, 36, 0.14);
+  color: var(--warning);
+}
+
+.signal-pill.review {
+  background: rgba(147, 164, 177, 0.14);
+}
+
+.signal-pill.market {
+  background: rgba(125, 211, 252, 0.12);
+  color: var(--accent);
 }
 
 .scan-row,
@@ -1080,6 +1172,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   .metric-grid,
   .scan-grid,
   .signal-scan-grid,
+  .signal-bucket-grid,
   .admin-grid,
   .detail-main-grid,
   .detail-grid,
