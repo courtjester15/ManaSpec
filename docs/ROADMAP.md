@@ -53,6 +53,7 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Transaction ledger filters for text and buy/sell type.
 - History filters for text and event type.
 - Radar set-number search for exact Scryfall printing lookup.
+- Admin JSON backup export/import for localStorage-backed user data.
 - Contextual right-side Help drawer with initial workflow topics.
 - Card-linked thesis notes from card detail.
 - Thesis view support for linked and general notes.
@@ -81,15 +82,11 @@ Current discipline: do not expand sideways until the core singles workflow has b
    - Tighten Plan, Thesis, Market Check, Market Evaluation, Card Data, and Actions without expanding scope.
    - Update Help in the same pass.
 
-3. Data safety
-   - Add JSON export/import from Admin before relying more heavily on localStorage.
-   - Make backup/restore understandable before deeper ledger work.
-
-4. Ledger migration plan
+3. Ledger migration plan
    - Draft the transaction migration path before changing the storage model.
    - Preserve existing localStorage data while defining computed Positions from transactions.
 
-5. UX polish candidates from beta notes
+4. UX polish candidates from beta notes
    - Replace layout-shifting app notices with toast notifications.
    - Replace browser-native sell confirmation with an app-styled workflow.
    - Simplify Radar search mode selection toward unified smart search.
@@ -124,9 +121,9 @@ Goal: turn the current alpha into a usable product, not a wider prototype.
    - [ ] Update help copy in the same pass.
 
 4. Data safety
-   - [ ] Add JSON export/import from Admin.
-   - [ ] Make backup/restore understandable before deeper ledger or storage changes.
-   - [ ] Treat localStorage as user data that must be portable.
+   - [x] Add JSON export/import from Admin.
+   - [x] Make backup/restore understandable before deeper ledger or storage changes.
+   - [x] Treat localStorage as user data that must be portable.
 
 5. Ledger foundation
    - [ ] Write the migration plan before changing storage behavior.

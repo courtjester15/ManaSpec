@@ -80,6 +80,7 @@ Current workflow direction:
 - Card Detail is the unified editor for a specific printing and edits canonical plan data.
 - Transactions and History are for what happened and what can be audited later.
 - Thesis is for why the user cared and what would change the plan.
+- Admin includes Data Safety controls for JSON backup export/import of local user data.
 - Radar, Positions, Signals, Transactions, and History use a shared module context band above filters and tables so workflow tables keep a consistent visual rhythm. Dashboard remains the broader overview surface.
 
 Near-term product focus:
@@ -162,6 +163,27 @@ Rules:
 - Keep help task-based and concise.
 - Screenshots or GIFs should wait until UI surfaces stabilize.
 - Help should reveal confusing workflows, not excuse them.
+
+### Admin
+
+Admin owns local maintenance and data-safety tools.
+
+Current behavior:
+
+- Data Safety can export a timestamped JSON backup from browser localStorage.
+- Backup schema is `manaspec-localstorage-backup` v1.
+- Exports include `specs`, `radar`, `transactions`, `thesisNotes`, `signals`, `cash`, `priceSnapshots`, `priceRefreshStatus`, and `marketObservations`.
+- Import uses a JSON file picker, validates the backup shape, and shows a preview before restore.
+- Selecting a file does not change data.
+- Restore requires explicit confirmation and replaces current local ManaSpec data in this browser.
+- Before restore, ManaSpec stores an emergency pre-import backup under `manaspec_pre_import_backup`.
+
+Rules:
+
+- Do not rename storage keys during backup/import work.
+- Do not add cloud sync, accounts, merge logic, or database migration to this workflow.
+- Unknown fields in backup files should not break import.
+- Invalid backups should fail with a friendly message and no claimed success.
 
 ### Card Detail
 

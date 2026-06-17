@@ -67,6 +67,178 @@ function loadMarketObservations() {
   return loadJsonArray("marketObservations");
 }
 
+const MANASPEC_BACKUP_SCHEMA = "manaspec-localstorage-backup";
+const MANASPEC_BACKUP_SCHEMA_VERSION = 1;
+const MANASPEC_BACKUP_APP_VERSION = "1.0.0-beta";
+const MANASPEC_BACKUP_ARRAY_KEYS = [
+  "specs",
+  "radar",
+  "transactions",
+  "thesisNotes",
+  "signals",
+  "priceSnapshots",
+  "marketObservations",
+];
+const MANASPEC_PRE_IMPORT_BACKUP_KEY = "manaspec_pre_import_backup";
+
+function createManaSpecBackup() {
+  const data = readManaSpecBackupData();
+
+  return {
+    app: "ManaSpec",
+    schema: MANASPEC_BACKUP_SCHEMA,
+    schemaVersion: MANASPEC_BACKUP_SCHEMA_VERSION,
+    appVersion: MANASPEC_BACKUP_APP_VERSION,
+    exportedAt: new Date().toISOString(),
+    data,
+    counts: buildManaSpecBackupCounts(data),
+  };
+}
+
+function readManaSpecBackupData() {
+  return {
+    specs: loadSpecs(),
+    radar: loadRadar(),
+    transactions: loadTransactions(),
+    thesisNotes: loadThesisNotes(),
+    signals: loadSignals(),
+    cash: loadCash(typeof startingCash !== "undefined" ? startingCash : 10000),
+    priceSnapshots: typeof loadPriceSnapshots === "function" ? loadPriceSnapshots() : loadJsonArray("priceSnapshots"),
+    priceRefreshStatus: loadPriceRefreshStatus() || {},
+    marketObservations: loadMarketObservations(),
+  };
+}
+
+function buildManaSpecBackupCounts(data) {
+  return {
+    positions: data.specs.length,
+    radar: data.radar.length,
+    transactions: data.transactions.length,
+    thesisNotes: data.thesisNotes.length,
+    signals: data.signals.length,
+    priceSnapshots: data.priceSnapshots.length,
+    marketObservations: data.marketObservations.length,
+  };
+}
+
+function parseManaSpecBackupText(text) {
+  let backup;
+
+  try {
+    backup = JSON.parse(text);
+  } catch (err) {
+    return {
+      ok: false,
+      message: "That file is not valid JSON.",
+      error: err,
+    };
+  }
+
+  return normalizeManaSpecBackup(backup);
+}
+
+function normalizeManaSpecBackup(backup) {
+  if (!backup || typeof backup !== "object") {
+    return {
+      ok: false,
+      message: "That file does not look like a ManaSpec backup.",
+    };
+  }
+
+  if (backup.app !== "ManaSpec" && backup.schema !== MANASPEC_BACKUP_SCHEMA) {
+    return {
+      ok: false,
+      message: "That file does not look like a ManaSpec backup.",
+    };
+  }
+
+  if (!backup.data || typeof backup.data !== "object" || Array.isArray(backup.data)) {
+    return {
+      ok: false,
+      message: "Backup could not be imported. No data was changed.",
+    };
+  }
+
+  const data = {};
+
+  for (const key of MANASPEC_BACKUP_ARRAY_KEYS) {
+    const value = backup.data[key];
+    if (value === undefined || value === null) {
+      data[key] = [];
+      continue;
+    }
+
+    if (!Array.isArray(value)) {
+      return {
+        ok: false,
+        message: `Backup field "${key}" was not in the expected format. No data was changed.`,
+      };
+    }
+
+    data[key] = value;
+  }
+
+  const cash = Number(backup.data.cash);
+  data.cash = Number.isFinite(cash)
+    ? cash
+    : loadCash(typeof startingCash !== "undefined" ? startingCash : 10000);
+
+  const status = backup.data.priceRefreshStatus;
+  data.priceRefreshStatus = status && typeof status === "object" && !Array.isArray(status)
+    ? status
+    : {};
+
+  const normalized = {
+    app: "ManaSpec",
+    schema: MANASPEC_BACKUP_SCHEMA,
+    schemaVersion: Number(backup.schemaVersion || MANASPEC_BACKUP_SCHEMA_VERSION),
+    appVersion: backup.appVersion || "",
+    exportedAt: backup.exportedAt || "",
+    data,
+    counts: buildManaSpecBackupCounts(data),
+  };
+
+  return {
+    ok: true,
+    backup: normalized,
+  };
+}
+
+function restoreManaSpecBackup(normalizedBackup) {
+  const validation = normalizeManaSpecBackup(normalizedBackup);
+  if (!validation.ok) {
+    throw new Error(validation.message);
+  }
+
+  const data = validation.backup.data;
+  const emergencyBackup = createManaSpecBackup();
+
+  try {
+    localStorage.setItem(MANASPEC_PRE_IMPORT_BACKUP_KEY, JSON.stringify({
+      createdAt: new Date().toISOString(),
+      reason: "pre-import",
+      backup: emergencyBackup,
+    }));
+
+    MANASPEC_BACKUP_ARRAY_KEYS.forEach(key => {
+      localStorage.setItem(key, JSON.stringify(data[key]));
+    });
+    localStorage.setItem("cash", String(data.cash));
+    localStorage.setItem("priceRefreshStatus", JSON.stringify(data.priceRefreshStatus || {}));
+  } catch (err) {
+    restoreManaSpecBackupData(emergencyBackup.data);
+    throw err;
+  }
+}
+
+function restoreManaSpecBackupData(data) {
+  MANASPEC_BACKUP_ARRAY_KEYS.forEach(key => {
+    localStorage.setItem(key, JSON.stringify(Array.isArray(data[key]) ? data[key] : []));
+  });
+  localStorage.setItem("cash", String(Number.isFinite(Number(data.cash)) ? Number(data.cash) : 10000));
+  localStorage.setItem("priceRefreshStatus", JSON.stringify(data.priceRefreshStatus || {}));
+}
+
 // Save state
 function saveState(specs, cash, updateTotals) {
   localStorage.setItem("specs", JSON.stringify(specs));

@@ -52,6 +52,14 @@ ManaSpec can explore a real database later, especially as a learning and durabil
 
 For now, storage work should not lead the product direction. The current priority is making Radar, Positions, Signals, Transactions, History, and Thesis feel coherent enough that a future database has clear entities and workflows to support.
 
+### JSON backup schema v1 protects local user data
+
+Admin backup files use `manaspec-localstorage-backup` schema v1.
+
+The v1 backup covers local user-owned ManaSpec state in `specs`, `radar`, `transactions`, `thesisNotes`, `signals`, `cash`, `priceSnapshots`, `priceRefreshStatus`, and `marketObservations`.
+
+Import is replace-only with preview and explicit confirmation. It does not merge data, rename storage keys, migrate the ledger model, or introduce cloud sync.
+
 ## App Shell
 
 ### Modular shell before routing
