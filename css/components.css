@@ -366,6 +366,109 @@ Panels, rows, lists, modals, metrics, and status elements.
   gap: 8px;
 }
 
+.module-context-band {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+  min-height: 76px;
+  margin-bottom: 0;
+  overflow: visible;
+}
+
+.module-context-band:has(.module-context-card--wide) {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.35fr) repeat(3, minmax(0, 1fr));
+}
+
+.module-context-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+  align-items: start;
+  min-width: 0;
+  min-height: 76px;
+  height: 76px;
+  margin: 0;
+  padding: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+  text-align: left;
+}
+
+.module-context-card--wide {
+  grid-column: span 2;
+}
+
+.module-context-card--search {
+  grid-template-columns: 1fr;
+  overflow: visible;
+  z-index: 9;
+}
+
+.module-context-card:hover,
+.module-context-card.active {
+  border-color: rgba(125, 211, 252, 0.36);
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.module-context-card span,
+.module-context-card small,
+.module-context-card em {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.module-context-card span {
+  color: var(--text-strong);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.module-context-card strong {
+  color: var(--text-strong);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.module-context-card small,
+.module-context-card em {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.15;
+}
+
+.module-context-card .radar-search-controls {
+  width: 100%;
+}
+
+.context-search-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.42);
+}
+
+.context-search-results:not(:has(.panel-list:not(:empty))) {
+  display: none;
+}
+
 .signal-bucket-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -424,6 +527,12 @@ Panels, rows, lists, modals, metrics, and status elements.
   grid-template-columns: minmax(0, 1fr) 94px;
   gap: 8px;
   align-items: center;
+  box-sizing: border-box;
+  min-height: 81px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
 }
 
 .signal-table-header h4 {
@@ -1173,6 +1282,8 @@ Panels, rows, lists, modals, metrics, and status elements.
   .scan-grid,
   .signal-scan-grid,
   .signal-bucket-grid,
+  .module-context-band,
+  .module-context-band:has(.module-context-card--wide),
   .admin-grid,
   .detail-main-grid,
   .detail-grid,
@@ -1183,6 +1294,14 @@ Panels, rows, lists, modals, metrics, and status elements.
   .bulk-set-row,
   .market-paste-top {
     grid-template-columns: 1fr;
+  }
+
+  .module-context-card--wide {
+    grid-column: auto;
+  }
+
+  .module-context-card {
+    height: auto;
   }
 
   .card-detail-panel {

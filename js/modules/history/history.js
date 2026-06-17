@@ -19,8 +19,10 @@ function renderHistoryView() {
     <section class="module-view">
       <div class="view-heading">
         <h3>History</h3>
-        <p>Recent activity and learning trail across transactions, radar, and thesis.</p>
+        <p>Recent activity and learning trail across transactions, radar, and notes.</p>
       </div>
+
+      ${renderModuleContextBand(getHistoryContextCards(), { label: "History context" })}
 
       <section class="card-filter-panel history-filter-panel">
         <div class="panel-heading compact-heading">
@@ -53,6 +55,40 @@ function renderHistoryView() {
 
   initHistoryFilters();
   renderHistoryList();
+}
+
+function getHistoryContextCards() {
+  const events = buildHistoryEvents();
+  const tradeCount = events.filter(event => event.kind === "transaction").length;
+  const noteCount = events.filter(event => event.kind === "thesis").length;
+  const latest = events[0];
+
+  return [
+    {
+      label: "Events",
+      value: events.length,
+      detail: "Reviewable records",
+      preview: latest?.title || "No history yet",
+    },
+    {
+      label: "Trades",
+      value: tradeCount,
+      detail: "Buy and sell events",
+      preview: "Ledger review",
+    },
+    {
+      label: "Lessons / Review",
+      value: noteCount,
+      detail: "Saved decision notes",
+      preview: noteCount ? "Notes available" : "No review notes",
+    },
+    {
+      label: "Notes",
+      value: thesisNotes.length,
+      detail: "Long-form thinking",
+      preview: thesisNotes[0]?.cardName || "General context",
+    },
+  ];
 }
 
 function buildHistoryEvents() {
@@ -96,7 +132,7 @@ function buildHistoryEvents() {
     rarity: "",
     color: "",
     price: "",
-    title: `Thesis: ${note.cardName || "General"}`,
+    title: `Note: ${note.cardName || "General"}`,
     detail: note.conviction,
     badge: "THESIS",
   }));

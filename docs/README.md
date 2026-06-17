@@ -80,6 +80,7 @@ Current workflow direction:
 - Card Detail is the unified editor for a specific printing and edits canonical plan data.
 - Transactions and History are for what happened and what can be audited later.
 - Thesis is for why the user cared and what would change the plan.
+- Radar, Positions, Signals, Transactions, and History use a shared module context band above filters and tables so workflow tables keep a consistent visual rhythm. Dashboard remains the broader overview surface.
 
 Near-term product focus:
 
@@ -282,6 +283,7 @@ Ownership model:
 Current behavior:
 
 - Search finds card identities and exact printings through Scryfall.
+- The search/add-candidate controls sit in Radar's module context band so discovery belongs to the workflow context instead of pushing the table layout down.
 - Printing rows can add exact paper or foil versions to Radar.
 - Radar items are stored separately from owned Positions.
 - Radar rows show current price, added date, planned quantity, market observation summary fields, and actions.
@@ -354,6 +356,7 @@ Ownership model:
 
 Current behavior:
 
+- Signals uses the shared module context band for attention buckets.
 - Manual signal records can still be added.
 - Target panels show exit hits, entry hits, approaching targets, and tracked cards with no plan.
 - Target states are based on local `entryTarget`, `exitTarget`, month-based `holdTime`, ownership, elapsed hold time, and current price snapshots.
@@ -404,6 +407,7 @@ Current state:
 - Buy and sell actions still directly mutate records in `specs`.
 - Buy and sell actions also log transaction records.
 - Existing owned positions are backfilled into opening `BUY` records using current quantity, average buy price, and buy date when available.
+- Transactions shows local ledger context above filters for buys, sells, net cash flow, and recent activity.
 - Transactions can be filtered by text and transaction type.
 - Transaction totals display as signed cash movement.
 
@@ -438,6 +442,7 @@ History is an audit-oriented activity feed across local app events.
 Current behavior:
 
 - History includes transactions, Radar additions, and thesis notes.
+- History shows local review context above filters for events, trades, lessons/review, and notes.
 - History can be filtered by text and event type.
 - Transaction history rows preserve buy/sell activity even when a current position reaches zero quantity.
 

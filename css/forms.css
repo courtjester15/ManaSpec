@@ -175,6 +175,13 @@ button[disabled] {
   background: rgba(255, 255, 255, 0.02);
 }
 
+.module-context-card .radar-search-controls {
+  grid-template-columns: minmax(130px, 1fr) 92px max-content;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
 .compact-heading {
   align-items: center;
 }

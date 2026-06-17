@@ -23,12 +23,35 @@ function renderRadarView(options = {}) {
         <p>Watch ideas before money is committed. Buying creates or updates a Position while Radar keeps watching.</p>
       </div>
 
-      <section class="radar-search-panel">
-        <div class="panel-heading">
-          <h4>Search</h4>
-          <p>Find printings, then add candidates to Radar.</p>
-        </div>
+      ${renderModuleContextBand(getRadarContextCards(), { label: "Radar context" })}
 
+      ${renderCardFilterControls("radar", "Filter Radar", { metaId: "radarCount" })}
+
+      <div class="ms-table ms-table--radar" id="radarList"></div>
+    </section>
+  `;
+
+  initSearch({
+    query: options.searchQuery || options.query || "",
+    limit: 5,
+  });
+  initCardFilters("radar", renderRadarItems);
+  if (options.filterToId) {
+    setExactCardFilter("radar", options.filterToId, options.filterLabel || "");
+  }
+  renderRadarItems();
+}
+
+function getRadarContextCards() {
+  const plannedEntries = radar.filter(item => Number(item.entryTarget || 0) > 0 || getRadarPlannedQty(item) > 1).length;
+  const notesCount = radar.reduce((total, item) => total + getTrackedNoteCount(item), 0);
+
+  return [
+    {
+      wide: true,
+      search: true,
+      html: `
+        <span>Search / Add Candidate</span>
         <div class="radar-search-controls">
           <input id="searchBox" placeholder="Find card or set #, e.g. MH3 123">
           <select id="searchMode" aria-label="Search mode">
@@ -48,28 +71,31 @@ function renderRadarView(options = {}) {
             </label>
           </div>
         </div>
-
-        <div class="add-card-results">
+        <div class="add-card-results context-search-results">
           <div id="searchResults" class="panel-list"></div>
           <div id="printingsView" class="panel-list"></div>
         </div>
-      </section>
-
-      ${renderCardFilterControls("radar", "Filter Radar", { metaId: "radarCount" })}
-
-      <div class="ms-table ms-table--radar" id="radarList"></div>
-    </section>
-  `;
-
-  initSearch({
-    query: options.searchQuery || options.query || "",
-    limit: 5,
-  });
-  initCardFilters("radar", renderRadarItems);
-  if (options.filterToId) {
-    setExactCardFilter("radar", options.filterToId, options.filterLabel || "");
-  }
-  renderRadarItems();
+      `,
+    },
+    {
+      label: "Watching",
+      value: radar.length,
+      detail: "Tracked ideas",
+      preview: radar[0]?.name || "No watched ideas",
+    },
+    {
+      label: "Planned Entries",
+      value: plannedEntries,
+      detail: "Entry target or staged qty",
+      preview: "Opportunity tracking",
+    },
+    {
+      label: "Notes",
+      value: notesCount,
+      detail: "Linked decision notes",
+      preview: notesCount ? "Context attached" : "Needs plan",
+    },
+  ];
 }
 
 function renderRadarItems() {

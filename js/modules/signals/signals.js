@@ -46,9 +46,7 @@ function renderSignalsView() {
         <p>What needs attention today across Radar and Positions.</p>
       </div>
 
-      <div class="signal-bucket-grid">
-        ${SIGNAL_BUCKETS.map(bucket => renderSignalBucketCard(bucket, rows)).join("")}
-      </div>
+      ${renderModuleContextBand(getSignalContextCards(rows), { label: "Signals context" })}
 
       <div class="signal-table-header">
         <h4>${escapeHtml(getSignalTableTitle())}</h4>
@@ -63,30 +61,33 @@ function renderSignalsView() {
   renderSignalsTable();
 }
 
+function getSignalContextCards(rows) {
+  return SIGNAL_BUCKETS.map(bucket => renderSignalBucketCard(bucket, rows));
+}
+
 function renderSignalBucketCard(bucket, rows) {
   const bucketRows = getRowsForSignalBucket(rows, bucket.id);
   const first = bucketRows[0];
-  const active = activeSignalBucket === bucket.id ? " active" : "";
   const preview = first
     ? `${first.name} - ${first.status}`
     : "No cards";
 
-  return `
-    <button type="button" class="signal-bucket-card${active}" data-signal-bucket="${bucket.id}">
-      <span>${escapeHtml(bucket.label)}</span>
-      <strong>${bucketRows.length}</strong>
-      <small>${escapeHtml(bucket.detail)}</small>
-      <em>${escapeHtml(preview)}</em>
-    </button>
-  `;
+  return {
+    label: bucket.label,
+    value: bucketRows.length,
+    detail: bucket.detail,
+    preview,
+    action: bucket.id,
+    active: activeSignalBucket === bucket.id,
+  };
 }
 
 function initSignalBucketCards() {
-  document.querySelectorAll("[data-signal-bucket]").forEach(button => {
+  document.querySelectorAll("[data-context-action]").forEach(button => {
     button.addEventListener("click", () => {
-      activeSignalBucket = activeSignalBucket === button.dataset.signalBucket
+      activeSignalBucket = activeSignalBucket === button.dataset.contextAction
         ? ""
-        : button.dataset.signalBucket;
+        : button.dataset.contextAction;
       renderSignalsView();
     });
   });

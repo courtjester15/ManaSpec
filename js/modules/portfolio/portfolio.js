@@ -26,6 +26,8 @@ function renderPortfolioView(options = {}) {
         <p>Owned positions only. Radar is for watch ideas before buying.</p>
       </div>
 
+      ${renderModuleContextBand(getPortfolioContextCards(), { label: "Positions context" })}
+
       ${renderCardFilterControls("portfolio", "Filter Positions", { metaId: "portfolioCount" })}
 
       <div id="portfolioTable" class="ms-table ms-table--positions"></div>
@@ -37,6 +39,40 @@ function renderPortfolioView(options = {}) {
     setExactCardFilter("portfolio", options.filterToId, options.filterLabel || "");
   }
   refreshPortfolioTable();
+}
+
+function getPortfolioContextCards() {
+  const positions = specs.filter(spec => Number(spec.qty || 0) > 0);
+  const portfolioValue = positions.reduce((total, spec) => total + getPositionValue(spec), 0);
+  const capitalDeployed = positions.reduce((total, spec) => total + (Number(spec.buyPrice || 0) * Number(spec.qty || 0)), 0);
+  const notesCount = positions.reduce((total, spec) => total + getTrackedNoteCount(spec), 0);
+
+  return [
+    {
+      label: "Portfolio Value",
+      value: money(portfolioValue),
+      detail: "Current marked value",
+      preview: `${positions.length} owned rows`,
+    },
+    {
+      label: "Capital Deployed",
+      value: money(capitalDeployed),
+      detail: "Open position cost basis",
+      preview: "Owned portfolio state",
+    },
+    {
+      label: "Open Positions",
+      value: positions.length,
+      detail: "Cards currently owned",
+      preview: positions[0]?.name || "No open positions",
+    },
+    {
+      label: "Notes",
+      value: notesCount,
+      detail: "Linked decision notes",
+      preview: notesCount ? "Context attached" : "No notes yet",
+    },
+  ];
 }
 
 function refreshPortfolioTable() {

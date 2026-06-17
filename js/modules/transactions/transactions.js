@@ -21,6 +21,8 @@ function renderTransactionsView() {
         <p>Compact ledger for buys, sells, backfills, corrections, and fees.</p>
       </div>
 
+      ${renderModuleContextBand(getTransactionContextCards(), { label: "Transactions context" })}
+
       <section class="card-filter-panel transaction-filter-panel">
         <div class="panel-heading compact-heading">
           <h4>Filter Transactions</h4>
@@ -51,6 +53,45 @@ function renderTransactionsView() {
 
   initTransactionFilters();
   renderTransactionsList();
+}
+
+function getTransactionContextCards() {
+  const buys = transactions.filter(tx => tx.type === "BUY");
+  const sells = transactions.filter(tx => tx.type === "SELL");
+  const buyTotal = buys.reduce((total, tx) => total + getTransactionTotal(tx), 0);
+  const sellTotal = sells.reduce((total, tx) => total + getTransactionTotal(tx), 0);
+  const latest = transactions[0];
+
+  return [
+    {
+      label: "Buys",
+      value: buys.length,
+      detail: `${money(buyTotal)} deployed`,
+      preview: "Acquisition events",
+    },
+    {
+      label: "Sells",
+      value: sells.length,
+      detail: `${money(sellTotal)} returned`,
+      preview: "Exit events",
+    },
+    {
+      label: "Net Cash Flow",
+      value: money(sellTotal - buyTotal),
+      detail: "Sells minus buys",
+      preview: "Ledger movement",
+    },
+    {
+      label: "Recent Activity",
+      value: latest ? formatTransactionDate(latest.date) : "-",
+      detail: latest ? latest.type : "No transactions",
+      preview: latest?.name || "No ledger rows yet",
+    },
+  ];
+}
+
+function getTransactionTotal(tx) {
+  return Number(tx.quantity || 0) * Number(tx.price || 0);
 }
 
 function renderTransactionsList() {
@@ -202,7 +243,7 @@ function getTransactionSortValue(tx, field) {
 }
 
 function formatTransactionSignedTotal(tx) {
-  const total = Number(tx.quantity || 0) * Number(tx.price || 0);
+  const total = getTransactionTotal(tx);
   return tx.type === "SELL" ? `+${money(total)}` : `-${money(total)}`;
 }
 
