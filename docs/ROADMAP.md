@@ -302,6 +302,41 @@ Goal: let users add older owned specs without turning ManaSpec into a collection
 - Support non-buy acquisition methods over time, including `OPENED`, `TRADE_IN`, `PRIZE`, `PROMO`, `GIFT`, `STORE_CREDIT`, and `CORRECTION`.
 - Keep the workflow scoped to cards with a speculation thesis, exit interest, or finance relevance.
 
+## Future Admin: Lightweight Module Exports
+
+Goal: provide small, focused exports for reporting, sharing, spreadsheet analysis, or personal record keeping.
+
+This is separate from Full Backup. Full Backup is for safety and recovery; module exports are for reporting and portability.
+
+Potential exports:
+
+- Export Positions Snapshot.
+- Export Radar Watchlist.
+
+Possible future formats:
+
+- JSON first.
+- CSV later if useful.
+
+Use cases:
+
+- Review active positions outside ManaSpec.
+- Share a watchlist.
+- Analyze positions in Excel.
+- Create a point-in-time archive of holdings.
+- Compare watchlists over time.
+
+Non-goals:
+
+- No partial restore.
+- No partial import.
+- No merge logic.
+- No synchronization.
+- No cloud functionality.
+- No replacement for Full Backup.
+
+Priority: low. Do not work on this before beta workflow, Signals, Dashboard, Card Detail, or other higher-priority usability improvements.
+
 ## Deferred
 
 - Sealed product tracking. Likely source: MTGJSON sealed product data for product identity and TCGplayer links, paired with manual/paste market observations. Keep this behind singles work until the core singles workflow is stable.

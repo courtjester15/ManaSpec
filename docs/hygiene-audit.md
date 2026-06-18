@@ -52,6 +52,15 @@ Priority lens: Search -> Radar -> Thesis -> Buy -> Positions -> Signals -> Dashb
 - No package-managed lint/test script exists because the project has no `package.json`.
 - No behavior-changing cleanup was applied during this audit.
 
+## Resolved Since Audit
+
+- 2026-06-12, `551600c`: added safe JSON loading paths for localStorage-backed data, including `priceSnapshots`; added numeric guards across summary, dashboard, trading, and money formatting.
+- 2026-06-12, `551600c`: added price refresh freshness gating and in-flight refresh protection.
+- 2026-06-12, `551600c`: escaped user-authored and stored text in Dashboard, Thesis, Card Detail, and related detail displays.
+- 2026-06-12, `7154e68`: refreshed active docs to remove stale Tabulator, Watchlists-as-current, legacy CSS, placeholder module, and `qty = 0` watch behavior references.
+- 2026-06-12, `7154e68`: changed History so filtering/sorting happen before applying the display cap.
+- 2026-06-15, `3c5403b`: refined History empty-state and filtered count behavior after the display-cap change.
+
 ## Fix Now
 
 ### Unprotected localStorage parsing can prevent app boot
@@ -60,6 +69,7 @@ Priority lens: Search -> Radar -> Thesis -> Buy -> Positions -> Signals -> Dashb
 - Issue: `loadSpecs`, `loadRadar`, `loadSignals`, `loadThesisNotes`, `loadTransactions`, `loadPriceRefreshStatus`, `loadMarketObservations`, and `loadPriceSnapshots` parse localStorage JSON without a recovery path.
 - Why it matters: one malformed stored value can break app startup or a core view, which is high trust damage for a local-first beta.
 - Suggested action: add small safe JSON loaders with fallback values, console warnings, and optional Admin repair/export guidance.
+- Status: Fixed 2026-06-12 in `551600c`. Active loaders now use safe JSON helpers/fallbacks, and `priceSnapshots` is protected through `loadJsonArray()` with a local fallback.
 
 ### Price refresh runs automatically from multiple navigation paths
 
@@ -67,6 +77,7 @@ Priority lens: Search -> Radar -> Thesis -> Buy -> Positions -> Signals -> Dashb
 - Issue: `refreshPrices()` runs on app boot and again when entering Radar or Positions.
 - Why it matters: repeated Scryfall calls can make navigation feel slow, create noisy failure states, and refresh more often than the user expects.
 - Suggested action: gate refreshes by last checked timestamp, add a manual refresh path, or skip automatic view refresh when prices were checked recently.
+- Status: Fixed 2026-06-12 in `551600c`. Refresh now has a freshness gate and in-flight protection. A manual refresh path can still be considered later as UX polish.
 
 ### Search code references inactive price filter controls
 
@@ -88,6 +99,7 @@ Priority lens: Search -> Radar -> Thesis -> Buy -> Positions -> Signals -> Dashb
 - Issue: docs still mention Tabulator, Watchlists, placeholder Dashboard/Signals/Thesis/History, active `legacy.css`/`modules.css`, and `qty = 0` watch behavior as current.
 - Why it matters: stale docs can steer future work toward old architecture and terminology.
 - Suggested action: run a focused docs refresh after beta smoke testing; do not mix it into feature work.
+- Status: Fixed 2026-06-12 in `7154e68`. Active docs now describe native tables, Radar/Positions ownership, Transactions/Admin navigation, current CSS files, and explicit Radar storage.
 
 ## Clean Soon
 
@@ -174,6 +186,7 @@ Priority lens: Search -> Radar -> Thesis -> Buy -> Positions -> Signals -> Dashb
 - Issue: `buildHistoryEvents()` sorts all events and slices to 50 before filters and table page size are applied.
 - Why it matters: older matching history can disappear even when filtered.
 - Suggested action: filter first or raise/remove the cap once data volume requires it.
+- Status: Fixed 2026-06-12 in `7154e68`, refined 2026-06-15 in `3c5403b`. History now filters/sorts before capping and reports capped/matching counts more clearly.
 
 ### Dashboard renders raw thesis text and signal fields directly
 
@@ -181,6 +194,7 @@ Priority lens: Search -> Radar -> Thesis -> Buy -> Positions -> Signals -> Dashb
 - Issue: Dashboard scan rows interpolate stored strings without the shared table escaping path.
 - Why it matters: local user-authored thesis text can break markup if it contains HTML-like characters.
 - Suggested action: escape scan row content or render with DOM nodes.
+- Status: Fixed 2026-06-12 in `551600c`. Dashboard scan rows and metric labels/values now escape rendered strings.
 
 ### Card Detail and Thesis render user-authored text directly
 
@@ -188,6 +202,7 @@ Priority lens: Search -> Radar -> Thesis -> Buy -> Positions -> Signals -> Dashb
 - Issue: thesis notes and Oracle/detail content are interpolated into `innerHTML`.
 - Why it matters: localStorage is local, but user-authored text should still not be able to damage the DOM.
 - Suggested action: escape user-authored strings or use `textContent` when rendering note bodies.
+- Status: Fixed 2026-06-12 in `551600c`. Card Detail and Thesis now escape note bodies, labels, links, Oracle/detail content, and related rendered values.
 
 ## Leave Alone For Now
 
@@ -224,18 +239,18 @@ Priority lens: Search -> Radar -> Thesis -> Buy -> Positions -> Signals -> Dashb
 ## Health Score
 
 - Structure: 7/10
-- Maintainability: 6/10
+- Maintainability: 7/10
 - UI Consistency: 7/10
 - Naming Consistency: 5/10
 - Technical Debt: 6/10
-- Beta Readiness: 7/10
+- Beta Readiness: 8/10
 
-Overall: stable enough for beta iteration, with the main risks concentrated in storage safety, stale docs, global-script coupling, and Card Detail complexity.
+Overall: stable enough for beta iteration. The main remaining risks are now data portability, global-script coupling, dormant search/import scaffolding, and Card Detail complexity.
 
 ## Top 5 Cleanup Tasks
 
-1. Add safe localStorage JSON parsing and recovery fallbacks.
-2. Refresh active docs to remove Tabulator, Watchlists-as-current, legacy CSS, placeholder-view, and `qty = 0` drift.
-3. Add a price refresh freshness gate so boot/navigation does not repeatedly call Scryfall.
-4. Remove or deliberately park unreachable bulk set lookup code and its CSS.
-5. Escape user-authored text in Dashboard, Thesis, and Card Detail rendering.
+1. Add Admin JSON export/import before deeper storage or ledger changes.
+2. Remove or deliberately park unreachable bulk set lookup code and its CSS.
+3. Decide whether dormant Radar search price-filter references should be restored or removed.
+4. Write the ledger migration plan before changing storage/business logic behavior.
+5. Tighten Card Detail as a command center before extracting helpers or expanding Signals.
