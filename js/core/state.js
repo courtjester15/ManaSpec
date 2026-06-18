@@ -19,6 +19,7 @@ let radar = loadRadar();
 // Early module state
 let signals = loadSignals();
 let thesisNotes = loadThesisNotes();
+let cardNotes = loadCardNotes();
 let transactions = loadTransactions();
 
 const migratedRadarItems = specs

@@ -22,6 +22,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   --col-qty: 38px;
   --col-date: 68px;
   --col-type: 58px;
+  --col-notes: 54px;
   --col-actions: 116px;
   --col-actions-wide: 124px;
   width: 100%;
@@ -399,11 +400,12 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     66px
     70px
     78px
+    var(--col-notes)
     var(--col-actions-wide);
 }
 
 .ms-table--radar {
-  --table-min-width: 1116px;
+  --table-min-width: 100%;
   --table-columns:
     var(--col-card)
     var(--col-set)
@@ -417,6 +419,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     56px
     56px
     var(--col-price)
+    var(--col-notes)
     120px;
 }
 
@@ -446,7 +449,8 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     var(--col-price)
     var(--col-date)
     var(--col-type)
-    minmax(280px, 2fr);
+    var(--col-notes)
+    minmax(220px, 2fr);
 }
 
 .ms-table--signals {

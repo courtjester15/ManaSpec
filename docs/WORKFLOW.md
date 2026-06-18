@@ -58,15 +58,21 @@ When performing UI QA, browser inspection, console debugging, or regression test
 
 - Use the Codex in-app Browser when available.
 - Test against a localhost URL rather than a file:// URL.
-- If browser automation is needed, start a temporary local HTTP server and test through localhost.
+- Start the checked-in Node static server from the project root:
 
-Example:
+```bash
+node static-server.mjs
+```
 
-http://localhost:8000/index.html
+Then open:
+
+```text
+http://127.0.0.1:8000/index.html
+```
 
 Notes:
 - Browser automation may fail against file:// URLs even when the app works normally.
-- Temporary localhost server scripts are development helpers and should not be committed unless intentionally added to the project.
+- Do not use Python servers, inline `node -e` scripts, `file://`, or hidden `Start-Process` server launches for the standard browser QA path.
 - Prefer browser inspection and console validation over screenshot-only debugging when available.
 
 ## Change Size

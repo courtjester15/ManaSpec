@@ -30,6 +30,20 @@ function buildTrackedCard(card, overrides = {}) {
   };
 }
 
+function getTrackedPrintingKey(item) {
+  if (!item) return "";
+
+  const rawId = String(item.scryfall_id || item.id || "");
+  const baseId = rawId.replace(/\|(foil|nonfoil)$/i, "");
+  if (!baseId) return "";
+
+  const finish = item.foil || /\|foil$/i.test(String(item.id || ""))
+    ? "foil"
+    : "nonfoil";
+
+  return `${baseId}|${finish}`;
+}
+
 function syncCardMetadata(target, card) {
   Object.assign(target, extractCardMetadata(card));
 

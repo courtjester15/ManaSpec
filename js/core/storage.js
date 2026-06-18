@@ -47,6 +47,10 @@ function loadThesisNotes() {
   return loadJsonArray("thesisNotes");
 }
 
+function loadCardNotes() {
+  return loadJsonArray("cardNotes");
+}
+
 function loadTransactions() {
   return loadJsonArray("transactions");
 }
@@ -74,6 +78,7 @@ const MANASPEC_BACKUP_ARRAY_KEYS = [
   "specs",
   "radar",
   "transactions",
+  "cardNotes",
   "thesisNotes",
   "signals",
   "priceSnapshots",
@@ -100,6 +105,7 @@ function readManaSpecBackupData() {
     specs: loadSpecs(),
     radar: loadRadar(),
     transactions: loadTransactions(),
+    cardNotes: loadCardNotes(),
     thesisNotes: loadThesisNotes(),
     signals: loadSignals(),
     cash: loadCash(typeof startingCash !== "undefined" ? startingCash : 10000),
@@ -114,6 +120,7 @@ function buildManaSpecBackupCounts(data) {
     positions: data.specs.length,
     radar: data.radar.length,
     transactions: data.transactions.length,
+    cardNotes: data.cardNotes.length,
     thesisNotes: data.thesisNotes.length,
     signals: data.signals.length,
     priceSnapshots: data.priceSnapshots.length,
@@ -261,6 +268,10 @@ function saveSignalsState(signals) {
 
 function saveThesisState(thesisNotes) {
   localStorage.setItem("thesisNotes", JSON.stringify(thesisNotes));
+}
+
+function saveCardNotesState(cardNotes) {
+  localStorage.setItem("cardNotes", JSON.stringify(cardNotes));
 }
 
 function saveTransactionsState(transactions) {

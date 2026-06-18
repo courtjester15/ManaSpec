@@ -93,7 +93,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 .card-art-panel header,
 .detail-header,
 .note-card header,
-.linked-thesis-note header {
+.linked-thesis-note header,
+.linked-card-note header {
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -761,6 +762,20 @@ Panels, rows, lists, modals, metrics, and status elements.
   font-size: 11px;
 }
 
+.history-note-count,
+.history-note-empty {
+  display: inline-flex;
+  justify-content: center;
+  width: 100%;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.history-note-count {
+  color: var(--text-strong);
+}
+
 .tx-pill.sell {
   background: rgba(248, 113, 113, 0.14);
 }
@@ -884,7 +899,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 .signal-slot,
 .evaluation-item,
 .detail-copy,
-.linked-thesis-note {
+.linked-thesis-note,
+.linked-card-note {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--panel);
@@ -904,7 +920,9 @@ Panels, rows, lists, modals, metrics, and status elements.
 .detail-copy span,
 .detail-loading span,
 .linked-thesis-note header span,
-.linked-thesis-note p {
+.linked-thesis-note p,
+.linked-card-note header span,
+.linked-card-note p {
   display: block;
   color: var(--muted);
   font-size: 10px;
@@ -1035,7 +1053,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 .detail-loading,
 .bulk-set-panel,
 .bulk-set-results,
-.card-thesis-list {
+.card-thesis-list,
+.card-note-list {
   display: grid;
   gap: 5px;
 }
@@ -1075,12 +1094,14 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .detail-copy,
-.linked-thesis-note {
+.linked-thesis-note,
+.linked-card-note {
   padding: 2px 4px;
 }
 
 .detail-copy p,
 .linked-thesis-note p,
+.linked-card-note p,
 .note-card p {
   margin: 0;
   color: var(--text);
@@ -1207,7 +1228,8 @@ Panels, rows, lists, modals, metrics, and status elements.
   font-weight: 500;
 }
 
-.linked-thesis-note {
+.linked-thesis-note,
+.linked-card-note {
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr);
   gap: 4px;
@@ -1216,22 +1238,44 @@ Panels, rows, lists, modals, metrics, and status elements.
   overflow: hidden;
 }
 
-.linked-thesis-note header {
+.linked-thesis-note header,
+.linked-card-note header {
   display: flex;
   gap: 3px;
   align-items: baseline;
   margin: 0;
 }
 
-.linked-thesis-note p {
+.linked-thesis-note p,
+.linked-card-note p,
+.card-note-preview {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .note-card header,
-.linked-thesis-note header {
+.linked-thesis-note header,
+.linked-card-note header {
   margin-bottom: 0;
+}
+
+.card-note-preview {
+  margin: 0 0 5px;
+  color: var(--text);
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+.card-note-preview.muted {
+  color: var(--muted);
+}
+
+.card-note-history summary {
+  width: fit-content;
+  color: var(--muted);
+  font-size: 10px;
+  cursor: pointer;
 }
 
 .add-card-panel,

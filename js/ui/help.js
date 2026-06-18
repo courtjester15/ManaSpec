@@ -56,7 +56,7 @@ const helpTopics = {
     intro: "Use the card detail Market Check area to save visible TCGplayer price-point text and power market evaluation.",
     steps: [
       "Open card detail from Radar, Positions, or Signals.",
-      "Use the detail sections in order: Overview, Plan, Thesis, Actions, Market Evaluation, Market Check, Card Data.",
+      "Use the detail sections in order: Overview, Plan, Notes, Market Evaluation, Market Check, Oracle, and Card Data.",
       "Open the TCGplayer link and find the Price Points block.",
       "Copy the visible text that includes Market Price, Recent Sale, Listed Median, Quantity, and Sellers.",
       "Screenshot guidance is deferred until the Market Check surface stabilizes.",
@@ -78,19 +78,9 @@ const helpTopics = {
     title: "History",
     intro: "History is the wider activity feed across the app.",
     steps: [
-      "Review buys, sells, Radar additions, and thesis notes.",
-      "Filter by event type when you only want transactions, Radar, or Thesis.",
+      "Review buys, sells, Radar additions, and notes.",
+      "Filter by event type when you only want transactions, Radar, or Notes.",
       "History keeps context even after a position closes.",
-    ],
-  },
-  thesis: {
-    title: "Thesis",
-    intro: "Thesis is decision memory: why the card matters and what would change your mind.",
-    steps: [
-      "Add linked thesis notes from card detail when the reasoning belongs to one printing.",
-      "Use the Thesis view to review linked and general notes together.",
-      "Write the catalyst, risk, conviction, and exit logic in plain language.",
-      "Keep notes user-authored. ManaSpec should not invent conviction for you.",
     ],
   },
   admin: {

@@ -137,6 +137,7 @@ function renderRadarItems() {
     onRowClick: item => openCardDetail(item.id, "radar"),
     onAction: (action, item) => {
       if (action === "art") openRadarArtPreview(item);
+      if (action === "notes") openCardDetail(item.id, "radar", { focusNotes: true });
       if (action === "buy") buyRadarItem(item.id);
       if (action === "remove") removeRadarItem(item.id);
     },
@@ -164,6 +165,7 @@ function getRadarTableColumns() {
       const marketPrice = getRadarMarketValue(item, "marketPrice");
       return marketPrice === "-" ? "-" : formatOptionalMoney(marketPrice);
     } },
+    { label: "Notes", align: "center", html: renderNotesTableControl },
     {
       label: "Actions",
       align: "actions",
@@ -243,13 +245,21 @@ function updateRadarCount(shownCount = 0, filteredCount = shownCount) {
     : `${shownText}${filteredCount} of ${radar.length} total`;
 }
 
-function addRadarItem(card) {
+function addRadarItem(card, options = {}) {
   const existing = radar.find(item => item.id === card.id);
   if (existing) return false;
 
-  radar.push(buildTrackedCard(card, {
+  const item = buildTrackedCard(card, {
     addedDate: new Date().toISOString(),
-  }));
+    plannedQty: options.plannedQty,
+    entryTarget: options.entryTarget,
+    holdTime: options.holdTime,
+  });
+
+  radar.push(item);
+  if (options.initialNote) {
+    addCardNote(item, options.initialNote);
+  }
 
   saveRadarState(radar);
   return true;

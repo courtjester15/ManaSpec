@@ -12,7 +12,7 @@ ManaSpec is focused on MTG speculation workflow, not collection management.
 
 This keeps the app optimized for decisions, positions, targets, and outcomes instead of inventory completeness.
 
-### User owns the thesis
+### User owns the notes
 
 ManaSpec should not present trade recommendations as truth.
 
@@ -22,7 +22,7 @@ The system can surface prices, targets, and signals, but the user decides strate
 
 Scryfall provides card identity, printings, and pricing snapshots.
 
-ManaSpec owns user state: watched cards, positions, future transactions, targets, thesis, and history.
+ManaSpec owns user state: watched cards, positions, future transactions, targets, notes, archived thesis data, and history.
 
 ### EDH signal starts with Scryfall rank
 
@@ -50,13 +50,13 @@ This feature belongs in a future Admin/Data Safety phase after export/import and
 
 ManaSpec can explore a real database later, especially as a learning and durability project.
 
-For now, storage work should not lead the product direction. The current priority is making Radar, Positions, Signals, Transactions, History, and Thesis feel coherent enough that a future database has clear entities and workflows to support.
+For now, storage work should not lead the product direction. The current priority is making Radar, Positions, Signals, Transactions, History, and Notes feel coherent enough that a future database has clear entities and workflows to support.
 
 ### JSON backup schema v1 protects local user data
 
 Admin backup files use `manaspec-localstorage-backup` schema v1.
 
-The v1 backup covers local user-owned ManaSpec state in `specs`, `radar`, `transactions`, `thesisNotes`, `signals`, `cash`, `priceSnapshots`, `priceRefreshStatus`, and `marketObservations`.
+The v1 backup covers local user-owned ManaSpec state in `specs`, `radar`, `transactions`, `cardNotes`, archived `thesisNotes`, `signals`, `cash`, `priceSnapshots`, `priceRefreshStatus`, and `marketObservations`.
 
 Import is replace-only with preview and explicit confirmation. It does not merge data, rename storage keys, migrate the ledger model, or introduce cloud sync.
 
@@ -95,6 +95,18 @@ Watched ideas belong in `radar`, not as zero-quantity rows in Positions. Buying 
 The same card can behave differently across printings, sets, foil states, and collector numbers.
 
 Tracked entries should preserve printing identity.
+
+### Notes are keyed by exact tracked printing
+
+Radar and Positions currently store separate row objects. Because buying from Radar creates or updates a Position while leaving the Radar row watched, notes must not live only on either row.
+
+Card notes are stored in shared `cardNotes` state keyed by stable exact printing identity, currently Scryfall card id plus finish. Radar, Positions, Card Detail, Signals, Transactions, and History should read/write notes through helpers that use that key.
+
+Selling all copies should not delete notes. Re-buying the same exact printing should reconnect to prior notes.
+
+### Thesis is retired, not deleted
+
+Thesis is no longer an active navigation module. Existing Thesis code and `thesisNotes` data are preserved for now so the idea can be restored or migrated deliberately later.
 
 ## Search
 

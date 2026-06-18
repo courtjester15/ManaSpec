@@ -39,8 +39,3 @@ function renderModuleContextCard(card = {}) {
     </${tag}>
   `;
 }
-
-function getTrackedNoteCount(item) {
-  if (!item || typeof getThesisNotesForCard !== "function") return 0;
-  return getThesisNotesForCard(item.id).length;
-}

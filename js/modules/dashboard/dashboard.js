@@ -3,7 +3,7 @@
 DASHBOARD MODULE
 ====================================
 
-Fast scan view for portfolio, radar, signals, and thesis state.
+Fast scan view for portfolio, radar, signals, and notes state.
 ====================================
 */
 
@@ -27,7 +27,7 @@ function renderDashboardView() {
         ${renderMetricCard("Radar", `${radar.length} ideas`)}
         ${renderMetricCard("Positions", `${owned.length} owned`)}
         ${renderMetricCard("Signals", `${signals.length} active`)}
-        ${renderMetricCard("Thesis", `${thesisNotes.length} notes`)}
+        ${renderMetricCard("Notes", `${cardNotes.length} notes`)}
         ${renderMetricCard("Transactions", `${transactions.length} logged`)}
       </div>
 
@@ -45,9 +45,9 @@ function renderDashboardView() {
         ${renderScanPanel("Targets Hit", getTargetRows("hit"))}
         ${renderScanPanel("Stops / Downside", getTargetRows("entry"))}
         ${renderScanPanel("Targets Approaching", getTargetRows("near"))}
-        ${renderScanPanel("Recent Thesis", thesisNotes.slice(0, 6).map(note => ({
+        ${renderScanPanel("Recent Notes", cardNotes.slice(0, 6).map(note => ({
           title: note.cardName || "General note",
-          detail: note.thesis
+          detail: note.text
         })))}
       </div>
     </section>

@@ -98,6 +98,7 @@ function renderPortfolioRows() {
     onRowClick: item => openCardDetail(item.id, "portfolio"),
     onAction: (action, item) => {
       if (action === "art") openPositionArtPreview(item);
+      if (action === "notes") openCardDetail(item.id, "portfolio", { focusNotes: true });
       if (action === "buy") buySpec(item);
       if (action === "sell") sellSpec(item);
       if (action === "delete") deleteSpec(item);
@@ -124,6 +125,7 @@ function getPortfolioTableColumns() {
     { label: "P/L %", sortKey: "plPct", align: "money", className: item => getGainLossClass(getPositionPlPct(item)), value: item => formatPercent(getPositionPlPct(item)) },
     { label: "Target", sortKey: "exitTarget", align: "money", type: "input", name: "exitTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*"', value: item => formatPlanInputValue(item.exitTarget) },
     { label: "Hold", sortKey: "holdTime", align: "center", type: "inputWithSuffix", name: "holdTime", inputAttrs: 'inputmode="numeric" pattern="[0-9]*"', suffix: "mo", value: item => getHoldMonthsInputValue(item.holdTime) },
+    { label: "Notes", align: "center", html: renderNotesTableControl },
     {
       label: "Actions",
       align: "actions",

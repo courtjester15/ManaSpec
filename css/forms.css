@@ -117,6 +117,7 @@ button[disabled] {
 #saveTcgObservation,
 .target-plan-form button,
 .card-thesis-form button,
+.card-notes-form button,
 .help-topic-list button,
 .signal-actions button {
   height: var(--control-h-sm);
@@ -549,16 +550,19 @@ input[type="number"]:focus {
   color: var(--text-strong);
 }
 
-.card-thesis-form {
+.card-thesis-form,
+.card-notes-form {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 3px;
   align-items: start;
 }
 
 .card-thesis-form select,
 .card-thesis-form input,
-.card-thesis-form button {
+.card-thesis-form button,
+.card-notes-form input,
+.card-notes-form button {
   height: 22px;
   min-height: 22px;
   margin: 0;
@@ -576,6 +580,56 @@ input[type="number"]:focus {
   color: var(--text-strong);
 }
 
+.note-control {
+  width: 100%;
+  height: var(--table-control-h, 20px);
+  min-height: var(--table-control-h, 20px);
+  padding: 0 3px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--text);
+  font-size: 10px;
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+.note-control--empty {
+  color: var(--muted-2);
+  opacity: 0.7;
+}
+
+.note-control--has-notes {
+  color: var(--text-strong);
+}
+
+.add-printing-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.add-printing-plan-grid label {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.add-printing-plan-grid span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.add-printing-plan-note {
+  grid-column: 1 / -1;
+}
+
+.add-printing-plan-note textarea {
+  min-height: 64px;
+  margin: 0;
+  resize: vertical;
+  font-size: 12px;
+}
+
 #saveTcgObservation {
   height: 22px;
   min-height: 22px;
@@ -591,7 +645,9 @@ input[type="number"]:focus {
   .thesis-form,
   .ledger-filter-bar,
   .target-plan-form,
-  .card-thesis-form {
+  .card-thesis-form,
+  .card-notes-form,
+  .add-printing-plan-grid {
     grid-template-columns: 1fr;
   }
 

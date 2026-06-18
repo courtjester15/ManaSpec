@@ -41,7 +41,7 @@ function renderHistoryView() {
               <option value="">All events</option>
               <option value="transaction">Transactions</option>
               <option value="radar">Radar</option>
-              <option value="thesis">Thesis</option>
+              <option value="note">Notes</option>
             </select>
           </label>
           ${renderTablePageSizeControl("history")}
@@ -60,7 +60,7 @@ function renderHistoryView() {
 function getHistoryContextCards() {
   const events = buildHistoryEvents();
   const tradeCount = events.filter(event => event.kind === "transaction").length;
-  const noteCount = events.filter(event => event.kind === "thesis").length;
+  const noteCount = events.filter(event => event.kind === "note" || event.kind === "thesis").length;
   const latest = events[0];
 
   return [
@@ -84,9 +84,9 @@ function getHistoryContextCards() {
     },
     {
       label: "Notes",
-      value: thesisNotes.length,
-      detail: "Long-form thinking",
-      preview: thesisNotes[0]?.cardName || "General context",
+      value: cardNotes.length,
+      detail: "Card memory",
+      preview: cardNotes[0]?.cardName || "No card notes",
     },
   ];
 }
@@ -122,6 +122,22 @@ function buildHistoryEvents() {
     badge: "RADAR",
   }));
 
+  const noteEvents = cardNotes.map(note => ({
+    kind: "note",
+    date: note.createdAt,
+    cardId: note.cardId || "",
+    cardKey: note.cardKey || "",
+    card: note.cardName || "Card note",
+    set: note.set_code || "",
+    number: note.collector_number || "",
+    rarity: "",
+    color: "",
+    price: "",
+    title: `Note: ${note.cardName || "Card note"}`,
+    detail: getCardNotePreview(note),
+    badge: "NOTE",
+  }));
+
   const thesisEvents = thesisNotes.map(note => ({
     kind: "thesis",
     date: note.createdAt,
@@ -137,7 +153,7 @@ function buildHistoryEvents() {
     badge: "THESIS",
   }));
 
-  return [...txEvents, ...radarEvents, ...thesisEvents]
+  return [...txEvents, ...radarEvents, ...noteEvents, ...thesisEvents]
     .filter(event => event.date)
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 }
@@ -257,8 +273,27 @@ function getHistoryTableColumns() {
     { label: "Price", sortKey: "price", align: "money", value: event => event.price ? money(event.price) : "-" },
     { label: "Date", sortKey: "date", align: "center", value: event => new Date(event.date).toLocaleDateString() },
     { label: "Type", sortKey: "badge", align: "center", type: "badge", value: event => event.badge },
+    { label: "Notes", align: "center", html: renderHistoryNotesIndicator },
     { label: "Detail", sortKey: "detail", value: event => event.detail || "-", title: event => event.detail || "" },
   ];
+}
+
+function renderHistoryNotesIndicator(event) {
+  const notes = getHistoryEventNotes(event);
+  if (!notes.length) return `<span class="history-note-empty">-</span>`;
+  return `<span class="history-note-count">${notes.length}n</span>`;
+}
+
+function getHistoryEventNotes(event) {
+  if (!event) return [];
+  if (event.cardKey && typeof getCardNotesForKey === "function") {
+    return getCardNotesForKey(event.cardKey);
+  }
+
+  const source = getHistoryCardSource(event);
+  return source && typeof getCardNotesForItem === "function"
+    ? getCardNotesForItem(source)
+    : [];
 }
 
 function setHistorySort(field) {
@@ -281,5 +316,6 @@ function getHistoryCardSource(event) {
   if (!event?.cardId) return null;
   return specs.find(item => item.id === event.cardId)
     || radar.find(item => item.id === event.cardId)
+    || (event.kind === "note" && typeof findTrackedCardByNote === "function" ? findTrackedCardByNote(event) : null)
     || null;
 }

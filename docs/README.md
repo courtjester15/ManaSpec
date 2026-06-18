@@ -24,7 +24,7 @@ It replaces scattered spreadsheets with a structured workflow for:
 - Recording buys and sells.
 - Tracking printing-level positions.
 - Monitoring price movement and target states.
-- Reviewing outcomes against the original thesis.
+- Reviewing outcomes against the user's saved notes and plan.
 
 ManaSpec does not make trading decisions. It provides visibility, structure, and discipline around user-driven speculation.
 
@@ -68,7 +68,7 @@ Primary zones:
 - Positions: owned holdings only. Radar handles card discovery and watch ideas before purchase.
 - Radar: ideas without ownership, exact printing discovery, entry planning, and planned buy quantity.
 - Signals: targets, price movement, and action triggers.
-- Thesis: reasoning, catalysts, conviction, and exit logic.
+- Notes: user-authored card memory attached to exact tracked printings.
 - Transactions: buy/sell ledger events and audit data.
 - History: buys, sells, outcomes, and learning.
 
@@ -79,7 +79,7 @@ Current workflow direction:
 - Signals is a read-only attention layer for alerts, reminders, and deep-links back to Radar or Positions.
 - Card Detail is the unified editor for a specific printing and edits canonical plan data.
 - Transactions and History are for what happened and what can be audited later.
-- Thesis is for why the user cared and what would change the plan.
+- Notes are for why the user cared and what changed over time.
 - Admin includes Data Safety controls for JSON backup export/import of local user data.
 - Radar, Positions, Signals, Transactions, and History use a shared module context band above filters and tables so workflow tables keep a consistent visual rhythm. Dashboard remains the broader overview surface.
 
@@ -103,7 +103,7 @@ Current implementation:
 - `#summaryBar` is a compact global account widget in the app header.
 - `#viewContainer` receives the active workflow view.
 - `js/ui/help.js` provides a contextual help drawer.
-- Dashboard, Radar, Positions, Signals, Thesis, Transactions, History, and Admin have active navigation entries.
+- Dashboard, Radar, Positions, Signals, Transactions, History, and Admin have active navigation entries.
 - Radar and Positions are the primary singles workflows.
 
 Rules:
@@ -132,8 +132,8 @@ Current order:
 
 1. `js/core/storage.js`: localStorage load/save helpers.
 2. `js/core/state.js`: global arrays, cash state, and startup migrations/backfills.
-3. Metadata, filters, table, and Dashboard helpers.
-4. Positions/Radar modules: trading, table rendering, printing search, Radar, Transactions, Signals, Thesis, History, Admin, and Card Detail.
+3. Metadata, Notes, filters, table, and Dashboard helpers.
+4. Positions/Radar modules: trading, table rendering, printing search, Radar, Transactions, Signals, archived Thesis code, History, Admin, and Card Detail.
 5. Global UI/status helpers: summary and help.
 6. Price snapshots and pricing refresh.
 7. `js/core/app.js`: navigation, universal search, boot, and initial render.
@@ -141,9 +141,9 @@ Current order:
 Dependency rules:
 
 - `storage.js` must load before `state.js`.
-- `state.js` must load before modules that read `specs`, `radar`, `signals`, `thesisNotes`, `transactions`, or `cash`.
+- `state.js` must load before modules that read `specs`, `radar`, `signals`, `cardNotes`, `thesisNotes`, `transactions`, or `cash`.
 - `js/ui/table.js` must load before modules that call shared table render, sort, or pagination helpers.
-- Card Detail depends on tracked card state, thesis helpers, market observation storage, target helpers, and price snapshots when available.
+- Card Detail depends on tracked card state, shared notes helpers, market observation storage, target helpers, and price snapshots when available.
 - `app.js` stays last because it calls `initApp()` immediately.
 
 ### Help
@@ -155,7 +155,7 @@ Current behavior:
 - The app shell has a Help button that opens a right-side drawer.
 - Help defaults to the currently active workflow.
 - Users can switch between help topics inside the drawer.
-- Current topics cover Dashboard, Radar, Positions, Signals, TCG Price Points, Transactions, History, Thesis, and Admin.
+- Current topics cover Dashboard, Radar, Positions, Signals, TCG Price Points, Transactions, History, and Admin.
 
 Rules:
 
@@ -172,7 +172,7 @@ Current behavior:
 
 - Data Safety can export a timestamped JSON backup from browser localStorage.
 - Backup schema is `manaspec-localstorage-backup` v1.
-- Exports include `specs`, `radar`, `transactions`, `thesisNotes`, `signals`, `cash`, `priceSnapshots`, `priceRefreshStatus`, and `marketObservations`.
+- Exports include `specs`, `radar`, `transactions`, `cardNotes`, archived `thesisNotes`, `signals`, `cash`, `priceSnapshots`, `priceRefreshStatus`, and `marketObservations`.
 - Import uses a JSON file picker, validates the backup shape, and shows a preview before restore.
 - Selecting a file does not change data.
 - Restore requires explicit confirmation and replaces current local ManaSpec data in this browser.
@@ -202,10 +202,10 @@ Current behavior:
 
 - Card detail opens from Radar, Positions, and Signals.
 - Positions card names and Radar rows open card detail.
-- The panel is organized into Overview, Plan, Thesis, Actions, Market Evaluation, Market Check, and Card Data.
+- The panel is organized into Overview, Plan, Notes, Market Evaluation, Market Check, Oracle, and Card Data.
 - Overview shows current price, movement, ownership state, buy price, value, and P/L.
 - Plan edits entry target, exit target, and hold time.
-- Thesis adds and reviews notes linked to the current printing.
+- Notes adds and reviews append-first notes linked to the current exact printing key.
 - Actions opens exact market/reference pages.
 - Market Evaluation summarizes observable market mechanics from saved/local data: supply, velocity, price confidence, Scryfall EDH rank, target math, freshness, and data gaps.
 - Market Check saves pasted TCGplayer Price Points text as a local observation and includes a compact explanation of what to copy.
@@ -213,11 +213,11 @@ Current behavior:
 
 Market evaluation rules:
 
-- Use only observable market data, Scryfall metadata, local targets, local thesis presence, and saved timestamps.
+- Use only observable market data, Scryfall metadata, local targets, local notes presence, and saved timestamps.
 - Scryfall `edhrec_rank` can be shown as an EDH presence signal. It is a rank, not a raw EDHREC deck count.
 - Do not evaluate format demand, reprint risk, hype, or speculative catalysts.
 - Do not produce buy/sell recommendations.
-- Strategy and thesis stay user-authored.
+- Strategy and notes stay user-authored.
 
 ### Positions
 
@@ -372,7 +372,7 @@ Ownership model:
 
 - Signals is a read-only attention layer.
 - Signals owns alerts, reminders, target-state awareness, and navigation back to the source workflow.
-- Signals does not own entry, exit, hold, quantity, thesis, transaction, or position state.
+- Signals does not own entry, exit, hold, quantity, notes, transaction, or position state.
 - Signals should deep-link to the relevant Radar idea or Position whenever possible.
 - Any quick edit shown in Signals is a shortcut to canonical Radar or Positions plan data, not Signals-owned data.
 
@@ -396,21 +396,24 @@ Workflow rule:
 - Signals should answer: what needs attention, why, and where should the user go next?
 - Signals should not become a data-entry module except for narrow shortcuts that save back to the canonical source.
 
-### Thesis
+### Notes
 
-Thesis is user-authored decision memory.
+Notes are user-authored card memory.
 
 Current behavior:
 
-- Thesis notes can be general or linked to a specific tracked printing.
-- Card detail can add linked thesis notes and show recent linked notes.
-- The Thesis view shows linked and general notes together.
-- Linked thesis notes can reopen the tracked card detail when the card still exists in Radar or Positions.
+- Notes are stored in `cardNotes`, separate from both Radar rows and Position rows.
+- Notes are keyed by exact tracked printing identity, currently Scryfall card id plus finish.
+- Card Detail can add append-first notes and show newest-to-oldest note history.
+- Radar and Positions show a Notes column that opens Card Detail, expands/focuses Notes, and lets the user continue writing.
+- Buying from Radar, buying more, partial selling, selling all, and re-buying the same exact printing should not delete or duplicate note history.
 
 Rules:
 
-- Thesis remains user-authored; ManaSpec should not generate conviction.
-- Linked thesis notes should preserve card id, name, set code, set name, and collector number when available.
+- Notes belong to the tracked printing identity, not to Radar, Positions, Signals, Transactions, History, or Thesis.
+- Notes remain user-authored; ManaSpec should not generate them.
+- Do not attach new notes only to a module-specific Radar row or Position row.
+- Thesis code and `thesisNotes` are archived for now, not destructively deleted.
 
 ### Transactions
 
@@ -420,7 +423,7 @@ Ownership model:
 
 - Transactions own the durable record of buys, sells, openings, corrections, and future acquisition methods.
 - Transactions should become append-first and auditable.
-- Transactions do not own Radar intent or thesis.
+- Transactions do not own Radar intent or notes.
 - Positions should eventually be computed from transaction history rather than manually maintained as independent truth.
 - History presents transaction and activity records for review; it should not be the source of transaction truth.
 
@@ -463,7 +466,7 @@ History is an audit-oriented activity feed across local app events.
 
 Current behavior:
 
-- History includes transactions, Radar additions, and thesis notes.
+- History includes transactions, Radar additions, shared card notes, and archived thesis notes.
 - History shows local review context above filters for events, trades, lessons/review, and notes.
 - History can be filtered by text and event type.
 - Transaction history rows preserve buy/sell activity even when a current position reaches zero quantity.
@@ -508,6 +511,25 @@ Relevant fields:
 - `pl`
 
 Long-term model: positions should be computed from transaction history.
+
+### Card Note
+
+Append-first user note for an exact tracked printing.
+
+Current fields:
+
+- `id`
+- `cardKey`
+- `cardId`
+- `scryfall_id`
+- `finish`
+- `cardName`
+- `set_code`
+- `set_name`
+- `collector_number`
+- `text`
+- `createdAt`
+- `updatedAt`
 
 ### Transaction
 
@@ -596,7 +618,7 @@ Likely sealed approach:
 - User can record buys and sells cleanly.
 - User can see Positions P/L and total equity.
 - User can define and monitor entry/exit targets.
-- User can review past trades and thesis quality.
+- User can review past trades and saved card notes.
 
 ## When To Split Docs Again
 

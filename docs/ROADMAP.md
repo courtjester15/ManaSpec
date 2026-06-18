@@ -14,7 +14,7 @@ It is not a collection tracker, inventory nostalgia tool, or prediction engine.
 - Search: split by domain so card discovery, local Positions/Radar filtering, transaction filtering, and future global routing stay distinct.
 - Transactions: planned source of truth for buys and sells.
 - Signals: target and price movement awareness.
-- Thesis: user-authored reasoning, catalysts, conviction, and exit logic.
+- Notes: user-authored card memory attached to exact tracked printings.
 - History: transaction and outcome review.
 
 ## Current Phase: Alpha Stabilization
@@ -55,11 +55,11 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Radar set-number search for exact Scryfall printing lookup.
 - Admin JSON backup export/import for localStorage-backed user data.
 - Contextual right-side Help drawer with initial workflow topics.
-- Card-linked thesis notes from card detail.
-- Thesis view support for linked and general notes.
+- Shared card notes from Card Detail, keyed by exact printing identity.
+- Thesis retired from active navigation while preserving existing Thesis code and data.
 - Compact card-detail Market Evaluation from observable/local data only.
 - Scryfall EDHREC rank shown as a compact EDH presence signal in card detail.
-- Navigation zones wired for dashboard, radar, positions, signals, thesis, transactions, history, and admin.
+- Navigation zones wired for dashboard, radar, positions, signals, transactions, history, and admin.
 - Table layout restored after Radar Entry and Positions sell workflow changes.
 
 ### Now
@@ -78,8 +78,8 @@ Current discipline: do not expand sideways until the core singles workflow has b
    - Prefer highlight, temporary filter, or scroll-to-card over broad module navigation.
 
 2. Card Detail command center pass
-   - Re-test opening from Radar, Positions, Signals, Transactions, History, and Thesis.
-   - Tighten Plan, Thesis, Market Check, Market Evaluation, Card Data, and Actions without expanding scope.
+   - Re-test opening from Radar, Positions, Signals, Transactions, and History.
+   - Tighten Plan, Notes, Market Check, Market Evaluation, Card Data, and Actions without expanding scope.
    - Update Help in the same pass.
 
 3. Ledger migration plan
@@ -116,8 +116,8 @@ Goal: turn the current alpha into a usable product, not a wider prototype.
 
 3. Card Detail command center
    - [ ] Tighten card detail into a compact working panel.
-   - [ ] Keep Plan, Thesis, Market Check, Market Evaluation, Card Data, and Actions visible but not crowded.
-   - [ ] Confirm opening from Radar, Positions, Signals, Transactions, History, and Thesis.
+   - [ ] Keep Plan, Notes, Market Check, Market Evaluation, Card Data, and Actions visible but not crowded.
+   - [ ] Confirm opening from Radar, Positions, Signals, Transactions, and History.
    - [ ] Update help copy in the same pass.
 
 4. Data safety
@@ -127,7 +127,7 @@ Goal: turn the current alpha into a usable product, not a wider prototype.
 
 5. Ledger foundation
    - [ ] Write the migration plan before changing storage behavior.
-   - [ ] Preserve current `specs`, `radar`, `transactions`, `thesisNotes`, market observations, cash, and price snapshots.
+   - [ ] Preserve current `specs`, `radar`, `transactions`, `cardNotes`, archived `thesisNotes`, market observations, cash, and price snapshots.
    - [ ] Move toward transactions as the source of truth and Positions as a computed view.
    - [ ] Keep historical owned-spec backfill in view, but do not build it before export/import and transaction safety are clear.
 
@@ -158,7 +158,7 @@ Keep ManaSpec vanilla-first unless a library clearly removes repeated infrastruc
 - Data-grid library: possible future candidate if native table helpers stop being enough for Positions, Radar, Transactions, History, and Signals. Review only after beta needs prove it.
 - Dexie.js: likely candidate when moving from localStorage to IndexedDB. Use only after the ledger shape is clear.
 - Day.js: useful candidate for buy dates, added dates, hold windows, stale checks, sorting, and readable timestamps.
-- Fuse.js: possible candidate for local fuzzy search across Radar, Positions, Transactions, Thesis, and History.
+- Fuse.js: possible candidate for local fuzzy search across Radar, Positions, Transactions, Notes, and History.
 - Papa Parse: future candidate for CSV/spreadsheet import and owned-spec backfill, but keep import tooling deferred until core singles workflow and data safety are stable.
 - Chart.js: future candidate once transaction history and price snapshots have enough data to deserve charts.
 
@@ -170,7 +170,7 @@ Use this as the starting point for the next working session. This pass is for ca
 
 Capture notes in this format:
 
-- Area: Dashboard, Radar, Positions, Card Detail, Signals, Transactions, History, Thesis, Admin, Help, or Overall.
+- Area: Dashboard, Radar, Positions, Card Detail, Signals, Transactions, History, Admin, Help, or Overall.
 - Type: bug, confusing UX, missing beta feature, data concern, polish, or future idea.
 - Severity: blocker, beta-critical, useful, or defer.
 - Repro: what you did and what happened.
@@ -180,7 +180,7 @@ Capture notes in this format:
 1. Workflow smoke test
    - Search by name in Radar.
    - Search by set number, using examples like `FIN 123`, `FIN #123`, `FIN123`, and `MH3 123`.
-   - Add an idea to Radar.
+   - Add an idea to Radar with planned quantity, hold time, entry target, and optional initial note.
    - Set entry target in Radar.
    - Set planned quantity in Radar.
    - Buy from Radar into Positions and confirm it remains watched in Radar.
@@ -192,7 +192,7 @@ Capture notes in this format:
    - Edit `Target` and `Hold` inline in Positions.
    - Open card detail from Radar, Positions, Signals, Transactions, and History when possible.
    - Save a plan from card detail.
-   - Add a linked thesis note from card detail.
+   - Add a note from card detail.
    - Paste a TCGplayer Price Points block if you have one handy.
    - Confirm Signals reflects entry/exit/approaching/no-plan states.
    - Confirm Transactions and History show useful audit trails.
@@ -266,7 +266,7 @@ Goal: separate ideas from owned positions and add decision triggers.
 - Add optional entry targets.
 - Add optional exit targets.
 - Add target-zone states such as hit, near hit, and stop triggered.
-- Keep thesis notes user-authored.
+- Keep notes user-authored.
 
 ## Phase 4: Signals And Dashboard
 

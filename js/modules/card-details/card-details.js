@@ -9,12 +9,12 @@ Live item check panel for price, movement, and market signals.
 
 let activeCardDetail = null;
 
-async function openCardDetail(cardId, source = "portfolio") {
+async function openCardDetail(cardId, source = "portfolio", options = {}) {
   const tracked = findTrackedCardSource(cardId, source);
   const item = tracked?.item;
   if (!item) return;
 
-  activeCardDetail = { cardId, source: tracked.source };
+  activeCardDetail = { cardId, source: tracked.source, focusNotes: Boolean(options.focusNotes) };
   renderCardDetailShell(item);
 
   try {
@@ -28,7 +28,7 @@ async function openCardDetail(cardId, source = "portfolio") {
 
     syncCardMetadata(item, card);
     syncTrackedCardPrice(item, card);
-    renderCardDetail(item, card, tracked.source);
+    renderCardDetail(item, card, tracked.source, options);
   } catch (err) {
     console.error(err);
     renderCardDetailError(item, "Live check failed.");
@@ -74,7 +74,7 @@ function renderCardDetailError(item, message) {
   `;
 }
 
-function renderCardDetail(item, card, source) {
+function renderCardDetail(item, card, source, options = {}) {
   const movement = getCardMovement(item.id);
   const marketLinks = getMarketLinks(card, item);
   const owned = specs.find(spec => spec.id === item.id);
@@ -97,8 +97,8 @@ function renderCardDetail(item, card, source) {
         </div>
       </div>
       <div class="detail-main-grid detail-lower-grid">
+        ${renderNotesSection(item)}
         ${renderOracleSection(card)}
-        ${renderThesisSection(item)}
       </div>
     </div>
   `;
@@ -113,7 +113,15 @@ function renderCardDetail(item, card, source) {
     }
   });
   document.getElementById("targetPlanForm").onsubmit = event => saveTargetPlan(event, item, card, source);
-  document.getElementById("cardThesisForm").onsubmit = event => saveCardThesis(event, item, card, source);
+  document.getElementById("cardNotesForm").onsubmit = event => saveCardNoteFromDetail(event, item, card, source);
+  document.getElementById("showNoteHistory")?.addEventListener("toggle", event => {
+    localStorage.setItem("cardDetailNotesExpanded", event.target.open ? "1" : "0");
+  });
+
+  if (options.focusNotes || activeCardDetail?.focusNotes) {
+    focusCardDetailNotes();
+    activeCardDetail.focusNotes = false;
+  }
 
   if (source === "portfolio") {
     save();
@@ -179,39 +187,43 @@ function renderPlanSection(item, targetState) {
   `;
 }
 
-function renderThesisSection(item) {
-  const notes = typeof getThesisNotesForCard === "function"
-    ? getThesisNotesForCard(item.id)
+function renderNotesSection(item) {
+  const notes = typeof getCardNotesForItem === "function"
+    ? getCardNotesForItem(item)
     : [];
+  const latest = notes[0];
+  const expanded = localStorage.getItem("cardDetailNotesExpanded") === "1";
 
   return `
-    <section class="detail-command-section">
+    <section class="detail-command-section card-notes-section" id="cardNotesSection">
       <div class="detail-section-heading">
-        <h4>Thesis</h4>
-        <span>${notes.length ? `${notes.length} linked` : "-"}</span>
+        <h4>Notes</h4>
+        <span>${notes.length ? `${notes.length} saved` : "-"}</span>
       </div>
-      <form class="card-thesis-form" id="cardThesisForm">
-        <select id="cardThesisConviction" aria-label="Conviction">
-          <option value="Low">Low</option>
-          <option value="Medium" selected>Med</option>
-          <option value="High">High</option>
-        </select>
-        <input id="cardThesisText" placeholder="Why this spec matters">
-        <button type="submit">Add Thesis</button>
+      ${latest ? `<p class="card-note-preview">${escapeHtml(getCardNotePreview(latest))}</p>` : `<p class="card-note-preview muted">No notes yet.</p>`}
+      <form class="card-notes-form" id="cardNotesForm">
+        <input id="cardNoteText" placeholder="Add note">
+        <button type="submit">Add Note</button>
       </form>
-      ${notes.length ? `<div class="card-thesis-list">${renderLinkedThesisNote(notes[0])}</div>` : ""}
+      ${notes.length ? `
+        <details class="card-note-history" id="showNoteHistory" ${expanded ? "open" : ""}>
+          <summary>Show Note History</summary>
+          <div class="card-note-list">
+            ${notes.map(renderCardNoteEntry).join("")}
+          </div>
+        </details>
+      ` : ""}
     </section>
   `;
 }
 
-function renderLinkedThesisNote(note) {
+function renderCardNoteEntry(note) {
   return `
-    <article class="linked-thesis-note">
+    <article class="linked-card-note">
       <header>
-        <strong>${escapeHtml(note.conviction)}</strong>
         <span>${new Date(note.createdAt).toLocaleDateString()}</span>
       </header>
-      <p>${escapeHtml(note.thesis)}</p>
+      <p>${escapeHtml(note.text)}</p>
     </article>
   `;
 }
@@ -230,31 +242,28 @@ function renderActionsSection(marketLinks) {
   `;
 }
 
-function saveCardThesis(event, item, card, source) {
+function saveCardNoteFromDetail(event, item, card, source) {
   event.preventDefault();
 
-  const thesis = document.getElementById("cardThesisText").value.trim();
-  const conviction = document.getElementById("cardThesisConviction").value;
+  const text = document.getElementById("cardNoteText").value.trim();
+  if (!text) return;
 
-  if (!thesis) return;
-
-  if (typeof addThesisNote === "function") {
-    addThesisNote({
-      cardId: item.id,
-      cardName: item.name,
-      set_code: item.set_code,
-      set_name: item.set_name,
-      collector_number: item.collector_number,
-      conviction,
-      thesis,
-    });
-  }
+  addCardNote(item, text);
 
   if (typeof showAppNotice === "function") {
-    showAppNotice(`${item.name} thesis saved.`, "save");
+    showAppNotice(`${item.name} note saved.`, "save");
   }
 
-  renderCardDetail(item, card, source);
+  renderCardDetail(item, card, source, { focusNotes: true });
+}
+
+function focusCardDetailNotes() {
+  window.requestAnimationFrame(() => {
+    const section = document.getElementById("cardNotesSection");
+    const input = document.getElementById("cardNoteText");
+    section?.scrollIntoView({ behavior: "smooth", block: "center" });
+    input?.focus();
+  });
 }
 
 function renderMarketCheckSection(item, latestTcg, marketLinks = []) {

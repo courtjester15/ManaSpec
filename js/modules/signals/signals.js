@@ -173,13 +173,13 @@ function buildSignalAttentionRow(item) {
   const market = getSignalMarketState(item);
   const hasPlan = hasSignalPlan(item);
   const hasTarget = hasSignalTarget(item);
-  const hasThesis = typeof getThesisNotesForCard === "function"
-    ? getThesisNotesForCard(item.id).length > 0
+  const hasNotes = typeof getCardNotesForItem === "function"
+    ? getCardNotesForItem(item).length > 0
     : false;
   const buckets = getSignalBuckets(item, targetState.label, {
     hasPlan,
     hasTarget,
-    hasThesis,
+    hasNotes,
     market,
   });
 
@@ -214,7 +214,7 @@ function getSignalBuckets(item, status, state) {
     buckets.push("approaching");
   }
 
-  if (!state.hasPlan || !state.hasTarget || !state.hasThesis) {
+  if (!state.hasPlan || !state.hasTarget || !state.hasNotes) {
     buckets.push("needsReview");
   }
 
