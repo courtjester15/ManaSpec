@@ -27,15 +27,55 @@ function initSearch(options = {}) {
   searchBox.value = options.query || searchBox.value || "";
   searchBox.addEventListener("input", handleSearch);
   searchBox.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      dismissRadarSearchSurface();
+      return;
+    }
+
     if (event.key !== "Enter") return;
 
     event.preventDefault();
     openCurrentSearchCandidate(searchBox.value);
   });
+  installRadarSearchEscapeHandler();
 
   if (searchBox.value.trim()) {
     runSearch(searchBox, 0, options.limit || 8);
   }
+}
+
+function installRadarSearchEscapeHandler() {
+  if (window.radarSearchEscapeHandlerInstalled) return;
+  window.radarSearchEscapeHandlerInstalled = true;
+
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    if (!document.getElementById("searchBox")) return;
+    if (document.getElementById("appConfirmDialog")?.classList.contains("open")) return;
+
+    const hasSearchSurface = Boolean(
+      document.getElementById("searchResults")?.textContent.trim() ||
+      document.getElementById("printingsView")?.textContent.trim()
+    );
+    if (!hasSearchSurface) return;
+
+    dismissRadarSearchSurface();
+  });
+}
+
+function dismissRadarSearchSurface(options = {}) {
+  clearTimeout(debounce);
+  latestSearchCandidates = [];
+  if (typeof currentPrintings !== "undefined" && Array.isArray(currentPrintings)) currentPrintings = [];
+
+  const resultsBox = document.getElementById("searchResults");
+  const printBox = document.getElementById("printingsView");
+  const searchBox = document.getElementById("searchBox");
+
+  if (resultsBox) resultsBox.innerHTML = "";
+  if (printBox) printBox.innerHTML = "";
+  if (options.clearInput && searchBox) searchBox.value = "";
+  if (options.blurInput && searchBox) searchBox.blur();
 }
 
 async function handleSearch(e) {
@@ -362,9 +402,8 @@ function renderSetNumberResult(card, resultsBox) {
   `;
 
   div.querySelector('[data-action="preview"]').onclick = () => openCardArtPreview(card);
-  div.querySelector('[data-action="add"]').onclick = () => {
-    addSpec(card);
-    resultsBox.innerHTML = "";
+  div.querySelector('[data-action="add"]').onclick = async () => {
+    await addSpec(card);
   };
 
   resultsBox.innerHTML = "";

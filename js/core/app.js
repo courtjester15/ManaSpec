@@ -347,6 +347,12 @@ async function addSpec(card) {
   } else {
     showAppNotice(`${trackedCard.name} is already on Radar.`, "info");
   }
+
+  if (typeof dismissRadarSearchSurface === "function") {
+    dismissRadarSearchSurface({ clearInput: true, blurInput: true });
+  }
+
+  return { added, card: trackedCard };
 }
 
 initApp();
