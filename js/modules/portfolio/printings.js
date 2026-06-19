@@ -100,8 +100,7 @@ function renderPrintings() {
     <div class="printing-picker-header">
       <span data-sort="set">Set${getSortArrow("set")}</span>
       <span data-sort="number">#${getSortArrow("number")}</span>
-      <span data-sort="name">Card${getSortArrow("name")}</span>
-      <span data-sort="setname">Set Name${getSortArrow("setname")}</span>
+      <span data-sort="name">Printing${getSortArrow("name")}</span>
       <span data-sort="nonfoil">NF${getSortArrow("nonfoil")}</span>
       <span data-sort="foil">F${getSortArrow("foil")}</span>
       <span>Action</span>
@@ -121,8 +120,7 @@ function renderPrintings() {
     div.innerHTML = `
       <span class="printing-picker-set">${printing.set.toUpperCase()}</span>
       <span class="printing-picker-number">${num}</span>
-      <button type="button" class="printing-picker-name" data-action="preview">${printing.name}</button>
-      <span class="printing-picker-set-name">${printing.set_name}</span>
+      <button type="button" class="printing-picker-printing" data-action="preview">${renderPrintingIdentity(printing)}</button>
       <span class="printing-picker-price">${renderPrintingPriceCell(printing, "nonfoil")}</span>
       <span class="printing-picker-price">${renderPrintingPriceCell(printing, "foil")}</span>
       <button type="button" class="search-row-action" data-action="select">Select</button>
@@ -162,6 +160,10 @@ function renderPrintings() {
       renderPrintings();
     };
   });
+}
+
+function renderPrintingIdentity(printing) {
+  return `${printing.name || ""} - ${printing.set_name || ""}`;
 }
 
 function getPrintingSortValue(printing, key) {
@@ -218,15 +220,14 @@ function comparePrintingPrices(a, b, dir) {
 function renderPrintingPriceCell(printing, finish) {
   const finishes = Array.isArray(printing.finishes) ? printing.finishes : [];
   const isFoil = finish === "foil";
-  const label = isFoil ? "F" : "NF";
   const available = isFoil
     ? finishes.includes("foil")
     : (!finishes.length || finishes.includes("nonfoil"));
 
-  if (!available) return `${label} -`;
+  if (!available) return "-";
 
   const price = isFoil ? printing.prices?.usd_foil : printing.prices?.usd;
-  return `${label} ${price ? money(price) : "?"}`;
+  return price ? money(price) : "?";
 }
 
 function buildPrintingFinishCard(printing, finish) {
