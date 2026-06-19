@@ -100,7 +100,8 @@ function renderPrintings() {
     <div class="printing-picker-header">
       <span data-sort="set">Set${getSortArrow("set")}</span>
       <span data-sort="number">#${getSortArrow("number")}</span>
-      <span data-sort="name">Printing${getSortArrow("name")}</span>
+      <span data-sort="name">Card${getSortArrow("name")}</span>
+      <span data-sort="setname">Set Name${getSortArrow("setname")}</span>
       <span data-sort="nonfoil">NF${getSortArrow("nonfoil")}</span>
       <span data-sort="foil">F${getSortArrow("foil")}</span>
       <span>Action</span>
@@ -120,10 +121,11 @@ function renderPrintings() {
     div.innerHTML = `
       <span class="printing-picker-set">${printing.set.toUpperCase()}</span>
       <span class="printing-picker-number">${num}</span>
-      <button type="button" class="printing-picker-printing" data-action="preview">${renderPrintingIdentity(printing)}</button>
+      <button type="button" class="printing-picker-card" data-action="preview">${printing.name}</button>
+      <span class="printing-picker-set-name">${printing.set_name}</span>
       <span class="printing-picker-price">${renderPrintingPriceCell(printing, "nonfoil")}</span>
       <span class="printing-picker-price">${renderPrintingPriceCell(printing, "foil")}</span>
-      <button type="button" class="search-row-action" data-action="select">Select</button>
+      <button type="button" class="search-row-action" data-action="select">Add</button>
     `;
 
     div.querySelector('[data-action="preview"]').onclick = () => {
@@ -160,10 +162,6 @@ function renderPrintings() {
       renderPrintings();
     };
   });
-}
-
-function renderPrintingIdentity(printing) {
-  return `${printing.name || ""} - ${printing.set_name || ""}`;
 }
 
 function getPrintingSortValue(printing, key) {
