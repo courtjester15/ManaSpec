@@ -482,60 +482,117 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     var(--col-actions);
 }
 
-.printing-header,
-.printing-row {
+.printing-picker-header,
+.printing-picker-row {
   display: grid;
-  grid-template-columns: 44px 56px minmax(150px, 1fr) minmax(210px, 1.35fr) 112px 112px;
-  gap: 6px;
+  grid-template-columns: 42px 48px minmax(170px, 1fr) minmax(132px, auto) 58px;
+  gap: 5px;
   align-items: center;
-  min-width: 680px;
+  min-width: 0;
 }
 
-.printing-header {
+.printing-picker-header {
   position: sticky;
   top: 0;
   z-index: 3;
-  min-height: var(--row-h);
-  padding: 0 var(--row-pad-x);
+  min-height: 24px;
+  padding: 0 5px 3px;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 650;
 }
 
-.printing-header [data-sort] {
+.printing-picker-header [data-sort] {
   cursor: pointer;
 }
 
-.printing-header [data-sort]:hover {
+.printing-picker-header [data-sort]:hover {
   color: var(--text-strong);
 }
 
-.printing-row {
-  padding: 2px var(--row-pad-x);
+.printing-price-sort {
+  display: inline-flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.printing-price-sort button {
+  height: 20px;
+  min-height: 20px;
+  padding: 0 5px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.printing-price-sort button:hover {
+  border-color: var(--border);
+  background: var(--panel);
+}
+
+.printing-picker-row {
+  padding: 3px 5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   color: var(--text);
   font-family: var(--font-mono);
   font-size: 11px;
 }
 
-.printing-row:hover {
+.printing-picker-row:hover {
   background: var(--row-hover);
 }
 
-.finish-action {
+.printing-picker-set,
+.printing-picker-number {
+  color: var(--muted);
+}
+
+.printing-picker-number {
+  text-align: right;
+}
+
+.printing-picker-identity {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.printing-picker-identity small {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 10px;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.printing-picker-prices {
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 4px;
+  gap: 5px;
   min-width: 0;
   color: var(--text);
 }
 
-.finish-action.muted {
-  justify-content: center;
+.printing-picker-prices span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  min-width: 50px;
+  justify-content: flex-end;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.printing-picker-prices em {
   color: var(--muted-2);
+  font-size: 9px;
+  font-style: normal;
 }
 
 .value-positive {

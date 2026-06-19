@@ -343,9 +343,9 @@ Radar name search:
 - Exact set-number input is detected before name search.
 - Normal name input is forgiving: autocomplete results are tried first, ordered abbreviation fragments such as `tef pro` are added, partial name-token matches are added, and a Scryfall fuzzy match is used as a final candidate.
 - Search should help identify the card first; printing selection happens after the user chooses a card identity.
-- Search and printing results default to paper cards. A Digital checkbox can include MTGO/Arena results when needed.
-- Adding to Radar is explicit: printing rows and exact set-number results use an Add button instead of whole-row click-to-add.
-- Printing rows show nonfoil and foil prices/actions inline when those finishes exist.
+- Search and printing results are paper-only in the active UI. Digital/MTGO search is archived until ManaSpec can also render MTGO tix pricing.
+- Adding to Radar is explicit: printing rows use a compact Select action and exact set-number results use an Add button instead of whole-row click-to-add.
+- Printing rows show available nonfoil and foil prices inline; finish choice happens in the add workflow only when multiple finishes exist.
 - Card names in printing rows open an art preview so the user can confirm the version before adding.
 
 Set-number search:

@@ -32,10 +32,6 @@ function initSearch(options = {}) {
     event.preventDefault();
     openCurrentSearchCandidate(searchBox.value);
   });
-  ["searchMode", "searchMinPrice", "searchMaxPrice", "searchFoilOnly", "searchIncludeDigital"].forEach(id => {
-    const control = document.getElementById(id);
-    if (control) control.addEventListener("change", () => runSearch(searchBox));
-  });
 
   if (searchBox.value.trim()) {
     runSearch(searchBox, 0, options.limit || 8);
@@ -54,7 +50,6 @@ async function runSearch(searchInput, delay = 300, limit = 8) {
 
     const resultsBox = document.getElementById("searchResults");
     const printBox = document.getElementById("printingsView");
-    const searchMode = document.getElementById("searchMode")?.value || "autocomplete";
     const setNumberQuery = parseSetNumberQuery(q);
 
     if (q.length < 2) {
@@ -68,13 +63,8 @@ async function runSearch(searchInput, delay = 300, limit = 8) {
     printBox.innerHTML = "";
 
     try {
-      if (searchMode === "setNumber" || (searchMode === "autocomplete" && setNumberQuery)) {
+      if (setNumberQuery) {
         await runSetNumberSearch(q, resultsBox);
-        return;
-      }
-
-      if (searchMode !== "autocomplete" || hasSearchFilters()) {
-        await runAdvancedSearch(q, resultsBox, limit);
         return;
       }
 
@@ -208,7 +198,15 @@ async function addFuzzyNameCandidate(query, candidates) {
 
 function addSearchCandidate(candidates, candidate) {
   const key = normalizeNameKey(candidate.name);
-  if (!key || candidates.some(item => normalizeNameKey(item.name) === key)) return;
+  if (!key) return;
+
+  const existing = candidates.find(item => normalizeNameKey(item.name) === key);
+  if (existing) {
+    if (!existing.card && candidate.card) {
+      Object.assign(existing, candidate);
+    }
+    return;
+  }
 
   candidates.push(candidate);
 }
@@ -219,11 +217,10 @@ function renderNameSearchCandidate(candidate) {
   }
 
   const div = document.createElement("div");
-  div.className = "search-result-row search-result-row--clickable";
+  div.className = "search-result-row search-result-row--card search-result-row--clickable";
   div.tabIndex = 0;
   div.innerHTML = `
-    <strong>${candidate.name}</strong>
-    <span>${candidate.source || "Name match"}</span>
+    <span class="search-result-identity">${candidate.name}</span>
   `;
 
   div.addEventListener("click", () => selectSearchResult(candidate.name));
@@ -293,8 +290,7 @@ async function selectSearchResult(name) {
 }
 
 async function runAdvancedSearch(query, resultsBox, limit) {
-  const mode = document.getElementById("searchMode")?.value || "autocomplete";
-  const scryfallQuery = withPaperSearchDefault(buildAdvancedScryfallQuery(query, mode));
+  const scryfallQuery = withPaperSearchDefault(query);
 
   const res = await fetch(
     `https://api.scryfall.com/cards/search?q=${encodeURIComponent(scryfallQuery)}&unique=cards&order=name`
@@ -579,36 +575,21 @@ function quoteSearchTerm(query) {
 }
 
 function hasSearchFilters() {
-  return Boolean(
-    document.getElementById("searchMinPrice")?.value ||
-    document.getElementById("searchMaxPrice")?.value ||
-    document.getElementById("searchFoilOnly")?.checked
-  );
+  return false;
 }
 
 function filterSearchCards(cards) {
-  const min = Number(document.getElementById("searchMinPrice")?.value || 0);
-  const max = Number(document.getElementById("searchMaxPrice")?.value || 0);
-  const foilOnly = Boolean(document.getElementById("searchFoilOnly")?.checked);
-  const includeDigital = Boolean(document.getElementById("searchIncludeDigital")?.checked);
-
   return cards.filter(card => {
-    const price = getCardSearchPrice(card, foilOnly);
-    if (!includeDigital && !isPaperCard(card)) return false;
-    if (foilOnly && !card.prices?.usd_foil) return false;
-    if (min && price < min) return false;
-    if (max && price > max) return false;
-    return true;
+    return isPaperCard(card);
   });
 }
 
 function renderCardSearchResult(card) {
   const div = document.createElement("div");
-  div.className = "search-result-row search-result-row--clickable";
+  div.className = "search-result-row search-result-row--card search-result-row--clickable";
   div.tabIndex = 0;
   div.innerHTML = `
-    <strong>${card.name}</strong>
-    <span>${formatSearchCardMeta(card)}</span>
+    <span class="search-result-identity">${formatCardSearchIdentity(card)}</span>
   `;
 
   div.addEventListener("click", () => openCardSearchResult(card));
@@ -633,15 +614,20 @@ function openCardSearchResult(card) {
   showPrintings(card);
 }
 
-function formatSearchCardMeta(card) {
-  const pieces = [
-    card.type_line || card.set_name || "",
+function formatCardSearchIdentity(card) {
+  return [
+    card.name || "",
+    getSearchPrimaryType(card),
     getSearchColorLabel(card),
-    card.edhrec_rank ? `EDH #${Number(card.edhrec_rank).toLocaleString()}` : "",
-    money(getCardSearchPrice(card)),
-  ].filter(Boolean);
+  ].filter(Boolean).join(" | ");
+}
 
-  return pieces.join(" - ");
+function getSearchPrimaryType(card) {
+  if (typeof getPrimaryType === "function") return getPrimaryType(card);
+
+  const typeLine = String(card.type_line || "");
+  const primary = typeLine.split(/[—-]/)[0].trim().split(/\s+/).pop();
+  return primary || "";
 }
 
 function getSearchColorLabel(card) {
@@ -658,7 +644,6 @@ function isPaperCard(card) {
 }
 
 function withPaperSearchDefault(query) {
-  if (document.getElementById("searchIncludeDigital")?.checked) return query;
   return `${query} game:paper`;
 }
 

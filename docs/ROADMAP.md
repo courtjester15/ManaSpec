@@ -90,6 +90,7 @@ Current discipline: do not expand sideways until the core singles workflow has b
    - Replace layout-shifting app notices with toast notifications.
    - Replace browser-native sell confirmation with an app-styled workflow.
    - Simplify Radar search mode selection toward unified smart search.
+   - Archive Digital search until ManaSpec can render MTGO tix prices. Digital results and digital pricing must ship together so search does not imply unsupported price intelligence.
 
 ## 1.0 Beta Track
 

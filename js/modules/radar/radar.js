@@ -54,22 +54,6 @@ function getRadarContextCards() {
         <span>Search / Add Candidate</span>
         <div class="radar-search-controls">
           <input id="searchBox" placeholder="Find card or set #, e.g. MH3 123">
-          <select id="searchMode" aria-label="Search mode">
-            <option value="autocomplete">Name</option>
-            <option value="setNumber">Set #</option>
-            <option value="oracle">Oracle</option>
-            <option value="type">Type</option>
-          </select>
-          <div class="radar-search-toggle-group" aria-label="Search filters">
-            <label class="inline-check">
-              <input id="searchFoilOnly" type="checkbox">
-              Foil
-            </label>
-            <label class="inline-check">
-              <input id="searchIncludeDigital" type="checkbox">
-              Digital
-            </label>
-          </div>
         </div>
         <div class="add-card-results context-search-results">
           <div id="searchResults" class="panel-list"></div>
@@ -317,50 +301,77 @@ function buyRadarItem(id) {
   if (!item) return;
 
   const price = Number(item.currentPrice || 0);
-  const buyQty = getRadarPlannedQty(item);
-  const totalCost = price * buyQty;
   if (!price) {
     showAppNotice("Price not loaded yet.", "warning");
     return;
   }
 
-  if (cash < totalCost) {
-    showAppNotice("Not enough cash for this buy.", "warning");
+  const buyQty = getRadarPlannedQty(item);
+  const runBuy = options => {
+    const quantity = Math.max(1, Number(options?.quantity || buyQty));
+    const totalCost = price * quantity;
+
+    if (cash < totalCost) {
+      showAppNotice("Not enough cash for this buy.", "warning");
+      return;
+    }
+
+    let position = specs.find(spec => spec.id === item.id);
+
+    if (!position) {
+      position = {
+        ...item,
+        qty: 0,
+        buyPrice: 0,
+        currentPrice: price,
+        pl: 0,
+        buyDate: null,
+      };
+
+      specs.push(position);
+    }
+
+    if (position.qty === 0) {
+      position.buyDate = new Date().toISOString();
+    }
+
+    if (options?.holdTime) {
+      position.holdTime = options.holdTime;
+      item.holdTime = options.holdTime;
+    }
+
+    if (options?.entryTarget) {
+      position.entryTarget = options.entryTarget;
+      item.entryTarget = options.entryTarget;
+    }
+
+    if (options?.initialNote) {
+      addCardNote(position, options.initialNote);
+    }
+
+    cash -= totalCost;
+    position.qty += quantity;
+    position.buyPrice = ((position.buyPrice * (position.qty - quantity)) + totalCost) / position.qty;
+
+    if (typeof logTransaction === "function") {
+      logTransaction(position, "BUY", quantity, price);
+    }
+
+    updatePL();
+    save();
+    saveRadarState(radar);
+
+    if (typeof showAppNotice === "function") {
+      showAppNotice(`Bought ${quantity} ${item.name} for ${money(totalCost)}. Radar will keep watching it.`, "trade");
+    }
+  };
+
+  if (typeof requestRadarBuyIntent === "function") {
+    requestRadarBuyIntent(item, { price, quantity: buyQty }).then(options => {
+      if (options) runBuy(options);
+    });
     return;
   }
 
-  let position = specs.find(spec => spec.id === item.id);
-
-  if (!position) {
-    position = {
-      ...item,
-      qty: 0,
-      buyPrice: 0,
-      currentPrice: price,
-      pl: 0,
-      buyDate: null,
-    };
-
-    specs.push(position);
-  }
-
-  if (position.qty === 0) {
-    position.buyDate = new Date().toISOString();
-  }
-
-  cash -= totalCost;
-  position.qty += buyQty;
-  position.buyPrice = ((position.buyPrice * (position.qty - buyQty)) + totalCost) / position.qty;
-
-  if (typeof logTransaction === "function") {
-    logTransaction(position, "BUY", buyQty, price);
-  }
-
-  updatePL();
-  save();
-  saveRadarState(radar);
-
-  if (typeof showAppNotice === "function") {
-    showAppNotice(`Bought ${buyQty} ${item.name} for ${money(totalCost)}. Radar will keep watching it.`, "trade");
-  }
+  runBuy({ quantity: buyQty });
 }

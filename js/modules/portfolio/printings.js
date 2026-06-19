@@ -97,15 +97,15 @@ function renderPrintings() {
   ///////////////////////////////
 
   container.innerHTML = `
-    <div class="printing-row printing-header">
-
-      <span data-sort="set">SET${getSortArrow("set")}</span>
+    <div class="printing-picker-header">
+      <span data-sort="set">Set${getSortArrow("set")}</span>
       <span data-sort="number">#${getSortArrow("number")}</span>
-      <span data-sort="name">NAME${getSortArrow("name")}</span>
-      <span data-sort="setname">SET NAME${getSortArrow("setname")}</span>
-      <span data-sort="nonfoil">NONFOIL${getSortArrow("nonfoil")}</span>
-      <span data-sort="foil">FOIL${getSortArrow("foil")}</span>
-
+      <span data-sort="name">Printing${getSortArrow("name")}</span>
+      <span class="printing-price-sort">
+        <button type="button" data-sort="nonfoil">NF${getSortArrow("nonfoil")}</button>
+        <button type="button" data-sort="foil">F${getSortArrow("foil")}</button>
+      </span>
+      <span></span>
     </div>
   `;
 
@@ -115,17 +115,19 @@ function renderPrintings() {
 
   printings.forEach(printing => {
     const div = document.createElement("div");
-    div.className = "printing-row";
+    div.className = "printing-picker-row";
 
     const num = String(printing.collector_number || "").padStart(3, "0");
 
     div.innerHTML = `
-      <span>${printing.set.toUpperCase()}</span>
-      <span>${num}</span>
-      <button type="button" class="link-action search-card-name" data-action="preview">${printing.name}</button>
-      <span>${printing.set_name}</span>
-      ${renderFinishAction(printing, false)}
-      ${renderFinishAction(printing, true)}
+      <span class="printing-picker-set">${printing.set.toUpperCase()}</span>
+      <span class="printing-picker-number">${num}</span>
+      <span class="printing-picker-identity">
+        <button type="button" class="link-action search-card-name" data-action="preview">${printing.name}</button>
+        <small>${printing.set_name}</small>
+      </span>
+      <span class="printing-picker-prices">${renderPrintingPriceSummary(printing)}</span>
+      <button type="button" class="search-row-action" data-action="select">Select</button>
     `;
 
     div.querySelector('[data-action="preview"]').onclick = () => {
@@ -133,9 +135,7 @@ function renderPrintings() {
         openCardArtPreview(printing);
       }
     };
-    div.querySelectorAll("[data-finish]").forEach(button => {
-      button.onclick = () => addSpec(buildPrintingFinishCard(printing, button.dataset.finish));
-    });
+    div.querySelector('[data-action="select"]').onclick = () => addSpec(printing);
 
     container.appendChild(div);
   });
@@ -144,7 +144,7 @@ function renderPrintings() {
   // HEADER CLICK EVENTS
   ///////////////////////////////
 
-  document.querySelectorAll(".printing-header span").forEach(el => {
+  document.querySelectorAll(".printing-picker-header [data-sort]").forEach(el => {
     if (el.dataset.sort) {
       el.style.cursor = "pointer";
     }
@@ -217,21 +217,20 @@ function comparePrintingPrices(a, b, dir) {
   return Number(a) - Number(b);
 }
 
-function renderFinishAction(printing, foil) {
-  const finish = foil ? "foil" : "nonfoil";
-  const available = printing.finishes?.includes(finish);
-  const price = foil ? printing.prices?.usd_foil : printing.prices?.usd;
+function renderPrintingPriceSummary(printing) {
+  const pieces = [];
+  const hasNonfoil = !printing.finishes?.length || printing.finishes.includes("nonfoil");
+  const hasFoil = printing.finishes?.includes("foil");
 
-  if (!available) {
-    return `<span class="finish-action muted">-</span>`;
+  if (hasNonfoil) {
+    pieces.push(`<span><em>NF</em>${printing.prices?.usd ? money(printing.prices.usd) : "?"}</span>`);
   }
 
-  return `
-    <span class="finish-action">
-      <span>${price ? money(price) : "?"}</span>
-      <button type="button" class="search-row-action" data-finish="${finish}">Add</button>
-    </span>
-  `;
+  if (hasFoil) {
+    pieces.push(`<span><em>F</em>${printing.prices?.usd_foil ? money(printing.prices.usd_foil) : "?"}</span>`);
+  }
+
+  return pieces.length ? pieces.join("") : `<span class="muted"><em>-</em>?</span>`;
 }
 
 function buildPrintingFinishCard(printing, finish) {

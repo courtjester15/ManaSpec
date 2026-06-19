@@ -331,73 +331,22 @@ function initApp() {
 }
 
 async function addSpec(card) {
-  const options = await requestAddPrintingPlan(card);
+  const options = typeof requestRadarAddIntent === "function"
+    ? await requestRadarAddIntent(card)
+    : {};
   if (!options) return;
 
-  const added = addRadarItem(card, options);
+  const { finish, ...planOptions } = options;
+  const trackedCard = finish && typeof buildPrintingFinishCard === "function"
+    ? buildPrintingFinishCard(card, finish)
+    : card;
+  const added = addRadarItem(trackedCard, planOptions);
 
   if (added) {
-    showAppNotice(`${card.name} added to Radar.`);
+    showAppNotice(`${trackedCard.name} added to Radar.`);
   } else {
-    showAppNotice(`${card.name} is already on Radar.`, "info");
+    showAppNotice(`${trackedCard.name} is already on Radar.`, "info");
   }
-}
-
-async function requestAddPrintingPlan(card) {
-  if (typeof requestAppConfirmation !== "function") {
-    return {};
-  }
-
-  const price = Number(card.foil ? card.prices?.usd_foil || card.prices?.usd : card.prices?.usd || 0);
-  const confirmed = await requestAppConfirmation({
-    title: "Add Printing",
-    message: `${card.name} ${card.set?.toUpperCase() || card.set_code || ""} #${card.collector_number || ""}${card.foil ? " foil" : ""}`,
-    confirmLabel: "Add to Radar",
-    cancelLabel: "Cancel",
-    tone: "info",
-    bodyHtml: `
-      <div class="add-printing-plan-grid">
-        <label>
-          <span>Planned Qty</span>
-          <input id="addPlanQty" type="number" min="1" step="1" value="1">
-        </label>
-        <label>
-          <span>Hold Time</span>
-          <input id="addPlanHold" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Months">
-        </label>
-        <label>
-          <span>Entry Target</span>
-          <input id="addPlanEntry" type="text" inputmode="numeric" pattern="[0-9]*" value="${price ? Math.round(price) : ""}" placeholder="Entry">
-        </label>
-        <label class="add-printing-plan-note">
-          <span>Initial Note</span>
-          <textarea id="addPlanNote" placeholder="Optional note"></textarea>
-        </label>
-      </div>
-    `,
-    onOpen: dialog => {
-      const qty = dialog.querySelector("#addPlanQty");
-      qty?.focus();
-      qty?.select();
-    },
-    getResult: dialog => {
-      const qty = Math.max(1, Number(dialog.querySelector("#addPlanQty")?.value || 1));
-      const holdMonths = typeof parseHoldMonthsInput === "function"
-        ? parseHoldMonthsInput(dialog.querySelector("#addPlanHold")?.value || "")
-        : Number(dialog.querySelector("#addPlanHold")?.value || 0);
-
-      return {
-        plannedQty: qty,
-        holdTime: typeof formatHoldTime === "function" ? formatHoldTime(holdMonths) : (holdMonths ? `${holdMonths} mo` : ""),
-        entryTarget: typeof parseWholeDollarInput === "function"
-          ? parseWholeDollarInput(dialog.querySelector("#addPlanEntry")?.value || "")
-          : Number(dialog.querySelector("#addPlanEntry")?.value || 0),
-        initialNote: dialog.querySelector("#addPlanNote")?.value.trim() || "",
-      };
-    },
-  });
-
-  return confirmed || null;
 }
 
 initApp();

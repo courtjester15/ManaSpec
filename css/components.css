@@ -458,8 +458,8 @@ Panels, rows, lists, modals, metrics, and status elements.
   right: 0;
   z-index: 20;
   display: grid;
-  gap: 6px;
-  padding: 6px;
+  gap: 4px;
+  padding: 5px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface-2);
@@ -803,7 +803,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .module-row,
 .signal-row,
 .note-card,
-.printing-row,
+.printing-picker-row,
 .bulk-set-row {
   border-color: var(--border);
   background: var(--panel);
@@ -816,7 +816,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .scan-row:hover,
 .module-row:hover,
 .signal-row:hover,
-.printing-row:hover,
+.printing-picker-row:hover,
 .bulk-set-row:hover {
   background: var(--row-hover);
 }
@@ -1314,8 +1314,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 #searchResults.panel-list {
-  max-height: 150px;
-  font-size: 12px;
+  max-height: 132px;
+  font-size: 11px;
 }
 
 .add-card-results {
@@ -1327,9 +1327,9 @@ Panels, rows, lists, modals, metrics, and status elements.
 .search-result-row,
 .bulk-set-row {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  padding: 4px 6px;
+  padding: 3px 6px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--panel);
@@ -1338,6 +1338,25 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .search-result-row {
   grid-template-columns: minmax(180px, 1fr) minmax(180px, 1.4fr);
+}
+
+.search-result-row--card {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 24px;
+  padding: 2px 6px;
+  border-color: transparent;
+  background: transparent;
+}
+
+.search-result-identity {
+  min-width: 0;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .search-result-row--action {
