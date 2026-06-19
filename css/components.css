@@ -1318,6 +1318,14 @@ Panels, rows, lists, modals, metrics, and status elements.
   font-size: 11px;
 }
 
+#printingsView.panel-list {
+  gap: 0;
+  max-height: 214px;
+  padding: 4px;
+  overflow-x: hidden;
+  font-size: 11px;
+}
+
 .add-card-results {
   display: grid;
   grid-template-columns: 1fr;

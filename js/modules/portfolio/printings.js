@@ -100,12 +100,11 @@ function renderPrintings() {
     <div class="printing-picker-header">
       <span data-sort="set">Set${getSortArrow("set")}</span>
       <span data-sort="number">#${getSortArrow("number")}</span>
-      <span data-sort="name">Printing${getSortArrow("name")}</span>
-      <span class="printing-price-sort">
-        <button type="button" data-sort="nonfoil">NF${getSortArrow("nonfoil")}</button>
-        <button type="button" data-sort="foil">F${getSortArrow("foil")}</button>
-      </span>
-      <span></span>
+      <span data-sort="name">Card${getSortArrow("name")}</span>
+      <span data-sort="setname">Set Name${getSortArrow("setname")}</span>
+      <span data-sort="nonfoil">NF${getSortArrow("nonfoil")}</span>
+      <span data-sort="foil">F${getSortArrow("foil")}</span>
+      <span>Action</span>
     </div>
   `;
 
@@ -122,11 +121,10 @@ function renderPrintings() {
     div.innerHTML = `
       <span class="printing-picker-set">${printing.set.toUpperCase()}</span>
       <span class="printing-picker-number">${num}</span>
-      <span class="printing-picker-identity">
-        <button type="button" class="link-action search-card-name" data-action="preview">${printing.name}</button>
-        <small>${printing.set_name}</small>
-      </span>
-      <span class="printing-picker-prices">${renderPrintingPriceSummary(printing)}</span>
+      <button type="button" class="printing-picker-name" data-action="preview">${printing.name}</button>
+      <span class="printing-picker-set-name">${printing.set_name}</span>
+      <span class="printing-picker-price">${renderPrintingPriceCell(printing, "nonfoil")}</span>
+      <span class="printing-picker-price">${renderPrintingPriceCell(printing, "foil")}</span>
       <button type="button" class="search-row-action" data-action="select">Select</button>
     `;
 
@@ -217,20 +215,18 @@ function comparePrintingPrices(a, b, dir) {
   return Number(a) - Number(b);
 }
 
-function renderPrintingPriceSummary(printing) {
-  const pieces = [];
-  const hasNonfoil = !printing.finishes?.length || printing.finishes.includes("nonfoil");
-  const hasFoil = printing.finishes?.includes("foil");
+function renderPrintingPriceCell(printing, finish) {
+  const finishes = Array.isArray(printing.finishes) ? printing.finishes : [];
+  const isFoil = finish === "foil";
+  const label = isFoil ? "F" : "NF";
+  const available = isFoil
+    ? finishes.includes("foil")
+    : (!finishes.length || finishes.includes("nonfoil"));
 
-  if (hasNonfoil) {
-    pieces.push(`<span><em>NF</em>${printing.prices?.usd ? money(printing.prices.usd) : "?"}</span>`);
-  }
+  if (!available) return `${label} -`;
 
-  if (hasFoil) {
-    pieces.push(`<span><em>F</em>${printing.prices?.usd_foil ? money(printing.prices.usd_foil) : "?"}</span>`);
-  }
-
-  return pieces.length ? pieces.join("") : `<span class="muted"><em>-</em>?</span>`;
+  const price = isFoil ? printing.prices?.usd_foil : printing.prices?.usd;
+  return `${label} ${price ? money(price) : "?"}`;
 }
 
 function buildPrintingFinishCard(printing, finish) {
