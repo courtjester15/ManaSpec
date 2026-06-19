@@ -31,6 +31,22 @@ When working on ManaSpec, use context in this order:
 6. Update `docs/DECISIONS.md` only when a meaningful choice was made.
 7. Put new raw notes in `dev notes/inbox/`, then promote durable behavior, priorities, or decisions into active docs.
 
+## Pasted Notes Workflow
+
+When the user pastes full notes from GPT, chat history, beta testing, or another planning session, treat them as project memory that may need to be saved before the thread moves on.
+
+Triage pasted notes this way:
+
+- Current behavior or implementation rules: summarize into [README](README.md).
+- Active priorities, beta gates, or next-session tasks: summarize into [ROADMAP](ROADMAP.md).
+- Durable product, architecture, data, or workflow rationale: summarize into [DECISIONS](DECISIONS.md).
+- Promising but uncommitted ideas: summarize into [PARKING_LOT](PARKING_LOT.md).
+- Raw observations, exploratory thinking, or context that may improve later analysis: save or summarize in `dev notes/inbox/` with a date-first filename.
+
+Do not paste long transcripts into active docs. Preserve the useful context, source, and reasoning in a concise form, then prune or promote it later.
+
+If the pasted notes are important and are not already saved in the project folder, create or update an appropriate note file before finishing the work. This helps future Codex sessions provide better analysis from project memory instead of relying on chat history alone.
+
 ## Git Checkpoints
 
 ManaSpec now uses Git for recovery points and version history.
@@ -49,7 +65,9 @@ ManaSpec now uses Git for recovery points and version history.
 - Point AI to the relevant README section and roadmap phase whenever possible.
 - Use this folder for current behavior and constraints.
 - Use `docs/DECISIONS.md` for rationale and tradeoffs.
+- Use `docs/PARKING_LOT.md` for useful ideas that are not ready for roadmap or decisions.
 - Use `dev notes/inbox/` and `dev notes/archive/` as reference, not authority.
+- When pasting full GPT or chat notes, ask AI to save the important parts if they are not already in the project folder.
 - If old notes conflict with active docs, active docs win.
 
 ## Browser Testing
