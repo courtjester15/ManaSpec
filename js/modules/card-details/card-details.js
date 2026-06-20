@@ -178,8 +178,9 @@ function renderPlanSection(item, targetState) {
         </label>
         <label>
           Hold
-          <input id="holdTimeInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${escapeDetailAttribute(formatHoldInputNumber(item.holdTime))}">
+          <input id="holdTimeInput" type="text" inputmode="numeric" pattern="[0-9-]*" value="${escapeDetailAttribute(formatHoldInputValue(item.holdTime))}">
         </label>
+        <span class="hold-time-helper">Examples: 3, 6-12, 12-18 months</span>
         <span class="plan-added-date">Added ${formatAddedDate(item.addedDate)}</span>
         <button type="submit">Save Plan</button>
       </form>
@@ -788,12 +789,24 @@ function parseWholeDollarInput(value) {
 }
 
 function parseHoldMonthsInput(value) {
-  const digits = String(value || "").replace(/[^\d]/g, "");
-  return digits ? Number(digits) : 0;
+  const normalized = String(value || "")
+    .replace(/[^\d-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+  const match = normalized.match(/^(\d+)(?:-(\d+))?$/);
+  if (!match) return "";
+
+  const start = Number(match[1] || 0);
+  const end = Number(match[2] || 0);
+  if (!start) return "";
+  if (match[2] && end > 0) return `${start}-${end}`;
+  return String(start);
 }
 
-function formatHoldTime(months) {
-  return months > 0 ? `${months} mo` : "";
+function formatHoldTime(value) {
+  const normalized = String(value || "").trim();
+  if (!normalized) return "";
+  return `${normalized} months`;
 }
 
 function getHoldMonths(value) {
@@ -828,9 +841,9 @@ function formatTargetInputNumber(value) {
   return number > 0 ? String(Math.round(number)) : "";
 }
 
-function formatHoldInputNumber(value) {
-  const months = getHoldMonths(value);
-  return months > 0 ? String(months) : "";
+function formatHoldInputValue(value) {
+  const match = String(value || "").match(/\d+(?:\s*-\s*\d+)?/);
+  return match ? match[0].replace(/\s+/g, "") : "";
 }
 
 function formatAddedDate(value) {

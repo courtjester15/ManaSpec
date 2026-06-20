@@ -456,14 +456,17 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 .ms-table--signals {
   --table-min-width: 100%;
   --table-columns:
-    var(--col-card)
-    72px
-    var(--col-price)
+    minmax(150px, 1.3fr)
+    var(--col-set)
+    var(--col-number)
+    58px
+    68px
+    112px
+    58px
+    68px
+    62px
     76px
-    76px
-    96px
-    86px
-    var(--col-actions);
+    96px;
 }
 
 .ms-table--plan {

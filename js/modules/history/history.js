@@ -280,8 +280,14 @@ function getHistoryTableColumns() {
 
 function renderHistoryNotesIndicator(event) {
   const notes = getHistoryEventNotes(event);
-  if (!notes.length) return `<span class="history-note-empty">-</span>`;
-  return `<span class="history-note-count">${notes.length}n</span>`;
+  const stateClass = notes.length ? "history-note-count" : "history-note-empty";
+  const label = notes.length ? `${notes.length} ${notes.length === 1 ? "note" : "notes"}` : "No notes";
+  return `
+    <span class="${stateClass}" title="${escapeAttribute(label)}" aria-label="${escapeAttribute(label)}">
+      <span class="note-control__icon" aria-hidden="true"></span>
+      ${notes.length > 1 ? `<span class="note-control__badge">${notes.length}</span>` : ""}
+    </span>
+  `;
 }
 
 function getHistoryEventNotes(event) {

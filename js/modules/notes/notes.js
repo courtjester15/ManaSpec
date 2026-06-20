@@ -73,15 +73,16 @@ function findTrackedCardByNote(note) {
 function renderNotesTableControl(item, index) {
   const notes = getCardNotesForItem(item);
   const latest = notes[0];
-  const label = notes.length ? `${notes.length}n` : "+note";
   const title = latest
     ? `${latest.text}\n${new Date(latest.createdAt).toLocaleDateString()}`
     : "No notes yet";
   const stateClass = notes.length ? "note-control--has-notes" : "note-control--empty";
+  const label = notes.length ? `${notes.length} ${notes.length === 1 ? "note" : "notes"}` : "No notes";
 
   return `
-    <button type="button" class="note-control ${stateClass}" data-ms-action="notes" data-ms-row="${msEscapeAttr(index)}" title="${msEscapeAttr(title)}">
-      ${msEscapeHtml(label)}
+    <button type="button" class="note-control ${stateClass}" data-ms-action="notes" data-ms-row="${msEscapeAttr(index)}" title="${msEscapeAttr(title)}" aria-label="${msEscapeAttr(label)}">
+      <span class="note-control__icon" aria-hidden="true"></span>
+      ${notes.length > 1 ? `<span class="note-control__badge">${msEscapeHtml(notes.length)}</span>` : ""}
     </button>
   `;
 }

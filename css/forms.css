@@ -511,7 +511,7 @@ input[type="number"]:focus {
 
 .target-plan-form {
   display: grid;
-  grid-template-columns: 70px 70px 62px minmax(70px, 1fr) auto;
+  grid-template-columns: 70px 70px 72px minmax(112px, 1fr) auto;
   gap: 5px;
   align-items: end;
   margin-top: 5px;
@@ -542,6 +542,13 @@ input[type="number"]:focus {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.hold-time-helper {
+  align-self: center;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.15;
 }
 
 .quick-plan-input,
@@ -581,6 +588,7 @@ input[type="number"]:focus {
 }
 
 .note-control {
+  position: relative;
   width: 100%;
   height: var(--table-control-h, 20px);
   min-height: var(--table-control-h, 20px);
@@ -588,9 +596,46 @@ input[type="number"]:focus {
   border-color: transparent;
   background: transparent;
   color: var(--text);
-  font-size: 10px;
-  text-transform: lowercase;
   white-space: nowrap;
+}
+
+.note-control__icon {
+  position: relative;
+  display: inline-block;
+  width: 13px;
+  height: 15px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  background:
+    linear-gradient(currentColor, currentColor) 3px 4px / 7px 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 3px 8px / 7px 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 3px 12px / 5px 1px no-repeat;
+}
+
+.note-control__icon::before {
+  position: absolute;
+  top: -3px;
+  left: 2px;
+  width: 7px;
+  height: 4px;
+  border-top: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  content: "";
+}
+
+.note-control__badge {
+  position: absolute;
+  right: 3px;
+  top: 1px;
+  min-width: 12px;
+  height: 12px;
+  padding: 0 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-strong);
+  font-size: 8px;
+  line-height: 10px;
 }
 
 .note-control--empty {

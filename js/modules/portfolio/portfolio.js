@@ -124,7 +124,7 @@ function getPortfolioTableColumns() {
     { label: "P/L", sortKey: "pl", align: "money", className: item => getGainLossClass(Number(item.pl || 0)), value: item => money(Number(item.pl || 0)) },
     { label: "P/L %", sortKey: "plPct", align: "money", className: item => getGainLossClass(getPositionPlPct(item)), value: item => formatPercent(getPositionPlPct(item)) },
     { label: "Target", sortKey: "exitTarget", align: "money", type: "input", name: "exitTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*"', value: item => formatPlanInputValue(item.exitTarget) },
-    { label: "Hold", sortKey: "holdTime", align: "center", type: "inputWithSuffix", name: "holdTime", inputAttrs: 'inputmode="numeric" pattern="[0-9]*"', suffix: "mo", value: item => getHoldMonthsInputValue(item.holdTime) },
+    { label: "Hold", sortKey: "holdTime", align: "center", type: "inputWithSuffix", name: "holdTime", inputAttrs: 'inputmode="numeric" pattern="[0-9-]*" title="Examples: 3, 6-12, 12-18 months"', suffix: "mo", value: item => getHoldMonthsInputValue(item.holdTime) },
     { label: "Notes", align: "center", html: renderNotesTableControl },
     {
       label: "Actions",

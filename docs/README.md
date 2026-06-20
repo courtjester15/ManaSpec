@@ -205,6 +205,7 @@ Current behavior:
 - The panel is organized into Overview, Plan, Notes, Market Evaluation, Market Check, Oracle, and Card Data.
 - Overview shows current price, movement, ownership state, buy price, value, and P/L.
 - Plan edits entry target, exit target, and hold time.
+- Hold time accepts simple month values and ranges such as `3`, `6-12`, and `12-18`.
 - Notes adds and reviews append-first notes linked to the current exact printing key.
 - Actions opens exact market/reference pages.
 - Market Evaluation summarizes observable market mechanics from saved/local data: supply, velocity, price confidence, Scryfall EDH rank, target math, freshness, and data gaps.
@@ -379,9 +380,11 @@ Ownership model:
 Current behavior:
 
 - Signals uses the shared module context band for attention buckets.
+- Signals summary tiles filter the attention table, and the table header includes a `Show all` reset when a bucket is active.
 - Manual signal records can still be added.
 - Target panels show exit hits, entry hits, approaching targets, and tracked cards with no plan.
 - Target states are based on local `entryTarget`, `exitTarget`, month-based `holdTime`, ownership, elapsed hold time, and current price snapshots.
+- Target signal rows show compact printing identity, source workflow, and action context such as buy, sell, review, watch, or market check.
 - Target signal rows can open card detail or jump to Radar/Positions.
 - No Plan signal rows show tracked cards without plan data and link back to the source workflow for edits.
 
@@ -405,7 +408,7 @@ Current behavior:
 - Notes are stored in `cardNotes`, separate from both Radar rows and Position rows.
 - Notes are keyed by exact tracked printing identity, currently Scryfall card id plus finish.
 - Card Detail can add append-first notes and show newest-to-oldest note history.
-- Radar and Positions show a Notes column that opens Card Detail, expands/focuses Notes, and lets the user continue writing.
+- Radar, Positions, and History use a compact notepad icon for note presence. Radar and Positions open Card Detail, expand/focus Notes, and let the user continue writing.
 - Buying from Radar, buying more, partial selling, selling all, and re-buying the same exact printing should not delete or duplicate note history.
 
 Rules:

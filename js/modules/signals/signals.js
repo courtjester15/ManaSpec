@@ -49,14 +49,21 @@ function renderSignalsView() {
       ${renderModuleContextBand(getSignalContextCards(rows), { label: "Signals context" })}
 
       <div class="signal-table-header">
-        <h4>${escapeHtml(getSignalTableTitle())}</h4>
-        ${renderTablePageSizeControl("signals")}
+        <div class="signal-table-title">
+          <h4>${escapeHtml(getSignalTableTitle())}</h4>
+          <span>${escapeHtml(getSignalTableMeta())}</span>
+        </div>
+        <div class="signal-table-tools">
+          ${activeSignalBucket ? `<button type="button" class="filter-reset-btn" id="clearSignalFilter">Show all</button>` : ""}
+          ${renderTablePageSizeControl("signals")}
+        </div>
       </div>
       <div id="signalsTable"></div>
     </section>
   `;
 
   initSignalBucketCards();
+  initSignalTableTools();
   initTablePageSizeControl("signals", renderSignalsTable);
   renderSignalsTable();
 }
@@ -85,11 +92,16 @@ function renderSignalBucketCard(bucket, rows) {
 function initSignalBucketCards() {
   document.querySelectorAll("[data-context-action]").forEach(button => {
     button.addEventListener("click", () => {
-      activeSignalBucket = activeSignalBucket === button.dataset.contextAction
-        ? ""
-        : button.dataset.contextAction;
+      activeSignalBucket = button.dataset.contextAction;
       renderSignalsView();
     });
+  });
+}
+
+function initSignalTableTools() {
+  document.getElementById("clearSignalFilter")?.addEventListener("click", () => {
+    activeSignalBucket = "";
+    renderSignalsView();
   });
 }
 
@@ -118,6 +130,13 @@ function getSignalTableTitle() {
   return bucket ? bucket.label : "All Attention Signals";
 }
 
+function getSignalTableMeta() {
+  const filtered = getFilteredSignalRows().length;
+  const total = getSignalAttentionRows().length;
+  if (activeSignalBucket) return `${filtered} of ${total} signals shown`;
+  return `${total} active signals`;
+}
+
 function getFilteredSignalRows() {
   const rows = getSignalAttentionRows();
   if (!activeSignalBucket) return rows;
@@ -131,11 +150,14 @@ function getRowsForSignalBucket(rows, bucketId) {
 function getSignalTableColumns() {
   return [
     { label: "Card", sortKey: "name", type: "link", action: "art", value: row => row.name, title: row => row.detail },
+    { label: "Set", sortKey: "set_code", align: "center", value: row => row.set_code || "-", title: row => row.set_name || "" },
+    { label: "#", sortKey: "collector_number", align: "center", value: row => row.collector_number ? `#${String(row.collector_number).padStart(3, "0")}` : "-" },
+    { label: "Fin", sortKey: "finishLabel", align: "center", value: row => row.finishLabel },
     { label: "Source", sortKey: "source", align: "center", value: row => row.sourceLabel },
+    { label: "Action", sortKey: "actionLabel", align: "center", type: "badge", badgeClass: row => getSignalActionClass(row), value: row => row.actionLabel },
     { label: "Now", sortKey: "currentPrice", align: "money", value: row => row.currentPrice ? money(row.currentPrice) : "-" },
     { label: "Target", sortKey: "targetSort", align: "money", value: row => row.relevantTarget },
     { label: "Distance", sortKey: "distanceSort", align: "center", value: row => row.distance },
-    { label: "Signal", sortKey: "status", align: "center", type: "badge", badgeClass: row => getSignalStatusClass(row), value: row => row.status },
     { label: "Market", sortKey: "marketAgeSort", align: "center", value: row => row.marketFreshness, title: row => row.marketDetail },
     {
       label: "Actions",
@@ -150,7 +172,7 @@ function getSignalTableColumns() {
 }
 
 function setSignalsSort(field) {
-  const defaultDirection = ["name", "source", "status"].includes(field) ? "asc" : "desc";
+  const defaultDirection = ["name", "set_code", "collector_number", "finishLabel", "source", "actionLabel"].includes(field) ? "asc" : "desc";
   updateStandardSort(signalsSort, field, defaultDirection);
   renderSignalsTable();
 }
@@ -186,9 +208,14 @@ function buildSignalAttentionRow(item) {
   return {
     id: item.id,
     name: item.name,
+    set_code: item.set_code || "",
+    set_name: item.set_name || "",
+    collector_number: item.collector_number || "",
+    finishLabel: getSignalFinishLabel(item),
     source: item.owned ? "portfolio" : "radar",
     sourceLabel: item.owned ? "Position" : "Radar",
     status: getSignalStatusLabel(targetState.label, buckets),
+    actionLabel: getSignalActionLabel(item, targetState.label, buckets, { hasPlan, hasTarget, hasNotes }),
     buckets,
     detail: formatSignalTargetDetail(item),
     currentPrice: Number(item.currentPrice || 0),
@@ -201,6 +228,24 @@ function buildSignalAttentionRow(item) {
     marketAgeSort: market.ageDays,
     priority: getSignalPriority(buckets, item, targetState.label, market),
   };
+}
+
+function getSignalFinishLabel(item) {
+  return item.foil ? "Foil" : "Nonfoil";
+}
+
+function getSignalActionLabel(item, status, buckets, state) {
+  if (status === "Exit hit") return "SELL / Exit hit";
+  if (status === "Entry hit") return "BUY / Entry hit";
+  if (status === "Exit near") return "WATCH / Exit near";
+  if (status === "Entry near") return "WATCH / Entry near";
+  if (status === "Hold due") return "REVIEW / Hold due";
+  if (status === "Hold near") return "REVIEW / Hold near";
+  if (!state.hasPlan) return "REVIEW / Missing plan";
+  if (!state.hasTarget) return "REVIEW / Add target";
+  if (!state.hasNotes) return "REVIEW / Add note";
+  if (buckets.includes("marketData")) return "MARKET / Needs check";
+  return item.owned ? "REVIEW / Position" : "WATCH / Radar";
 }
 
 function getSignalBuckets(item, status, state) {
@@ -399,6 +444,13 @@ function getSignalStatusClass(row) {
   if (row.buckets.includes("needsReview")) return "signal-pill review";
   if (row.buckets.includes("marketData")) return "signal-pill market";
   return "signal-pill";
+}
+
+function getSignalActionClass(row) {
+  if (row.actionLabel.startsWith("BUY") || row.actionLabel.startsWith("SELL")) return "signal-pill action";
+  if (row.actionLabel.startsWith("WATCH")) return "signal-pill approaching";
+  if (row.actionLabel.startsWith("MARKET")) return "signal-pill market";
+  return "signal-pill review";
 }
 
 function openSignalArtPreview(row) {

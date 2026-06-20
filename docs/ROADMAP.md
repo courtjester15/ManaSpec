@@ -47,8 +47,12 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Plan-state filters for planned, unplanned, hit, and approaching cards.
 - Dashboard target panels backed by local target fields.
 - Signals target panels backed by local Radar and Positions target fields.
+- Signals summary tiles filter the attention table and include a visible reset back to all signals.
+- Signals rows show compact source, action context, and exact printing identity for beta workflow scanning.
 - Signals quick actions for opening card detail or jumping to Radar/Positions.
 - Signals is now a read-only attention layer for plan data; plan edits happen in Radar, Positions, or Card Detail.
+- Hold-time planning accepts simple month ranges such as `6-12` and `12-18`.
+- Shared note indicators use compact notepad icons in table workflows.
 - Card Detail saves plan edits to the source that opened the printing instead of cross-writing Radar and Positions.
 - Transaction ledger filters for text and buy/sell type.
 - History filters for text and event type.
@@ -87,7 +91,7 @@ Current discipline: do not expand sideways until the core singles workflow has b
    - Preserve existing localStorage data while defining computed Positions from transactions.
 
 4. UX polish candidates from beta notes
-   - Replace layout-shifting app notices with toast notifications.
+   - Continue tightening app notice styling now that shared toasts are opaque and layered above app UI.
    - Replace browser-native sell confirmation with an app-styled workflow.
    - Simplify Radar search mode selection toward unified smart search.
    - Archive Digital search until ManaSpec can render MTGO tix prices. Digital results and digital pricing must ship together so search does not imply unsupported price intelligence.
@@ -134,7 +138,7 @@ Goal: turn the current alpha into a usable product, not a wider prototype.
 
 6. Beta polish and freeze
    - [x] Restore table layout integrity after Radar/Positions column changes.
-   - [ ] Replace layout-shifting notices with toast notifications.
+   - [x] Fix shared toast readability and layering.
    - [ ] Replace native sell confirmation with an app-styled workflow.
    - [ ] Tighten labels, empty states, confirmations, disabled states, table scan behavior, and Help.
    - [ ] Smoke test the complete beta path.

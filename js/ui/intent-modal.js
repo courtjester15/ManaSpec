@@ -51,7 +51,8 @@ function requestCardIntentModal(options = {}) {
         </label>
         <label>
           <span>${escapeHtml(options.holdLabel || "Hold Duration")}</span>
-          <input id="intentHold" type="text" inputmode="numeric" pattern="[0-9]*" value="${escapeAttribute(holdValue)}" placeholder="Months">
+          <input id="intentHold" type="text" inputmode="numeric" pattern="[0-9-]*" value="${escapeAttribute(holdValue)}" placeholder="Months">
+          <small class="hold-time-helper">Examples: 3, 6-12, 12-18 months</small>
         </label>
         <label class="intent-modal-note">
           <span>${escapeHtml(options.noteLabel || "First Note")}</span>
@@ -125,7 +126,9 @@ function requestRadarBuyIntent(item, options = {}) {
     holdLabel: "Hold Duration",
     qtyValue: options.quantity || 1,
     entryValue: item.entryTarget ? Math.round(Number(item.entryTarget || 0)) : "",
-    holdValue: typeof getHoldMonths === "function" ? getHoldMonths(item.holdTime) || "" : "",
+    holdValue: typeof formatHoldInputValue === "function"
+      ? formatHoldInputValue(item.holdTime)
+      : (typeof getHoldMonths === "function" ? getHoldMonths(item.holdTime) || "" : ""),
     notePlaceholder: "Optional buy note",
     showPrice: true,
     price,
