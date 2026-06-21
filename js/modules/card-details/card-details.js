@@ -859,7 +859,7 @@ function formatTargetInputNumber(value) {
 
 function formatTargetDisplayValue(value) {
   const number = Number(value || 0);
-  return number > 0 ? money(number) : "";
+  return number > 0 ? tableMoney(number) : "";
 }
 
 function formatHoldInputValue(value) {

@@ -40,6 +40,16 @@ function money(n) {
   return `$${Number.isFinite(number) ? number.toFixed(2) : "0.00"}`;
 }
 
+function tableMoney(n) {
+  const number = Number(n);
+  if (!Number.isFinite(number)) return "$0";
+
+  const sign = number < 0 ? "-" : "";
+  const absolute = Math.abs(number);
+  const decimals = absolute >= 5 ? 0 : 2;
+  return `${sign}$${absolute.toFixed(decimals)}`;
+}
+
 function showAppNotice(message, tone = "success") {
   const stack = document.getElementById("toastStack");
   if (!stack) return;

@@ -139,7 +139,7 @@ function getRadarTableColumns() {
     { label: "#", sortKey: "collector_number", align: "center", value: item => `${String(item.collector_number || "").padStart(3, "0")}${item.foil ? " F" : ""}` },
     { label: "Rarity", sortKey: "rarity", align: "center", value: formatRarityLabel },
     { label: "Color", sortKey: "color", align: "center", value: getColorLabel },
-    { label: "Scryfall", sortKey: "currentPrice", align: "money", value: item => money(item.currentPrice), title: formatRadarScryfallPriceTitle },
+    { label: "Scryfall", sortKey: "currentPrice", align: "money", value: item => tableMoney(item.currentPrice), title: formatRadarScryfallPriceTitle },
     { label: "Added", sortKey: "addedDate", align: "center", value: item => formatRadarAddedDate(item.addedDate), title: item => formatRadarAddedTitle(item.addedDate) },
     { label: "Entry", sortKey: "entryTarget", align: "money", type: "editable", name: "entryTarget", inputAttrs: 'inputmode="decimal" pattern="[0-9$,.]*" placeholder="Entry"', placeholder: "Set", value: item => formatRadarEntryTarget(item.entryTarget), displayValue: item => formatTargetDisplayValue(item.entryTarget) },
     { label: "Δ Target", sortKey: "entryDistance", align: "money", className: getRadarEntryDistanceClass, value: formatRadarEntryDistance, title: formatRadarEntryDistanceTitle },
@@ -222,7 +222,7 @@ function formatRadarScryfallPriceTitle(item) {
 
 function formatRadarTcgCheckValue(item) {
   const marketPrice = getRadarMarketValue(item, "marketPrice");
-  return marketPrice === "-" ? "-" : formatOptionalMoney(marketPrice);
+  return marketPrice === "-" ? "-" : tableMoney(marketPrice);
 }
 
 function formatRadarTcgCheckTitle(item) {
