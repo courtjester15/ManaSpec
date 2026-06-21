@@ -26,6 +26,7 @@ const helpTopics = {
       "Use Set # search for exact printings, such as FIN 123, FIN #123, FIN123, or MH3 123.",
       "Use the nonfoil or foil Add button on a printing to add it to Radar. Printing names open art previews.",
       "Set Entry and Want when you know your target buy price and planned quantity.",
+      "Scryfall is the saved/refreshed app price; TCG Check is your latest manually saved TCGplayer Price Points observation.",
       "Buying from Radar creates or updates a Position while keeping the card watched.",
       "Leave targets blank when you are only watching what a card does.",
     ],
@@ -35,6 +36,7 @@ const helpTopics = {
     intro: "Positions is for owned cards and compact trade management.",
     steps: [
       "Use +1 to buy one more copy at the current price.",
+      "Now is the saved/refreshed Scryfall price used for current value and target math.",
       "Use Sell to choose one copy, all copies, or a custom quantity before confirming the exit.",
       "Edit Target and Hold inline when you have a plan.",
       "Delete removes the position without logging a transaction, so use it only for corrections.",
@@ -61,6 +63,7 @@ const helpTopics = {
       "Copy the visible text that includes Market Price, Recent Sale, Listed Median, Quantity, and Sellers.",
       "Screenshot guidance is deferred until the Market Check surface stabilizes.",
       "Paste it into the TCG Price Points box and save the check.",
+      "Saved TCG checks are manual observations with timestamps, not a live TCGplayer price feed.",
       "ManaSpec evaluates only observable market mechanics: supply, velocity, price confidence, Scryfall EDH rank, target math, freshness, and data gaps.",
     ],
   },

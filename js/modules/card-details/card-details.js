@@ -138,7 +138,7 @@ function renderOverviewSection(item, movement, owned) {
         <span>${owned ? "Owned position" : "Radar idea"}</span>
       </div>
       <div class="detail-grid overview-grid">
-        ${renderDetailMetric("Now", money(item.currentPrice))}
+        ${renderDetailMetric("Scryfall", money(item.currentPrice))}
         ${renderDetailMetric("Movement", movement.label)}
         ${renderDetailMetric("Qty", owned ? Number(owned.qty || 0) : "0")}
         ${renderDetailMetric("P/L", owned ? formatDetailMoney(Number(owned.pl || 0)) : "-")}
@@ -170,11 +170,11 @@ function renderPlanSection(item, targetState) {
       <form class="target-plan-form" id="targetPlanForm">
         <label>
           Entry $
-          <input id="entryTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.entryTarget))}">
+          <input id="entryTargetInput" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.entryTarget))}">
         </label>
         <label>
           Exit $
-          <input id="exitTargetInput" type="text" inputmode="numeric" pattern="[0-9]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.exitTarget))}">
+          <input id="exitTargetInput" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.exitTarget))}">
         </label>
         <label>
           Hold
@@ -280,7 +280,7 @@ function renderMarketCheckSection(item, latestTcg, marketLinks = []) {
         ${renderSignalSlot("TCG Qty", formatSellerQty(latestTcg))}
         ${renderSignalSlot("TCG Price", formatMarketRecent(latestTcg))}
         ${renderSignalSlot("CK Buylist", "-")}
-        ${renderSignalSlot("Checked", item.priceUpdatedAt ? new Date(item.priceUpdatedAt).toLocaleDateString() : "-")}
+        ${renderSignalSlot("Scryfall", item.priceUpdatedAt ? new Date(item.priceUpdatedAt).toLocaleDateString() : "-")}
       </div>
       <div class="market-paste-panel">
         <div class="detail-actions market-link-actions">
@@ -386,11 +386,20 @@ function renderOracleSection(card) {
 function saveTargetPlan(event, item, card, source) {
   event.preventDefault();
 
+  const entryTarget = parseWholeDollarInput(document.getElementById("entryTargetInput").value);
+  const exitTarget = parseWholeDollarInput(document.getElementById("exitTargetInput").value);
+  if (entryTarget === null || exitTarget === null) {
+    if (typeof showAppNotice === "function") {
+      showAppNotice("Use numbers, $, commas, or decimals for target prices.", "warning");
+    }
+    return;
+  }
+
   savePlanForTrackedCard(
     item.id,
     {
-      entryTarget: parseWholeDollarInput(document.getElementById("entryTargetInput").value),
-      exitTarget: parseWholeDollarInput(document.getElementById("exitTargetInput").value),
+      entryTarget,
+      exitTarget,
       holdTime: formatHoldTime(parseHoldMonthsInput(document.getElementById("holdTimeInput").value)),
     },
     source
@@ -784,8 +793,14 @@ function savePlanForTrackedCard(cardId, plan, source = activeCardDetail?.source)
 }
 
 function parseWholeDollarInput(value) {
-  const digits = String(value || "").replace(/[^\d]/g, "");
-  return digits ? Number(digits) : 0;
+  const rawValue = String(value || "").trim();
+  if (!rawValue) return 0;
+
+  const normalized = rawValue.replace(/[$,\s]/g, "");
+  if (!/^(?:\d+|\d*\.\d{1,2})$/.test(normalized)) return null;
+
+  const number = Number(normalized);
+  return Number.isFinite(number) ? number : null;
 }
 
 function parseHoldMonthsInput(value) {
@@ -838,7 +853,13 @@ function getPlanStartDate(item) {
 
 function formatTargetInputNumber(value) {
   const number = Number(value || 0);
-  return number > 0 ? String(Math.round(number)) : "";
+  if (number <= 0) return "";
+  return Number.isInteger(number) ? String(number) : String(Number(number.toFixed(2)));
+}
+
+function formatTargetDisplayValue(value) {
+  const number = Number(value || 0);
+  return number > 0 ? money(number) : "";
 }
 
 function formatHoldInputValue(value) {

@@ -125,11 +125,13 @@ function renderStandardTableCell(row, index, column) {
   if (column.type === "editable" || column.type === "editableWithSuffix") {
     const name = column.name || column.key || "";
     const value = column.value ? column.value(row, index) : "";
-    const displayValue = value === "" || value === null || value === undefined
+    const isEmpty = value === "" || value === null || value === undefined;
+    const formattedDisplayValue = column.displayValue ? column.displayValue(row, index, value) : value;
+    const displayValue = isEmpty
       ? (column.placeholder || "-")
-      : value;
+      : formattedDisplayValue;
     const suffix = column.type === "editableWithSuffix" ? column.suffix || "" : "";
-    const emptyClass = value === "" || value === null || value === undefined ? " empty" : "";
+    const emptyClass = isEmpty ? " empty" : "";
     return `
       <label class="ms-table__editable ${classes}${emptyClass}" data-ms-editable-cell>
         <button type="button" class="ms-table__editable-display" data-ms-edit="${msEscapeAttr(name)}" data-ms-row="${index}" aria-label="Edit ${msEscapeAttr(column.label || name)}">

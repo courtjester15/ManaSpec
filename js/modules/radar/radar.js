@@ -139,17 +139,14 @@ function getRadarTableColumns() {
     { label: "#", sortKey: "collector_number", align: "center", value: item => `${String(item.collector_number || "").padStart(3, "0")}${item.foil ? " F" : ""}` },
     { label: "Rarity", sortKey: "rarity", align: "center", value: formatRarityLabel },
     { label: "Color", sortKey: "color", align: "center", value: getColorLabel },
-    { label: "Price", sortKey: "currentPrice", align: "money", value: item => money(item.currentPrice), title: item => item.priceUpdatedAt ? `Updated ${new Date(item.priceUpdatedAt).toLocaleDateString()}` : "No refresh" },
+    { label: "Scryfall", sortKey: "currentPrice", align: "money", value: item => money(item.currentPrice), title: formatRadarScryfallPriceTitle },
     { label: "Added", sortKey: "addedDate", align: "center", value: item => formatRadarAddedDate(item.addedDate), title: item => formatRadarAddedTitle(item.addedDate) },
-    { label: "Entry", sortKey: "entryTarget", align: "money", type: "editable", name: "entryTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*" placeholder="Entry"', placeholder: "Set", value: item => formatRadarEntryTarget(item.entryTarget) },
+    { label: "Entry", sortKey: "entryTarget", align: "money", type: "editable", name: "entryTarget", inputAttrs: 'inputmode="decimal" pattern="[0-9$,.]*" placeholder="Entry"', placeholder: "Set", value: item => formatRadarEntryTarget(item.entryTarget), displayValue: item => formatTargetDisplayValue(item.entryTarget) },
     { label: "Δ Target", sortKey: "entryDistance", align: "money", className: getRadarEntryDistanceClass, value: formatRadarEntryDistance, title: formatRadarEntryDistanceTitle },
     { label: "Want", sortKey: "plannedQty", align: "center", type: "stepper", name: "plannedQty", min: 1, step: 1, value: getRadarPlannedQty },
     { label: "Sellers", sortKey: "sellers", align: "center", value: item => getRadarMarketValue(item, "currentSellers") },
     { label: "Qty", sortKey: "marketQty", align: "center", value: item => getRadarMarketValue(item, "currentQuantity") },
-    { label: "Market", sortKey: "marketPrice", align: "money", value: item => {
-      const marketPrice = getRadarMarketValue(item, "marketPrice");
-      return marketPrice === "-" ? "-" : formatOptionalMoney(marketPrice);
-    } },
+    { label: "TCG Check", sortKey: "marketPrice", align: "money", value: formatRadarTcgCheckValue, title: formatRadarTcgCheckTitle },
     { label: "Notes", align: "center", html: renderNotesTableControl },
     {
       label: "Actions",
@@ -206,10 +203,37 @@ function parseRadarAddedDate(value) {
 }
 
 function getRadarMarketValue(item, field, fallback = "-") {
-  const latestTcg = typeof getLatestMarketObservation === "function"
+  const latestTcg = getRadarMarketObservation(item);
+  return latestTcg ? (latestTcg[field] || fallback) : fallback;
+}
+
+function getRadarMarketObservation(item) {
+  return typeof getLatestMarketObservation === "function"
     ? getLatestMarketObservation(item.id, "tcgplayer")
     : null;
-  return latestTcg ? (latestTcg[field] || fallback) : fallback;
+}
+
+function formatRadarScryfallPriceTitle(item) {
+  const detail = item.priceUpdatedAt
+    ? `updated ${new Date(item.priceUpdatedAt).toLocaleString()}`
+    : "not refreshed this session";
+  return `Scryfall price snapshot, ${detail}`;
+}
+
+function formatRadarTcgCheckValue(item) {
+  const marketPrice = getRadarMarketValue(item, "marketPrice");
+  return marketPrice === "-" ? "-" : formatOptionalMoney(marketPrice);
+}
+
+function formatRadarTcgCheckTitle(item) {
+  const observation = getRadarMarketObservation(item);
+  if (!observation) return "No saved manual TCGplayer Market Check";
+
+  const checkedAt = observation.checkedAt
+    ? new Date(observation.checkedAt).toLocaleString()
+    : "unknown time";
+  const market = observation.marketPrice ? ` Market ${formatOptionalMoney(observation.marketPrice)}.` : "";
+  return `Manual TCGplayer Market Check saved ${checkedAt}.${market}`;
 }
 
 function openRadarArtPreview(item) {
@@ -264,8 +288,9 @@ function saveRadarPlannedQty(id, value) {
 }
 
 function formatRadarEntryTarget(value) {
-  const number = Number(value || 0);
-  return number > 0 ? Math.round(number) : "";
+  return typeof formatTargetInputNumber === "function"
+    ? formatTargetInputNumber(value)
+    : "";
 }
 
 function getRadarEntryDistanceValue(item) {
@@ -305,9 +330,18 @@ function saveRadarEntryTarget(id, value) {
   const item = radar.find(radarItem => radarItem.id === id);
   if (!item) return;
 
-  item.entryTarget = typeof parseWholeDollarInput === "function"
+  const entryTarget = typeof parseWholeDollarInput === "function"
     ? parseWholeDollarInput(value)
     : Number(String(value || "").replace(/[^\d]/g, "") || 0);
+  if (entryTarget === null) {
+    if (typeof showAppNotice === "function") {
+      showAppNotice("Use numbers, $, commas, or decimals for entry target.", "warning");
+    }
+    renderRadarItems();
+    return;
+  }
+
+  item.entryTarget = entryTarget;
   saveRadarState(radar);
 
   if (typeof showAppNotice === "function") {

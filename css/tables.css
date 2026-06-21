@@ -342,6 +342,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 
 .ms-table__editable-display em {
   flex: 0 0 auto;
+  margin-left: auto;
   color: var(--muted);
   font-size: 10px;
   font-style: normal;
@@ -387,6 +388,11 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
+}
+
+.ms-table__editable-input-wrap > span {
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .ms-table__editable.editing .ms-table__editable-display {
@@ -520,9 +526,9 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     68px
     64px
     62px
-    64px
+    80px
     58px
-    72px
+    92px
     var(--col-notes)
     var(--col-actions-wide);
 }
@@ -535,14 +541,14 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     var(--col-number)
     var(--col-rarity)
     var(--col-color)
-    var(--col-price)
+    72px
     58px
     74px
     72px
     58px
     50px
     50px
-    var(--col-price)
+    72px
     var(--col-notes)
     112px;
 }

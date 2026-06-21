@@ -47,7 +47,7 @@ function requestCardIntentModal(options = {}) {
         </label>
         <label>
           <span>${escapeHtml(options.entryLabel || "Entry Target")}</span>
-          <input id="intentEntry" type="text" inputmode="numeric" pattern="[0-9]*" value="${escapeAttribute(entryValue)}" placeholder="Optional">
+          <input id="intentEntry" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeAttribute(entryValue)}" placeholder="Optional">
         </label>
         <label>
           <span>${escapeHtml(options.holdLabel || "Hold Duration")}</span>
@@ -74,12 +74,13 @@ function requestCardIntentModal(options = {}) {
       const holdMonths = typeof parseHoldMonthsInput === "function"
         ? parseHoldMonthsInput(rawHold)
         : Number(rawHold || 0);
+      const entryTarget = typeof parseWholeDollarInput === "function"
+        ? parseWholeDollarInput(rawEntry)
+        : Number(rawEntry || 0);
 
       return {
         quantity: rawQty === "" ? 0 : Math.max(1, Number(rawQty || 1)),
-        entryTarget: typeof parseWholeDollarInput === "function"
-          ? parseWholeDollarInput(rawEntry)
-          : Number(rawEntry || 0),
+        entryTarget: entryTarget === null ? 0 : entryTarget,
         holdTime: typeof formatHoldTime === "function"
           ? formatHoldTime(holdMonths)
           : (holdMonths ? `${holdMonths} mo` : ""),

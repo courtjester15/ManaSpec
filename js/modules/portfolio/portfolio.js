@@ -117,13 +117,13 @@ function getPortfolioTableColumns() {
     { label: "Rarity", sortKey: "rarity", align: "center", value: formatRarityLabel },
     { label: "Color", sortKey: "color", align: "center", value: getColorLabel },
     { label: "Buy", sortKey: "buyPrice", align: "money", value: item => money(item.buyPrice) },
-    { label: "Now", sortKey: "currentPrice", align: "money", value: item => money(item.currentPrice) },
+    { label: "Now", sortKey: "currentPrice", align: "money", value: item => money(item.currentPrice), title: formatPositionScryfallPriceTitle },
     { label: "Qty", sortKey: "qty", align: "center", value: item => Number(item.qty || 0) },
     { label: "Age", sortKey: "buyDate", align: "center", value: item => formatPositionAge(item.buyDate), title: item => item.buyDate ? `Buy Date ${formatTableDate(item.buyDate)}` : "" },
     { label: "Value", sortKey: "positionValue", align: "money", value: item => money(getPositionValue(item)) },
     { label: "P/L", sortKey: "pl", align: "money", className: item => getGainLossClass(Number(item.pl || 0)), value: item => money(Number(item.pl || 0)) },
     { label: "P/L %", sortKey: "plPct", align: "money", className: item => getGainLossClass(getPositionPlPct(item)), value: item => formatPercent(getPositionPlPct(item)) },
-    { label: "Target", sortKey: "exitTarget", align: "money", type: "editable", name: "exitTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*"', placeholder: "Set", value: item => formatPlanInputValue(item.exitTarget) },
+    { label: "Target", sortKey: "exitTarget", align: "money", type: "editable", name: "exitTarget", inputAttrs: 'inputmode="decimal" pattern="[0-9$,.]*"', placeholder: "Set", value: item => formatPlanInputValue(item.exitTarget), displayValue: item => formatTargetDisplayValue(item.exitTarget) },
     { label: "Δ", sortKey: "exitDistance", align: "money", className: getPositionExitDistanceClass, value: formatPositionExitDistance, title: formatPositionExitDistanceTitle },
     { label: "Hold", sortKey: "holdTime", align: "center", type: "editableWithSuffix", name: "holdTime", inputAttrs: 'inputmode="numeric" pattern="[0-9-]*" title="Examples: 3, 6-12, 12-18 months"', placeholder: "Set", suffix: "mo", value: item => getHoldMonthsInputValue(item.holdTime) },
     { label: "Notes", align: "center", html: renderNotesTableControl },
@@ -296,8 +296,16 @@ function formatPortfolioSignedMoney(value) {
 }
 
 function formatPlanInputValue(value) {
-  const number = Number(value || 0);
-  return number > 0 ? Math.round(number) : "";
+  return typeof formatTargetInputNumber === "function"
+    ? formatTargetInputNumber(value)
+    : "";
+}
+
+function formatPositionScryfallPriceTitle(item) {
+  const detail = item.priceUpdatedAt
+    ? `updated ${new Date(item.priceUpdatedAt).toLocaleString()}`
+    : "not refreshed this session";
+  return `Scryfall price snapshot, ${detail}`;
 }
 
 function getHoldMonthsInputValue(value) {
@@ -320,9 +328,18 @@ function savePositionPlanEdit(id, field, value) {
   if (!spec) return;
 
   if (field === "exitTarget") {
-    spec.exitTarget = typeof parseWholeDollarInput === "function"
+    const exitTarget = typeof parseWholeDollarInput === "function"
       ? parseWholeDollarInput(value)
       : Number(value || 0);
+    if (exitTarget === null) {
+      if (typeof showAppNotice === "function") {
+        showAppNotice("Use numbers, $, commas, or decimals for target.", "warning");
+      }
+      refreshPortfolioTable();
+      return;
+    }
+
+    spec.exitTarget = exitTarget;
   } else {
     const rawValue = String(value || "").trim();
     if (/^\d+\s*-\s*\d+$/.test(rawValue)) {
