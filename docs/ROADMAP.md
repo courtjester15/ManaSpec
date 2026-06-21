@@ -39,10 +39,12 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Filter reset controls for local Radar and Positions filters.
 - Optional entry target, exit target, and hold-time fields on tracked cards.
 - Radar entry target editing directly from the Radar table.
+- Radar and Positions target delta columns for faster target scanning.
 - Radar planned quantity editing directly from the Radar table.
 - Radar buy flow creates or updates a Position while keeping the Radar item watched.
 - Optional target and hold-time columns in the Positions scan table.
 - Inline target and hold-time editing from the Positions scan table.
+- Display-first click-to-edit treatment for Radar entry target and Positions target/hold fields.
 - Positions sell workflow supports a chosen quantity or all copies.
 - Plan-state filters for planned, unplanned, hit, and approaching cards.
 - Dashboard target panels backed by local target fields.

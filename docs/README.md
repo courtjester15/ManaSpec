@@ -265,6 +265,7 @@ Current behavior:
 - Deleting asks for confirmation and warns that no transaction will be logged.
 - Table pagination defaults to 15 rows to fit laptop-height scan workflows.
 - The main Positions table shows compact trading fields plus optional target and hold-time columns; lower-priority identity fields such as set name and type line stay available through card detail or hover context instead of occupying primary table columns.
+- Positions shows a compact target delta column beside exit target and uses display-first click-to-edit controls for target and hold fields.
 - Positions table action buttons are reserved for state-changing actions such as buy, sell, and delete.
 - Local Radar and Positions filters include reset actions and plan-state filters.
 - Local Radar and Positions filters use visible labels so filter meaning is clear while scanning.
@@ -310,7 +311,7 @@ Current behavior:
 - Printing rows can add exact paper or foil versions to Radar.
 - Radar items are stored separately from owned Positions.
 - Radar rows show current price, added date, planned quantity, market observation summary fields, and actions.
-- Radar rows show and edit entry target as part of pre-purchase planning.
+- Radar rows show entry target, a compact target delta column, and display-first click-to-edit entry target controls as part of pre-purchase planning.
 - Duplicate exact printings are blocked within Radar.
 - Buying from Radar uses the planned quantity, defaults to 1, creates or updates an owned Position, logs a transaction when available, and keeps the Radar item watched.
 - Removing from Radar only removes the watched idea and does not affect owned Positions.

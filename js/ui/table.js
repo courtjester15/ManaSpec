@@ -122,6 +122,28 @@ function renderStandardTableCell(row, index, column) {
     `;
   }
 
+  if (column.type === "editable" || column.type === "editableWithSuffix") {
+    const name = column.name || column.key || "";
+    const value = column.value ? column.value(row, index) : "";
+    const displayValue = value === "" || value === null || value === undefined
+      ? (column.placeholder || "-")
+      : value;
+    const suffix = column.type === "editableWithSuffix" ? column.suffix || "" : "";
+    const emptyClass = value === "" || value === null || value === undefined ? " empty" : "";
+    return `
+      <label class="ms-table__editable ${classes}${emptyClass}" data-ms-editable-cell>
+        <button type="button" class="ms-table__editable-display" data-ms-edit="${msEscapeAttr(name)}" data-ms-row="${index}" aria-label="Edit ${msEscapeAttr(column.label || name)}">
+          <span>${msEscapeHtml(displayValue)}</span>
+          ${suffix ? `<em>${msEscapeHtml(suffix)}</em>` : ""}
+        </button>
+        <span class="ms-table__editable-input-wrap">
+          <input class="ms-table__input" name="${msEscapeAttr(name)}" type="${column.inputType || "text"}" value="${msEscapeAttr(value)}" data-ms-input="${msEscapeAttr(name)}" data-ms-row="${index}" data-ms-original-value="${msEscapeAttr(value)}" ${column.inputAttrs || ""}>
+          ${suffix ? `<span>${msEscapeHtml(suffix)}</span>` : ""}
+        </span>
+      </label>
+    `;
+  }
+
   if (column.type === "inputWithSuffix") {
     return `
       <label class="ms-table__input-wrap ${classes}">
@@ -191,13 +213,50 @@ function bindStandardTableEvents(container, rows, config) {
 
   container.querySelectorAll("[data-ms-input]").forEach(input => {
     input.addEventListener("click", event => event.stopPropagation());
-    input.addEventListener("change", event => {
+    input.addEventListener("keydown", event => {
+      event.stopPropagation();
+      if (event.key === "Enter") {
+        event.preventDefault();
+        input.blur();
+      }
+      if (event.key === "Escape") {
+        const cell = input.closest("[data-ms-editable-cell]");
+        if (cell) cell.classList.remove("editing");
+        input.blur();
+      }
+    });
+    input.addEventListener("blur", event => {
+      const cell = input.closest("[data-ms-editable-cell]");
+      if (!cell?.classList.contains("editing")) return;
+      cell.classList.remove("editing");
+      if (event.target.value === input.dataset.msOriginalValue) return;
       preserveViewportDuring(() => {
         const row = rows[Number(input.dataset.msRow)];
         if (row && typeof config.onInputChange === "function") {
           config.onInputChange(input.dataset.msInput, row, event.target.value, event);
         }
       });
+    });
+    input.addEventListener("change", event => {
+      if (input.closest("[data-ms-editable-cell]")) return;
+      preserveViewportDuring(() => {
+        const row = rows[Number(input.dataset.msRow)];
+        if (row && typeof config.onInputChange === "function") {
+          config.onInputChange(input.dataset.msInput, row, event.target.value, event);
+        }
+      });
+    });
+  });
+
+  container.querySelectorAll("[data-ms-edit]").forEach(button => {
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      const cell = button.closest("[data-ms-editable-cell]");
+      const input = cell?.querySelector("[data-ms-input]");
+      if (!cell || !input) return;
+      cell.classList.add("editing");
+      input.focus();
+      input.select();
     });
   });
 

@@ -118,13 +118,14 @@ function getPortfolioTableColumns() {
     { label: "Color", sortKey: "color", align: "center", value: getColorLabel },
     { label: "Buy", sortKey: "buyPrice", align: "money", value: item => money(item.buyPrice) },
     { label: "Now", sortKey: "currentPrice", align: "money", value: item => money(item.currentPrice) },
-    { label: "Qty", sortKey: "qty", align: "number", value: item => Number(item.qty || 0) },
+    { label: "Qty", sortKey: "qty", align: "center", value: item => Number(item.qty || 0) },
     { label: "Age", sortKey: "buyDate", align: "center", value: item => formatPositionAge(item.buyDate), title: item => item.buyDate ? `Buy Date ${formatTableDate(item.buyDate)}` : "" },
     { label: "Value", sortKey: "positionValue", align: "money", value: item => money(getPositionValue(item)) },
     { label: "P/L", sortKey: "pl", align: "money", className: item => getGainLossClass(Number(item.pl || 0)), value: item => money(Number(item.pl || 0)) },
     { label: "P/L %", sortKey: "plPct", align: "money", className: item => getGainLossClass(getPositionPlPct(item)), value: item => formatPercent(getPositionPlPct(item)) },
-    { label: "Target", sortKey: "exitTarget", align: "money", type: "input", name: "exitTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*"', value: item => formatPlanInputValue(item.exitTarget) },
-    { label: "Hold", sortKey: "holdTime", align: "center", type: "inputWithSuffix", name: "holdTime", inputAttrs: 'inputmode="numeric" pattern="[0-9-]*" title="Examples: 3, 6-12, 12-18 months"', suffix: "mo", value: item => getHoldMonthsInputValue(item.holdTime) },
+    { label: "Target", sortKey: "exitTarget", align: "money", type: "editable", name: "exitTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*"', placeholder: "Set", value: item => formatPlanInputValue(item.exitTarget) },
+    { label: "Δ", sortKey: "exitDistance", align: "money", className: getPositionExitDistanceClass, value: formatPositionExitDistance, title: formatPositionExitDistanceTitle },
+    { label: "Hold", sortKey: "holdTime", align: "center", type: "editableWithSuffix", name: "holdTime", inputAttrs: 'inputmode="numeric" pattern="[0-9-]*" title="Examples: 3, 6-12, 12-18 months"', placeholder: "Set", suffix: "mo", value: item => getHoldMonthsInputValue(item.holdTime) },
     { label: "Notes", align: "center", html: renderNotesTableControl },
     {
       label: "Actions",
@@ -171,6 +172,7 @@ function getPortfolioSortValue(item, field) {
   if (field === "positionValue") return getPositionValue(item);
   if (field === "plPct") return getPositionPlPct(item);
   if (field === "holdTime") return getHoldMonthsInputValue(item.holdTime);
+  if (field === "exitDistance") return getPositionExitDistanceSort(item);
   if (field === "buyDate") return item.buyDate || "";
   return item[field];
 }
@@ -253,6 +255,44 @@ function formatPositionAge(value) {
 function formatPercent(value) {
   const number = Number(value || 0);
   return `${number >= 0 ? "+" : ""}${number.toFixed(1)}%`;
+}
+
+function getPositionExitDistanceValue(item) {
+  const price = Number(item.currentPrice || 0);
+  const target = Number(item.exitTarget || 0);
+  if (!price || !target) return null;
+
+  return {
+    dollars: price - target,
+    percent: ((price - target) / target) * 100,
+  };
+}
+
+function formatPositionExitDistance(item) {
+  const distance = getPositionExitDistanceValue(item);
+  return distance ? formatPercent(distance.percent) : "-";
+}
+
+function formatPositionExitDistanceTitle(item) {
+  const distance = getPositionExitDistanceValue(item);
+  if (!distance) return "No exit target";
+  return `${formatPortfolioSignedMoney(distance.dollars)} vs exit`;
+}
+
+function getPositionExitDistanceSort(item) {
+  const distance = getPositionExitDistanceValue(item);
+  return distance ? distance.percent : -9999;
+}
+
+function getPositionExitDistanceClass(item) {
+  const distance = getPositionExitDistanceValue(item);
+  if (!distance) return "target-distance neutral";
+  return distance.percent >= 0 ? "target-distance good" : "target-distance bad";
+}
+
+function formatPortfolioSignedMoney(value) {
+  const number = Number(value || 0);
+  return `${number >= 0 ? "+" : "-"}${money(Math.abs(number))}`;
 }
 
 function formatPlanInputValue(value) {

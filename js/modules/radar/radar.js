@@ -141,7 +141,8 @@ function getRadarTableColumns() {
     { label: "Color", sortKey: "color", align: "center", value: getColorLabel },
     { label: "Price", sortKey: "currentPrice", align: "money", value: item => money(item.currentPrice), title: item => item.priceUpdatedAt ? `Updated ${new Date(item.priceUpdatedAt).toLocaleDateString()}` : "No refresh" },
     { label: "Added", sortKey: "addedDate", align: "center", value: item => formatRadarAddedDate(item.addedDate), title: item => formatRadarAddedTitle(item.addedDate) },
-    { label: "Entry", sortKey: "entryTarget", align: "money", type: "input", name: "entryTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*" placeholder="Entry"', value: item => formatRadarEntryTarget(item.entryTarget) },
+    { label: "Entry", sortKey: "entryTarget", align: "money", type: "editable", name: "entryTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*" placeholder="Entry"', placeholder: "Set", value: item => formatRadarEntryTarget(item.entryTarget) },
+    { label: "Δ", sortKey: "entryDistance", align: "money", className: getRadarEntryDistanceClass, value: formatRadarEntryDistance, title: formatRadarEntryDistanceTitle },
     { label: "Want", sortKey: "plannedQty", align: "center", type: "stepper", name: "plannedQty", min: 1, step: 1, value: getRadarPlannedQty },
     { label: "Sellers", sortKey: "sellers", align: "center", value: item => getRadarMarketValue(item, "currentSellers") },
     { label: "Qty", sortKey: "marketQty", align: "center", value: item => getRadarMarketValue(item, "currentQuantity") },
@@ -176,6 +177,7 @@ function getRadarSortValue(item, field) {
   if (field === "color") return getColorLabel(item);
   if (field === "addedDate") return getRadarAddedTimestamp(item.addedDate);
   if (field === "entryTarget") return Number(item.entryTarget || 0);
+  if (field === "entryDistance") return getRadarEntryDistanceSort(item);
   if (field === "plannedQty") return getRadarPlannedQty(item);
   if (field === "sellers") return getRadarMarketValue(item, "currentSellers", 0);
   if (field === "marketQty") return getRadarMarketValue(item, "currentQuantity", 0);
@@ -264,6 +266,39 @@ function saveRadarPlannedQty(id, value) {
 function formatRadarEntryTarget(value) {
   const number = Number(value || 0);
   return number > 0 ? Math.round(number) : "";
+}
+
+function getRadarEntryDistanceValue(item) {
+  const price = Number(item.currentPrice || 0);
+  const target = Number(item.entryTarget || 0);
+  if (!price || !target) return null;
+
+  return {
+    dollars: price - target,
+    percent: ((price - target) / target) * 100,
+  };
+}
+
+function formatRadarEntryDistance(item) {
+  const distance = getRadarEntryDistanceValue(item);
+  return distance ? formatPercent(distance.percent) : "-";
+}
+
+function formatRadarEntryDistanceTitle(item) {
+  const distance = getRadarEntryDistanceValue(item);
+  if (!distance) return "No entry target";
+  return `${formatRadarSignedMoney(distance.dollars)} vs entry`;
+}
+
+function getRadarEntryDistanceSort(item) {
+  const distance = getRadarEntryDistanceValue(item);
+  return distance ? distance.percent : 9999;
+}
+
+function getRadarEntryDistanceClass(item) {
+  const distance = getRadarEntryDistanceValue(item);
+  if (!distance) return "target-distance neutral";
+  return distance.percent <= 0 ? "target-distance good" : "target-distance bad";
 }
 
 function saveRadarEntryTarget(id, value) {
@@ -374,4 +409,9 @@ function buyRadarItem(id) {
   }
 
   runBuy({ quantity: buyQty });
+}
+
+function formatRadarSignedMoney(value) {
+  const number = Number(value || 0);
+  return `${number >= 0 ? "+" : "-"}${money(Math.abs(number))}`;
 }

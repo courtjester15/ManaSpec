@@ -13,7 +13,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   --table-row-h: 27px;
   --table-control-h: 20px;
   --table-cell-pad-x: 6px;
-  --col-card: minmax(190px, 1.6fr);
+  --col-card: minmax(170px, 1.45fr);
   --col-set: 48px;
   --col-number: 48px;
   --col-rarity: 44px;
@@ -113,6 +113,15 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   box-sizing: border-box;
 }
 
+.ms-table__row > span,
+.ms-table__row > button,
+.ms-table__row > label,
+.ms-table__row > div {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
 .ms-table__header > *:last-child,
 .ms-table__row > *:last-child {
   border-right: 0;
@@ -143,7 +152,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 .ms-table__row > span,
 .ms-table__row > button.link-action {
   overflow: hidden;
-  line-height: 19px;
+  line-height: 1.15;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -291,6 +300,103 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   line-height: var(--table-control-h);
 }
 
+.ms-table__editable {
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: var(--text-strong);
+}
+
+.ms-table__editable.ms-table__cell--money {
+  justify-content: flex-end;
+}
+
+.ms-table__editable.ms-table__cell--center {
+  justify-content: center;
+}
+
+.ms-table__editable-display {
+  display: inline-flex;
+  align-items: center;
+  justify-content: inherit;
+  gap: 3px;
+  width: calc(100% - 8px);
+  height: var(--table-control-h);
+  min-height: var(--table-control-h);
+  padding: 0 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ms-table__editable-display span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-table__editable-display em {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.ms-table__editable.empty .ms-table__editable-display {
+  color: var(--muted-2);
+  font-weight: 500;
+}
+
+.ms-table__editable-display::after {
+  color: var(--muted-2);
+  content: "edit";
+  font-size: 9px;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.ms-table__editable:hover .ms-table__editable-display,
+.ms-table__editable:focus-within .ms-table__editable-display {
+  border-color: rgba(125, 211, 252, 0.2);
+  background: rgba(125, 211, 252, 0.06);
+  color: var(--text-strong);
+}
+
+.ms-table__editable:hover .ms-table__editable-display::after,
+.ms-table__editable:focus-within .ms-table__editable-display::after {
+  opacity: 1;
+}
+
+.ms-table__editable-input-wrap {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  width: calc(100% - 8px);
+  height: var(--table-control-h);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: var(--table-control-h);
+}
+
+.ms-table__editable-input-wrap .ms-table__input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.ms-table__editable.editing .ms-table__editable-display {
+  display: none;
+}
+
+.ms-table__editable.editing .ms-table__editable-input-wrap {
+  display: flex;
+}
+
 .ms-table__input-wrap .ms-table__input {
   flex: 1 1 auto;
   width: 100%;
@@ -379,6 +485,22 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   line-height: 1;
 }
 
+.target-distance {
+  font-weight: 650;
+}
+
+.target-distance.good {
+  color: var(--good);
+}
+
+.target-distance.bad {
+  color: var(--bad);
+}
+
+.target-distance.neutral {
+  color: var(--muted);
+}
+
 .ms-table__cell--actions .row-actions {
   justify-content: center;
 }
@@ -394,12 +516,13 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     var(--col-price)
     var(--col-price)
     var(--col-qty)
-    var(--col-date)
+    52px
+    68px
+    64px
+    62px
+    64px
+    58px
     72px
-    66px
-    66px
-    70px
-    78px
     var(--col-notes)
     var(--col-actions-wide);
 }
@@ -413,14 +536,15 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     var(--col-rarity)
     var(--col-color)
     var(--col-price)
-    var(--col-date)
-    70px
+    58px
     62px
-    56px
-    56px
+    58px
+    58px
+    50px
+    50px
     var(--col-price)
     var(--col-notes)
-    120px;
+    112px;
 }
 
 .ms-table--ledger {
