@@ -142,7 +142,7 @@ function getRadarTableColumns() {
     { label: "Price", sortKey: "currentPrice", align: "money", value: item => money(item.currentPrice), title: item => item.priceUpdatedAt ? `Updated ${new Date(item.priceUpdatedAt).toLocaleDateString()}` : "No refresh" },
     { label: "Added", sortKey: "addedDate", align: "center", value: item => formatRadarAddedDate(item.addedDate), title: item => formatRadarAddedTitle(item.addedDate) },
     { label: "Entry", sortKey: "entryTarget", align: "money", type: "editable", name: "entryTarget", inputAttrs: 'inputmode="numeric" pattern="[0-9]*" placeholder="Entry"', placeholder: "Set", value: item => formatRadarEntryTarget(item.entryTarget) },
-    { label: "Δ", sortKey: "entryDistance", align: "money", className: getRadarEntryDistanceClass, value: formatRadarEntryDistance, title: formatRadarEntryDistanceTitle },
+    { label: "Δ Target", sortKey: "entryDistance", align: "money", className: getRadarEntryDistanceClass, value: formatRadarEntryDistance, title: formatRadarEntryDistanceTitle },
     { label: "Want", sortKey: "plannedQty", align: "center", type: "stepper", name: "plannedQty", min: 1, step: 1, value: getRadarPlannedQty },
     { label: "Sellers", sortKey: "sellers", align: "center", value: item => getRadarMarketValue(item, "currentSellers") },
     { label: "Qty", sortKey: "marketQty", align: "center", value: item => getRadarMarketValue(item, "currentQuantity") },

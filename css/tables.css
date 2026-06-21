@@ -530,15 +530,15 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 .ms-table--radar {
   --table-min-width: 100%;
   --table-columns:
-    var(--col-card)
+    minmax(150px, 1.2fr)
     var(--col-set)
     var(--col-number)
     var(--col-rarity)
     var(--col-color)
     var(--col-price)
     58px
-    62px
-    58px
+    74px
+    72px
     58px
     50px
     50px
