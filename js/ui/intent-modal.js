@@ -49,7 +49,7 @@ function requestCardIntentModal(options = {}) {
           <span>${escapeHtml(options.entryLabel || "Entry Target")}</span>
           <input id="intentEntry" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeAttribute(entryValue)}" placeholder="Optional">
         </label>
-        <label>
+        <label class="intent-hold-field">
           <span>${escapeHtml(options.holdLabel || "Hold Duration")}</span>
           <input id="intentHold" type="text" inputmode="numeric" pattern="[0-9-]*" value="${escapeAttribute(holdValue)}" placeholder="Months">
           <small class="hold-time-helper">Examples: 3, 6-12, 12-18 months</small>
@@ -62,6 +62,7 @@ function requestCardIntentModal(options = {}) {
     `,
     onOpen: dialog => {
       bindIntentFinishChoice(dialog);
+      bindIntentKeyboardSubmit(dialog);
       const qty = dialog.querySelector("#intentQty");
       qty?.focus();
       qty?.select();
@@ -89,6 +90,16 @@ function requestCardIntentModal(options = {}) {
       };
     },
   }).then(result => result || null);
+}
+
+function bindIntentKeyboardSubmit(dialog) {
+  dialog.querySelectorAll(".intent-modal-grid input").forEach(input => {
+    input.addEventListener("keydown", event => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      dialog.querySelector("[data-confirm-action='confirm']")?.click();
+    });
+  });
 }
 
 function requestRadarAddIntent(card) {

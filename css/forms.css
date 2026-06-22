@@ -52,9 +52,11 @@ button {
   padding: 0 11px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
+  box-sizing: border-box;
   font-size: 13px;
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.1;
+  vertical-align: middle;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -247,6 +249,7 @@ button[disabled] {
 .search-row-action,
 .note-link-btn {
   min-height: var(--control-h-sm);
+  line-height: 1.1;
 }
 
 #saveTcgObservation {
@@ -650,8 +653,9 @@ input[type="number"]:focus {
 .intent-modal-grid,
 .add-printing-plan-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+  align-items: start;
 }
 
 .intent-modal-grid label,
@@ -668,6 +672,8 @@ input[type="number"]:focus {
 }
 
 .intent-modal-grid input {
+  width: 100%;
+  min-width: 0;
   margin: 0;
 }
 
@@ -743,8 +749,14 @@ input[type="number"]:focus {
 }
 
 .intent-modal-note,
+.intent-hold-field,
 .add-printing-plan-note {
   grid-column: 1 / -1;
+}
+
+.intent-hold-field .hold-time-helper {
+  align-self: start;
+  white-space: normal;
 }
 
 .add-printing-plan-note textarea {

@@ -19,6 +19,7 @@ Handles:
 
 let debounce;
 let latestSearchCandidates = [];
+let activeSearchRequestId = 0;
 
 function initSearch(options = {}) {
   const searchBox = document.getElementById(options.inputId || "searchBox");
@@ -65,6 +66,7 @@ function installRadarSearchEscapeHandler() {
 
 function dismissRadarSearchSurface(options = {}) {
   clearTimeout(debounce);
+  activeSearchRequestId += 1;
   latestSearchCandidates = [];
   if (typeof currentPrintings !== "undefined" && Array.isArray(currentPrintings)) currentPrintings = [];
 
@@ -74,6 +76,8 @@ function dismissRadarSearchSurface(options = {}) {
 
   if (resultsBox) resultsBox.innerHTML = "";
   if (printBox) printBox.innerHTML = "";
+  setSearchBusy(resultsBox, false);
+  setSearchBusy(printBox, false);
   if (options.clearInput && searchBox) searchBox.value = "";
   if (options.blurInput && searchBox) searchBox.blur();
 }
@@ -86,6 +90,7 @@ async function runSearch(searchInput, delay = 300, limit = 8) {
   clearTimeout(debounce);
 
   debounce = setTimeout(async () => {
+    const requestId = ++activeSearchRequestId;
     const q = searchInput.value.trim();
 
     const resultsBox = document.getElementById("searchResults");
@@ -95,38 +100,48 @@ async function runSearch(searchInput, delay = 300, limit = 8) {
     if (q.length < 2) {
       resultsBox.innerHTML = "";
       printBox.innerHTML = "";
+      setSearchBusy(resultsBox, false);
+      setSearchBusy(printBox, false);
       latestSearchCandidates = [];
       return;
     }
 
-    resultsBox.innerHTML = "Searching...";
+    renderSearchStatus(resultsBox, setNumberQuery ? "Looking up exact printing..." : "Searching Scryfall...");
     printBox.innerHTML = "";
+    setSearchBusy(printBox, false);
 
     try {
       if (setNumberQuery) {
-        await runSetNumberSearch(q, resultsBox);
+        await runSetNumberSearch(q, resultsBox, requestId);
         return;
       }
 
-      await runForgivingNameSearch(q, resultsBox, limit);
+      await runForgivingNameSearch(q, resultsBox, limit, requestId);
 
     } catch (err) {
       console.error(err);
+      if (!isCurrentSearchRequest(requestId)) return;
       resultsBox.innerHTML = "Error searching";
+      setSearchBusy(resultsBox, false);
     }
 
   }, delay);
 }
 
-async function runForgivingNameSearch(query, resultsBox, limit) {
+async function runForgivingNameSearch(query, resultsBox, limit, requestId = activeSearchRequestId) {
   const candidates = [];
 
   await addAutocompleteCandidates(query, candidates, limit);
+  if (!isCurrentSearchRequest(requestId)) return;
   await addOrderedFragmentNameCandidates(query, candidates, limit);
+  if (!isCurrentSearchRequest(requestId)) return;
   await addPartialNameCandidates(query, candidates, limit);
+  if (!isCurrentSearchRequest(requestId)) return;
   await addFuzzyNameCandidate(query, candidates);
+  if (!isCurrentSearchRequest(requestId)) return;
 
   resultsBox.innerHTML = "";
+  setSearchBusy(resultsBox, false);
 
   if (!candidates.length) {
     resultsBox.innerHTML = "No matches. Try fewer words or a set number like FIN 123.";
@@ -305,10 +320,12 @@ async function selectSearchResult(name) {
   const searchInput = document.getElementById("searchBox");
   const resultsBox = document.getElementById("searchResults");
   const printBox = document.getElementById("printingsView");
+  const requestId = ++activeSearchRequestId;
 
   searchInput.value = name;
   resultsBox.innerHTML = "";
-  printBox.innerHTML = "Loading printings...";
+  setSearchBusy(resultsBox, false);
+  renderSearchStatus(printBox, "Loading printings...");
 
   try {
     const res = await fetch(
@@ -316,16 +333,21 @@ async function selectSearchResult(name) {
     );
 
     const card = await res.json();
+    if (!isCurrentSearchRequest(requestId)) return;
 
     if (card.object === "error") {
       printBox.innerHTML = "Could not load card";
+      setSearchBusy(printBox, false);
       return;
     }
 
-    showPrintings(card);
+    setSearchBusy(printBox, false);
+    showPrintings(card, requestId);
   } catch (err) {
     console.error(err);
+    if (!isCurrentSearchRequest(requestId)) return;
     printBox.innerHTML = "Error loading card";
+    setSearchBusy(printBox, false);
   }
 }
 
@@ -359,19 +381,21 @@ function buildAdvancedScryfallQuery(query, mode) {
   return query;
 }
 
-async function runSetNumberSearch(query, resultsBox) {
+async function runSetNumberSearch(query, resultsBox, requestId = activeSearchRequestId) {
   const parsed = parseSetNumberQuery(query);
   const printBox = document.getElementById("printingsView");
 
   resultsBox.innerHTML = "";
   printBox.innerHTML = "";
+  setSearchBusy(printBox, false);
 
   if (!parsed) {
     resultsBox.innerHTML = renderSetNumberHelp(query);
+    setSearchBusy(resultsBox, false);
     return;
   }
 
-  resultsBox.innerHTML = `Looking up ${parsed.setCode.toUpperCase()} #${parsed.collectorNumber}...`;
+  renderSearchStatus(resultsBox, `Looking up ${parsed.setCode.toUpperCase()} #${parsed.collectorNumber}...`);
 
   try {
     const res = await fetch(
@@ -379,16 +403,21 @@ async function runSetNumberSearch(query, resultsBox) {
     );
 
     const card = await res.json();
+    if (!isCurrentSearchRequest(requestId)) return;
 
     if (card.object === "error") {
       resultsBox.innerHTML = `No card found for ${parsed.setCode.toUpperCase()} #${parsed.collectorNumber}`;
+      setSearchBusy(resultsBox, false);
       return;
     }
 
+    setSearchBusy(resultsBox, false);
     renderSetNumberResult(card, resultsBox);
   } catch (err) {
     console.error(err);
+    if (!isCurrentSearchRequest(requestId)) return;
     resultsBox.innerHTML = "Error looking up set number";
+    setSearchBusy(resultsBox, false);
   }
 }
 
@@ -649,8 +678,32 @@ function openCardSearchResult(card) {
 
   searchInput.value = card.name;
   resultsBox.innerHTML = "";
-  printBox.innerHTML = "Loading printings...";
-  showPrintings(card);
+  const requestId = ++activeSearchRequestId;
+  setSearchBusy(resultsBox, false);
+  renderSearchStatus(printBox, "Loading printings...");
+  showPrintings(card, requestId);
+}
+
+function renderSearchStatus(container, message) {
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="search-status-row" role="status">
+      <span class="search-status-spinner" aria-hidden="true"></span>
+      <span>${escapeSearchHtml(message)}</span>
+    </div>
+  `;
+  setSearchBusy(container, true);
+}
+
+function setSearchBusy(container, isBusy) {
+  if (!container) return;
+  container.classList.toggle("is-loading", Boolean(isBusy));
+  container.setAttribute("aria-busy", isBusy ? "true" : "false");
+}
+
+function isCurrentSearchRequest(requestId) {
+  return requestId === activeSearchRequestId;
 }
 
 function formatCardSearchIdentity(card) {

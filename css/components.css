@@ -172,6 +172,10 @@ Panels, rows, lists, modals, metrics, and status elements.
   transform: translate(-50%, -50%);
 }
 
+.app-confirm-panel:has(.intent-modal-grid) {
+  width: min(520px, calc(100vw - 28px));
+}
+
 .app-confirm-panel header {
   display: block;
 }
@@ -1332,6 +1336,31 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .panel-list:empty {
   display: none;
+}
+
+.search-status-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 24px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.search-status-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(147, 164, 177, 0.32);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: search-status-spin 720ms linear infinite;
+}
+
+@keyframes search-status-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 #searchResults.panel-list {

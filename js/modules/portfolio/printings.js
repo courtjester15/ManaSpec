@@ -60,27 +60,42 @@ function sortPrintings(list) {
 // LOAD PRINTINGS
 ///////////////////////////////
 
-async function showPrintings(card) {
+async function showPrintings(card, searchRequestId = null) {
   const container = document.getElementById("printingsView");
 
-  container.innerHTML = "Loading printings...";
+  if (typeof renderSearchStatus === "function") {
+    renderSearchStatus(container, "Loading printings...");
+  } else {
+    container.innerHTML = "Loading printings...";
+  }
 
-  const full = await fetch(`https://api.scryfall.com/cards/${card.id}`);
-  const fullCard = await full.json();
+  try {
+    const full = await fetch(`https://api.scryfall.com/cards/${card.id}`);
+    const fullCard = await full.json();
 
-  const query = typeof withPaperSearchDefault === "function"
-    ? withPaperSearchDefault(`oracleid:${fullCard.oracle_id}`)
-    : `oracleid:${fullCard.oracle_id}`;
+    const query = typeof withPaperSearchDefault === "function"
+      ? withPaperSearchDefault(`oracleid:${fullCard.oracle_id}`)
+      : `oracleid:${fullCard.oracle_id}`;
 
-  const res = await fetch(
-    `https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}&unique=prints`
-  );
+    const res = await fetch(
+      `https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}&unique=prints`
+    );
 
-  const data = await res.json();
+    const data = await res.json();
 
-  currentPrintings = data.data || [];
+    if (searchRequestId && typeof isCurrentSearchRequest === "function" && !isCurrentSearchRequest(searchRequestId)) {
+      return;
+    }
 
-  renderPrintings();
+    currentPrintings = data.data || [];
+
+    if (typeof setSearchBusy === "function") setSearchBusy(container, false);
+    renderPrintings();
+  } catch (err) {
+    console.error(err);
+    if (typeof setSearchBusy === "function") setSearchBusy(container, false);
+    container.innerHTML = "Error loading printings";
+  }
 }
 
 ///////////////////////////////
