@@ -66,6 +66,11 @@ Rules:
 
 ManaSpec is a modular trading terminal running inside one static app shell. It has workflow zones exposed through module navigation, but it is not currently a routed SPA.
 
+Terminology:
+
+- Use cards or printings for MTG objects.
+- Use tiles for Dashboard, metric, info, and module context UI summary blocks.
+
 Primary zones:
 
 - Dashboard: awareness and what matters now.

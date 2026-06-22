@@ -597,6 +597,29 @@ Panels, rows, lists, modals, metrics, and status elements.
   font-size: 18px;
 }
 
+.metric-card small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric-card--positive strong {
+  color: var(--good);
+}
+
+.metric-card--negative strong {
+  color: var(--bad);
+}
+
+.metric-card--neutral strong {
+  color: var(--muted);
+}
+
 .scan-panel,
 .signal-panel {
   min-height: 150px;
@@ -641,6 +664,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .signal-row {
   display: grid;
   gap: 2px;
+  min-width: 0;
   padding: 7px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 12px;
@@ -664,6 +688,10 @@ Panels, rows, lists, modals, metrics, and status elements.
 .scan-row span {
   display: block;
   line-height: 1.2;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .signal-row strong {
