@@ -459,10 +459,12 @@ Panels, rows, lists, modals, metrics, and status elements.
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  right: 0;
+  right: auto;
   z-index: 20;
   display: grid;
   gap: 4px;
+  width: min(920px, calc(100vw - 48px));
+  max-width: calc(100vw - 48px);
   padding: 5px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -1386,16 +1388,18 @@ Panels, rows, lists, modals, metrics, and status elements.
 .bulk-set-row {
   display: grid;
   gap: 6px;
-  align-items: center;
+  align-items: start;
   padding: 3px 6px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--panel);
   font-size: 12px;
+  font-weight: 400;
+  line-height: 1.25;
 }
 
 .search-result-row {
-  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1.4fr);
+  grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.45fr);
 }
 
 .search-result-row--card {
@@ -1410,15 +1414,43 @@ Panels, rows, lists, modals, metrics, and status elements.
   min-width: 0;
   color: var(--text);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.25;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .search-result-row--action {
-  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1.4fr) auto;
+  grid-template-columns: minmax(180px, 1fr) minmax(260px, 1.4fr) auto;
+}
+
+.search-result-row > span,
+.search-result-row small {
+  min-width: 0;
+  font-weight: 400;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.context-search-results .search-result-row span,
+.context-search-results .printing-picker-row span,
+.context-search-results .printing-picker-card {
+  font-weight: 400;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.context-search-results .printing-picker-row .search-row-action {
+  font-weight: 400;
+}
+
+.context-search-results .printing-picker-header > * {
+  font-weight: 500;
 }
 
 .search-result-row--clickable {

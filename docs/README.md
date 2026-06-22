@@ -57,6 +57,12 @@ Rules:
 - Prefer shared tokens from `base.css` over new raw colors.
 - Put reusable styling in `forms.css`, `components.css`, or `tables.css` before adding module-specific overrides.
 - Positions and Radar should share the same dark terminal visual language.
+- Avoid visible ellipses in user-facing UI. Prefer wider surfaces, wrapping, smaller text, or hiding lower-priority fields over `text-overflow: ellipsis`.
+- Any remaining ellipsis must be intentional and documented. Current exceptions are:
+  - `css/tables.css`: dense shared table row text (`.ms-table__row > span`, `.ms-table__row > button.link-action`) where fixed row height preserves scan speed.
+  - `css/forms.css`: compact select controls and plan-date labels where native control width or tight plan layout would otherwise overflow.
+  - `css/layout.css`: inactive placeholder text in fixed-height placeholder views.
+  - `css/components.css`: fixed-height module/context cards, admin backup preview labels, link-style action buttons, compact detail metrics/evaluation items, card data chips, compact detail summaries, linked note rows, and card note previews.
 
 ## App Shape
 

@@ -614,9 +614,9 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 .printing-picker-header,
 .printing-picker-row {
   display: grid;
-  grid-template-columns: 38px 38px minmax(96px, 1fr) minmax(112px, 1fr) 62px 62px 42px;
+  grid-template-columns: 44px 48px minmax(150px, 1.25fr) minmax(180px, 1.6fr) 56px 56px 48px;
   gap: 0;
-  align-items: center;
+  align-items: start;
   min-width: 0;
 }
 
@@ -631,6 +631,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   color: var(--muted);
   font-size: 10px;
   font-weight: 500;
+  line-height: 1.15;
   text-align: center;
 }
 
@@ -650,6 +651,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 400;
+  line-height: 1.2;
 }
 
 .printing-picker-row:hover {
@@ -661,6 +663,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   min-width: 0;
   padding: 3px 6px;
   border-left: 1px solid rgba(255, 255, 255, 0.035);
+  font-weight: inherit;
   line-height: 1.2;
 }
 
@@ -700,14 +703,16 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 .printing-picker-card,
 .printing-picker-set-name {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .printing-picker-set-name {
   color: var(--muted);
   font-family: var(--font-body);
+  font-weight: 400;
 }
 
 .printing-picker-price {
