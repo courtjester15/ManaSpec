@@ -119,7 +119,7 @@ function renderPrintings() {
       <span data-sort="setname">Set Name${getSortArrow("setname")}</span>
       <span data-sort="nonfoil">NF${getSortArrow("nonfoil")}</span>
       <span data-sort="foil">F${getSortArrow("foil")}</span>
-      <span>Action</span>
+      <span>Add</span>
     </div>
   `;
 

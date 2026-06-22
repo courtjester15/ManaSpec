@@ -1416,10 +1416,9 @@ Panels, rows, lists, modals, metrics, and status elements.
   font-size: 11px;
   font-weight: 400;
   line-height: 1.25;
-  overflow: visible;
-  overflow-wrap: anywhere;
-  text-overflow: clip;
-  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .search-result-row--action {
@@ -1430,27 +1429,47 @@ Panels, rows, lists, modals, metrics, and status elements.
 .search-result-row small {
   min-width: 0;
   font-weight: 400;
-  overflow: visible;
-  overflow-wrap: anywhere;
-  text-overflow: clip;
-  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .context-search-results .search-result-row span,
-.context-search-results .printing-picker-row span,
-.context-search-results .printing-picker-card {
+.context-search-results .printing-picker-row span {
   font-weight: 400;
-  overflow: visible;
+  overflow: hidden;
   text-overflow: clip;
-  white-space: normal;
+  white-space: nowrap;
+}
+
+.context-search-results .search-result-row .search-result-identity {
+  text-overflow: ellipsis;
+}
+
+.context-search-results .printing-picker-card,
+.context-search-results .printing-picker-set-name {
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.context-search-results .printing-picker-row .printing-picker-set-name {
+  text-overflow: ellipsis;
 }
 
 .context-search-results .printing-picker-row .search-row-action {
   font-weight: 400;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
 }
 
 .context-search-results .printing-picker-header > * {
   font-weight: 500;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
 }
 
 .search-result-row--clickable {

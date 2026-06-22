@@ -614,9 +614,9 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 .printing-picker-header,
 .printing-picker-row {
   display: grid;
-  grid-template-columns: 44px 48px minmax(150px, 1.25fr) minmax(180px, 1.6fr) 56px 56px 48px;
+  grid-template-columns: 44px 48px minmax(150px, 1.15fr) minmax(170px, 1.5fr) 70px 70px 54px;
   gap: 0;
-  align-items: start;
+  align-items: center;
   min-width: 0;
 }
 
@@ -703,10 +703,9 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 .printing-picker-card,
 .printing-picker-set-name {
   min-width: 0;
-  overflow: visible;
-  overflow-wrap: anywhere;
-  text-overflow: clip;
-  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .printing-picker-set-name {
@@ -719,6 +718,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   color: var(--text);
   font-weight: 400;
   font-variant-numeric: tabular-nums;
+  overflow: visible;
   text-align: right;
   white-space: nowrap;
 }
