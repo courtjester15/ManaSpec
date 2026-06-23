@@ -92,7 +92,10 @@ function getHistoryContextCards() {
 }
 
 function buildHistoryEvents() {
-  const txEvents = transactions.map(tx => ({
+  const transactionRows = typeof getTransactionsWithReviewContext === "function"
+    ? getTransactionsWithReviewContext()
+    : transactions;
+  const txEvents = transactionRows.map(tx => ({
     kind: "transaction",
     date: tx.date,
     cardId: tx.cardId || "",
@@ -103,7 +106,7 @@ function buildHistoryEvents() {
     color: getColorLabel(tx),
     price: tx.price || 0,
     title: `${tx.type} ${tx.name}`,
-    detail: `${tx.quantity || 0} qty / ${formatTransactionIdentity(tx) || "manual log"}`,
+    detail: formatHistoryTransactionDetail(tx),
     badge: tx.type,
   }));
 
@@ -156,6 +159,23 @@ function buildHistoryEvents() {
   return [...txEvents, ...radarEvents, ...noteEvents, ...thesisEvents]
     .filter(event => event.date)
     .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function formatHistoryTransactionDetail(tx) {
+  const pieces = [
+    `${tx.quantity || 0} qty`,
+    formatTransactionIdentity(tx) || "manual log",
+  ];
+
+  if (Number.isFinite(Number(tx.balanceAfter))) {
+    pieces.push(`Balance ${money(tx.balanceAfter)}`);
+  }
+
+  if (tx.type === "SELL" && typeof formatTransactionRealizedPL === "function") {
+    pieces.push(`Realized ${formatTransactionRealizedPL(tx)}`);
+  }
+
+  return pieces.join(" / ");
 }
 
 function initHistoryFilters() {

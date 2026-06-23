@@ -552,14 +552,16 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 .ms-table--ledger {
   --table-min-width: 100%;
   --table-columns:
-    var(--col-card)
+    minmax(150px, 1.2fr)
     var(--col-set)
     var(--col-number)
     var(--col-rarity)
     var(--col-color)
     var(--col-price)
     var(--col-qty)
+    74px
     82px
+    76px
     var(--col-date)
     var(--col-type);
 }
@@ -588,9 +590,10 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     58px
     68px
     112px
+    minmax(120px, 1fr)
     58px
     68px
-    62px
+    86px
     76px
     96px;
 }

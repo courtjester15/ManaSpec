@@ -18,7 +18,7 @@ function renderAdminView() {
       <div class="admin-grid">
         <section class="admin-panel">
           <h4>Cash</h4>
-          <p>Reset paper trading cash back to the starting balance.</p>
+          <p>Reset only the paper trading cash balance back to the starting balance. Positions, Radar, notes, and history are not changed.</p>
           <button type="button" class="admin-action danger-lite" id="adminResetCash">Reset Cash</button>
         </section>
 
@@ -47,10 +47,7 @@ function renderAdminView() {
     </section>
   `;
 
-  document.getElementById("adminResetCash").onclick = () => {
-    resetCash();
-    renderAdminView();
-  };
+  document.getElementById("adminResetCash").onclick = confirmAdminResetCash;
 
   document.getElementById("adminExportBackup").onclick = exportAdminBackup;
   document.getElementById("adminImportBackup").onclick = () => {
@@ -59,6 +56,50 @@ function renderAdminView() {
     input.click();
   };
   document.getElementById("adminImportBackupFile").onchange = handleAdminBackupFileSelected;
+}
+
+async function confirmAdminResetCash() {
+  const confirmed = await requestAppConfirmation({
+    title: "Reset Cash Balance?",
+    message: "This changes only available cash. It does not delete Positions, Radar ideas, transactions, notes, market checks, or price history.",
+    confirmLabel: "Reset Cash",
+    cancelLabel: "Cancel",
+    tone: "danger",
+    bodyHtml: renderCashResetPreview(),
+  });
+
+  if (!confirmed) {
+    showAdminBackupNotice("Reset Cash canceled. No data was changed.", "info");
+    return;
+  }
+
+  resetCash();
+  showAdminBackupNotice(`Cash reset to ${money(startingCash)}. Positions and history were not changed.`, "success");
+  renderAdminView();
+}
+
+function renderCashResetPreview() {
+  return `
+    <div class="backup-preview-grid">
+      <div>
+        <span>Current Cash</span>
+        <strong>${escapeHtml(money(cash || 0))}</strong>
+      </div>
+      <div>
+        <span>After Reset</span>
+        <strong>${escapeHtml(money(startingCash))}</strong>
+      </div>
+      <div>
+        <span>Positions</span>
+        <strong>Unchanged</strong>
+      </div>
+      <div>
+        <span>Transactions</span>
+        <strong>Unchanged</strong>
+      </div>
+    </div>
+    <p class="backup-warning">Use this for paper-cash corrections only. Export a backup first if you want a rollback point.</p>
+  `;
 }
 
 function exportAdminBackup() {

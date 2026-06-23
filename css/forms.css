@@ -514,7 +514,7 @@ input[type="number"]:focus {
 
 .target-plan-form {
   display: grid;
-  grid-template-columns: 70px 70px 72px minmax(112px, 1fr) auto;
+  grid-template-columns: 70px 70px 72px minmax(112px, 1fr) auto minmax(116px, 1fr);
   gap: 5px;
   align-items: end;
   margin-top: 5px;
@@ -538,6 +538,16 @@ input[type="number"]:focus {
 }
 
 .plan-added-date {
+  align-self: center;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan-save-status {
   align-self: center;
   color: var(--muted);
   font-size: 9px;

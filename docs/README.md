@@ -180,6 +180,7 @@ Admin owns local maintenance and data-safety tools.
 Current behavior:
 
 - Data Safety can export a timestamped JSON backup from browser localStorage.
+- Reset Cash requires confirmation, previews current and reset cash, and changes only available cash.
 - Backup schema is `manaspec-localstorage-backup` v1.
 - Exports include `specs`, `radar`, `transactions`, `cardNotes`, archived `thesisNotes`, `signals`, `cash`, `priceSnapshots`, `priceRefreshStatus`, and `marketObservations`.
 - Import uses a JSON file picker, validates the backup shape, and shows a preview before restore.
@@ -190,6 +191,7 @@ Current behavior:
 Rules:
 
 - Do not rename storage keys during backup/import work.
+- Reset Cash must not change Positions, Radar, notes, transactions, market checks, price history, or storage schema.
 - Do not add cloud sync, accounts, merge logic, or database migration to this workflow.
 - Unknown fields in backup files should not break import.
 - Invalid backups should fail with a friendly message and no claimed success.
@@ -214,6 +216,7 @@ Current behavior:
 - The panel is organized into Overview, Plan, Notes, Market Evaluation, Market Check, Oracle, and Card Data.
 - Overview shows current price, movement, ownership state, buy price, value, and P/L.
 - Plan edits entry target, exit target, and hold time.
+- Plan fields save on Enter or click-away and update the visible plan status without requiring the user to close and reopen Card Detail.
 - Hold time accepts simple month values and ranges such as `3`, `6-12`, and `12-18`.
 - Notes adds and reviews append-first notes linked to the current exact printing key.
 - Actions opens exact market/reference pages.
@@ -317,6 +320,7 @@ Current behavior:
 
 - Search finds card identities and exact printings through Scryfall.
 - The search/add-candidate controls sit in Radar's module context band so discovery belongs to the workflow context instead of pushing the table layout down.
+- Search and printing results collapse when focus moves outside the Radar search area, and opening Card Detail from Radar dismisses active search UI.
 - Printing rows can add exact paper or foil versions to Radar.
 - Radar items are stored separately from owned Positions.
 - Radar rows show current price, added date, planned quantity, market observation summary fields, and actions.
@@ -354,6 +358,7 @@ Radar name search:
 - Exact set-number input is detected before name search.
 - Normal name input is forgiving: autocomplete results are tried first, ordered abbreviation fragments such as `tef pro` are added, partial name-token matches are added, and a Scryfall fuzzy match is used as a final candidate.
 - Search should help identify the card first; printing selection happens after the user chooses a card identity.
+- Active search and printing result surfaces should collapse when the user clicks elsewhere or opens Card Detail.
 - Search and printing results are paper-only in the active UI. Digital/MTGO search is archived until ManaSpec can also render MTGO tix pricing.
 - Adding to Radar is explicit: printing rows use a compact Select action and exact set-number results use an Add button instead of whole-row click-to-add.
 - Printing rows show available nonfoil and foil prices inline; finish choice happens in the add workflow only when multiple finishes exist.
@@ -395,6 +400,7 @@ Current behavior:
 - Target panels show exit hits, entry hits, approaching targets, and tracked cards with no plan.
 - Target states are based on local `entryTarget`, `exitTarget`, month-based `holdTime`, ownership, elapsed hold time, and current price snapshots.
 - Target signal rows show compact printing identity, source workflow, and action context such as buy, sell, review, watch, or market check.
+- Target signal rows include a compact reason column so the user can see why the row exists before opening Detail.
 - Target signal rows can open card detail or jump to Radar/Positions.
 - No Plan signal rows show tracked cards without plan data and link back to the source workflow for edits.
 
@@ -448,6 +454,7 @@ Current state:
 - Transactions shows local ledger context above filters for buys, sells, net cash flow, and recent activity.
 - Transactions can be filtered by text and transaction type.
 - Transaction totals display as signed cash movement.
+- Transactions display balance after each event and realized gain/loss on SELL rows when cost basis is available.
 
 Future behavior:
 
@@ -482,6 +489,7 @@ Current behavior:
 - History includes transactions, Radar additions, shared card notes, and archived thesis notes.
 - History shows local review context above filters for events, trades, lessons/review, and notes.
 - History can be filtered by text and event type.
+- History transaction details include balance context and SELL realized gain/loss when available.
 - Transaction history rows preserve buy/sell activity even when a current position reaches zero quantity.
 
 ## Current Data Concepts

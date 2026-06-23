@@ -39,6 +39,7 @@ function initSearch(options = {}) {
     openCurrentSearchCandidate(searchBox.value);
   });
   installRadarSearchEscapeHandler();
+  installRadarSearchOutsideDismissHandler();
 
   if (searchBox.value.trim()) {
     runSearch(searchBox, 0, options.limit || 8);
@@ -54,14 +55,31 @@ function installRadarSearchEscapeHandler() {
     if (!document.getElementById("searchBox")) return;
     if (document.getElementById("appConfirmDialog")?.classList.contains("open")) return;
 
-    const hasSearchSurface = Boolean(
-      document.getElementById("searchResults")?.textContent.trim() ||
-      document.getElementById("printingsView")?.textContent.trim()
-    );
-    if (!hasSearchSurface) return;
+    if (!hasActiveRadarSearchSurface()) return;
 
     dismissRadarSearchSurface();
   });
+}
+
+function installRadarSearchOutsideDismissHandler() {
+  if (window.radarSearchOutsideDismissHandlerInstalled) return;
+  window.radarSearchOutsideDismissHandlerInstalled = true;
+
+  document.addEventListener("pointerdown", event => {
+    if (!document.getElementById("searchBox")) return;
+    if (!hasActiveRadarSearchSurface()) return;
+    if (event.target.closest(".module-context-card--search")) return;
+    if (event.target.closest(".card-detail-modal, .card-art-preview, .app-confirm-dialog")) return;
+
+    dismissRadarSearchSurface();
+  });
+}
+
+function hasActiveRadarSearchSurface() {
+  return Boolean(
+    document.getElementById("searchResults")?.textContent.trim() ||
+    document.getElementById("printingsView")?.textContent.trim()
+  );
 }
 
 function dismissRadarSearchSurface(options = {}) {
@@ -325,7 +343,6 @@ async function selectSearchResult(name) {
   searchInput.value = name;
   resultsBox.innerHTML = "";
   setSearchBusy(resultsBox, false);
-  renderSearchStatus(printBox, "Loading printings...");
 
   try {
     const res = await fetch(
@@ -341,7 +358,6 @@ async function selectSearchResult(name) {
       return;
     }
 
-    setSearchBusy(printBox, false);
     showPrintings(card, requestId);
   } catch (err) {
     console.error(err);
@@ -680,7 +696,6 @@ function openCardSearchResult(card) {
   resultsBox.innerHTML = "";
   const requestId = ++activeSearchRequestId;
   setSearchBusy(resultsBox, false);
-  renderSearchStatus(printBox, "Loading printings...");
   showPrintings(card, requestId);
 }
 

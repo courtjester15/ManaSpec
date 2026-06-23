@@ -112,7 +112,7 @@ function renderCardDetail(item, card, source, options = {}) {
       saveTcgObservation(item, card, source);
     }
   });
-  document.getElementById("targetPlanForm").onsubmit = event => saveTargetPlan(event, item, card, source);
+  initTargetPlanForm(item, card, source);
   document.getElementById("cardNotesForm").onsubmit = event => saveCardNoteFromDetail(event, item, card, source);
   document.getElementById("showNoteHistory")?.addEventListener("toggle", event => {
     localStorage.setItem("cardDetailNotesExpanded", event.target.open ? "1" : "0");
@@ -165,24 +165,25 @@ function renderPlanSection(item, targetState) {
     <section class="detail-command-section">
       <div class="detail-section-heading">
         <h4>Plan</h4>
-        <span>${escapeHtml(formatCompactStatus(targetState.label))}</span>
+        <span id="targetPlanStatus">${escapeHtml(formatCompactStatus(targetState.label))}</span>
       </div>
       <form class="target-plan-form" id="targetPlanForm">
         <label>
           Entry $
-          <input id="entryTargetInput" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.entryTarget))}">
+          <input id="entryTargetInput" name="entryTarget" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.entryTarget))}">
         </label>
         <label>
           Exit $
-          <input id="exitTargetInput" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.exitTarget))}">
+          <input id="exitTargetInput" name="exitTarget" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.exitTarget))}">
         </label>
         <label>
           Hold
-          <input id="holdTimeInput" type="text" inputmode="numeric" pattern="[0-9-]*" value="${escapeDetailAttribute(formatHoldInputValue(item.holdTime))}">
+          <input id="holdTimeInput" name="holdTime" type="text" inputmode="numeric" pattern="[0-9-]*" value="${escapeDetailAttribute(formatHoldInputValue(item.holdTime))}">
         </label>
         <span class="hold-time-helper">Examples: 3, 6-12, 12-18 months</span>
         <span class="plan-added-date">Added ${formatAddedDate(item.addedDate)}</span>
         <button type="submit">Save Plan</button>
+        <span class="plan-save-status" id="targetPlanSaveStatus">Auto-saves on Enter or click-away</span>
       </form>
     </section>
   `;
@@ -383,8 +384,38 @@ function renderOracleSection(card) {
   `;
 }
 
+function initTargetPlanForm(item, card, source) {
+  const form = document.getElementById("targetPlanForm");
+  if (!form) return;
+
+  form.dataset.planSignature = getTargetPlanInputSignature();
+  form.addEventListener("submit", event => saveTargetPlan(event, item, card, source));
+  form.querySelectorAll("input").forEach(input => {
+    input.addEventListener("keydown", event => {
+      event.stopPropagation();
+      if (event.key === "Enter") {
+        event.preventDefault();
+        input.blur();
+      }
+    });
+
+    input.addEventListener("blur", () => {
+      if (getTargetPlanInputSignature() === form.dataset.planSignature) return;
+      saveTargetPlan(null, item, card, source);
+    });
+  });
+}
+
+function getTargetPlanInputSignature() {
+  return [
+    document.getElementById("entryTargetInput")?.value || "",
+    document.getElementById("exitTargetInput")?.value || "",
+    document.getElementById("holdTimeInput")?.value || "",
+  ].join("|");
+}
+
 function saveTargetPlan(event, item, card, source) {
-  event.preventDefault();
+  event?.preventDefault();
 
   const entryTarget = parseWholeDollarInput(document.getElementById("entryTargetInput").value);
   const exitTarget = parseWholeDollarInput(document.getElementById("exitTargetInput").value);

@@ -116,9 +116,36 @@ Before calling a task done:
 
 - The app behavior matches the relevant README section.
 - For UI-facing changes, verify behavior through the Codex in-app Browser on localhost when browser automation is available.
+- If a change modifies shared table structure, columns, widths, editable cells, money formatting, alignment, headers, rows, or table helpers, complete the table contract verification below.
 - Any new rule or workflow is documented.
 - The roadmap status still makes sense.
 - No old note has silently become the new source of truth.
+
+## Table Contract Verification
+
+ManaSpec uses native shared table rendering across Radar, Positions, Signals, Transactions, and History. Because the app is not using a table library, table layout integrity is part of acceptance criteria.
+
+When a change modifies table structure or adds/removes columns, verify these views at 1366px width:
+
+- Radar
+- Positions
+- Signals
+- Transactions
+- History
+
+Confirm:
+
+- Headers align with data columns.
+- Column ordering remains correct.
+- Row height remains consistent.
+- Text remains vertically centered.
+- Money columns remain readable.
+- Editable cells still enter edit mode correctly.
+- Text does not unexpectedly wrap.
+- There is no horizontal overflow.
+- There are no displaced or secondary header rows.
+
+A table feature is not complete simply because the new column or field appears. Table scanability and layout integrity are part of the acceptance criteria.
 
 ## Workflow Ownership Rules
 

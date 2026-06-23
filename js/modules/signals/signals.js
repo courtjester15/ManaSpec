@@ -155,6 +155,7 @@ function getSignalTableColumns() {
     { label: "Fin", sortKey: "finishLabel", align: "center", value: row => row.finishLabel },
     { label: "Source", sortKey: "source", align: "center", value: row => row.sourceLabel },
     { label: "Action", sortKey: "actionLabel", align: "center", type: "badge", badgeClass: row => getSignalActionClass(row), value: row => row.actionLabel },
+    { label: "Why", sortKey: "reasonLabel", value: row => row.reasonLabel, title: row => row.reasonDetail },
     { label: "Now", sortKey: "currentPrice", align: "money", value: row => row.currentPrice ? money(row.currentPrice) : "-" },
     { label: "Target", sortKey: "targetSort", align: "money", value: row => row.relevantTarget },
     { label: "Distance", sortKey: "distanceSort", align: "center", value: row => row.distance },
@@ -172,7 +173,7 @@ function getSignalTableColumns() {
 }
 
 function setSignalsSort(field) {
-  const defaultDirection = ["name", "set_code", "collector_number", "finishLabel", "source", "actionLabel"].includes(field) ? "asc" : "desc";
+  const defaultDirection = ["name", "set_code", "collector_number", "finishLabel", "source", "actionLabel", "reasonLabel"].includes(field) ? "asc" : "desc";
   updateStandardSort(signalsSort, field, defaultDirection);
   renderSignalsTable();
 }
@@ -216,8 +217,10 @@ function buildSignalAttentionRow(item) {
     sourceLabel: item.owned ? "Position" : "Radar",
     status: getSignalStatusLabel(targetState.label, buckets),
     actionLabel: getSignalActionLabel(item, targetState.label, buckets, { hasPlan, hasTarget, hasNotes }),
+    reasonLabel: getSignalReasonLabel(item, targetState.label, buckets, { hasPlan, hasTarget, hasNotes, market }),
+    reasonDetail: getSignalReasonDetail(item, targetState.label, buckets, { hasPlan, hasTarget, hasNotes, market }),
     buckets,
-    detail: formatSignalTargetDetail(item),
+    detail: formatSignalTargetDetail(item, targetState.label, buckets),
     currentPrice: Number(item.currentPrice || 0),
     relevantTarget: formatRelevantSignalTarget(item, targetState.label),
     targetSort: getRelevantSignalTargetSort(item),
@@ -235,17 +238,46 @@ function getSignalFinishLabel(item) {
 }
 
 function getSignalActionLabel(item, status, buckets, state) {
-  if (status === "Exit hit") return "SELL / Exit hit";
-  if (status === "Entry hit") return "BUY / Entry hit";
-  if (status === "Exit near") return "WATCH / Exit near";
-  if (status === "Entry near") return "WATCH / Entry near";
+  if (status === "Exit hit") return "SELL / Position";
+  if (status === "Entry hit") return "BUY / Radar";
+  if (status === "Exit near") return "REVIEW / Exit";
+  if (status === "Entry near") return "REVIEW / Entry";
   if (status === "Hold due") return "REVIEW / Hold due";
   if (status === "Hold near") return "REVIEW / Hold near";
-  if (!state.hasPlan) return "REVIEW / Missing plan";
-  if (!state.hasTarget) return "REVIEW / Add target";
-  if (!state.hasNotes) return "REVIEW / Add note";
-  if (buckets.includes("marketData")) return "MARKET / Needs check";
+  if (!state.hasPlan) return "ADD PLAN";
+  if (!state.hasTarget) return "ADD TARGET";
+  if (!state.hasNotes) return "ADD NOTE";
+  if (buckets.includes("marketData")) return item.owned ? "MARKET / Position" : "MARKET / Radar";
   return item.owned ? "REVIEW / Position" : "WATCH / Radar";
+}
+
+function getSignalReasonLabel(item, status, buckets, state) {
+  if (status === "Exit hit") return "At or above exit";
+  if (status === "Entry hit") return "At or below entry";
+  if (status === "Exit near") return "Near exit target";
+  if (status === "Entry near") return "Near entry target";
+  if (status === "Hold due") return "Hold window due";
+  if (status === "Hold near") return "Hold window near";
+  if (!state.hasPlan) return "No saved plan";
+  if (!state.hasTarget) return "No target price";
+  if (!state.hasNotes) return "No decision note";
+  if (buckets.includes("marketData")) return state.market.state === "missing" ? "No market check" : "Stale market check";
+  return item.owned ? "Position review" : "Radar watch";
+}
+
+function getSignalReasonDetail(item, status, buckets, state) {
+  const source = item.owned ? "Positions" : "Radar";
+  const pieces = [
+    `${source} row`,
+    getSignalReasonLabel(item, status, buckets, state),
+    formatSignalTargetDetail(item, status, buckets),
+  ].filter(Boolean);
+
+  if (state.market?.detail && buckets.includes("marketData")) {
+    pieces.push(state.market.detail);
+  }
+
+  return pieces.join(" / ");
 }
 
 function getSignalBuckets(item, status, state) {
@@ -386,8 +418,11 @@ function formatSignalDistance(item, status) {
     ? ((target - price) / target) * 100
     : ((price - target) / target) * 100;
 
-  if (status === "Exit hit" || status === "Entry hit") return "Hit";
-  return `${Math.max(0, pct).toFixed(1)}%`;
+  if (status === "Exit hit") return "Above exit";
+  if (status === "Entry hit") return "Below entry";
+  return item.owned
+    ? `${Math.max(0, pct).toFixed(1)}% below exit`
+    : `${Math.max(0, pct).toFixed(1)}% above entry`;
 }
 
 function getSignalDistanceSort(item, status) {
@@ -426,9 +461,11 @@ function getSignalHoldMonths(item) {
   return match ? Number(match[0]) : 0;
 }
 
-function formatSignalTargetDetail(item) {
+function formatSignalTargetDetail(item, status = "", buckets = []) {
   const pieces = [
     item.owned ? "Position" : "Radar",
+    status && status !== "Watching" ? status : "",
+    buckets.includes("marketData") ? "Market check needed" : "",
     item.currentPrice ? `Now ${money(item.currentPrice)}` : "",
     item.entryTarget ? `Entry ${money(item.entryTarget)}` : "",
     item.exitTarget ? `Exit ${money(item.exitTarget)}` : "",

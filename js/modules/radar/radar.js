@@ -118,10 +118,10 @@ function renderRadarItems() {
     emptyText: "No Radar ideas match the current filters.",
     getRowId: item => item.id,
     onSort: setRadarSort,
-    onRowClick: item => openCardDetail(item.id, "radar"),
+    onRowClick: item => openRadarCardDetail(item.id),
     onAction: (action, item) => {
       if (action === "art") openRadarArtPreview(item);
-      if (action === "notes") openCardDetail(item.id, "radar", { focusNotes: true });
+      if (action === "notes") openRadarCardDetail(item.id, { focusNotes: true });
       if (action === "buy") buyRadarItem(item.id);
       if (action === "remove") removeRadarItem(item.id);
     },
@@ -242,7 +242,15 @@ function openRadarArtPreview(item) {
     return;
   }
 
-  openCardDetail(item.id, "radar");
+  openRadarCardDetail(item.id);
+}
+
+function openRadarCardDetail(cardId, options = {}) {
+  if (typeof dismissRadarSearchSurface === "function") {
+    dismissRadarSearchSurface({ blurInput: true });
+  }
+
+  openCardDetail(cardId, "radar", options);
 }
 
 function updateRadarCount(shownCount = 0, filteredCount = shownCount) {
