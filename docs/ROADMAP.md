@@ -83,16 +83,11 @@ Current discipline: do not expand sideways until the core singles workflow has b
    - Jump to the exact Radar idea or Position from a signal.
    - Prefer highlight, temporary filter, or scroll-to-card over broad module navigation.
 
-2. Card Detail command center pass
-   - Re-test opening from Radar, Positions, Signals, Transactions, and History.
-   - Tighten Plan, Notes, Market Check, Market Evaluation, Card Data, and Actions without expanding scope.
-   - Update Help in the same pass.
-
-3. Ledger migration plan
+2. Ledger migration plan
    - Draft the transaction migration path before changing the storage model.
    - Preserve existing localStorage data while defining computed Positions from transactions.
 
-4. UX polish candidates from beta notes
+3. UX polish candidates from beta notes
    - Continue tightening app notice styling now that shared toasts are opaque and layered above app UI.
    - Replace browser-native sell confirmation with an app-styled workflow.
    - Simplify Radar search mode selection toward unified smart search.
@@ -122,10 +117,10 @@ Goal: turn the current alpha into a usable product, not a wider prototype.
    - [ ] Re-test Transactions, History, and Dashboard after another complete core-loop pass.
 
 3. Card Detail command center
-   - [ ] Tighten card detail into a compact working panel.
-   - [ ] Keep Plan, Notes, Market Check, Market Evaluation, Card Data, and Actions visible but not crowded.
+   - [x] Tighten card detail into a compact working panel.
+   - [x] Keep Plan, Notes, Market Check, Market Evaluation, Card Data, and Actions visible but not crowded.
    - [ ] Confirm opening from Radar, Positions, Signals, Transactions, and History.
-   - [ ] Update help copy in the same pass.
+   - [x] Update help copy in the same pass.
 
 4. Data safety
    - [x] Add JSON export/import from Admin.

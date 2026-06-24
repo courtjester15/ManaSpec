@@ -895,6 +895,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .detail-main-stack,
 .detail-main-grid,
+.detail-primary-grid,
+.detail-market-grid,
 .detail-column,
 .detail-grid,
 .signal-grid,
@@ -911,6 +913,18 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .detail-main-grid {
   grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr);
+  gap: 6px;
+  align-items: stretch;
+}
+
+.detail-primary-grid {
+  grid-template-columns: minmax(360px, 1.25fr) minmax(260px, 0.75fr);
+  gap: 6px;
+  align-items: stretch;
+}
+
+.detail-market-grid {
+  grid-template-columns: minmax(360px, 1.08fr) minmax(320px, 0.92fr);
   gap: 6px;
   align-items: stretch;
 }
@@ -1012,6 +1026,19 @@ Panels, rows, lists, modals, metrics, and status elements.
   background: rgba(255, 255, 255, 0.018);
 }
 
+.detail-plan-section {
+  border-color: rgba(125, 211, 252, 0.22);
+  background: rgba(125, 211, 252, 0.045);
+}
+
+.detail-plan-section .detail-section-heading h4 {
+  font-size: 12px;
+}
+
+.detail-overview-section {
+  background: rgba(255, 255, 255, 0.012);
+}
+
 .detail-main-grid .detail-command-section {
   margin-top: 2px;
 }
@@ -1076,8 +1103,12 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .market-paste-actions span {
+  min-width: 0;
+  overflow: hidden;
   font-size: 10px;
   line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .detail-actions a {
@@ -1103,7 +1134,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .market-link-actions {
   flex-wrap: wrap;
   margin-top: 2px;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 .market-paste-panel,
@@ -1126,8 +1157,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .market-paste-panel textarea {
-  min-height: 96px;
-  max-height: 126px;
+  min-height: 72px;
+  max-height: 112px;
   margin: 0;
   resize: vertical;
   font-family: var(--font-mono);
@@ -1545,6 +1576,8 @@ Panels, rows, lists, modals, metrics, and status elements.
   .module-context-band:has(.module-context-card--wide),
   .admin-grid,
   .detail-main-grid,
+  .detail-primary-grid,
+  .detail-market-grid,
   .detail-grid,
   .signal-grid,
   .evaluation-grid,

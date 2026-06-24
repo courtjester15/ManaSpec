@@ -514,7 +514,7 @@ input[type="number"]:focus {
 
 .target-plan-form {
   display: grid;
-  grid-template-columns: 70px 70px 72px minmax(112px, 1fr) auto minmax(116px, 1fr);
+  grid-template-columns: 78px 78px 86px minmax(118px, 1fr) minmax(132px, 1fr);
   gap: 5px;
   align-items: end;
   margin-top: 5px;
@@ -562,6 +562,25 @@ input[type="number"]:focus {
   color: var(--muted);
   font-size: 9px;
   line-height: 1.15;
+}
+
+.detail-plan-section .target-plan-form {
+  grid-template-columns: 84px 84px 92px minmax(130px, 1fr) minmax(144px, 1fr);
+  gap: 6px;
+}
+
+.detail-plan-section .target-plan-form label {
+  color: var(--text);
+}
+
+.detail-plan-section .target-plan-form input {
+  border-color: rgba(125, 211, 252, 0.24);
+  background: rgba(6, 12, 18, 0.72);
+}
+
+.detail-plan-section .plan-save-status {
+  color: var(--accent);
+  font-weight: 650;
 }
 
 .quick-plan-input,

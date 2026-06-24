@@ -61,7 +61,8 @@ const helpTopics = {
     intro: "Use the card detail Market Check area to save visible TCGplayer price-point text and power market evaluation.",
     steps: [
       "Open card detail from Radar, Positions, or Signals.",
-      "Use the detail sections in order: Overview, Plan, Notes, Market Evaluation, Market Check, Oracle, and Card Data.",
+      "Use the detail sections in order: printing context, Plan, Market Check, Market Evaluation, Notes, and reference text.",
+      "Plan fields save on Enter or click-away, so the visible plan is the current saved plan.",
       "Open the TCGplayer link and find the Price Points block.",
       "Copy the visible text that includes Market Price, Recent Sale, Listed Median, Quantity, and Sellers.",
       "Screenshot guidance is deferred until the Market Check surface stabilizes.",

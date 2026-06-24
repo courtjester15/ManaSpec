@@ -86,15 +86,13 @@ function renderCardDetail(item, card, source, options = {}) {
     ${renderCardDataSection(item, card)}
 
     <div class="detail-main-stack">
-      <div class="detail-main-grid">
-        ${renderOverviewSection(item, movement, owned)}
+      <div class="detail-primary-grid">
         ${renderPlanSection(item, targetState)}
+        ${renderOverviewSection(item, movement, owned)}
       </div>
-      <div class="detail-main-grid">
+      <div class="detail-market-grid">
+        ${renderMarketCheckSection(item, latestTcg, marketLinks)}
         ${renderMarketEvaluationSection(item, latestTcg, Boolean(owned))}
-        <div class="detail-column">
-          ${renderMarketCheckSection(item, latestTcg, marketLinks)}
-        </div>
       </div>
       <div class="detail-main-grid detail-lower-grid">
         ${renderNotesSection(item)}
@@ -134,7 +132,7 @@ function renderOverviewSection(item, movement, owned) {
   return `
     <section class="detail-command-section detail-overview-section">
       <div class="detail-section-heading">
-        <h4>Overview</h4>
+        <h4>Status</h4>
         <span>${owned ? "Owned position" : "Radar idea"}</span>
       </div>
       <div class="detail-grid overview-grid">
@@ -162,7 +160,7 @@ function renderCardDetailHeader(item) {
 
 function renderPlanSection(item, targetState) {
   return `
-    <section class="detail-command-section">
+    <section class="detail-command-section detail-plan-section">
       <div class="detail-section-heading">
         <h4>Plan</h4>
         <span id="targetPlanStatus">${escapeHtml(formatCompactStatus(targetState.label))}</span>
@@ -182,7 +180,6 @@ function renderPlanSection(item, targetState) {
         </label>
         <span class="hold-time-helper">Examples: 3, 6-12, 12-18 months</span>
         <span class="plan-added-date">Added ${formatAddedDate(item.addedDate)}</span>
-        <button type="submit">Save Plan</button>
         <span class="plan-save-status" id="targetPlanSaveStatus">Auto-saves on Enter or click-away</span>
       </form>
     </section>
@@ -275,7 +272,7 @@ function renderMarketCheckSection(item, latestTcg, marketLinks = []) {
     <section class="detail-command-section signal-section">
       <div class="detail-section-heading">
         <h4>Market Check</h4>
-        <span>${latestTcg ? `Saved ${new Date(latestTcg.checkedAt).toLocaleString()}` : "-"}</span>
+        <span>${latestTcg ? `Saved ${new Date(latestTcg.checkedAt).toLocaleString()}` : "Manual observation"}</span>
       </div>
       <div class="signal-grid">
         ${renderSignalSlot("TCG Qty", formatSellerQty(latestTcg))}
@@ -331,7 +328,7 @@ function renderMarketEvaluationSection(item, observation, owned) {
     <section class="detail-command-section">
       <div class="detail-section-heading">
         <h4>Market Evaluation</h4>
-        <span>${escapeHtml(evaluation.summary)}</span>
+        <span>${escapeHtml(evaluation.summary === "-" ? "Data gaps" : evaluation.summary)}</span>
       </div>
       <div class="evaluation-grid">
         ${evaluation.items.map(renderEvaluationItem).join("")}

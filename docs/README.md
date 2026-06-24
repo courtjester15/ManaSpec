@@ -213,16 +213,16 @@ Current behavior:
 
 - Card detail opens from Radar, Positions, and Signals.
 - Positions card names and Radar rows open card detail.
-- The panel is organized into Overview, Plan, Notes, Market Evaluation, Market Check, Oracle, and Card Data.
-- Overview shows current price, movement, ownership state, buy price, value, and P/L.
+- The panel is organized as a compact command center: printing context, Plan, Market Check, Market Evaluation, Notes, and reference text.
+- Status shows current price, movement, ownership state, buy price, value, and P/L without competing with the working plan.
 - Plan edits entry target, exit target, and hold time.
-- Plan fields save on Enter or click-away and update the visible plan status without requiring the user to close and reopen Card Detail.
+- Plan is the primary working section. Plan fields save on Enter or click-away and update the visible plan status without requiring the user to close and reopen Card Detail.
 - Hold time accepts simple month values and ranges such as `3`, `6-12`, and `12-18`.
 - Notes adds and reviews append-first notes linked to the current exact printing key.
 - Actions opens exact market/reference pages.
 - Market Evaluation summarizes observable market mechanics from saved/local data: supply, velocity, price confidence, Scryfall EDH rank, target math, freshness, and data gaps.
-- Market Check saves pasted TCGplayer Price Points text as a local observation and includes a compact explanation of what to copy.
-- Card Data keeps printing metadata and Oracle text visible without crowding Positions.
+- Market Check sits directly after Plan, saves pasted TCGplayer Price Points text as a local observation, and keeps market links/check status aligned.
+- Card Data and Oracle text stay available as compact reference context instead of crowding the working workflow.
 
 Market evaluation rules:
 
