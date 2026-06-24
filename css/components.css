@@ -1427,6 +1427,12 @@ Panels, rows, lists, modals, metrics, and status elements.
   animation: search-status-spin 720ms linear infinite;
 }
 
+#searchResults[aria-busy="true"]::before,
+#printingsView[aria-busy="true"]::before {
+  content: none;
+  display: none;
+}
+
 @keyframes search-status-spin {
   to {
     transform: rotate(360deg);
