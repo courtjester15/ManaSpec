@@ -62,11 +62,17 @@ function sortPrintings(list) {
 
 async function showPrintings(card, searchRequestId = null) {
   const container = document.getElementById("printingsView");
+  const statusContainer = document.getElementById("searchResults") || container;
 
-  if (typeof renderSearchStatus === "function") {
-    renderSearchStatus(container, "Loading printings...");
-  } else {
-    container.innerHTML = "Loading printings...";
+  if (container) {
+    container.innerHTML = "";
+    if (typeof setSearchBusy === "function") setSearchBusy(container, false);
+  }
+
+  if (statusContainer && typeof renderSearchStatus === "function") {
+    renderSearchStatus(statusContainer, "Searching Scryfall...");
+  } else if (statusContainer) {
+    statusContainer.innerHTML = "Searching Scryfall...";
   }
 
   try {
@@ -89,12 +95,14 @@ async function showPrintings(card, searchRequestId = null) {
 
     currentPrintings = data.data || [];
 
-    if (typeof setSearchBusy === "function") setSearchBusy(container, false);
+    if (typeof setSearchBusy === "function") setSearchBusy(statusContainer, false);
+    if (statusContainer && statusContainer !== container) statusContainer.innerHTML = "";
     renderPrintings();
   } catch (err) {
     console.error(err);
-    if (typeof setSearchBusy === "function") setSearchBusy(container, false);
-    container.innerHTML = "Error loading printings";
+    if (typeof setSearchBusy === "function") setSearchBusy(statusContainer, false);
+    if (statusContainer && statusContainer !== container) statusContainer.innerHTML = "";
+    if (container) container.innerHTML = "Error loading printings";
   }
 }
 
