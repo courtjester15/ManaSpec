@@ -238,7 +238,8 @@ App shell, header, workbar, summary, and view headings.
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
   align-items: center;
-  padding: 9px 10px;
+  min-height: 42px;
+  padding: 8px 10px 8px 12px;
   border: 1px solid rgba(125, 211, 252, 0.28);
   border-radius: var(--radius);
   background: #101820;
@@ -251,7 +252,8 @@ App shell, header, workbar, summary, and view headings.
 }
 
 .app-toast.trade {
-  padding: 12px;
+  min-height: 46px;
+  padding: 10px 12px;
   border-color: rgba(52, 211, 153, 0.5);
   background: #10201a;
   color: var(--text-strong);
@@ -281,7 +283,15 @@ App shell, header, workbar, summary, and view headings.
   color: var(--warning);
 }
 
+.app-toast span {
+  display: flex;
+  align-items: center;
+  min-height: var(--control-h-sm);
+  line-height: 1.25;
+}
+
 .app-toast button {
+  align-self: center;
   height: var(--control-h-sm);
   min-height: var(--control-h-sm);
   padding: 0 8px;

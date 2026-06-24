@@ -222,6 +222,10 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   font-variant-numeric: tabular-nums;
 }
 
+.ms-table__row > .ms-table__cell--money {
+  padding-right: calc(var(--table-cell-pad-x) + 4px);
+}
+
 .ms-table__cell--actions {
   justify-content: center;
   text-align: center;
@@ -256,7 +260,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 
 .ms-table__input,
 .quick-plan-input {
-  width: calc(100% - 8px);
+  width: calc(100% - 10px);
   height: var(--table-control-h) !important;
   min-height: var(--table-control-h) !important;
   margin: 0 !important;
@@ -289,7 +293,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   display: flex;
   align-items: center;
   gap: 4px;
-  width: calc(100% - 8px);
+  width: calc(100% - 10px);
   height: var(--table-control-h);
   min-height: var(--table-control-h);
   margin: 0 !important;
@@ -321,7 +325,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   align-items: center;
   justify-content: inherit;
   gap: 3px;
-  width: calc(100% - 8px);
+  width: calc(100% - 10px);
   height: var(--table-control-h);
   min-height: var(--table-control-h);
   padding: 0 4px;
@@ -333,6 +337,16 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
+}
+
+.ms-table__editable.ms-table__cell--center .ms-table__editable-display {
+  justify-content: center;
+}
+
+.ms-table__editable.ms-table__cell--money .ms-table__editable-display,
+.ms-table__editable.ms-table__cell--number .ms-table__editable-display {
+  justify-content: flex-end;
+  padding-right: 6px;
 }
 
 .ms-table__editable-display span {
@@ -373,7 +387,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   display: none;
   align-items: center;
   gap: 4px;
-  width: calc(100% - 8px);
+  width: calc(100% - 10px);
   height: var(--table-control-h);
   color: var(--muted);
   font-size: 11px;
@@ -417,7 +431,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   align-items: center;
   align-self: center;
   justify-self: center;
-  width: calc(100% - 6px);
+  width: calc(100% - 8px);
   height: var(--table-control-h);
   min-height: var(--table-control-h);
   margin: 0 auto !important;
@@ -718,6 +732,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 }
 
 .printing-picker-price {
+  padding-right: 8px;
   color: var(--text);
   font-weight: 400;
   font-variant-numeric: tabular-nums;
