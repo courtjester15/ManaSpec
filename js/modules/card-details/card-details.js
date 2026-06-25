@@ -82,8 +82,7 @@ function renderCardDetail(item, card, source, options = {}) {
   const targetState = getTargetState(item, Boolean(owned));
 
   document.getElementById("cardDetailBody").innerHTML = `
-    ${renderCardDetailHeader(item)}
-    ${renderCardDataSection(item, card)}
+    ${renderCardDetailHeader(item, card)}
 
     <div class="detail-main-stack">
       <div class="detail-primary-grid">
@@ -147,11 +146,14 @@ function renderOverviewSection(item, movement, owned) {
   `;
 }
 
-function renderCardDetailHeader(item) {
+function renderCardDetailHeader(item, card) {
   return `
     <header class="detail-header">
       <div class="detail-title-block">
-        <h3>${escapeHtml(item.name)}</h3>
+        <div class="detail-title-line">
+          <h3>${escapeHtml(item.name)}</h3>
+          ${renderCardDataSection(item, card)}
+        </div>
       </div>
       <button type="button" class="detail-close" id="closeCardDetail">Close</button>
     </header>
@@ -168,12 +170,12 @@ function renderPlanSection(item, targetState, source) {
       </div>
       <form class="target-plan-form" id="targetPlanForm">
         <label>
-          Entry $
-          <input id="entryTargetInput" name="entryTarget" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.entryTarget))}">
+          Entry
+          <input id="entryTargetInput" name="entryTarget" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetDisplayValue(item.entryTarget))}">
         </label>
         <label>
-          Exit $
-          <input id="exitTargetInput" name="exitTarget" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetInputNumber(item.exitTarget))}">
+          Exit
+          <input id="exitTargetInput" name="exitTarget" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeDetailAttribute(formatTargetDisplayValue(item.exitTarget))}">
         </label>
         <label>
           Hold
@@ -221,11 +223,8 @@ function renderCardNoteEntry(note, index) {
   const timestamp = formatCardNoteTimestamp(note.createdAt);
   return `
     <article class="card-note-entry ${index === 0 ? "latest" : "older"}">
-      <header>
-        <strong>${escapeHtml(label)}</strong>
-        <span>${escapeHtml(timestamp)}</span>
-      </header>
-      <p>${escapeHtml(note.text)}</p>
+      <span class="card-note-meta">${escapeHtml(timestamp)}</span>
+      <p><strong>${escapeHtml(label)}</strong><span>&mdash; ${escapeHtml(note.text)}</span></p>
     </article>
   `;
 }
@@ -397,6 +396,12 @@ function initTargetPlanForm(item, card, source) {
   form.dataset.planSignature = getTargetPlanInputSignature();
   form.addEventListener("submit", event => saveTargetPlan(event, item, card, source));
   form.querySelectorAll("input").forEach(input => {
+    if (input.name === "entryTarget" || input.name === "exitTarget") {
+      input.addEventListener("focus", () => {
+        input.value = formatTargetInputNumber(parseWholeDollarInput(input.value));
+      });
+    }
+
     input.addEventListener("keydown", event => {
       event.stopPropagation();
       if (event.key === "Enter") {
@@ -406,6 +411,11 @@ function initTargetPlanForm(item, card, source) {
     });
 
     input.addEventListener("blur", () => {
+      if (input.name === "entryTarget" || input.name === "exitTarget") {
+        const parsed = parseWholeDollarInput(input.value);
+        if (parsed !== null) input.value = formatTargetDisplayValue(parsed);
+      }
+
       if (getTargetPlanInputSignature() === form.dataset.planSignature) return;
       saveTargetPlan(null, item, card, source);
     });
