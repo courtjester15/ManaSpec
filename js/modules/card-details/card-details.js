@@ -178,8 +178,8 @@ function renderPlanSection(item, targetState, source) {
         <label>
           Hold
           <input id="holdTimeInput" name="holdTime" type="text" inputmode="numeric" pattern="[0-9-]*" value="${escapeDetailAttribute(formatHoldInputValue(item.holdTime))}">
-          <span class="hold-time-helper">Examples: 3, 6-12, 12-18 months</span>
         </label>
+        <span class="hold-time-helper">Examples: 3, 6-12, 12-18 months</span>
         <span class="plan-added-date">Added ${formatAddedDate(item.addedDate)}</span>
       </form>
     </section>

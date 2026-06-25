@@ -147,11 +147,11 @@ Panels, rows, lists, modals, metrics, and status elements.
   top: 12px;
   right: 12px;
   bottom: auto;
-  width: min(900px, calc(100vw - 24px));
-  max-height: min(560px, calc(100vh - 24px));
+  width: min(860px, calc(100vw - 24px));
+  max-height: min(540px, calc(100vh - 24px));
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 4px;
+  padding: 3px;
 }
 
 .card-art-panel {
@@ -298,8 +298,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .detail-header {
   align-items: center;
-  min-height: 28px;
-  margin-bottom: 2px;
+  min-height: 26px;
+  margin-bottom: 1px;
 }
 
 .detail-title-block {
@@ -913,24 +913,24 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .detail-main-stack {
   align-content: start;
-  gap: 5px;
+  gap: 3px;
 }
 
 .detail-main-grid {
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr);
-  gap: 6px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.95fr);
+  gap: 4px;
   align-items: stretch;
 }
 
 .detail-primary-grid {
-  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
-  gap: 6px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr);
+  gap: 4px;
   align-items: stretch;
 }
 
 .detail-market-grid {
-  grid-template-columns: minmax(360px, 1.08fr) minmax(320px, 0.92fr);
-  gap: 6px;
+  grid-template-columns: minmax(340px, 1.05fr) minmax(300px, 0.95fr);
+  gap: 4px;
   align-items: stretch;
 }
 
@@ -946,7 +946,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .overview-grid {
   grid-template-columns: repeat(3, minmax(70px, 1fr));
-  gap: 4px;
+  gap: 3px;
 }
 
 .signal-grid {
@@ -983,8 +983,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .detail-metric,
 .signal-slot {
-  min-height: 34px;
-  padding: 4px 6px;
+  min-height: 30px;
+  padding: 3px 5px;
 }
 
 .detail-metric span,
@@ -1024,8 +1024,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .detail-command-section {
-  padding: 6px;
-  margin-top: 2px;
+  padding: 4px;
+  margin-top: 1px;
   border: 1px solid rgba(255, 255, 255, 0.065);
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.018);
@@ -1049,14 +1049,14 @@ Panels, rows, lists, modals, metrics, and status elements.
   justify-content: space-between;
   gap: 6px;
   align-items: baseline;
-  min-height: 17px;
-  margin-bottom: 4px;
+  min-height: 15px;
+  margin-bottom: 3px;
 }
 
 .evaluation-item {
-  padding: 1px 5px;
+  padding: 1px 4px;
   border-left-width: 3px;
-  min-height: 32px;
+  min-height: 29px;
 }
 
 .evaluation-item.good {
@@ -1095,12 +1095,12 @@ Panels, rows, lists, modals, metrics, and status elements.
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 .market-paste-actions {
   justify-content: flex-start;
-  min-height: 22px;
+  min-height: 20px;
 }
 
 .market-paste-actions span {
@@ -1115,8 +1115,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 .detail-actions a {
   display: inline-flex;
   align-items: center;
-  min-height: 22px;
-  padding: 2px 7px;
+  min-height: 20px;
+  padding: 1px 6px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   color: var(--text);
@@ -1134,8 +1134,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .market-link-actions {
   flex-wrap: wrap;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
 
 .market-paste-panel,
@@ -1145,7 +1145,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .card-thesis-list,
 .card-note-list {
   display: grid;
-  gap: 5px;
+  gap: 3px;
 }
 
 .market-observation-preview .empty-state.compact {
@@ -1158,7 +1158,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .market-paste-panel textarea {
-  min-height: 72px;
+  min-height: 62px;
   max-height: 112px;
   margin: 0;
   resize: vertical;
@@ -1185,7 +1185,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .detail-copy,
 .linked-thesis-note,
 .linked-card-note {
-  padding: 4px 5px;
+  padding: 2px 4px;
 }
 
 .detail-copy p,
@@ -1241,8 +1241,8 @@ Panels, rows, lists, modals, metrics, and status elements.
   flex-wrap: nowrap;
   gap: 3px;
   align-items: center;
-  min-height: 20px;
-  margin-bottom: 2px;
+  min-height: 18px;
+  margin-bottom: 1px;
   overflow: hidden;
 }
 
@@ -1250,7 +1250,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   display: inline-flex;
   min-width: 0;
   max-width: 170px;
-  padding: 1px 5px;
+  padding: 1px 4px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--panel);
@@ -1274,17 +1274,17 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .market-paste-details summary,
 .market-observation-preview summary {
-  height: 21px;
+  height: 19px;
   color: var(--muted);
   font-size: 10px;
-  line-height: 21px;
+  line-height: 19px;
   cursor: pointer;
 }
 
 .market-paste-details summary {
   width: fit-content;
   max-width: 100%;
-  padding: 0 6px;
+  padding: 0 5px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
@@ -1320,7 +1320,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .linked-thesis-note,
 .linked-card-note {
   display: grid;
-  gap: 3px;
+  gap: 2px;
   align-items: start;
   min-height: 0;
   overflow: visible;
@@ -1330,7 +1330,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .linked-card-note header {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px 6px;
+  gap: 2px 5px;
   align-items: baseline;
   margin: 0;
 }
@@ -1356,7 +1356,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .card-note-preview {
-  margin: 0 0 5px;
+  margin: 0 0 3px;
   color: var(--text);
   font-size: 10px;
   line-height: 1.25;
@@ -1372,6 +1372,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   font-size: 10px;
   line-height: 1.1;
   cursor: pointer;
+  margin-top: 1px;
 }
 
 .add-card-panel,
