@@ -206,7 +206,7 @@ function renderNotesSection(item) {
       </form>
       ${notes.length ? `
         <details class="card-note-history" id="showNoteHistory" ${expanded ? "open" : ""}>
-          <summary>${notes.length > 1 ? `Show ${notes.length - 1} older ${notes.length === 2 ? "note" : "notes"}` : "Show note details"}</summary>
+          <summary>Show Notes</summary>
           <div class="card-note-list">
             ${notes.slice(1).map((note, index) => renderCardNoteEntry(note, index + 1)).join("")}
           </div>
@@ -217,10 +217,10 @@ function renderNotesSection(item) {
 }
 
 function renderCardNoteEntry(note, index) {
-  const label = index === 0 ? "Latest note" : "Older note";
+  const label = index === 0 ? "Latest note" : `Note ${index + 1}`;
   const timestamp = formatCardNoteTimestamp(note.createdAt);
   return `
-    <article class="linked-card-note">
+    <article class="card-note-entry ${index === 0 ? "latest" : "older"}">
       <header>
         <strong>${escapeHtml(label)}</strong>
         <span>${escapeHtml(timestamp)}</span>
