@@ -292,10 +292,12 @@ App shell, header, workbar, summary, and view headings.
 
 .app-toast button {
   align-self: center;
+  flex: 0 0 auto;
   height: var(--control-h-sm);
   min-height: var(--control-h-sm);
   padding: 0 8px;
   font-size: 11px;
+  line-height: 1;
 }
 
 @keyframes toast-enter {

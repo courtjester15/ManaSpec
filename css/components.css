@@ -203,6 +203,11 @@ Panels, rows, lists, modals, metrics, and status elements.
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  width: 100%;
+}
+
+.app-confirm-actions button {
+  flex: 0 0 auto;
 }
 
 .sell-confirm-grid {
@@ -918,7 +923,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .detail-primary-grid {
-  grid-template-columns: minmax(360px, 1.25fr) minmax(260px, 0.75fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
   gap: 6px;
   align-items: stretch;
 }
@@ -1031,10 +1036,6 @@ Panels, rows, lists, modals, metrics, and status elements.
   background: rgba(125, 211, 252, 0.045);
 }
 
-.detail-plan-section .detail-section-heading h4 {
-  font-size: 12px;
-}
-
 .detail-overview-section {
   background: rgba(255, 255, 255, 0.012);
 }
@@ -1049,7 +1050,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   gap: 6px;
   align-items: baseline;
   min-height: 17px;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .evaluation-item {
@@ -1184,7 +1185,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .detail-copy,
 .linked-thesis-note,
 .linked-card-note {
-  padding: 2px 4px;
+  padding: 4px 5px;
 }
 
 .detail-copy p,
@@ -1319,27 +1320,33 @@ Panels, rows, lists, modals, metrics, and status elements.
 .linked-thesis-note,
 .linked-card-note {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
-  gap: 4px;
-  align-items: center;
-  min-height: 20px;
-  overflow: hidden;
+  gap: 3px;
+  align-items: start;
+  min-height: 0;
+  overflow: visible;
 }
 
 .linked-thesis-note header,
 .linked-card-note header {
   display: flex;
-  gap: 3px;
+  flex-wrap: wrap;
+  gap: 3px 6px;
   align-items: baseline;
   margin: 0;
+}
+
+.linked-card-note header strong {
+  color: var(--text-strong);
+  font-size: 10px;
+  line-height: 1.1;
 }
 
 .linked-thesis-note p,
 .linked-card-note p,
 .card-note-preview {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .note-card header,
@@ -1363,6 +1370,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   width: fit-content;
   color: var(--muted);
   font-size: 10px;
+  line-height: 1.1;
   cursor: pointer;
 }
 

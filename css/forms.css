@@ -514,15 +514,15 @@ input[type="number"]:focus {
 
 .target-plan-form {
   display: grid;
-  grid-template-columns: 78px 78px 86px minmax(118px, 1fr) minmax(132px, 1fr);
-  gap: 5px;
+  grid-template-columns: repeat(3, minmax(74px, 1fr)) auto;
+  gap: 4px 5px;
   align-items: end;
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .target-plan-form label {
   display: grid;
-  gap: 3px;
+  gap: 2px;
   margin: 0;
   color: var(--muted);
   font-size: 10px;
@@ -547,26 +547,17 @@ input[type="number"]:focus {
   white-space: nowrap;
 }
 
-.plan-save-status {
-  align-self: center;
-  color: var(--muted);
-  font-size: 9px;
-  line-height: 1.1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .hold-time-helper {
-  align-self: center;
+  align-self: start;
   color: var(--muted);
   font-size: 9px;
   line-height: 1.15;
+  white-space: normal;
 }
 
 .detail-plan-section .target-plan-form {
-  grid-template-columns: 84px 84px 92px minmax(130px, 1fr) minmax(144px, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(3, minmax(76px, 1fr)) auto;
+  gap: 4px 5px;
 }
 
 .detail-plan-section .target-plan-form label {
@@ -576,11 +567,6 @@ input[type="number"]:focus {
 .detail-plan-section .target-plan-form input {
   border-color: rgba(125, 211, 252, 0.24);
   background: rgba(6, 12, 18, 0.72);
-}
-
-.detail-plan-section .plan-save-status {
-  color: var(--accent);
-  font-weight: 650;
 }
 
 .quick-plan-input,

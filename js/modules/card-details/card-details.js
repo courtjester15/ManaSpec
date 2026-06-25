@@ -87,7 +87,7 @@ function renderCardDetail(item, card, source, options = {}) {
 
     <div class="detail-main-stack">
       <div class="detail-primary-grid">
-        ${renderPlanSection(item, targetState)}
+        ${renderPlanSection(item, targetState, source)}
         ${renderOverviewSection(item, movement, owned)}
       </div>
       <div class="detail-market-grid">
@@ -158,12 +158,13 @@ function renderCardDetailHeader(item) {
   `;
 }
 
-function renderPlanSection(item, targetState) {
+function renderPlanSection(item, targetState, source) {
+  const sourceLabel = source === "radar" ? "Source: Radar" : "Source: Positions";
   return `
     <section class="detail-command-section detail-plan-section">
       <div class="detail-section-heading">
         <h4>Plan</h4>
-        <span id="targetPlanStatus">${escapeHtml(formatCompactStatus(targetState.label))}</span>
+        <span id="targetPlanStatus">${escapeHtml(sourceLabel)} / ${escapeHtml(formatCompactStatus(targetState.label))}</span>
       </div>
       <form class="target-plan-form" id="targetPlanForm">
         <label>
@@ -177,10 +178,9 @@ function renderPlanSection(item, targetState) {
         <label>
           Hold
           <input id="holdTimeInput" name="holdTime" type="text" inputmode="numeric" pattern="[0-9-]*" value="${escapeDetailAttribute(formatHoldInputValue(item.holdTime))}">
+          <span class="hold-time-helper">Examples: 3, 6-12, 12-18 months</span>
         </label>
-        <span class="hold-time-helper">Examples: 3, 6-12, 12-18 months</span>
         <span class="plan-added-date">Added ${formatAddedDate(item.addedDate)}</span>
-        <span class="plan-save-status" id="targetPlanSaveStatus">Auto-saves on Enter or click-away</span>
       </form>
     </section>
   `;
@@ -199,16 +199,16 @@ function renderNotesSection(item) {
         <h4>Notes</h4>
         <span>${notes.length ? `${notes.length} saved` : "-"}</span>
       </div>
-      ${latest ? `<p class="card-note-preview">${escapeHtml(getCardNotePreview(latest))}</p>` : `<p class="card-note-preview muted">No notes yet.</p>`}
+      ${latest ? renderCardNoteEntry(latest, 0) : `<p class="card-note-preview muted">No notes yet.</p>`}
       <form class="card-notes-form" id="cardNotesForm">
         <input id="cardNoteText" placeholder="Add note">
         <button type="submit">Add Note</button>
       </form>
       ${notes.length ? `
         <details class="card-note-history" id="showNoteHistory" ${expanded ? "open" : ""}>
-          <summary>Show Note History</summary>
+          <summary>${notes.length > 1 ? `Show ${notes.length - 1} older ${notes.length === 2 ? "note" : "notes"}` : "Show note details"}</summary>
           <div class="card-note-list">
-            ${notes.map(renderCardNoteEntry).join("")}
+            ${notes.slice(1).map((note, index) => renderCardNoteEntry(note, index + 1)).join("")}
           </div>
         </details>
       ` : ""}
@@ -216,15 +216,24 @@ function renderNotesSection(item) {
   `;
 }
 
-function renderCardNoteEntry(note) {
+function renderCardNoteEntry(note, index) {
+  const label = index === 0 ? "Latest note" : "Older note";
+  const timestamp = formatCardNoteTimestamp(note.createdAt);
   return `
     <article class="linked-card-note">
       <header>
-        <span>${new Date(note.createdAt).toLocaleDateString()}</span>
+        <strong>${escapeHtml(label)}</strong>
+        <span>${escapeHtml(timestamp)}</span>
       </header>
       <p>${escapeHtml(note.text)}</p>
     </article>
   `;
+}
+
+function formatCardNoteTimestamp(value) {
+  const date = value ? new Date(value) : null;
+  if (!date || Number.isNaN(date.getTime())) return "Undated";
+  return date.toLocaleString([], { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
 function renderActionsSection(marketLinks) {
@@ -272,7 +281,7 @@ function renderMarketCheckSection(item, latestTcg, marketLinks = []) {
     <section class="detail-command-section signal-section">
       <div class="detail-section-heading">
         <h4>Market Check</h4>
-        <span>${latestTcg ? `Saved ${new Date(latestTcg.checkedAt).toLocaleString()}` : "Manual observation"}</span>
+        <span>${latestTcg ? `Saved ${new Date(latestTcg.checkedAt).toLocaleString()}` : "TCG snapshot"}</span>
       </div>
       <div class="signal-grid">
         ${renderSignalSlot("TCG Qty", formatSellerQty(latestTcg))}
@@ -615,7 +624,7 @@ function getTargetState(item, owned) {
 
   if (!price) return { label: "No price" };
 
-  if (entry || exit || getHoldMonths(item.holdTime)) return { label: "Watching" };
+  if (entry || exit || getHoldMonths(item.holdTime)) return { label: "Plan saved" };
   return { label: "No target" };
 }
 
