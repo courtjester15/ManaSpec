@@ -378,10 +378,14 @@ function renderCardDataSection(item, card) {
 function renderOracleSection(card) {
   return `
     <section class="detail-command-section oracle-section">
+      <div class="detail-section-heading">
+        <h4>Oracle</h4>
+        <span>${escapeHtml(card.type_line || "Card text")}</span>
+      </div>
       <details class="detail-copy">
         <summary>
-          <span>Oracle</span>
-          <strong>${escapeHtml(card.type_line || "Card text")}</strong>
+          <span>Text</span>
+          <strong>Show card text</strong>
         </summary>
         <p>${escapeHtml(card.oracle_text || "No oracle text available.")}</p>
       </details>

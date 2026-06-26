@@ -292,8 +292,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .detail-section-heading h4 {
   margin: 0;
-  font-size: 11px;
-  font-weight: 650;
+  font-size: 12px;
+  font-weight: 750;
   letter-spacing: 0;
   line-height: 1.1;
 }
@@ -1105,15 +1105,29 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .market-paste-actions {
+  flex-wrap: nowrap;
+  align-items: center;
   justify-content: flex-start;
-  min-height: 20px;
+  gap: 6px;
+  min-height: 24px;
+  margin-top: 4px;
+  padding-top: 2px;
+  line-height: 1;
+}
+
+.market-paste-actions button {
+  margin: 0;
 }
 
 .market-paste-actions span {
+  display: inline-flex;
+  align-items: center;
   min-width: 0;
+  min-height: 22px;
   overflow: hidden;
+  color: var(--muted);
   font-size: 10px;
-  line-height: 1.1;
+  line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1152,7 +1166,18 @@ Panels, rows, lists, modals, metrics, and status elements.
   justify-content: center;
   width: 100%;
   min-width: 0;
+  min-height: 22px;
   padding-inline: 4px;
+  border-color: rgba(125, 211, 252, 0.26);
+  background: rgba(125, 211, 252, 0.08);
+  color: var(--text-strong);
+  font-weight: 650;
+}
+
+.market-link-actions a:hover {
+  border-color: rgba(125, 211, 252, 0.44);
+  background: rgba(125, 211, 252, 0.14);
+  color: var(--accent);
 }
 
 .market-paste-panel,
@@ -1311,9 +1336,14 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .market-paste-details summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: fit-content;
   max-width: 100%;
-  padding: 0 5px;
+  min-height: 21px;
+  margin: 0;
+  padding: 0 7px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
@@ -1327,23 +1357,25 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .market-paste-details.needs-check summary,
 .market-paste-details.stale-check summary {
-  border-color: rgba(125, 211, 252, 0.28);
-  background: var(--accent-soft);
+  border-color: rgba(125, 211, 252, 0.42);
+  background: rgba(125, 211, 252, 0.16);
   color: var(--accent);
   font-size: 11px;
   font-weight: 700;
 }
 
 .market-paste-details.aging-check summary {
-  border-color: rgba(125, 211, 252, 0.18);
-  background: rgba(125, 211, 252, 0.07);
-  color: var(--text);
-  font-weight: 650;
+  border-color: rgba(125, 211, 252, 0.34);
+  background: rgba(125, 211, 252, 0.12);
+  color: var(--accent);
+  font-weight: 700;
 }
 
 .market-paste-details.recent-check summary {
-  color: var(--muted);
-  font-weight: 500;
+  border-color: rgba(125, 211, 252, 0.28);
+  background: rgba(125, 211, 252, 0.09);
+  color: var(--text-strong);
+  font-weight: 650;
 }
 
 .linked-thesis-note,
