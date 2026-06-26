@@ -156,6 +156,9 @@ function renderSignalsTable() {
       if (action === "detail") openCardDetail(row.id, row.source);
       if (action === "view") openTrackedSource(row.source, row.id);
     },
+    onInputChange: (field, row, value) => {
+      if (field === "target") saveSignalTargetEdit(row, value);
+    },
   });
 }
 
@@ -191,8 +194,8 @@ function getSignalTableColumns() {
     { label: "Action", sortKey: "actionLabel", align: "center", type: "badge", badgeClass: row => getSignalActionClass(row), value: row => row.actionLabel },
     { label: "Why", sortKey: "reasonLabel", value: row => row.reasonLabel, title: row => row.reasonDetail },
     { label: "Now", sortKey: "currentPrice", align: "money", value: row => row.currentPrice ? money(row.currentPrice) : "-" },
-    { label: "Target", sortKey: "targetSort", align: "money", value: row => row.relevantTarget },
-    { label: "Distance", sortKey: "distanceSort", align: "center", value: row => row.distance },
+    { label: "Target", sortKey: "targetSort", align: "money", type: "editable", name: "target", inputAttrs: 'inputmode="decimal" pattern="[0-9$,.]*"', placeholder: "Set", value: row => formatSignalTargetInput(row.targetValue), displayValue: row => formatTargetDisplayValue(row.targetValue) },
+    { label: "Δ Target", sortKey: "distanceSort", align: "money", className: getSignalDistanceClass, value: formatSignalDistance, title: formatSignalDistanceTitle },
     { label: "Market", sortKey: "marketAgeSort", align: "center", value: row => row.marketFreshness, title: row => row.marketDetail },
     {
       label: "Actions",
@@ -228,14 +231,14 @@ function buildSignalAttentionRow(item) {
   const market = getSignalMarketState(item);
   const plan = getSignalPlanState(item);
   const hasPlan = !plan.missing.length;
-  const hasTarget = Boolean(getRelevantSignalTarget(item));
-  const hasNotes = typeof getCardNotesForItem === "function"
-    ? getCardNotesForItem(item).length > 0
-    : false;
+  const targetValue = getRelevantSignalTarget(item);
+  const hasTarget = Boolean(targetValue);
   const buckets = getSignalBuckets(item, targetSignal, {
     plan,
     market,
   });
+  const source = item.owned ? "portfolio" : "radar";
+  const currentPrice = Number(item.currentPrice || 0);
 
   return {
     id: item.id,
@@ -244,19 +247,18 @@ function buildSignalAttentionRow(item) {
     set_name: item.set_name || "",
     collector_number: item.collector_number || "",
     finishLabel: getSignalFinishLabel(item),
-    source: item.owned ? "portfolio" : "radar",
+    source,
     sourceLabel: item.owned ? "Position" : "Radar",
     status: getSignalStatusLabel(targetSignal.status, buckets),
-    actionLabel: getSignalActionLabel(item, targetSignal.status, buckets, { hasPlan, hasTarget, hasNotes }),
-    reasonLabel: getSignalReasonLabel(item, targetSignal.status, buckets, { hasPlan, hasTarget, hasNotes, market, plan }),
-    reasonDetail: getSignalReasonDetail(item, targetSignal.status, buckets, { hasPlan, hasTarget, hasNotes, market, plan }),
+    actionLabel: getSignalActionLabel(item, targetSignal.status, buckets, { hasPlan, hasTarget }),
+    reasonLabel: getSignalReasonLabel(item, targetSignal.status, buckets, { hasPlan, hasTarget, market, plan }),
+    reasonDetail: getSignalReasonDetail(item, targetSignal.status, buckets, { hasPlan, hasTarget, market, plan }),
     buckets,
     detail: formatSignalTargetDetail(item, targetSignal.status, buckets),
-    currentPrice: Number(item.currentPrice || 0),
-    relevantTarget: formatRelevantSignalTarget(item, targetSignal.status),
+    currentPrice,
+    targetValue,
     targetSort: getRelevantSignalTargetSort(item),
-    distance: formatSignalDistance(item, targetSignal.status),
-    distanceSort: getSignalDistanceSort(item, targetSignal.status),
+    distanceSort: getSignalDistanceSort({ currentPrice, targetValue, source }),
     marketFreshness: market.label,
     marketDetail: market.detail,
     marketAgeSort: market.ageDays,
@@ -279,7 +281,6 @@ function getSignalActionLabel(item, status, buckets, state) {
   if (status === "Hold near") return "REVIEW / Hold near";
   if (!state.hasPlan) return "ADD PLAN";
   if (!state.hasTarget) return "ADD TARGET";
-  if (!state.hasNotes) return "ADD NOTE";
   if (buckets.includes("staleChecks")) return item.owned ? "MARKET / Position" : "MARKET / Radar";
   return item.owned ? "REVIEW / Position" : "WATCH / Radar";
 }
@@ -293,7 +294,6 @@ function getSignalReasonLabel(item, status, buckets, state) {
   if (status === "Hold near") return "Hold window near";
   if (buckets.includes("noPlan")) return `${state.plan.missing.join(" + ")} missing`;
   if (!state.hasTarget) return "No target price";
-  if (!state.hasNotes) return "No decision note";
   if (buckets.includes("staleChecks")) return state.market.state === "missing" ? "No market check" : "Stale market check";
   return item.owned ? "Position review" : "Radar watch";
 }
@@ -516,16 +516,6 @@ function getSignalPriceAgeDays(item) {
   return Math.floor(Math.max(0, Date.now() - date.getTime()) / 86400000);
 }
 
-function formatRelevantSignalTarget(item, status) {
-  if (status === "Hold due" || status === "Hold near") {
-    const months = getSignalHoldMonths(item);
-    return months ? `${months} mo` : "-";
-  }
-
-  const target = getRelevantSignalTarget(item);
-  return target ? money(target) : "-";
-}
-
 function getRelevantSignalTargetSort(item) {
   if (item.owned) return Number(item.exitTarget || 0);
   return Number(item.entryTarget || 0);
@@ -536,54 +526,50 @@ function getRelevantSignalTarget(item) {
   return Number(item.entryTarget || 0);
 }
 
-function formatSignalDistance(item, status) {
-  if (status === "Hold due" || status === "Hold near") {
-    return formatSignalHoldDistance(item);
-  }
-
-  const price = Number(item.currentPrice || 0);
-  const target = getRelevantSignalTarget(item);
-  if (!price || !target) return "-";
-
-  const pct = item.owned
-    ? ((target - price) / target) * 100
-    : ((price - target) / target) * 100;
-
-  if (status === "Exit hit") return "Above exit";
-  if (status === "Entry hit") return "Below entry";
-  return item.owned
-    ? `${Math.max(0, pct).toFixed(1)}% below exit`
-    : `${Math.max(0, pct).toFixed(1)}% above entry`;
+function formatSignalTargetInput(value) {
+  return typeof formatTargetInputNumber === "function"
+    ? formatTargetInputNumber(value)
+    : "";
 }
 
-function getSignalDistanceSort(item, status) {
-  if (status === "Hold due" || status === "Hold near") {
-    return getSignalHoldDaysRemaining(item);
-  }
+function getSignalTargetDeltaValue(row) {
+  const price = Number(row.currentPrice || 0);
+  const target = Number(row.targetValue || 0);
+  if (!price || !target) return null;
 
-  const price = Number(item.currentPrice || 0);
-  const target = getRelevantSignalTarget(item);
-  if (!price || !target) return 999;
-
-  if (item.owned) return Math.max(0, ((target - price) / target) * 100);
-  return Math.max(0, ((price - target) / target) * 100);
+  return {
+    dollars: price - target,
+    percent: ((price - target) / target) * 100,
+  };
 }
 
-function formatSignalHoldDistance(item) {
-  const days = getSignalHoldDaysRemaining(item);
-  if (days === 999) return "-";
-  if (days <= 0) return "Due";
-  return `${days}d`;
+function formatSignalDistance(row) {
+  const distance = getSignalTargetDeltaValue(row);
+  return distance ? formatPercent(distance.percent) : "-";
 }
 
-function getSignalHoldDaysRemaining(item) {
-  const months = getSignalHoldMonths(item);
-  const startDate = typeof getPlanStartDate === "function" ? getPlanStartDate(item) : null;
-  if (!months || !startDate) return 999;
+function formatSignalDistanceTitle(row) {
+  const distance = getSignalTargetDeltaValue(row);
+  if (!distance) return row.source === "portfolio" ? "No exit target" : "No entry target";
+  const targetType = row.source === "portfolio" ? "exit" : "entry";
+  return `${formatSignalSignedMoney(distance.dollars)} vs ${targetType}`;
+}
 
-  const targetMs = months * 30 * 86400000;
-  const ageMs = Date.now() - startDate.getTime();
-  return Math.ceil((targetMs - ageMs) / 86400000);
+function getSignalDistanceSort(row) {
+  const distance = getSignalTargetDeltaValue(row);
+  return distance ? distance.percent : (row.source === "portfolio" ? -9999 : 9999);
+}
+
+function getSignalDistanceClass(row) {
+  const distance = getSignalTargetDeltaValue(row);
+  if (!distance) return "target-distance neutral";
+  if (row.source === "portfolio") return distance.percent >= 0 ? "target-distance good" : "target-distance bad";
+  return distance.percent <= 0 ? "target-distance good" : "target-distance bad";
+}
+
+function formatSignalSignedMoney(value) {
+  const number = Number(value || 0);
+  return `${number >= 0 ? "+" : "-"}${money(Math.abs(number))}`;
 }
 
 function getSignalHoldMonths(item) {
@@ -619,6 +605,40 @@ function getSignalActionClass(row) {
   if (row.actionLabel.startsWith("WATCH")) return "signal-pill approaching";
   if (row.actionLabel.startsWith("MARKET")) return "signal-pill market";
   return "signal-pill review";
+}
+
+function saveSignalTargetEdit(row, value) {
+  const target = typeof parseWholeDollarInput === "function"
+    ? parseWholeDollarInput(value)
+    : Number(String(value || "").replace(/[^\d.]/g, "") || 0);
+
+  if (target === null) {
+    if (typeof showAppNotice === "function") {
+      showAppNotice("Use numbers, $, commas, or decimals for target.", "warning");
+    }
+    renderSignalsView();
+    return;
+  }
+
+  const item = row.source === "portfolio"
+    ? specs.find(spec => spec.id === row.id)
+    : radar.find(radarItem => radarItem.id === row.id);
+
+  if (!item) return;
+
+  if (row.source === "portfolio") {
+    item.exitTarget = target;
+    localStorage.setItem("specs", JSON.stringify(specs));
+  } else {
+    item.entryTarget = target;
+    saveRadarState(radar);
+  }
+
+  renderSignalsView();
+
+  if (typeof showAppNotice === "function") {
+    showAppNotice(`${item.name} ${row.source === "portfolio" ? "exit" : "entry"} target saved.`, "save");
+  }
 }
 
 function openSignalArtPreview(row) {

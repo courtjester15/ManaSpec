@@ -49,6 +49,9 @@ The missing layer is a small, pruneable place for promising ideas before they ar
 - Expand Signals beyond target states into attention categories such as missing plan, stale market check, newly purchased, thesis missing, and never reviewed.
 - Make Signals hierarchy clearer: each signal should explain why it appears and what action the user is expected to consider.
 - Use exact deep-links, row highlight, temporary filtering, or scroll-to-card behavior so a signal lands on the relevant Radar idea or Position.
+- Revisit View navigation after beta: smoother transitions, destination row highlighting, and clearer context after jumping from Signals into Radar or Positions.
+- Consider lightweight local usage analytics later to understand whether users naturally prefer row clicks, Detail, or View before simplifying Signals actions.
+- Evolve static Hold Months toward an expected review or target date, such as "Hold: 12 months" plus "Expected Review: Jun 2027"; this is UX polish, not a beta requirement.
 
 ## Card Detail
 
