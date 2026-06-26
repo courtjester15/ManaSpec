@@ -542,14 +542,144 @@ Panels, rows, lists, modals, metrics, and status elements.
   line-height: 1.15;
 }
 
-.signal-table-header {
+.signals-action-band {
+  margin-bottom: 0;
+}
+
+.signals-action-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(112px, 0.58fr);
+  gap: 6px;
+  align-items: stretch;
+}
+
+.signals-action-tile,
+.signals-action-utility {
+  min-width: 0;
+  min-height: 118px;
+  margin: 0;
+  padding: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+  text-align: left;
+}
+
+.signals-action-tile {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 6px;
+  align-content: start;
+}
+
+.signals-action-tile:hover,
+.signals-action-tile.active {
+  border-color: rgba(125, 211, 252, 0.38);
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.signals-action-title,
+.signals-action-utility span {
+  min-width: 0;
+  color: var(--text-strong);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.05;
+}
+
+.signals-action-tile strong,
+.signals-action-utility strong {
+  color: var(--text-strong);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.signals-action-tile > small {
+  grid-column: 1 / -1;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.signals-action-preview {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.signals-action-preview-row {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+  min-height: 20px;
+  padding-top: 1px;
+  border-top: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+.signals-action-preview-row b,
+.signals-action-preview-row small,
+.signals-action-preview em {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signals-action-preview-row b {
+  color: var(--text-strong);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.05;
+}
+
+.signals-action-preview-row small,
+.signals-action-preview em {
+  color: var(--muted);
+  font-size: 9px;
+  font-style: normal;
+  line-height: 1.05;
+}
+
+.signals-action-utility {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
+  align-content: start;
+}
+
+.signals-action-utility .filter-reset-btn,
+.signals-action-utility .table-page-size-control {
+  width: 100%;
+  margin: 0;
+}
+
+.signals-action-utility .table-page-size-control {
+  justify-content: space-between;
+}
+
+.signals-action-utility .filter-reset-btn,
+.signals-action-utility .table-page-size-control select {
+  height: 24px;
+  min-height: 24px;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.signal-table-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
   align-items: center;
   box-sizing: border-box;
-  min-height: 48px;
-  padding: 6px;
+  min-height: 34px;
+  padding: 4px 6px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--panel);
@@ -572,13 +702,6 @@ Panels, rows, lists, modals, metrics, and status elements.
   color: var(--muted);
   font-size: 11px;
   line-height: 1.1;
-}
-
-.signal-table-tools {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
 }
 
 .admin-grid {

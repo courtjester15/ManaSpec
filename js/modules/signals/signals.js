@@ -16,24 +16,24 @@ let activeSignalBucket = "";
 
 const SIGNAL_BUCKETS = [
   {
-    id: "needsAction",
-    label: "Needs Action",
-    detail: "Plan says act now",
+    id: "targetsHit",
+    label: "Targets Hit",
+    detail: "Immediate buy/sell review",
   },
   {
     id: "approaching",
     label: "Approaching",
-    detail: "May need review soon",
+    detail: "Within 5% of target",
   },
   {
-    id: "needsReview",
-    label: "Needs Review",
-    detail: "Missing decision context",
+    id: "noPlan",
+    label: "No Plan",
+    detail: "Missing target or hold",
   },
   {
-    id: "marketData",
-    label: "Market Data",
-    detail: "Needs fresh market context",
+    id: "staleChecks",
+    label: "Stale Checks",
+    detail: "Missing or 30+ days old",
   },
 ];
 
@@ -46,16 +46,12 @@ function renderSignalsView() {
         <p>What needs attention today across Radar and Positions.</p>
       </div>
 
-      ${renderModuleContextBand(getSignalContextCards(rows), { label: "Signals context" })}
+      ${renderSignalActionBand(rows)}
 
       <div class="signal-table-header">
         <div class="signal-table-title">
           <h4>${escapeHtml(getSignalTableTitle())}</h4>
           <span>${escapeHtml(getSignalTableMeta())}</span>
-        </div>
-        <div class="signal-table-tools">
-          ${activeSignalBucket ? `<button type="button" class="filter-reset-btn" id="clearSignalFilter">Show all</button>` : ""}
-          ${renderTablePageSizeControl("signals")}
         </div>
       </div>
       <div id="signalsTable"></div>
@@ -68,25 +64,63 @@ function renderSignalsView() {
   renderSignalsTable();
 }
 
-function getSignalContextCards(rows) {
-  return SIGNAL_BUCKETS.map(bucket => renderSignalBucketCard(bucket, rows));
+function renderSignalActionBand(rows) {
+  return `
+    <section class="signals-action-band" aria-label="Signals action center">
+      <div class="signals-action-tiles">
+        ${SIGNAL_BUCKETS.map(bucket => renderSignalActionTile(bucket, rows)).join("")}
+        ${renderSignalUtilityTile(rows)}
+      </div>
+    </section>
+  `;
 }
 
-function renderSignalBucketCard(bucket, rows) {
+function renderSignalActionTile(bucket, rows) {
   const bucketRows = getRowsForSignalBucket(rows, bucket.id);
-  const first = bucketRows[0];
-  const preview = first
-    ? `${first.name} - ${first.status}`
-    : "No cards";
+  const previewRows = getSignalBucketPreviewRows(bucketRows, bucket.id);
+  const classes = [
+    "signals-action-tile",
+    activeSignalBucket === bucket.id ? "active" : "",
+  ].filter(Boolean).join(" ");
 
-  return {
-    label: bucket.label,
-    value: bucketRows.length,
-    detail: bucket.detail,
-    preview,
-    action: bucket.id,
-    active: activeSignalBucket === bucket.id,
-  };
+  return `
+    <button type="button" class="${classes}" data-context-action="${escapeAttribute(bucket.id)}">
+      <span class="signals-action-title">${escapeHtml(bucket.label)}</span>
+      <strong>${bucketRows.length}</strong>
+      <small>${escapeHtml(bucket.detail)}</small>
+      <div class="signals-action-preview">
+        ${previewRows.length
+          ? previewRows.map(renderSignalPreviewRow).join("")
+          : `<em>No cards</em>`}
+      </div>
+    </button>
+  `;
+}
+
+function renderSignalUtilityTile(rows) {
+  return `
+    <article class="signals-action-utility">
+      <span>All Attention Signals</span>
+      <strong>${rows.length}</strong>
+      <button type="button" class="filter-reset-btn" id="clearSignalFilter"${activeSignalBucket ? "" : " disabled"}>Show all</button>
+      ${renderTablePageSizeControl("signals")}
+    </article>
+  `;
+}
+
+function getSignalBucketPreviewRows(rows, bucketId) {
+  return [...rows]
+    .sort((a, b) => compareSignalBucketPriority(a, b, bucketId))
+    .slice(0, 3);
+}
+
+function renderSignalPreviewRow(row) {
+  return `
+    <span class="signals-action-preview-row">
+      <b>${escapeHtml(row.name)}</b>
+      <small>${escapeHtml(row.previewReason || row.reasonLabel || row.status)}</small>
+    </span>
+  `;
 }
 
 function initSignalBucketCards() {
@@ -190,19 +224,16 @@ function getSignalAttentionRows() {
 }
 
 function buildSignalAttentionRow(item) {
-  const targetState = typeof getTargetState === "function"
-    ? getTargetState(item, item.owned)
-    : { label: "No target" };
+  const targetSignal = getSignalTargetState(item);
   const market = getSignalMarketState(item);
-  const hasPlan = hasSignalPlan(item);
-  const hasTarget = hasSignalTarget(item);
+  const plan = getSignalPlanState(item);
+  const hasPlan = !plan.missing.length;
+  const hasTarget = Boolean(getRelevantSignalTarget(item));
   const hasNotes = typeof getCardNotesForItem === "function"
     ? getCardNotesForItem(item).length > 0
     : false;
-  const buckets = getSignalBuckets(item, targetState.label, {
-    hasPlan,
-    hasTarget,
-    hasNotes,
+  const buckets = getSignalBuckets(item, targetSignal, {
+    plan,
     market,
   });
 
@@ -215,21 +246,23 @@ function buildSignalAttentionRow(item) {
     finishLabel: getSignalFinishLabel(item),
     source: item.owned ? "portfolio" : "radar",
     sourceLabel: item.owned ? "Position" : "Radar",
-    status: getSignalStatusLabel(targetState.label, buckets),
-    actionLabel: getSignalActionLabel(item, targetState.label, buckets, { hasPlan, hasTarget, hasNotes }),
-    reasonLabel: getSignalReasonLabel(item, targetState.label, buckets, { hasPlan, hasTarget, hasNotes, market }),
-    reasonDetail: getSignalReasonDetail(item, targetState.label, buckets, { hasPlan, hasTarget, hasNotes, market }),
+    status: getSignalStatusLabel(targetSignal.status, buckets),
+    actionLabel: getSignalActionLabel(item, targetSignal.status, buckets, { hasPlan, hasTarget, hasNotes }),
+    reasonLabel: getSignalReasonLabel(item, targetSignal.status, buckets, { hasPlan, hasTarget, hasNotes, market, plan }),
+    reasonDetail: getSignalReasonDetail(item, targetSignal.status, buckets, { hasPlan, hasTarget, hasNotes, market, plan }),
     buckets,
-    detail: formatSignalTargetDetail(item, targetState.label, buckets),
+    detail: formatSignalTargetDetail(item, targetSignal.status, buckets),
     currentPrice: Number(item.currentPrice || 0),
-    relevantTarget: formatRelevantSignalTarget(item, targetState.label),
+    relevantTarget: formatRelevantSignalTarget(item, targetSignal.status),
     targetSort: getRelevantSignalTargetSort(item),
-    distance: formatSignalDistance(item, targetState.label),
-    distanceSort: getSignalDistanceSort(item, targetState.label),
+    distance: formatSignalDistance(item, targetSignal.status),
+    distanceSort: getSignalDistanceSort(item, targetSignal.status),
     marketFreshness: market.label,
     marketDetail: market.detail,
     marketAgeSort: market.ageDays,
-    priority: getSignalPriority(buckets, item, targetState.label, market),
+    previewReason: getSignalPreviewReason(item, targetSignal, plan, market, buckets),
+    bucketPriority: getSignalBucketPriority(item, targetSignal, plan, market),
+    priority: getSignalPriority(buckets, item, targetSignal, market, plan),
   };
 }
 
@@ -247,7 +280,7 @@ function getSignalActionLabel(item, status, buckets, state) {
   if (!state.hasPlan) return "ADD PLAN";
   if (!state.hasTarget) return "ADD TARGET";
   if (!state.hasNotes) return "ADD NOTE";
-  if (buckets.includes("marketData")) return item.owned ? "MARKET / Position" : "MARKET / Radar";
+  if (buckets.includes("staleChecks")) return item.owned ? "MARKET / Position" : "MARKET / Radar";
   return item.owned ? "REVIEW / Position" : "WATCH / Radar";
 }
 
@@ -258,10 +291,10 @@ function getSignalReasonLabel(item, status, buckets, state) {
   if (status === "Entry near") return "Near entry target";
   if (status === "Hold due") return "Hold window due";
   if (status === "Hold near") return "Hold window near";
-  if (!state.hasPlan) return "No saved plan";
+  if (buckets.includes("noPlan")) return `${state.plan.missing.join(" + ")} missing`;
   if (!state.hasTarget) return "No target price";
   if (!state.hasNotes) return "No decision note";
-  if (buckets.includes("marketData")) return state.market.state === "missing" ? "No market check" : "Stale market check";
+  if (buckets.includes("staleChecks")) return state.market.state === "missing" ? "No market check" : "Stale market check";
   return item.owned ? "Position review" : "Radar watch";
 }
 
@@ -273,30 +306,30 @@ function getSignalReasonDetail(item, status, buckets, state) {
     formatSignalTargetDetail(item, status, buckets),
   ].filter(Boolean);
 
-  if (state.market?.detail && buckets.includes("marketData")) {
+  if (state.market?.detail && buckets.includes("staleChecks")) {
     pieces.push(state.market.detail);
   }
 
   return pieces.join(" / ");
 }
 
-function getSignalBuckets(item, status, state) {
+function getSignalBuckets(item, targetSignal, state) {
   const buckets = [];
 
-  if (status === "Exit hit" || status === "Entry hit" || status === "Hold due") {
-    buckets.push("needsAction");
+  if (targetSignal.state === "hit") {
+    buckets.push("targetsHit");
   }
 
-  if (status === "Exit near" || status === "Entry near" || status === "Hold near") {
+  if (targetSignal.state === "approaching") {
     buckets.push("approaching");
   }
 
-  if (!state.hasPlan || !state.hasTarget || !state.hasNotes) {
-    buckets.push("needsReview");
+  if (state.plan.missing.length) {
+    buckets.push("noPlan");
   }
 
-  if (state.market.state === "missing" || state.market.state === "stale" || state.market.priceState === "stale") {
-    buckets.push("marketData");
+  if (state.market.state === "missing" || state.market.state === "stale") {
+    buckets.push("staleChecks");
   }
 
   return buckets;
@@ -304,17 +337,23 @@ function getSignalBuckets(item, status, state) {
 
 function getSignalStatusLabel(status, buckets) {
   if (status && status !== "Watching") return status;
-  if (buckets.includes("needsReview")) return "Needs review";
-  if (buckets.includes("marketData")) return "Market check";
+  if (buckets.includes("noPlan")) return "No plan";
+  if (buckets.includes("staleChecks")) return "Market check";
   return status || "Watching";
 }
 
-function getSignalPriority(buckets, item, status, market) {
-  if (buckets.includes("needsAction")) return 0 + getSignalDistanceSort(item, status) / 1000;
-  if (buckets.includes("approaching")) return 10 + getSignalDistanceSort(item, status) / 1000;
-  if (buckets.includes("needsReview")) return 20;
-  if (buckets.includes("marketData")) return 30 + Math.min(market.ageDays, 999) / 1000;
+function getSignalPriority(buckets, item, targetSignal, market, plan) {
+  const rank = getSignalBucketPriority(item, targetSignal, plan, market);
+  if (buckets.includes("targetsHit")) return rank.targetsHit;
+  if (buckets.includes("approaching")) return 10 + rank.approaching / 1000;
+  if (buckets.includes("noPlan")) return 20 + rank.noPlan / 1000;
+  if (buckets.includes("staleChecks")) return 30 + rank.staleChecks / 1000;
   return 99;
+}
+
+function compareSignalBucketPriority(a, b, bucketId) {
+  return compareStandardSortValues(a.bucketPriority?.[bucketId] ?? 9999, b.bucketPriority?.[bucketId] ?? 9999)
+    || String(a.name || "").localeCompare(String(b.name || ""), undefined, { numeric: true, sensitivity: "base" });
 }
 
 function compareSignalPriority(a, b) {
@@ -331,12 +370,104 @@ function getTrackedSignalCards() {
   ];
 }
 
-function hasSignalPlan(item) {
-  return Boolean(Number(item.entryTarget || 0) || Number(item.exitTarget || 0) || getSignalHoldMonths(item));
+function getSignalTargetState(item) {
+  const price = Number(item.currentPrice || 0);
+  const target = getRelevantSignalTarget(item);
+  if (!price || !target) {
+    return { state: "none", status: "", percent: 999, beyond: 0 };
+  }
+
+  if (item.owned) {
+    if (price >= target) {
+      return {
+        state: "hit",
+        status: "Exit hit",
+        percent: 0,
+        beyond: ((price - target) / target) * 100,
+      };
+    }
+
+    const percent = ((target - price) / target) * 100;
+    return {
+      state: percent <= 5 ? "approaching" : "watching",
+      status: percent <= 5 ? "Exit near" : "",
+      percent,
+      beyond: 0,
+    };
+  }
+
+  if (price <= target) {
+    return {
+      state: "hit",
+      status: "Entry hit",
+      percent: 0,
+      beyond: ((target - price) / target) * 100,
+    };
+  }
+
+  const percent = ((price - target) / target) * 100;
+  return {
+    state: percent <= 5 ? "approaching" : "watching",
+    status: percent <= 5 ? "Entry near" : "",
+    percent,
+    beyond: 0,
+  };
 }
 
-function hasSignalTarget(item) {
-  return Boolean(Number(item.entryTarget || 0) || Number(item.exitTarget || 0));
+function getSignalPlanState(item) {
+  const missing = [];
+  if (item.owned) {
+    if (!Number(item.exitTarget || 0)) missing.push("Exit");
+  } else if (!Number(item.entryTarget || 0)) {
+    missing.push("Entry");
+  }
+
+  if (!getSignalHoldMonths(item)) missing.push("Hold");
+
+  const date = getSignalPlanAgeDate(item);
+  return {
+    missing,
+    ageSort: date ? date.getTime() : Number.MAX_SAFE_INTEGER,
+  };
+}
+
+function getSignalPlanAgeDate(item) {
+  const raw = item.buyDate || item.addedDate || item.priceUpdatedAt || "";
+  const date = raw ? new Date(raw) : null;
+  return date && !Number.isNaN(date.getTime()) ? date : null;
+}
+
+function getSignalPreviewReason(item, targetSignal, plan, market, buckets) {
+  if (buckets.includes("targetsHit")) {
+    return item.owned
+      ? `${targetSignal.beyond.toFixed(1)}% above exit`
+      : `${targetSignal.beyond.toFixed(1)}% below entry`;
+  }
+
+  if (buckets.includes("approaching")) {
+    return item.owned
+      ? `${targetSignal.percent.toFixed(1)}% from exit`
+      : `${targetSignal.percent.toFixed(1)}% from entry`;
+  }
+
+  if (buckets.includes("noPlan")) {
+    return `${item.owned ? "Position" : "Radar"} missing ${plan.missing.join(" + ")}`;
+  }
+
+  if (buckets.includes("staleChecks")) {
+    return market.state === "missing" ? "No market check" : `${market.ageDays}d since check`;
+  }
+
+  return item.owned ? "Position review" : "Radar watch";
+}
+
+function getSignalBucketPriority(item, targetSignal, plan, market) {
+  return {
+    targetsHit: targetSignal.state === "hit" ? -targetSignal.beyond : 9999,
+    approaching: targetSignal.state === "approaching" ? targetSignal.percent : 9999,
+    noPlan: plan.missing.length ? (item.owned ? 10000000000000 : 0) + plan.ageSort : 99999999999999,
+    staleChecks: market.state === "missing" ? 0 : Math.min(market.ageDays, 999),
+  };
 }
 
 function getSignalMarketState(item) {
@@ -359,7 +490,7 @@ function getSignalMarketState(item) {
     };
   }
 
-  if (ageDays > 60) {
+  if (ageDays >= 30) {
     return {
       state: "stale",
       priceState: priceAgeDays > 14 ? "stale" : "ok",
@@ -370,7 +501,7 @@ function getSignalMarketState(item) {
   }
 
   return {
-    state: ageDays > 30 ? "aging" : "recent",
+    state: ageDays >= 7 ? "aging" : "fresh",
     priceState: priceAgeDays > 14 ? "stale" : "ok",
     label: ageDays <= 0 ? "Today" : `${ageDays}d old`,
     detail: `Market Check saved ${ageDays <= 0 ? "today" : `${ageDays} days ago`}`,
@@ -465,7 +596,7 @@ function formatSignalTargetDetail(item, status = "", buckets = []) {
   const pieces = [
     item.owned ? "Position" : "Radar",
     status && status !== "Watching" ? status : "",
-    buckets.includes("marketData") ? "Market check needed" : "",
+    buckets.includes("staleChecks") ? "Market check needed" : "",
     item.currentPrice ? `Now ${money(item.currentPrice)}` : "",
     item.entryTarget ? `Entry ${money(item.entryTarget)}` : "",
     item.exitTarget ? `Exit ${money(item.exitTarget)}` : "",
@@ -476,10 +607,10 @@ function formatSignalTargetDetail(item, status = "", buckets = []) {
 }
 
 function getSignalStatusClass(row) {
-  if (row.buckets.includes("needsAction")) return "signal-pill action";
+  if (row.buckets.includes("targetsHit")) return "signal-pill action";
   if (row.buckets.includes("approaching")) return "signal-pill approaching";
-  if (row.buckets.includes("needsReview")) return "signal-pill review";
-  if (row.buckets.includes("marketData")) return "signal-pill market";
+  if (row.buckets.includes("noPlan")) return "signal-pill review";
+  if (row.buckets.includes("staleChecks")) return "signal-pill market";
   return "signal-pill";
 }
 
