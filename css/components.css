@@ -558,7 +558,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   min-width: 0;
   min-height: 118px;
   margin: 0;
-  padding: 6px;
+  padding: 7px;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -570,7 +570,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 .signals-action-tile {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 2px 6px;
+  gap: 3px 6px;
   align-content: start;
 }
 
@@ -585,15 +585,16 @@ Panels, rows, lists, modals, metrics, and status elements.
 .signals-action-utility span {
   min-width: 0;
   color: var(--text-strong);
-  font-size: 12px;
-  font-weight: 750;
+  font-size: 13px;
+  font-weight: 800;
   line-height: 1.05;
 }
 
 .signals-action-tile strong,
 .signals-action-utility strong {
-  color: var(--text-strong);
-  font-size: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 650;
   line-height: 1;
 }
 
@@ -609,16 +610,16 @@ Panels, rows, lists, modals, metrics, and status elements.
 .signals-action-preview {
   grid-column: 1 / -1;
   display: grid;
-  gap: 2px;
-  margin-top: 2px;
+  gap: 4px;
+  margin-top: 3px;
 }
 
 .signals-action-preview-row {
   display: grid;
-  gap: 0;
+  gap: 2px;
   min-width: 0;
-  min-height: 20px;
-  padding-top: 1px;
+  min-height: 23px;
+  padding-top: 3px;
   border-top: 1px solid rgba(255, 255, 255, 0.045);
 }
 
@@ -633,9 +634,9 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .signals-action-preview-row b {
   color: var(--text-strong);
-  font-size: 10px;
-  font-weight: 650;
-  line-height: 1.05;
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.08;
 }
 
 .signals-action-preview-row small,
@@ -649,8 +650,20 @@ Panels, rows, lists, modals, metrics, and status elements.
 .signals-action-utility {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 3px;
+  gap: 4px;
   align-content: start;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.signals-action-utility span {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.signals-action-utility strong {
+  font-size: 12px;
+  color: var(--text);
 }
 
 .signals-action-utility .filter-reset-btn,
@@ -670,38 +683,6 @@ Panels, rows, lists, modals, metrics, and status elements.
   margin: 0;
   font-size: 11px;
   line-height: 1;
-}
-
-.signal-table-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 8px;
-  align-items: center;
-  box-sizing: border-box;
-  min-height: 34px;
-  padding: 4px 6px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--panel);
-}
-
-.signal-table-title {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.signal-table-header h4 {
-  margin: 0;
-  color: var(--text-strong);
-  font-size: 14px;
-  font-weight: 650;
-}
-
-.signal-table-title span {
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.1;
 }
 
 .admin-grid {

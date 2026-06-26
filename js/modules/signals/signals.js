@@ -48,12 +48,6 @@ function renderSignalsView() {
 
       ${renderSignalActionBand(rows)}
 
-      <div class="signal-table-header">
-        <div class="signal-table-title">
-          <h4>${escapeHtml(getSignalTableTitle())}</h4>
-          <span>${escapeHtml(getSignalTableMeta())}</span>
-        </div>
-      </div>
       <div id="signalsTable"></div>
     </section>
   `;
@@ -100,8 +94,8 @@ function renderSignalActionTile(bucket, rows) {
 function renderSignalUtilityTile(rows) {
   return `
     <article class="signals-action-utility">
-      <span>All Attention Signals</span>
-      <strong>${rows.length}</strong>
+      <span>Attention</span>
+      <strong>${rows.length} Active</strong>
       <button type="button" class="filter-reset-btn" id="clearSignalFilter"${activeSignalBucket ? "" : " disabled"}>Show all</button>
       ${renderTablePageSizeControl("signals")}
     </article>
@@ -160,18 +154,6 @@ function renderSignalsTable() {
       if (field === "target") saveSignalTargetEdit(row, value);
     },
   });
-}
-
-function getSignalTableTitle() {
-  const bucket = SIGNAL_BUCKETS.find(item => item.id === activeSignalBucket);
-  return bucket ? bucket.label : "All Attention Signals";
-}
-
-function getSignalTableMeta() {
-  const filtered = getFilteredSignalRows().length;
-  const total = getSignalAttentionRows().length;
-  if (activeSignalBucket) return `${filtered} of ${total} signals shown`;
-  return `${total} active signals`;
 }
 
 function getFilteredSignalRows() {
