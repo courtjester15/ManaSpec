@@ -76,6 +76,7 @@ The missing layer is a small, pruneable place for promising ideas before they ar
 - Replace layout-shifting save notices with app-level toast notifications.
 - Standardize empty, filtered, loading, and network-failure states across Radar, Positions, Signals, Transactions, History, and Dashboard.
 - Review a shared formatting and escaping helper pass once beta UI settles.
+- Responsive Desktop Layout Contract (Post-Beta Review): after beta and more real-world desktop usage, evaluate whether ManaSpec needs an intentional desktop layout. First answer whether the current laptop-first layout limits usability, which screens benefit from width, whether ManaSpec should remain dense like a trading terminal or become more fluid, whether Dashboard should preserve fixed grouped tile rhythm, and whether wider monitors should gain breathing room rather than different layouts. Do not begin another responsive CSS pass until a clear visual contract has been defined from 1366x768, 1440x900, and 1920x1080 usage.
 
 ## Technical Follow-Ups
 

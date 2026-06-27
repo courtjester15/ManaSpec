@@ -10,7 +10,7 @@ App shell, header, workbar, summary, and view headings.
 .app-header {
   display: flex;
   align-items: center;
-  gap: clamp(12px, 1vw, 18px);
+  gap: 16px;
   margin-bottom: 8px;
 }
 
@@ -44,7 +44,7 @@ App shell, header, workbar, summary, and view headings.
 .workbar {
   display: flex;
   align-items: center;
-  gap: var(--app-shell-gap);
+  gap: 10px;
   margin: 8px 0;
 }
 
@@ -214,7 +214,7 @@ App shell, header, workbar, summary, and view headings.
 .module-view,
 .admin-view {
   display: grid;
-  gap: var(--app-shell-gap);
+  gap: 10px;
 }
 
 .portfolio-workflow {
