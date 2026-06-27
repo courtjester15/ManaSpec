@@ -146,11 +146,11 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .card-detail-panel {
-  top: 12px;
-  right: 12px;
+  top: var(--app-page-pad-x);
+  right: var(--app-page-pad-x);
   bottom: auto;
-  width: min(760px, calc(100vw - 24px));
-  max-height: min(520px, calc(100vh - 24px));
+  width: min(clamp(760px, 52vw, 900px), calc(100vw - (var(--app-page-pad-x) * 2)));
+  max-height: min(clamp(520px, 72vh, 680px), calc(100vh - (var(--app-page-pad-x) * 2)));
   overflow-y: hidden;
   overflow-x: hidden;
   padding: 2px;
@@ -358,8 +358,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(140px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--app-grid-gap);
   margin-bottom: 12px;
 }
 
@@ -367,27 +367,27 @@ Panels, rows, lists, modals, metrics, and status elements.
 .signal-scan-grid,
 .admin-grid {
   display: grid;
-  gap: 10px;
+  gap: var(--app-grid-gap);
 }
 
 .scan-grid {
-  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .signal-scan-grid {
-  grid-template-columns: repeat(4, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
 .signal-bucket-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--app-grid-gap);
 }
 
 .module-context-band {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--app-grid-gap);
   align-items: stretch;
   min-height: 76px;
   margin-bottom: 0;
@@ -548,8 +548,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .signals-action-tiles {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(112px, 0.58fr);
-  gap: 6px;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(120px, 0.42fr);
+  gap: clamp(6px, 0.5vw, 8px);
   align-items: stretch;
   min-height: 150px;
 }
@@ -687,7 +687,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .admin-grid {
-  grid-template-columns: repeat(4, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
 .metric-card,
