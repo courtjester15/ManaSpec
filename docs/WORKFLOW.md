@@ -53,6 +53,7 @@ ManaSpec now uses Git for recovery points and version history.
 
 - Commit before risky refactors or data-model changes.
 - Commit after each coherent workflow fix or doc update.
+- Do not push to GitHub or use remote GitHub actions unless the user explicitly asks for that batch.
 - Use branches for experiments that may need to be abandoned or compared.
 - Use tags for meaningful app versions such as alpha, beta, or release milestones.
 - Do not create new dated release-copy folders for normal checkpoints.
