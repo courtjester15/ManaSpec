@@ -6,6 +6,12 @@ ManaSpec is a decision terminal for MTG speculation: track positions, plan exits
 
 It is not a collection tracker, inventory nostalgia tool, or prediction engine.
 
+## Ownership
+
+This roadmap represents committed future work. If an item is here, the project has decided it belongs in ManaSpec; the remaining questions are timing, order, and implementation shape.
+
+Use [PARKING_LOT.md](PARKING_LOT.md) for promising ideas that still need validation, workflow testing, prioritization, or a product decision.
+
 ## Workflow Lineup
 
 - App Shell: stable frame, navigation, global summary, active view mount.
