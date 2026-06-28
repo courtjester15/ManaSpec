@@ -31,7 +31,7 @@ Focus areas:
 - `docs/ROADMAP.md`
 - `docs/WORKFLOW.md`
 - `docs/DECISIONS.md`
-- `docs/hygiene-audit.md`
+- `docs/audits/hygiene-audit.md`
 - `js/core/app.js`
 - `js/core/state.js`
 - `js/core/storage.js`

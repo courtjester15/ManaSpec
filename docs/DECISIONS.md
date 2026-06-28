@@ -151,4 +151,11 @@ Raw notes in `dev notes/inbox/` and historical notes in `dev notes/archive/` are
 
 Use flat docs until the project is large enough to need per-module specs.
 
-Active docs should stay centered around [README](README.md), [ROADMAP](ROADMAP.md), this decision log, and the lightweight [WORKFLOW](WORKFLOW.md).
+ManaSpec has earned three focused ownership docs because README was carrying too much durable project truth:
+
+- [PRODUCT_PRINCIPLES](PRODUCT_PRINCIPLES.md) owns stable product philosophy and decision mindset.
+- [ARCHITECTURE](ARCHITECTURE.md) owns how the app is built.
+- [DATA_MODEL](DATA_MODEL.md) owns entities and relationships.
+- [STYLE_GUIDE](STYLE_GUIDE.md) owns UI language and visual conventions.
+
+These docs should absorb complexity from README without duplicating product behavior, roadmap priority, or decision rationale.

@@ -6,12 +6,33 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 
 ## Start Here
 
-- [README](README.md): product shape, current implementation rules, module lineup, and data model.
+- [README](README.md): product shape, current workflow behavior, and module lineup.
+- [Product Principles](PRODUCT_PRINCIPLES.md): stable product philosophy and decision mindset.
+- [Architecture](ARCHITECTURE.md): how ManaSpec is built internally.
+- [Data Model](DATA_MODEL.md): important entities and how they relate.
+- [Style Guide](STYLE_GUIDE.md): UI language, terminology, table conventions, and design rules.
 - [Roadmap](ROADMAP.md): current phase, next work, and future phases.
 - [Workflow](WORKFLOW.md): lightweight rules for working on the app.
 - [Decisions](DECISIONS.md): short log of durable product, architecture, and data choices.
+- [Parking Lot](PARKING_LOT.md): useful ideas that are not yet roadmap commitments.
+- [Changelog](../CHANGELOG.md): human-readable history of meaningful workflow, product, and process changes.
 
-Most day-to-day work should only need this file and [ROADMAP.md](ROADMAP.md).
+Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), then use the ownership map below when a change touches architecture, data, style, or process.
+
+## Documentation Ownership Map
+
+- `README.md`: what ManaSpec is, current workflow behavior, module lineup, and where to start.
+- `PRODUCT_PRINCIPLES.md`: stable product philosophy and decision mindset.
+- `ARCHITECTURE.md`: how the app is built, boot flow, module ownership, rendering flow, storage ownership, and future architecture direction.
+- `DATA_MODEL.md`: conceptual entities, relationships, ownership, lifecycle, and ledger migration context.
+- `STYLE_GUIDE.md`: terminology, UI language, dense table rules, formatting conventions, and product feel.
+- `ROADMAP.md`: active phase, next work, beta gates, and future phases.
+- `WORKFLOW.md`: how humans, Codex, and GPT should work on the project.
+- `DECISIONS.md`: durable choices and why they were made.
+- `PARKING_LOT.md`: useful but uncommitted ideas.
+- `CHANGELOG.md`: human-readable history of meaningful changes.
+- `audits/`: dated reviews, audit plans, and diagnostic snapshots; not active authority unless findings are promoted into active docs.
+- `dev notes/`: raw or historical project memory, not active authority.
 
 ## Product Shape
 
@@ -44,6 +65,8 @@ ManaSpec is local-first for user state, but it is not offline-only. Scryfall-bac
 
 Active app styling is layered through `css/style.css`.
 
+For project-wide UI language, terminology, table conventions, wrapping, ellipsis, and formatting rules, use [STYLE_GUIDE.md](STYLE_GUIDE.md) as the owning doc.
+
 Current files:
 
 - `base.css`: design tokens, colors, typography defaults, and app-wide primitives.
@@ -65,6 +88,8 @@ Rules:
 ## App Shape
 
 ManaSpec is a modular trading terminal running inside one static app shell. It has workflow zones exposed through module navigation, but it is not currently a routed SPA.
+
+For internal build structure, boot flow, module ownership, rendering flow, storage ownership, and future architecture direction, use [ARCHITECTURE.md](ARCHITECTURE.md) as the owning doc.
 
 Terminology:
 
@@ -493,6 +518,8 @@ Current behavior:
 - Transaction history rows preserve buy/sell activity even when a current position reaches zero quantity.
 
 ## Current Data Concepts
+
+This section is a quick workflow reference. For entity relationships, lifecycle, ownership semantics, and ledger migration context, use [DATA_MODEL.md](DATA_MODEL.md) as the owning doc.
 
 ### Card
 
