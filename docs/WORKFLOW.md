@@ -138,6 +138,14 @@ Maintain `CHANGELOG.md` as the human-readable history of meaningful work.
 - When pasting full GPT or chat notes, ask AI to save the important parts if they are not already in the project folder.
 - If old notes conflict with active docs, active docs win.
 
+## Codex Friction Notes
+
+Use `dev notes/inbox/codex-friction-log.md` for recurring tool, environment, browser harness, command, or workflow snags that make Codex take non-obvious detours.
+
+Log friction when it is surprising, repeated, safety-relevant, or likely to save future time. Do not log every harmless typo, one-off retry, or normal command failure.
+
+Promote a friction note into this Workflow doc only after it becomes a durable operating rule.
+
 ## Documentation Ownership Rules
 
 Use the docs ownership map in [README](README.md) before adding or moving documentation.
@@ -178,9 +186,12 @@ http://127.0.0.1:8000/index.html
 
 Notes:
 - Browser automation may fail against file:// URLs even when the app works normally.
-- Do not use Python servers, inline `node -e` scripts, `file://`, or hidden `Start-Process` server launches for the standard browser QA path.
+- The checked-in Node server is the standard browser QA path because it is documented for this project.
+- Python is available for local utilities, diagnostics, one-off scripts, temporary servers, or data processing when appropriate. Do not substitute a Python server for the standard ManaSpec browser QA path unless there is a specific reason.
+- Avoid inline `node -e` scripts, `file://`, or hidden `Start-Process` server launches for the standard browser QA path.
 - Prefer browser inspection and console validation over screenshot-only debugging when available.
 - Browser `evaluate()` is not a reliable way to inspect localStorage or app state in the Codex browser harness. Prefer visible UI, DOM snapshots, screenshots when useful, and console checks.
+- If the browser harness becomes sluggish, loops, hangs, or returns inconsistent inspection results after extended debugging, restart the browser session, reopen the page, and continue from a fresh state.
 
 ### Card Detail Browser QA
 
