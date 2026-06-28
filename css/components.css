@@ -363,6 +363,26 @@ Panels, rows, lists, modals, metrics, and status elements.
   margin-bottom: 12px;
 }
 
+.dashboard-state-grid {
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.dashboard-state-grid .metric-card {
+  min-height: 58px;
+  padding: 7px 9px;
+}
+
+.dashboard-state-grid .metric-card strong {
+  margin-top: 3px;
+  font-size: 16px;
+  line-height: 1.05;
+}
+
+.dashboard-state-grid .metric-card small {
+  margin-top: 3px;
+}
+
 .scan-grid,
 .signal-scan-grid,
 .admin-grid {
@@ -372,6 +392,10 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .scan-grid {
   grid-template-columns: repeat(4, minmax(220px, 1fr));
+}
+
+.dashboard-work-grid {
+  gap: 8px;
 }
 
 .signal-scan-grid {
@@ -746,6 +770,12 @@ Panels, rows, lists, modals, metrics, and status elements.
   padding: 9px;
 }
 
+.dashboard-work-grid .scan-panel {
+  min-height: 126px;
+  max-height: 168px;
+  padding: 8px;
+}
+
 .signal-panel {
   min-height: 112px;
   max-height: 142px;
@@ -786,6 +816,29 @@ Panels, rows, lists, modals, metrics, and status elements.
   padding: 7px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 12px;
+}
+
+.dashboard-queue-row {
+  width: 100%;
+  padding: 7px 8px;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font: inherit;
+  text-align: left;
+}
+
+button.dashboard-queue-row {
+  cursor: pointer;
+}
+
+button.dashboard-queue-row:hover,
+button.dashboard-queue-row:focus-visible {
+  outline: 1px solid rgba(125, 211, 252, 0.3);
+  outline-offset: -1px;
+}
+
+.dashboard-queue-row--static {
+  cursor: default;
 }
 
 .signal-row {

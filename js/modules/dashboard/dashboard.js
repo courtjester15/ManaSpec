@@ -14,38 +14,36 @@ function renderDashboardView() {
   const pl = totalValue - invested;
   const plPct = invested ? (pl / invested) * 100 : 0;
   const signalRows = getDashboardSignalRows();
-  const approachingRows = getTargetRows("near");
+  const workQueues = getDashboardWorkQueues(signalRows);
 
   document.getElementById("viewContainer").innerHTML = `
     <section class="dashboard-view">
       <div class="view-heading">
         <h3>Dashboard</h3>
-        <p>Fast scan of positions, radar ideas, signals, and decision notes.</p>
+        <p>Daily work queue for the tracked printings most worth inspecting first.</p>
       </div>
 
-      <div class="metric-grid">
+      <div class="metric-grid dashboard-state-grid">
         ${renderMetricTile("Cash", money(cash), { detail: "Available capital" })}
-        ${renderMetricTile("Positions Value", money(totalValue), { detail: `${owned.length} open ${owned.length === 1 ? "position" : "positions"}` })}
-        ${renderMetricTile("Open P/L", `${formatSignedMoney(pl)} / ${formatSignedPercent(plPct)}`, { tone: getDashboardValueTone(pl), detail: "Unrealized positions" })}
-        ${renderMetricTile("Radar Count", `${radar.length} ${radar.length === 1 ? "idea" : "ideas"}`, { detail: "Watched printings" })}
-        ${renderMetricTile("Signals Attention", `${signalRows.length} active`, { detail: "Computed attention" })}
-        ${renderMetricTile("Targets Approaching", `${approachingRows.length} near`, { detail: "Entry, exit, or hold" })}
-        ${renderMetricTile("Notes Count", `${cardNotes.length} ${cardNotes.length === 1 ? "note" : "notes"}`, { detail: "Decision memory" })}
-        ${renderMetricTile("Recent Activity", `${transactions.length} tx`, { detail: getDashboardLatestActivityLabel() })}
+        ${renderMetricTile("Equity / Open P&L", `${money(cash + totalValue)} / ${formatSignedMoney(pl)}`, { tone: getDashboardValueTone(pl), detail: formatSignedPercent(plPct) })}
+        ${renderMetricTile("Tracked Printings", `${owned.length + radar.length}`, { detail: `${owned.length} Positions / ${radar.length} Radar` })}
+        ${renderMetricTile("Signals", `${signalRows.length} active`, { detail: "Attention queue" })}
       </div>
 
-      <div class="scan-grid">
-        ${renderScanPanel("Position Gainers", getTopPositions("gain"), "No open gainers yet. Add positions or refresh prices.")}
-        ${renderScanPanel("Position Losers", getTopPositions("loss"), "No open losers yet.")}
-        ${renderScanPanel("Radar Watchlist", getDashboardRadarRows(), "No Radar ideas yet. Search Radar to add exact printings.")}
-        ${renderScanPanel("Signals", signalRows.slice(0, 5).map(formatDashboardSignalRow), "No active attention signals. Add targets, notes, or market checks to create useful alerts.")}
-        ${renderScanPanel("Targets Hit", getTargetRows("hit"), "No exit targets hit yet.")}
-        ${renderScanPanel("Entry Hits / Downside Watch", getTargetRows("entry"), "No explicit stop/downside fields yet. Entry hits appear here for now.")}
-        ${renderScanPanel("Targets Approaching", approachingRows, "No targets or hold windows are approaching.")}
-        ${renderScanPanel("Recent Notes", getDashboardRecentNoteRows(), "No card notes yet. Add notes from Card Detail.")}
+      <div class="scan-grid dashboard-work-grid">
+        ${renderScanPanel("Exit Hits", workQueues.exitHits, "No owned positions are at an exit target.")}
+        ${renderScanPanel("Entry Hits", workQueues.entryHits, "No Radar ideas are at an entry target.")}
+        ${renderScanPanel("Exit Near", workQueues.exitNear, "No owned positions are near an exit target.")}
+        ${renderScanPanel("Entry Near", workQueues.entryNear, "No Radar ideas are near an entry target.")}
+        ${renderScanPanel("Market Checks Due", workQueues.marketDue, "No stale or missing market checks in the current attention queue.")}
+        ${renderScanPanel("Hold Reviews Due", workQueues.holdDue, "No hold windows are near or due.")}
+        ${renderScanPanel("Missing Plans", workQueues.missingPlans, "No tracked printings are missing plan fields.")}
+        ${renderScanPanel("Recent Notes", workQueues.recentNotes, "No card notes yet. Add notes from Card Detail.")}
       </div>
     </section>
   `;
+
+  initDashboardQueueActions();
 }
 
 function renderMetricTile(label, value, options = {}) {
@@ -61,8 +59,15 @@ function renderMetricTile(label, value, options = {}) {
 
 function renderScanPanel(title, rows, emptyText = "No data yet") {
   const body = rows.length
-    ? rows.map(row => `
-        <div class="scan-row">
+    ? rows.map(row => row.action
+      ? `
+        <button type="button" class="scan-row dashboard-queue-row" data-dashboard-action="${escapeAttribute(row.action)}" data-dashboard-id="${escapeAttribute(row.id || "")}" data-dashboard-source="${escapeAttribute(row.source || "")}">
+          <strong>${escapeHtml(row.title)}</strong>
+          <span>${escapeHtml(row.detail)}</span>
+        </button>
+      `
+      : `
+        <div class="scan-row dashboard-queue-row dashboard-queue-row--static">
           <strong>${escapeHtml(row.title)}</strong>
           <span>${escapeHtml(row.detail)}</span>
         </div>
@@ -75,6 +80,32 @@ function renderScanPanel(title, rows, emptyText = "No data yet") {
       ${body}
     </section>
   `;
+}
+
+function initDashboardQueueActions() {
+  document.querySelectorAll("[data-dashboard-action]").forEach(row => {
+    row.addEventListener("click", () => {
+      const action = row.dataset.dashboardAction;
+      const id = row.dataset.dashboardId;
+      const source = row.dataset.dashboardSource;
+
+      if (!id) return;
+
+      if (action === "detail" && typeof openCardDetail === "function") {
+        openCardDetail(id, source || "portfolio");
+        return;
+      }
+
+      if (action === "notes" && typeof openCardDetail === "function") {
+        openCardDetail(id, source || "portfolio", { focusNotes: true });
+        return;
+      }
+
+      if (action === "source" && typeof openTrackedSource === "function") {
+        openTrackedSource(source, id);
+      }
+    });
+  });
 }
 
 function getOwnedPositions() {
@@ -102,6 +133,8 @@ function getTopPositions(direction) {
     .sort((a, b) => direction === "gain" ? b.value - a.value : a.value - b.value)
     .slice(0, 6);
 }
+
+// Preserved for post-beta review if users expect gain/loss queues on Dashboard.
 
 function getPositionGainLoss(spec) {
   return (getDashboardNumber(spec.currentPrice) - getDashboardNumber(spec.buyPrice)) * getDashboardNumber(spec.qty);
@@ -161,6 +194,26 @@ function getTargetRows(kind) {
       return false;
     })
     .slice(0, 6);
+}
+
+function getDashboardWorkQueues(signalRows) {
+  return {
+    exitHits: getDashboardSignalQueue(signalRows, row => row.status === "Exit hit"),
+    entryHits: getDashboardSignalQueue(signalRows, row => row.status === "Entry hit"),
+    exitNear: getDashboardSignalQueue(signalRows, row => row.status === "Exit near"),
+    entryNear: getDashboardSignalQueue(signalRows, row => row.status === "Entry near"),
+    marketDue: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("staleChecks")),
+    holdDue: getDashboardSignalQueue(signalRows, row => row.status === "Hold due" || row.status === "Hold near"),
+    missingPlans: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("noPlan")),
+    recentNotes: getDashboardRecentNoteRows(),
+  };
+}
+
+function getDashboardSignalQueue(rows, predicate) {
+  return rows
+    .filter(predicate)
+    .slice(0, 5)
+    .map(formatDashboardSignalRow);
 }
 
 function formatTargetDetail(item, state) {
@@ -233,10 +286,14 @@ function formatDashboardSignalRow(row) {
   return {
     title: row.name || "Attention item",
     detail: [
-      row.actionLabel || row.status || "Review",
+      row.reasonLabel || row.status || "Review",
+      row.sourceLabel || "",
       row.detail || "",
       row.marketFreshness && row.marketFreshness !== "Recent" ? row.marketFreshness : "",
     ].filter(Boolean).join(" / "),
+    id: row.id || "",
+    source: row.source || "",
+    action: row.id ? "detail" : "",
   };
 }
 
@@ -244,19 +301,17 @@ function getDashboardRecentNoteRows() {
   return [...cardNotes]
     .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
     .slice(0, 6)
-    .map(note => ({
-      title: note.cardName || "General note",
-      detail: [getCardNotePreview(note), formatDashboardDate(note.createdAt)].filter(Boolean).join(" / "),
-    }));
-}
+    .map(note => {
+      const source = getDashboardNoteSource(note);
 
-function getDashboardLatestActivityLabel() {
-  const latest = transactions
-    .map(tx => tx.date || tx.createdAt)
-    .filter(Boolean)
-    .sort((a, b) => new Date(b) - new Date(a))[0];
-
-  return latest ? `Latest ${formatDashboardDate(latest)}` : "No transactions yet";
+      return {
+        title: note.cardName || "General note",
+        detail: [getCardNotePreview(note), formatDashboardDate(note.createdAt), source?.label || "Untracked note"].filter(Boolean).join(" / "),
+        id: source?.id || "",
+        source: source?.source || "",
+        action: source?.id ? "notes" : "",
+      };
+    });
 }
 
 function formatDashboardPrintingIdentity(item) {
@@ -269,6 +324,22 @@ function getDashboardMarketObservation(item) {
   return typeof getLatestMarketObservation === "function"
     ? getLatestMarketObservation(item.id, "tcgplayer")
     : null;
+}
+
+function getDashboardNoteSource(note) {
+  if (!note) return null;
+
+  const tracked = typeof findTrackedCardByNote === "function"
+    ? findTrackedCardByNote(note)
+    : null;
+  if (!tracked?.id) return null;
+
+  const source = specs.some(spec => spec.id === tracked.id) ? "portfolio" : "radar";
+  return {
+    id: tracked.id,
+    source,
+    label: source === "portfolio" ? "Position" : "Radar",
+  };
 }
 
 function getDashboardEntryDistance(item) {

@@ -33,6 +33,7 @@ The missing layer is a small, pruneable place for promising ideas before they ar
 
 - Explore whether Dashboard should become the default "start here" scan surface once Signals deep-linking and card detail flows are tighter.
 - Consider future dashboard concepts around tonight's attention list, recent activity, stale checks, and target movement without turning Dashboard into Signals.
+- Watch beta feedback on whether users expect Dashboard gainers/losers. If few users ask, keep gainers/losers out of the main Dashboard. If many users ask, reintroduce them intentionally as a secondary row or Positions-linked view.
 
 ## Radar
 

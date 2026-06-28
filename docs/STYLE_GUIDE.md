@@ -34,7 +34,7 @@ Use these terms consistently in UI copy, docs, and future implementation names w
 - **Module Context Band**: the compact summary/action band above workflow filters and tables.
 - **Transaction**: a buy, sell, correction, backfill, or future acquisition/disposition event.
 - **History**: a review trail, not a separate source of truth.
-- **Tile**: a Dashboard, metric, info, or context summary block.
+- **Tile**: a Dashboard, metric, info, action queue, or context summary block.
 
 Avoid:
 
@@ -102,6 +102,18 @@ Rules:
 - Use compact panels only when they frame a real tool, repeated item, modal, or focused summary.
 
 The app should fit meaningful workflow information on a normal laptop viewport without feeling cramped.
+
+## Dashboard Tiles
+
+Dashboard is a daily work queue, not a duplicate Positions page or decorative home screen.
+
+Rules:
+
+- Keep the top Dashboard state tiles compact so action tiles have room on laptop screens.
+- Prefer actionable workflow queues over passive database counts.
+- Dashboard action tiles should make the reason and source clear before the user opens Detail or jumps to Radar or Positions.
+- Do not use placeholder labels for unsupported concepts such as downside or stop tracking.
+- Preserve a little left/right padding inside queue rows so dense text does not feel jammed against tile borders.
 
 ## Colors
 

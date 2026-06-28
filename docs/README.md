@@ -98,7 +98,7 @@ Terminology:
 
 Primary zones:
 
-- Dashboard: awareness and what matters now.
+- Dashboard: daily triage and what to inspect first.
 - Positions: owned holdings only. Radar handles card discovery and watch ideas before purchase.
 - Radar: ideas without ownership, exact printing discovery, entry planning, and planned buy quantity.
 - Signals: targets, price movement, and action triggers.
@@ -108,6 +108,8 @@ Primary zones:
 
 Current workflow direction:
 
+- Dashboard answers "what should I inspect first today?" with a compact state row and action tiles for Exit Hits, Entry Hits, Exit Near, Entry Near, Market Checks Due, Hold Reviews Due, Missing Plans, and Recent Notes.
+- Dashboard queue rows should open Card Detail or route to the exact Radar or Position source when practical.
 - Radar is for discovery, watched ideas, entry planning, and planned quantity before money is committed.
 - Positions is for owned holdings, exit planning, and active position management.
 - Signals is a read-only attention layer for alerts, reminders, and deep-links back to Radar or Positions.
@@ -115,7 +117,7 @@ Current workflow direction:
 - Transactions and History are for what happened and what can be audited later.
 - Notes are for why the user cared and what changed over time.
 - Admin includes Data Safety controls for JSON backup export/import of local user data.
-- Radar, Positions, Signals, Transactions, and History use a shared module context band above filters and tables so workflow tables keep a consistent visual rhythm. Dashboard remains the broader overview surface.
+- Radar, Positions, Signals, Transactions, and History use a shared module context band above filters and tables so workflow tables keep a consistent visual rhythm. Dashboard remains a broader daily work queue rather than a table workflow.
 
 Near-term product focus:
 

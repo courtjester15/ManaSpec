@@ -198,11 +198,12 @@ Audit docs are allowed to be more diagnostic and time-bound than active docs. Th
 When performing UI QA, browser inspection, console debugging, or regression testing:
 
 - Use the Codex in-app Browser when available.
-- Test against a localhost URL rather than a file:// URL.
-- Start the checked-in Node static server from the project root:
+- Never open the app using `file://`.
+- Always test against the local static server on `127.0.0.1`.
+- Start the standard ManaSpec browser QA server from the project root:
 
 ```bash
-node static-server.mjs
+python -m http.server 8000 --bind 127.0.0.1
 ```
 
 Then open:
@@ -212,10 +213,8 @@ http://127.0.0.1:8000/index.html
 ```
 
 Notes:
-- Browser automation may fail against file:// URLs even when the app works normally.
-- The checked-in Node server is the standard browser QA path because it is documented for this project.
-- Python is available for local utilities, diagnostics, one-off scripts, temporary servers, or data processing when appropriate. Do not substitute a Python server for the standard ManaSpec browser QA path unless there is a specific reason.
-- Avoid inline `node -e` scripts, `file://`, or hidden `Start-Process` server launches for the standard browser QA path.
+- If the browser reports `file://` is blocked, do not troubleshoot file access. Start or reconnect to the local static server and continue testing at the localhost URL.
+- Avoid `file://`, inline `node -e` scripts, checked-in Node static server launches, or hidden `Start-Process` server launches for the standard browser QA path.
 - Prefer browser inspection and console validation over screenshot-only debugging when available.
 - Browser `evaluate()` is not a reliable way to inspect localStorage or app state in the Codex browser harness. Prefer visible UI, DOM snapshots, screenshots when useful, and console checks.
 - If the browser harness becomes sluggish, loops, hangs, or returns inconsistent inspection results after extended debugging, restart the browser session, reopen the page, and continue from a fresh state.
