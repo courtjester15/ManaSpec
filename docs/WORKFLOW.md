@@ -88,6 +88,7 @@ Include:
 - User outcome.
 - Scope.
 - Out of scope.
+- Context Routing.
 - Acceptance checks.
 - Regression checks.
 - Docs to update.
@@ -101,6 +102,32 @@ Each implementation batch should end with:
 - Files, workflows, or data that must not be touched.
 
 GPT notes are project memory, not automatic authority. Codex should still compare them against active docs, current code, and the current Git state before implementing.
+
+Implementation notes should include a Context Routing section so Codex can begin from the right docs and files without rediscovering the whole repo:
+
+```md
+## Context Routing
+
+Read first:
+- docs/README.md
+- docs/ROADMAP.md
+- docs/PRODUCT_PRINCIPLES.md
+
+If UI/table/copy:
+- docs/STYLE_GUIDE.md
+
+If architecture/module/rendering/script-order:
+- docs/ARCHITECTURE.md
+
+If storage/entities/ledger/data ownership:
+- docs/DATA_MODEL.md
+
+Likely files:
+- ...
+
+Avoid touching:
+- ...
+```
 
 ## Git Checkpoints
 
