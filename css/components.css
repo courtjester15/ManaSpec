@@ -369,18 +369,57 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .dashboard-state-grid .metric-card {
-  min-height: 58px;
-  padding: 7px 9px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1px 8px;
+  align-content: center;
+  height: 50px;
+  min-height: 50px;
+  padding: 4px 9px;
+  overflow: hidden;
+}
+
+.dashboard-state-grid button.metric-card {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dashboard-state-grid button.metric-card:hover,
+.dashboard-state-grid button.metric-card:focus-visible {
+  border-color: rgba(125, 211, 252, 0.36);
+  background: var(--accent-soft);
+  outline: none;
 }
 
 .dashboard-state-grid .metric-card strong {
-  margin-top: 3px;
-  font-size: 16px;
+  grid-column: 1 / -1;
+  order: 1;
+  margin-top: 0;
+  font-size: 14px;
   line-height: 1.05;
 }
 
+.dashboard-state-grid .metric-card span {
+  order: 2;
+  min-width: 0;
+  font-size: 10px;
+  line-height: 1.05;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .dashboard-state-grid .metric-card small {
-  margin-top: 3px;
+  order: 3;
+  margin-top: 0;
+  font-size: 10px;
+  line-height: 1.05;
+  text-align: right;
 }
 
 .scan-grid,
@@ -771,8 +810,9 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .dashboard-work-grid .scan-panel {
-  min-height: 126px;
-  max-height: 168px;
+  min-height: 178px;
+  max-height: none;
+  overflow-y: visible;
   padding: 8px;
 }
 
@@ -820,7 +860,9 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .dashboard-queue-row {
   width: 100%;
-  padding: 7px 8px;
+  gap: 4px;
+  min-height: 28px;
+  padding: 7px 10px;
   border: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font: inherit;

@@ -10,11 +10,11 @@ Contextual workflow help for ManaSpec.
 const helpTopics = {
   dashboard: {
     title: "Dashboard",
-    intro: "Use Dashboard as the fast scan view for what needs attention.",
+    intro: "Use Dashboard to decide what to inspect first today.",
     steps: [
-      "Check top gainers and losers before drilling into a card.",
-      "Use target panels to spot positions near or past planned exits.",
-      "Treat empty panels as setup prompts, not errors.",
+      "Start with hit and near-target tiles when you want the most urgent price checks.",
+      "Use market check, hold review, and missing plan tiles to clean up cards that need attention.",
+      "Open a row to review the tracked printing in Card Detail.",
     ],
   },
   radar: {

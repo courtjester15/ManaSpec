@@ -20,40 +20,43 @@ function renderDashboardView() {
     <section class="dashboard-view">
       <div class="view-heading">
         <h3>Dashboard</h3>
-        <p>Daily work queue for the tracked printings most worth inspecting first.</p>
+        <p>What to inspect first today.</p>
       </div>
 
       <div class="metric-grid dashboard-state-grid">
-        ${renderMetricTile("Cash", money(cash), { detail: "Available capital" })}
+        ${renderMetricTile("Cash", money(cash), { detail: "Available" })}
         ${renderMetricTile("Equity / Open P&L", `${money(cash + totalValue)} / ${formatSignedMoney(pl)}`, { tone: getDashboardValueTone(pl), detail: formatSignedPercent(plPct) })}
-        ${renderMetricTile("Tracked Printings", `${owned.length + radar.length}`, { detail: `${owned.length} Positions / ${radar.length} Radar` })}
-        ${renderMetricTile("Signals", `${signalRows.length} active`, { detail: "Attention queue" })}
+        ${renderMetricTile("Tracked Printings", `${owned.length + radar.length}`, { detail: `${owned.length} Positions, ${radar.length} Radar` })}
+        ${renderMetricTile("Signals", `${signalRows.length} active`, { detail: "Open Signals", action: "signals" })}
       </div>
 
       <div class="scan-grid dashboard-work-grid">
-        ${renderScanPanel("Exit Hits", workQueues.exitHits, "No owned positions are at an exit target.")}
-        ${renderScanPanel("Entry Hits", workQueues.entryHits, "No Radar ideas are at an entry target.")}
-        ${renderScanPanel("Exit Near", workQueues.exitNear, "No owned positions are near an exit target.")}
-        ${renderScanPanel("Entry Near", workQueues.entryNear, "No Radar ideas are near an entry target.")}
-        ${renderScanPanel("Market Checks Due", workQueues.marketDue, "No stale or missing market checks in the current attention queue.")}
-        ${renderScanPanel("Hold Reviews Due", workQueues.holdDue, "No hold windows are near or due.")}
-        ${renderScanPanel("Missing Plans", workQueues.missingPlans, "No tracked printings are missing plan fields.")}
-        ${renderScanPanel("Recent Notes", workQueues.recentNotes, "No card notes yet. Add notes from Card Detail.")}
+        ${renderScanPanel("Exit Hits", workQueues.exitHits, "No exit hits.")}
+        ${renderScanPanel("Entry Hits", workQueues.entryHits, "No entry hits.")}
+        ${renderScanPanel("Exit Near", workQueues.exitNear, "Nothing near exit.")}
+        ${renderScanPanel("Entry Near", workQueues.entryNear, "Nothing near entry.")}
+        ${renderScanPanel("Market Checks Due", workQueues.marketDue, "No market checks due.")}
+        ${renderScanPanel("Hold Reviews Due", workQueues.holdDue, "No hold reviews due.")}
+        ${renderScanPanel("Missing Plans", workQueues.missingPlans, "Plans look filled in.")}
+        ${renderScanPanel("Recent Notes", workQueues.recentNotes, "No recent notes.")}
       </div>
     </section>
   `;
 
+  initDashboardStateActions();
   initDashboardQueueActions();
 }
 
 function renderMetricTile(label, value, options = {}) {
   const toneClass = options.tone ? ` metric-card--${options.tone}` : "";
+  const tag = options.action ? "button" : "div";
+  const actionAttribute = options.action ? ` type="button" data-dashboard-state-action="${escapeAttribute(options.action)}"` : "";
   return `
-    <div class="metric-card${toneClass}">
+    <${tag}${actionAttribute} class="metric-card${toneClass}${options.action ? " metric-card--action" : ""}">
       <span>${escapeHtml(label)}</span>
       <strong>${escapeHtml(value)}</strong>
       ${options.detail ? `<small>${escapeHtml(options.detail)}</small>` : ""}
-    </div>
+    </${tag}>
   `;
 }
 
@@ -80,6 +83,16 @@ function renderScanPanel(title, rows, emptyText = "No data yet") {
       ${body}
     </section>
   `;
+}
+
+function initDashboardStateActions() {
+  document.querySelectorAll("[data-dashboard-state-action]").forEach(tile => {
+    tile.addEventListener("click", () => {
+      if (tile.dataset.dashboardStateAction === "signals" && typeof setActiveView === "function") {
+        setActiveView("signals");
+      }
+    });
+  });
 }
 
 function initDashboardQueueActions() {
@@ -198,22 +211,22 @@ function getTargetRows(kind) {
 
 function getDashboardWorkQueues(signalRows) {
   return {
-    exitHits: getDashboardSignalQueue(signalRows, row => row.status === "Exit hit"),
-    entryHits: getDashboardSignalQueue(signalRows, row => row.status === "Entry hit"),
-    exitNear: getDashboardSignalQueue(signalRows, row => row.status === "Exit near"),
-    entryNear: getDashboardSignalQueue(signalRows, row => row.status === "Entry near"),
-    marketDue: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("staleChecks")),
-    holdDue: getDashboardSignalQueue(signalRows, row => row.status === "Hold due" || row.status === "Hold near"),
-    missingPlans: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("noPlan")),
+    exitHits: getDashboardSignalQueue(signalRows, row => row.status === "Exit hit", "Exit hit"),
+    entryHits: getDashboardSignalQueue(signalRows, row => row.status === "Entry hit", "Entry hit"),
+    exitNear: getDashboardSignalQueue(signalRows, row => row.status === "Exit near", "Exit near"),
+    entryNear: getDashboardSignalQueue(signalRows, row => row.status === "Entry near", "Entry near"),
+    marketDue: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("staleChecks"), "Market check due"),
+    holdDue: getDashboardSignalQueue(signalRows, row => row.status === "Hold due" || row.status === "Hold near", "Hold review due"),
+    missingPlans: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("noPlan"), "Missing plan"),
     recentNotes: getDashboardRecentNoteRows(),
   };
 }
 
-function getDashboardSignalQueue(rows, predicate) {
+function getDashboardSignalQueue(rows, predicate, reason) {
   return rows
     .filter(predicate)
     .slice(0, 5)
-    .map(formatDashboardSignalRow);
+    .map(row => formatDashboardSignalRow(row, reason));
 }
 
 function formatTargetDetail(item, state) {
@@ -282,15 +295,10 @@ function getDashboardSignalRows() {
   }));
 }
 
-function formatDashboardSignalRow(row) {
+function formatDashboardSignalRow(row, reason) {
   return {
     title: row.name || "Attention item",
-    detail: [
-      row.reasonLabel || row.status || "Review",
-      row.sourceLabel || "",
-      row.detail || "",
-      row.marketFreshness && row.marketFreshness !== "Recent" ? row.marketFreshness : "",
-    ].filter(Boolean).join(" / "),
+    detail: reason || row.reasonLabel || row.status || "Review",
     id: row.id || "",
     source: row.source || "",
     action: row.id ? "detail" : "",
@@ -298,15 +306,23 @@ function formatDashboardSignalRow(row) {
 }
 
 function getDashboardRecentNoteRows() {
+  const seenKeys = new Set();
+
   return [...cardNotes]
     .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
-    .slice(0, 6)
+    .filter(note => {
+      const key = note.cardKey || note.cardId || `${note.cardName || ""}|${note.set_code || ""}|${note.collector_number || ""}`;
+      if (seenKeys.has(key)) return false;
+      seenKeys.add(key);
+      return true;
+    })
+    .slice(0, 5)
     .map(note => {
       const source = getDashboardNoteSource(note);
 
       return {
         title: note.cardName || "General note",
-        detail: [getCardNotePreview(note), formatDashboardDate(note.createdAt), source?.label || "Untracked note"].filter(Boolean).join(" / "),
+        detail: ["Recent note", formatDashboardDate(note.createdAt)].filter(Boolean).join(" / "),
         id: source?.id || "",
         source: source?.source || "",
         action: source?.id ? "notes" : "",

@@ -287,6 +287,8 @@ Rules:
 
 ManaSpec copy should be direct and operational.
 
+The voice should feel like talking MTG finance with an experienced player: clear, practical, and human without becoming chatty or giving advice.
+
 Use:
 
 - Short labels.
@@ -294,6 +296,7 @@ Use:
 - Clear empty states.
 - Friendly but concise warnings.
 - Actionable status messages.
+- Natural Dashboard phrasing such as "No exit hits" or "Nothing near entry" instead of enterprise-style status sentences.
 
 Avoid:
 
@@ -302,5 +305,6 @@ Avoid:
 - Claims that ManaSpec predicts outcomes.
 - Buy/sell advice.
 - Decorative phrasing that slows scanning.
+- Robotic empty states when a shorter human phrase says the same thing.
 
 Help can explain workflows. Primary app surfaces should let the workflow be used.
