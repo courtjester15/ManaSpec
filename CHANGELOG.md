@@ -22,6 +22,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Refined Dashboard summary hierarchy, uniform action tile height, left-aligned queue rows, quieter empty states, and compact printing identifiers.
 - Finalized Dashboard beta polish with useful Near fallback rows, concise price context, proper summary tile hierarchy, and denser list-style action rows.
 - Fixed Dashboard layout containment by removing inherited card/panel margins, clipping overflowing queue rows, and hardening list-row alignment.
+- Added a repeated-issue workflow reminder to pause and diagnose root causes before continuing small adjustment loops.
 - Standardized Codex browser QA on `python -m http.server 8000 --bind 127.0.0.1` and documented that `file://` browser blocks should not be troubleshot.
 
 ## 2026-06-24 - Project Hygiene And QA Guardrails

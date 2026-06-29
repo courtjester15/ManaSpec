@@ -173,6 +173,12 @@ Log friction when it is surprising, repeated, safety-relevant, or likely to save
 
 Promote a friction note into this Workflow doc only after it becomes a durable operating rule.
 
+## Repeated Issue Check
+
+When the same issue comes back after one or two fix attempts, pause before making more small adjustments. Treat the repeat as a signal to step back and inspect the underlying cause, especially for styling, layout, cascade, shared component, browser-state, or data-flow problems.
+
+This is a rule of thumb, not dogma. The goal is to avoid polishing around a hidden root cause while keeping normal iteration lightweight.
+
 ## Documentation Ownership Rules
 
 Use the docs ownership map in [README](README.md) before adding or moving documentation.
