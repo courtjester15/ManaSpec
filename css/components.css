@@ -373,9 +373,9 @@ Panels, rows, lists, modals, metrics, and status elements.
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 1px 8px;
   align-content: center;
-  height: 50px;
-  min-height: 50px;
-  padding: 4px 9px;
+  height: 54px;
+  min-height: 54px;
+  padding: 6px 10px;
   overflow: hidden;
 }
 
@@ -398,16 +398,16 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .dashboard-state-grid .metric-card strong {
   grid-column: 1 / -1;
-  order: 1;
+  order: 3;
   margin-top: 0;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.05;
 }
 
 .dashboard-state-grid .metric-card span {
-  order: 2;
+  order: 1;
   min-width: 0;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.05;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -415,7 +415,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .dashboard-state-grid .metric-card small {
-  order: 3;
+  order: 2;
   margin-top: 0;
   font-size: 10px;
   line-height: 1.05;
@@ -810,10 +810,15 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .dashboard-work-grid .scan-panel {
-  min-height: 178px;
+  height: 170px;
+  min-height: 170px;
   max-height: none;
   overflow-y: visible;
-  padding: 8px;
+  padding: 7px 8px;
+}
+
+.dashboard-work-grid .scan-panel h4 {
+  margin-bottom: 6px;
 }
 
 .signal-panel {
@@ -860,13 +865,29 @@ Panels, rows, lists, modals, metrics, and status elements.
 
 .dashboard-queue-row {
   width: 100%;
-  gap: 4px;
-  min-height: 28px;
-  padding: 7px 10px;
+  gap: 3px;
+  min-height: 27px;
+  padding: 5px 11px;
   border: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font: inherit;
   text-align: left;
+}
+
+.dashboard-queue-row strong {
+  font-size: 12px;
+}
+
+.dashboard-queue-row span {
+  font-size: 11px;
+}
+
+.dashboard-work-grid .empty-state.compact {
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  font-size: 11px;
+  line-height: 1.2;
 }
 
 button.dashboard-queue-row {

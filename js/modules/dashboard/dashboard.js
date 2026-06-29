@@ -297,7 +297,7 @@ function getDashboardSignalRows() {
 
 function formatDashboardSignalRow(row, reason) {
   return {
-    title: row.name || "Attention item",
+    title: formatDashboardQueueTitle(row),
     detail: reason || row.reasonLabel || row.status || "Review",
     id: row.id || "",
     source: row.source || "",
@@ -321,13 +321,19 @@ function getDashboardRecentNoteRows() {
       const source = getDashboardNoteSource(note);
 
       return {
-        title: note.cardName || "General note",
+        title: formatDashboardQueueTitle(note, note.cardName || "General note"),
         detail: ["Recent note", formatDashboardDate(note.createdAt)].filter(Boolean).join(" / "),
         id: source?.id || "",
         source: source?.source || "",
         action: source?.id ? "notes" : "",
       };
     });
+}
+
+function formatDashboardQueueTitle(item, fallbackName = "") {
+  const name = item.name || item.cardName || fallbackName || "Tracked printing";
+  const identity = formatDashboardPrintingIdentity(item);
+  return identity ? `${name} - ${identity}` : name;
 }
 
 function formatDashboardPrintingIdentity(item) {
