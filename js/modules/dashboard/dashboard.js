@@ -210,16 +210,16 @@ function getTargetRows(kind) {
 }
 
 function getDashboardWorkQueues(signalRows) {
-  const exitNearRows = getDashboardSignalQueue(signalRows, row => row.status === "Exit near", "Exit near");
-  const entryNearRows = getDashboardSignalQueue(signalRows, row => row.status === "Entry near", "Entry near");
+  const exitNearRows = getDashboardSignalQueue(signalRows, row => row.status === "Exit near", "Exit Near");
+  const entryNearRows = getDashboardSignalQueue(signalRows, row => row.status === "Entry near", "Entry Near");
 
   return {
-    exitHits: getDashboardSignalQueue(signalRows, row => row.status === "Exit hit", "Exit hit"),
-    entryHits: getDashboardSignalQueue(signalRows, row => row.status === "Entry hit", "Entry hit"),
-    exitNear: fillDashboardNearQueue(exitNearRows, "portfolio", "Exit watch"),
-    entryNear: fillDashboardNearQueue(entryNearRows, "radar", "Entry watch"),
-    marketDue: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("staleChecks"), "Market check due"),
-    holdDue: getDashboardSignalQueue(signalRows, row => row.status === "Hold due" || row.status === "Hold near", "Hold review due"),
+    exitHits: getDashboardSignalQueue(signalRows, row => row.status === "Exit hit", "Exit Hit"),
+    entryHits: getDashboardSignalQueue(signalRows, row => row.status === "Entry hit", "Entry Hit"),
+    exitNear: fillDashboardNearQueue(exitNearRows, "portfolio", "Exit Watch"),
+    entryNear: fillDashboardNearQueue(entryNearRows, "radar", "Entry Watch"),
+    marketDue: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("staleChecks"), "Market Check Due"),
+    holdDue: getDashboardHoldRows(signalRows),
     missingPlans: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("noPlan"), "Missing plan"),
     recentNotes: getDashboardRecentNoteRows(),
   };
@@ -241,6 +241,24 @@ function fillDashboardNearQueue(rows, source, fallbackReason) {
     .slice(0, 5 - rows.length);
 
   return [...rows, ...fillRows];
+}
+
+function getDashboardHoldRows(signalRows) {
+  const holdRows = getDashboardSignalQueue(
+    signalRows,
+    row => row.status === "Hold due" || row.status === "Hold near",
+    "Hold Review Due"
+  );
+  if (holdRows.length >= 5) return holdRows;
+
+  const existingIds = new Set(holdRows.map(row => row.id));
+  const missingHoldRows = signalRows
+    .filter(row => row.buckets?.includes("noPlan") && String(row.reasonLabel || "").includes("Hold"))
+    .filter(row => !existingIds.has(row.id))
+    .slice(0, 5 - holdRows.length)
+    .map(row => formatDashboardSignalRow(row, "Hold Missing"));
+
+  return [...holdRows, ...missingHoldRows];
 }
 
 function formatTargetDetail(item, state) {
@@ -313,7 +331,7 @@ function formatDashboardSignalRow(row, reason) {
   const priceContext = formatDashboardPriceContext(row);
   return {
     title: formatDashboardQueueTitle(row),
-    detail: [reason || row.reasonLabel || row.status || "Review", priceContext].filter(Boolean).join(" / "),
+    detail: [reason || row.reasonLabel || row.status || "Review", priceContext].filter(Boolean).join(" - "),
     id: row.id || "",
     source: row.source || "",
     action: row.id ? "detail" : "",
@@ -340,7 +358,7 @@ function getDashboardClosestTargetRows(source, reason) {
 
       return {
         title: formatDashboardQueueTitle(item),
-        detail: [reason, formatDashboardPriceContext({ currentPrice, targetValue, source })].filter(Boolean).join(" / "),
+        detail: [reason, formatDashboardPriceContext({ currentPrice, targetValue, source })].filter(Boolean).join(" - "),
         id: item.id || "",
         source,
         action: item.id ? "detail" : "",
@@ -388,7 +406,7 @@ function formatDashboardPriceContext(row) {
   if (!currentPrice || !targetValue) return "";
 
   const targetLabel = row.source === "radar" ? "Entry" : "Target";
-  return `Now ${money(currentPrice)} / ${targetLabel} ${money(targetValue)}`;
+  return `${money(currentPrice)} -> ${targetLabel} ${money(targetValue)}`;
 }
 
 function formatDashboardPrintingIdentity(item) {

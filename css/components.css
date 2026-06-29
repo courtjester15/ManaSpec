@@ -364,7 +364,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .dashboard-state-grid {
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 0;
 }
 
@@ -436,7 +436,7 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .dashboard-work-grid {
-  gap: 8px;
+  gap: 6px;
 }
 
 .signal-scan-grid {
@@ -812,8 +812,8 @@ Panels, rows, lists, modals, metrics, and status elements.
 }
 
 .dashboard-work-grid .scan-panel {
-  height: 198px;
-  min-height: 198px;
+  height: 224px;
+  min-height: 224px;
   max-height: none;
   overflow-y: visible;
   padding: 7px 8px;
@@ -871,14 +871,17 @@ Panels, rows, lists, modals, metrics, and status elements.
   height: auto;
   min-height: 0;
   margin: 0;
-  padding: 3px 11px;
-  border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 0;
-  background: transparent;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.025);
   font: inherit;
   justify-items: start;
   text-align: left;
+}
+
+.dashboard-queue-row + .dashboard-queue-row {
+  margin-top: 2px;
 }
 
 .dashboard-queue-row strong {
