@@ -210,11 +210,14 @@ function getTargetRows(kind) {
 }
 
 function getDashboardWorkQueues(signalRows) {
+  const exitNearRows = getDashboardSignalQueue(signalRows, row => row.status === "Exit near", "Exit near");
+  const entryNearRows = getDashboardSignalQueue(signalRows, row => row.status === "Entry near", "Entry near");
+
   return {
     exitHits: getDashboardSignalQueue(signalRows, row => row.status === "Exit hit", "Exit hit"),
     entryHits: getDashboardSignalQueue(signalRows, row => row.status === "Entry hit", "Entry hit"),
-    exitNear: getDashboardSignalQueue(signalRows, row => row.status === "Exit near", "Exit near"),
-    entryNear: getDashboardSignalQueue(signalRows, row => row.status === "Entry near", "Entry near"),
+    exitNear: fillDashboardNearQueue(exitNearRows, "portfolio", "Exit watch"),
+    entryNear: fillDashboardNearQueue(entryNearRows, "radar", "Entry watch"),
     marketDue: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("staleChecks"), "Market check due"),
     holdDue: getDashboardSignalQueue(signalRows, row => row.status === "Hold due" || row.status === "Hold near", "Hold review due"),
     missingPlans: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("noPlan"), "Missing plan"),
@@ -227,6 +230,17 @@ function getDashboardSignalQueue(rows, predicate, reason) {
     .filter(predicate)
     .slice(0, 5)
     .map(row => formatDashboardSignalRow(row, reason));
+}
+
+function fillDashboardNearQueue(rows, source, fallbackReason) {
+  if (rows.length >= 5) return rows.slice(0, 5);
+
+  const existingIds = new Set(rows.map(row => row.id));
+  const fillRows = getDashboardClosestTargetRows(source, fallbackReason)
+    .filter(row => !existingIds.has(row.id))
+    .slice(0, 5 - rows.length);
+
+  return [...rows, ...fillRows];
 }
 
 function formatTargetDetail(item, state) {
@@ -296,13 +310,45 @@ function getDashboardSignalRows() {
 }
 
 function formatDashboardSignalRow(row, reason) {
+  const priceContext = formatDashboardPriceContext(row);
   return {
     title: formatDashboardQueueTitle(row),
-    detail: reason || row.reasonLabel || row.status || "Review",
+    detail: [reason || row.reasonLabel || row.status || "Review", priceContext].filter(Boolean).join(" / "),
     id: row.id || "",
     source: row.source || "",
     action: row.id ? "detail" : "",
   };
+}
+
+function getDashboardClosestTargetRows(source, reason) {
+  const owned = source === "portfolio";
+  const items = owned
+    ? getOwnedPositions().filter(item => getDashboardNumber(item.exitTarget))
+    : radar.filter(item => getDashboardNumber(item.entryTarget));
+
+  return items
+    .map(item => {
+      const currentPrice = getDashboardNumber(item.currentPrice);
+      const targetValue = getDashboardNumber(owned ? item.exitTarget : item.entryTarget);
+      if (!currentPrice || !targetValue) return null;
+
+      const distancePercent = owned
+        ? ((targetValue - currentPrice) / targetValue) * 100
+        : ((currentPrice - targetValue) / targetValue) * 100;
+
+      if (distancePercent <= 0) return null;
+
+      return {
+        title: formatDashboardQueueTitle(item),
+        detail: [reason, formatDashboardPriceContext({ currentPrice, targetValue, source })].filter(Boolean).join(" / "),
+        id: item.id || "",
+        source,
+        action: item.id ? "detail" : "",
+        distancePercent,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.distancePercent - b.distancePercent || String(a.title).localeCompare(String(b.title), undefined, { numeric: true, sensitivity: "base" }));
 }
 
 function getDashboardRecentNoteRows() {
@@ -334,6 +380,15 @@ function formatDashboardQueueTitle(item, fallbackName = "") {
   const name = item.name || item.cardName || fallbackName || "Tracked printing";
   const identity = formatDashboardPrintingIdentity(item);
   return identity ? `${name} - ${identity}` : name;
+}
+
+function formatDashboardPriceContext(row) {
+  const currentPrice = getDashboardNumber(row.currentPrice);
+  const targetValue = getDashboardNumber(row.targetValue);
+  if (!currentPrice || !targetValue) return "";
+
+  const targetLabel = row.source === "radar" ? "Entry" : "Target";
+  return `Now ${money(currentPrice)} / ${targetLabel} ${money(targetValue)}`;
 }
 
 function formatDashboardPrintingIdentity(item) {

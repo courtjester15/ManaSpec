@@ -20,6 +20,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Refocused Dashboard around a compact daily work queue with action tiles for target hits, near targets, market checks, hold reviews, missing plans, and recent notes.
 - Polished Dashboard tile density, empty-state language, concise row reasons, Signals tile navigation, and unique-card Recent Notes behavior.
 - Refined Dashboard summary hierarchy, uniform action tile height, left-aligned queue rows, quieter empty states, and compact printing identifiers.
+- Finalized Dashboard beta polish with useful Near fallback rows, concise price context, proper summary tile hierarchy, and denser list-style action rows.
 - Standardized Codex browser QA on `python -m http.server 8000 --bind 127.0.0.1` and documented that `file://` browser blocks should not be troubleshot.
 
 ## 2026-06-24 - Project Hygiene And QA Guardrails
