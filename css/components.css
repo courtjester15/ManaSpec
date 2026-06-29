@@ -368,6 +368,10 @@ Panels, rows, lists, modals, metrics, and status elements.
   margin-bottom: 0;
 }
 
+.dashboard-view {
+  gap: 6px;
+}
+
 .dashboard-state-grid .metric-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -375,6 +379,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   align-content: center;
   height: 62px;
   min-height: 62px;
+  margin-bottom: 0;
   padding: 7px 10px;
   overflow: hidden;
 }
@@ -815,7 +820,8 @@ Panels, rows, lists, modals, metrics, and status elements.
   height: 224px;
   min-height: 224px;
   max-height: none;
-  overflow-y: visible;
+  margin-bottom: 0;
+  overflow: hidden;
   padding: 7px 8px;
 }
 
@@ -865,33 +871,37 @@ Panels, rows, lists, modals, metrics, and status elements.
   font-size: 12px;
 }
 
-.dashboard-queue-row {
+.scan-row.dashboard-queue-row {
+  display: grid;
+  align-items: start;
+  justify-content: stretch;
   width: 100%;
   gap: 3px;
   height: auto;
   min-height: 0;
   margin: 0;
-  padding: 4px 8px;
+  padding: 4px 7px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.025);
   font: inherit;
   justify-items: start;
   text-align: left;
+  box-sizing: border-box;
 }
 
-.dashboard-queue-row + .dashboard-queue-row {
-  margin-top: 2px;
+.scan-row.dashboard-queue-row + .scan-row.dashboard-queue-row {
+  margin-top: 1px;
 }
 
-.dashboard-queue-row strong {
+.scan-row.dashboard-queue-row strong {
   width: 100%;
   font-size: 12px;
   line-height: 1.1;
   text-align: left;
 }
 
-.dashboard-queue-row span {
+.scan-row.dashboard-queue-row span {
   width: 100%;
   font-size: 11px;
   line-height: 1.1;

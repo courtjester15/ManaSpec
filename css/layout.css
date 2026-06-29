@@ -217,6 +217,10 @@ App shell, header, workbar, summary, and view headings.
   gap: 10px;
 }
 
+.dashboard-view {
+  gap: 6px;
+}
+
 .portfolio-workflow {
   min-height: 0;
 }
