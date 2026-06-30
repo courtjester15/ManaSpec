@@ -23,9 +23,9 @@ Use [PARKING_LOT.md](PARKING_LOT.md) for promising ideas that still need validat
 - Notes: user-authored card memory attached to exact tracked printings.
 - History: transaction and outcome review.
 
-## Current Phase: Alpha Stabilization
+## Current Phase: Alpha Friend Preview
 
-Goal: make the current modular terminal shell reliable, understandable, and ready for the next data model step.
+Goal: use `v0.9.0-alpha.1` with one or two trusted testers while keeping the remaining beta gates visible.
 
 Current discipline: do not expand sideways until the core singles workflow has been smoke tested, cataloged, and prioritized for 1.0 beta.
 
@@ -101,7 +101,7 @@ Current discipline: do not expand sideways until the core singles workflow has b
 
 ## 1.0 Beta Track
 
-Goal: turn the current alpha into a usable product, not a wider prototype.
+Goal: turn the current alpha preview into a usable beta product, not a wider prototype.
 
 ### Beta Gates
 
@@ -145,6 +145,7 @@ Goal: turn the current alpha into a usable product, not a wider prototype.
    - [ ] Replace native sell confirmation with an app-styled workflow.
    - [ ] Tighten labels, empty states, confirmations, disabled states, table scan behavior, and Help.
    - [ ] Smoke test the complete beta path.
+   - [x] Mark friend-preview status as `v0.9.0-alpha.1`.
    - [ ] Version the app as `v1.0.0-beta` only after the core loop is reliable.
 
 ### Scope Lock Until Beta

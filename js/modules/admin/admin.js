@@ -24,7 +24,7 @@ function renderAdminView() {
 
         <section class="admin-panel">
           <h4>Data Safety</h4>
-          <p>ManaSpec stores your data in this browser. Export a backup before risky changes, moving computers, or sharing beta builds.</p>
+          <p>ManaSpec stores your data in this browser. Export a backup before risky changes, moving computers, or sharing friend-preview builds.</p>
           <div class="admin-action-row">
             <button type="button" class="admin-action" id="adminExportBackup">Export Backup</button>
             <button type="button" class="admin-action" id="adminImportBackup">Import Backup</button>

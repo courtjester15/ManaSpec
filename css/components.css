@@ -642,6 +642,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   display: grid;
   gap: 3px 6px;
   align-content: start;
+  cursor: pointer;
 }
 
 .signals-action-tile:hover,
@@ -720,10 +721,25 @@ Panels, rows, lists, modals, metrics, and status elements.
   cursor: pointer;
 }
 
+.signals-action-preview-row strong,
+.attention-queue-row strong {
+  color: var(--text-strong);
+}
+
 .signals-action-preview-row:hover,
-.signals-action-preview-row:focus-visible {
+.signals-action-preview-row:focus-visible,
+.signals-action-preview-row.active {
   outline: 1px solid rgba(125, 211, 252, 0.3);
   outline-offset: -1px;
+}
+
+.signals-action-preview-row:hover strong,
+.signals-action-preview-row:focus-visible strong,
+.signals-action-preview-row.active strong {
+  color: #ffffff;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
 }
 
 .signals-action-preview em {

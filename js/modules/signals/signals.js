@@ -13,6 +13,7 @@ let signalsSort = {
 };
 
 let activeSignalBucket = "";
+let activeSignalCardId = "";
 
 const SIGNAL_TILE_ROW_LIMIT = 3;
 
@@ -81,8 +82,8 @@ function renderSignalActionTile(bucket, rows) {
   ].filter(Boolean).join(" ");
 
   return `
-    <article class="${classes}">
-      <button type="button" class="signals-action-filter" data-context-action="${escapeAttribute(bucket.id)}">
+    <article class="${classes}" data-signal-bucket-filter="${escapeAttribute(bucket.id)}">
+      <button type="button" class="signals-action-filter" data-signal-bucket-filter="${escapeAttribute(bucket.id)}">
         <span class="signals-action-title">${escapeHtml(bucket.label)}</span>
         <strong>${bucketRows.length}</strong>
         <small>${escapeHtml(bucket.detail)}</small>
@@ -91,8 +92,8 @@ function renderSignalActionTile(bucket, rows) {
         ${previewRows.length
           ? previewRows.map(row => renderAttentionQueueRow(row, {
             tag: "button",
-            className: "signals-action-preview-row",
-            attributes: `type="button" data-context-action="${escapeAttribute(bucket.id)}"`,
+            className: row.id === activeSignalCardId ? "signals-action-preview-row active" : "signals-action-preview-row",
+            attributes: `type="button" data-signal-card-filter="${escapeAttribute(row.id || "")}" data-signal-bucket="${escapeAttribute(bucket.id)}"`,
           })).join("")
           : `<em>No cards</em>`}
       </div>
@@ -105,16 +106,28 @@ function renderSignalUtilityTile(rows) {
     <article class="signals-action-utility">
       <span>Attention</span>
       <strong>${rows.length} Active</strong>
-      <button type="button" class="filter-reset-btn" id="clearSignalFilter"${activeSignalBucket ? "" : " disabled"}>Show all</button>
+      <button type="button" class="filter-reset-btn" id="clearSignalFilter"${activeSignalBucket || activeSignalCardId ? "" : " disabled"}>Show all</button>
       ${renderTablePageSizeControl("signals")}
     </article>
   `;
 }
 
 function initSignalBucketCards() {
-  document.querySelectorAll("[data-context-action]").forEach(button => {
-    button.addEventListener("click", () => {
-      activeSignalBucket = button.dataset.contextAction;
+  document.querySelectorAll("[data-signal-bucket-filter]").forEach(tile => {
+    tile.addEventListener("click", event => {
+      if (event.target.closest("[data-signal-card-filter]")) return;
+      if (tile.classList.contains("signals-action-filter")) event.stopPropagation();
+      activeSignalBucket = tile.dataset.signalBucketFilter;
+      activeSignalCardId = "";
+      renderSignalsView();
+    });
+  });
+
+  document.querySelectorAll("[data-signal-card-filter]").forEach(row => {
+    row.addEventListener("click", event => {
+      event.stopPropagation();
+      activeSignalBucket = row.dataset.signalBucket || "";
+      activeSignalCardId = row.dataset.signalCardFilter || "";
       renderSignalsView();
     });
   });
@@ -123,6 +136,7 @@ function initSignalBucketCards() {
 function initSignalTableTools() {
   document.getElementById("clearSignalFilter")?.addEventListener("click", () => {
     activeSignalBucket = "";
+    activeSignalCardId = "";
     renderSignalsView();
   });
 }
@@ -154,7 +168,10 @@ function getFilteredSignalRows() {
   const rows = getAllSignalRows();
   const activeRows = getActiveSignalRows(rows);
   if (!activeSignalBucket) return activeRows;
-  return getRowsForSignalBucket(rows, activeSignalBucket);
+  const bucketRows = getRowsForSignalBucket(rows, activeSignalBucket);
+  return activeSignalCardId
+    ? bucketRows.filter(row => row.id === activeSignalCardId)
+    : bucketRows;
 }
 
 function getRowsForSignalBucket(rows, bucketId, options = {}) {
@@ -186,6 +203,7 @@ function fillSignalApproachingRows(rows, bucketRows, limit = 0) {
 
 function formatSignalQueueRow(row, bucketId) {
   return {
+    id: row.id || "",
     title: formatSignalQueueTitle(row),
     detail: formatSignalQueueReason(row, bucketId),
     meta: formatSignalPriceContext(row),
