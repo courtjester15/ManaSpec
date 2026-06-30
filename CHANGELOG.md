@@ -17,11 +17,14 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Marked the current project status as `v0.9.0-alpha.1` friend preview while reserving `v1.0.0-beta` for the formal beta gates.
 - Refocused Dashboard around a compact daily work queue with action tiles for target hits, near targets, market checks, hold reviews, missing plans, and recent notes.
 - Polished Dashboard tile density, empty-state language, concise row reasons, Signals tile navigation, and unique-card Recent Notes behavior.
 - Refined Dashboard summary hierarchy, uniform action tile height, left-aligned queue rows, quieter empty states, and compact printing identifiers.
 - Finalized Dashboard beta polish with useful Near fallback rows, concise price context, proper summary tile hierarchy, and denser list-style action rows.
 - Fixed Dashboard layout containment by removing inherited card/panel margins, clipping overflowing queue rows, and hardening list-row alignment.
+- Fixed Dashboard Missing Plans so Radar cards only require entry targets, Positions require exit and hold targets, and Recent Notes show note preview text again.
+- Aligned Signals attention tiles with Dashboard queue rows, including richer reason/price context, closest-target Approaching fallbacks, and clearer No Plan ownership copy.
 - Added a repeated-issue workflow reminder to pause and diagnose root causes before continuing small adjustment loops.
 - Standardized Codex browser QA on `python -m http.server 8000 --bind 127.0.0.1` and documented that `file://` browser blocks should not be troubleshot.
 

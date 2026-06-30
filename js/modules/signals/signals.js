@@ -14,6 +14,8 @@ let signalsSort = {
 
 let activeSignalBucket = "";
 
+const SIGNAL_TILE_ROW_LIMIT = 3;
+
 const SIGNAL_BUCKETS = [
   {
     id: "targetsHit",
@@ -23,12 +25,12 @@ const SIGNAL_BUCKETS = [
   {
     id: "approaching",
     label: "Approaching",
-    detail: "Within 5% of target",
+    detail: "Near or closest target",
   },
   {
     id: "noPlan",
     label: "No Plan",
-    detail: "Missing target or hold",
+    detail: "Missing required fields",
   },
   {
     id: "staleChecks",
@@ -38,7 +40,8 @@ const SIGNAL_BUCKETS = [
 ];
 
 function renderSignalsView() {
-  const rows = getSignalAttentionRows();
+  const allRows = getAllSignalRows();
+  const rows = getActiveSignalRows(allRows);
   document.getElementById("viewContainer").innerHTML = `
     <section class="module-view">
       <div class="view-heading">
@@ -46,7 +49,7 @@ function renderSignalsView() {
         <p>What needs attention today across Radar and Positions.</p>
       </div>
 
-      ${renderSignalActionBand(rows)}
+      ${renderSignalActionBand(rows, allRows)}
 
       <div id="signalsTable"></div>
     </section>
@@ -58,11 +61,11 @@ function renderSignalsView() {
   renderSignalsTable();
 }
 
-function renderSignalActionBand(rows) {
+function renderSignalActionBand(rows, allRows = rows) {
   return `
     <section class="signals-action-band" aria-label="Signals action center">
       <div class="signals-action-tiles">
-        ${SIGNAL_BUCKETS.map(bucket => renderSignalActionTile(bucket, rows)).join("")}
+        ${SIGNAL_BUCKETS.map(bucket => renderSignalActionTile(bucket, allRows)).join("")}
         ${renderSignalUtilityTile(rows)}
       </div>
     </section>
@@ -70,24 +73,30 @@ function renderSignalActionBand(rows) {
 }
 
 function renderSignalActionTile(bucket, rows) {
-  const bucketRows = getRowsForSignalBucket(rows, bucket.id);
-  const previewRows = getSignalBucketPreviewRows(bucketRows, bucket.id);
+  const bucketRows = getRowsForSignalBucket(rows, bucket.id, { limit: SIGNAL_TILE_ROW_LIMIT });
+  const previewRows = bucketRows.map(row => formatSignalQueueRow(row, bucket.id));
   const classes = [
     "signals-action-tile",
     activeSignalBucket === bucket.id ? "active" : "",
   ].filter(Boolean).join(" ");
 
   return `
-    <button type="button" class="${classes}" data-context-action="${escapeAttribute(bucket.id)}">
-      <span class="signals-action-title">${escapeHtml(bucket.label)}</span>
-      <strong>${bucketRows.length}</strong>
-      <small>${escapeHtml(bucket.detail)}</small>
+    <article class="${classes}">
+      <button type="button" class="signals-action-filter" data-context-action="${escapeAttribute(bucket.id)}">
+        <span class="signals-action-title">${escapeHtml(bucket.label)}</span>
+        <strong>${bucketRows.length}</strong>
+        <small>${escapeHtml(bucket.detail)}</small>
+      </button>
       <div class="signals-action-preview">
         ${previewRows.length
-          ? previewRows.map(renderSignalPreviewRow).join("")
+          ? previewRows.map(row => renderAttentionQueueRow(row, {
+            tag: "button",
+            className: "signals-action-preview-row",
+            attributes: `type="button" data-context-action="${escapeAttribute(bucket.id)}"`,
+          })).join("")
           : `<em>No cards</em>`}
       </div>
-    </button>
+    </article>
   `;
 }
 
@@ -99,21 +108,6 @@ function renderSignalUtilityTile(rows) {
       <button type="button" class="filter-reset-btn" id="clearSignalFilter"${activeSignalBucket ? "" : " disabled"}>Show all</button>
       ${renderTablePageSizeControl("signals")}
     </article>
-  `;
-}
-
-function getSignalBucketPreviewRows(rows, bucketId) {
-  return [...rows]
-    .sort((a, b) => compareSignalBucketPriority(a, b, bucketId))
-    .slice(0, 3);
-}
-
-function renderSignalPreviewRow(row) {
-  return `
-    <span class="signals-action-preview-row">
-      <b>${escapeHtml(row.name)}</b>
-      <small>${escapeHtml(row.previewReason || row.reasonLabel || row.status)}</small>
-    </span>
   `;
 }
 
@@ -157,13 +151,78 @@ function renderSignalsTable() {
 }
 
 function getFilteredSignalRows() {
-  const rows = getSignalAttentionRows();
-  if (!activeSignalBucket) return rows;
+  const rows = getAllSignalRows();
+  const activeRows = getActiveSignalRows(rows);
+  if (!activeSignalBucket) return activeRows;
   return getRowsForSignalBucket(rows, activeSignalBucket);
 }
 
-function getRowsForSignalBucket(rows, bucketId) {
-  return rows.filter(row => row.buckets.includes(bucketId));
+function getRowsForSignalBucket(rows, bucketId, options = {}) {
+  const bucketRows = rows.filter(row => row.buckets.includes(bucketId));
+  const filledRows = bucketId === "approaching"
+    ? fillSignalApproachingRows(rows, bucketRows, options.limit)
+    : bucketRows;
+  const sortedRows = [...filledRows].sort((a, b) => compareSignalBucketPriority(a, b, bucketId));
+
+  return options.limit ? sortedRows.slice(0, options.limit) : sortedRows;
+}
+
+function fillSignalApproachingRows(rows, bucketRows, limit = 0) {
+  const displayLimit = limit || 0;
+  if (displayLimit && bucketRows.length >= displayLimit) return bucketRows;
+
+  const existingIds = new Set(bucketRows.map(row => row.id));
+  const candidates = rows
+    .filter(row => !existingIds.has(row.id))
+    .filter(row => row.targetState === "watching")
+    .filter(row => Number.isFinite(row.targetPercent) && row.targetPercent > 5)
+    .filter(row => row.currentPrice && row.targetValue)
+    .sort((a, b) => compareStandardSortValues(a.targetPercent, b.targetPercent)
+      || String(a.name || "").localeCompare(String(b.name || ""), undefined, { numeric: true, sensitivity: "base" }));
+
+  const fillCount = displayLimit ? Math.max(0, displayLimit - bucketRows.length) : candidates.length;
+  return [...bucketRows, ...candidates.slice(0, fillCount)];
+}
+
+function formatSignalQueueRow(row, bucketId) {
+  return {
+    title: formatSignalQueueTitle(row),
+    detail: formatSignalQueueReason(row, bucketId),
+    meta: formatSignalPriceContext(row),
+  };
+}
+
+function formatSignalQueueTitle(row) {
+  const number = row.collector_number ? `#${row.collector_number}` : "";
+  const identity = [row.set_code || "", number].filter(Boolean).join(" ");
+  return identity ? `${row.name} - ${identity}` : row.name;
+}
+
+function formatSignalQueueReason(row, bucketId) {
+  if (bucketId === "targetsHit") return row.source === "portfolio" ? "Exit Hit" : "Entry Hit";
+  if (bucketId === "approaching") {
+    if (row.status === "Exit near") return "Exit Near";
+    if (row.status === "Entry near") return "Entry Near";
+    return row.source === "portfolio" ? "Exit Watch" : "Entry Watch";
+  }
+  if (bucketId === "noPlan") return formatSignalMissingPlanReason(row);
+  if (bucketId === "staleChecks") return "Market Check Due";
+  return row.reasonLabel || row.status || "Review";
+}
+
+function formatSignalMissingPlanReason(row) {
+  const missing = Array.isArray(row.missingPlanReasons) ? row.missingPlanReasons : [];
+  if (!missing.length) return "Missing Plan";
+  return `Missing ${missing.join(" + ")}`;
+}
+
+function formatSignalPriceContext(row) {
+  const currentPrice = Number(row.currentPrice || 0);
+  const targetValue = Number(row.targetValue || 0);
+  if (!currentPrice || !targetValue) return "";
+
+  const targetLabel = row.source === "radar" ? "Entry" : "Target";
+  return `${money(currentPrice)} -> ${targetLabel} ${money(targetValue)}`;
 }
 
 function getSignalTableColumns() {
@@ -202,10 +261,17 @@ function getSortedSignalRows(rows) {
 }
 
 function getSignalAttentionRows() {
+  return getActiveSignalRows(getAllSignalRows());
+}
+
+function getAllSignalRows() {
   return getTrackedSignalCards()
     .map(buildSignalAttentionRow)
-    .filter(row => row.buckets.length)
     .sort(compareSignalPriority);
+}
+
+function getActiveSignalRows(rows) {
+  return rows.filter(row => row.buckets.length);
 }
 
 function buildSignalAttentionRow(item) {
@@ -239,12 +305,15 @@ function buildSignalAttentionRow(item) {
     detail: formatSignalTargetDetail(item, targetSignal.status, buckets),
     currentPrice,
     targetValue,
+    targetState: targetSignal.state,
+    targetPercent: targetSignal.percent,
     targetSort: getRelevantSignalTargetSort(item),
     distanceSort: getSignalDistanceSort({ currentPrice, targetValue, source }),
     marketFreshness: market.label,
     marketDetail: market.detail,
     marketAgeSort: market.ageDays,
     previewReason: getSignalPreviewReason(item, targetSignal, plan, market, buckets),
+    missingPlanReasons: plan.missing,
     bucketPriority: getSignalBucketPriority(item, targetSignal, plan, market),
     priority: getSignalPriority(buckets, item, targetSignal, market, plan),
   };
@@ -400,11 +469,10 @@ function getSignalPlanState(item) {
   const missing = [];
   if (item.owned) {
     if (!Number(item.exitTarget || 0)) missing.push("Exit");
+    if (!getSignalHoldMonths(item)) missing.push("Hold");
   } else if (!Number(item.entryTarget || 0)) {
     missing.push("Entry");
   }
-
-  if (!getSignalHoldMonths(item)) missing.push("Hold");
 
   const date = getSignalPlanAgeDate(item);
   return {
@@ -446,7 +514,7 @@ function getSignalPreviewReason(item, targetSignal, plan, market, buckets) {
 function getSignalBucketPriority(item, targetSignal, plan, market) {
   return {
     targetsHit: targetSignal.state === "hit" ? -targetSignal.beyond : 9999,
-    approaching: targetSignal.state === "approaching" ? targetSignal.percent : 9999,
+    approaching: targetSignal.state === "approaching" || targetSignal.state === "watching" ? targetSignal.percent : 9999,
     noPlan: plan.missing.length ? (item.owned ? 10000000000000 : 0) + plan.ageSort : 99999999999999,
     staleChecks: market.state === "missing" ? 0 : Math.min(market.ageDays, 999),
   };

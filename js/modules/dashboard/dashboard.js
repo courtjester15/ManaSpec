@@ -62,19 +62,13 @@ function renderMetricTile(label, value, options = {}) {
 
 function renderScanPanel(title, rows, emptyText = "No data yet") {
   const body = rows.length
-    ? rows.map(row => row.action
-      ? `
-        <button type="button" class="scan-row dashboard-queue-row" data-dashboard-action="${escapeAttribute(row.action)}" data-dashboard-id="${escapeAttribute(row.id || "")}" data-dashboard-source="${escapeAttribute(row.source || "")}">
-          <strong>${escapeHtml(row.title)}</strong>
-          <span>${escapeHtml(row.detail)}</span>
-        </button>
-      `
-      : `
-        <div class="scan-row dashboard-queue-row dashboard-queue-row--static">
-          <strong>${escapeHtml(row.title)}</strong>
-          <span>${escapeHtml(row.detail)}</span>
-        </div>
-      `).join("")
+    ? rows.map(row => renderAttentionQueueRow(row, {
+      tag: row.action ? "button" : "div",
+      className: row.action ? "" : "dashboard-queue-row--static",
+      attributes: row.action
+        ? `type="button" data-dashboard-action="${escapeAttribute(row.action)}" data-dashboard-id="${escapeAttribute(row.id || "")}" data-dashboard-source="${escapeAttribute(row.source || "")}"`
+        : "",
+    })).join("")
     : `<div class="empty-state compact">${escapeHtml(emptyText)}</div>`;
 
   return `
@@ -82,6 +76,22 @@ function renderScanPanel(title, rows, emptyText = "No data yet") {
       <h4>${escapeHtml(title)}</h4>
       ${body}
     </section>
+  `;
+}
+
+function renderAttentionQueueRow(row, options = {}) {
+  const tag = options.tag || "div";
+  const classes = ["scan-row", "dashboard-queue-row", "attention-queue-row", options.className || ""]
+    .filter(Boolean)
+    .join(" ");
+  const attributes = options.attributes ? ` ${options.attributes}` : "";
+
+  return `
+    <${tag} class="${classes}"${attributes}>
+      <strong>${escapeHtml(row.title || "")}</strong>
+      ${row.detail ? `<span>${escapeHtml(row.detail)}</span>` : ""}
+      ${row.meta ? `<small>${escapeHtml(row.meta)}</small>` : ""}
+    </${tag}>
   `;
 }
 
@@ -220,7 +230,7 @@ function getDashboardWorkQueues(signalRows) {
     entryNear: fillDashboardNearQueue(entryNearRows, "radar", "Entry Watch"),
     marketDue: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("staleChecks"), "Market Check Due"),
     holdDue: getDashboardHoldRows(signalRows),
-    missingPlans: getDashboardSignalQueue(signalRows, row => row.buckets?.includes("noPlan"), "Missing plan"),
+    missingPlans: getDashboardMissingPlanRows(signalRows),
     recentNotes: getDashboardRecentNoteRows(),
   };
 }
@@ -259,6 +269,23 @@ function getDashboardHoldRows(signalRows) {
     .map(row => formatDashboardSignalRow(row, "Hold Missing"));
 
   return [...holdRows, ...missingHoldRows];
+}
+
+function getDashboardMissingPlanRows(signalRows) {
+  return getDashboardSignalQueue(
+    signalRows,
+    row => row.buckets?.includes("noPlan"),
+    row => formatDashboardMissingPlanReason(row)
+  );
+}
+
+function formatDashboardMissingPlanReason(row) {
+  const missing = Array.isArray(row.missingPlanReasons)
+    ? row.missingPlanReasons
+    : [];
+  if (!missing.length) return "Missing plan";
+
+  return `Missing ${missing.map(reason => String(reason).toLowerCase()).join(" + ")}`;
 }
 
 function formatTargetDetail(item, state) {
@@ -329,9 +356,12 @@ function getDashboardSignalRows() {
 
 function formatDashboardSignalRow(row, reason) {
   const priceContext = formatDashboardPriceContext(row);
+  const reasonText = typeof reason === "function"
+    ? reason(row)
+    : reason;
   return {
     title: formatDashboardQueueTitle(row),
-    detail: [reason || row.reasonLabel || row.status || "Review", priceContext].filter(Boolean).join(" - "),
+    detail: [reasonText || row.reasonLabel || row.status || "Review", priceContext].filter(Boolean).join(" - "),
     id: row.id || "",
     source: row.source || "",
     action: row.id ? "detail" : "",
@@ -386,12 +416,21 @@ function getDashboardRecentNoteRows() {
 
       return {
         title: formatDashboardQueueTitle(note, note.cardName || "General note"),
-        detail: ["Recent note", formatDashboardDate(note.createdAt)].filter(Boolean).join(" / "),
+        detail: [formatDashboardNotePreview(note), formatDashboardDate(note.createdAt)].filter(Boolean).join(" / "),
         id: source?.id || "",
         source: source?.source || "",
         action: source?.id ? "notes" : "",
       };
     });
+}
+
+function formatDashboardNotePreview(note) {
+  if (typeof getCardNotePreview === "function") {
+    return getCardNotePreview(note);
+  }
+
+  const text = String(note?.text || "").trim();
+  return text.length > 96 ? `${text.slice(0, 93)}...` : text;
 }
 
 function formatDashboardQueueTitle(item, fallbackName = "") {
