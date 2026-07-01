@@ -59,14 +59,21 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - Signals rows show compact source, action context, and exact printing identity for beta workflow scanning.
 - Signals quick actions for opening card detail or jumping to Radar/Positions.
 - Signals is now a read-only attention layer for plan data; plan edits happen in Radar, Positions, or Card Detail.
+- Dashboard and Signals share compact attention queue row language for target hits, approaching states, missing plans, stale checks, and recent note context.
+- Signals attention tiles support bucket filtering from the tile/header and exact-card filtering from queue rows.
+- Signals Approaching previews fill quiet days with closest target-watch rows outside the true near-target threshold.
+- Signals No Plan ownership is explicit: Radar requires Entry Target, while Positions require Exit Target and Hold.
 - Hold-time planning accepts simple month ranges such as `6-12` and `12-18`.
 - Shared note indicators use compact notepad icons in table workflows.
 - Card Detail saves plan edits to the source that opened the printing instead of cross-writing Radar and Positions.
 - Transaction ledger filters for text and buy/sell type.
 - History filters for text and event type.
 - Radar set-number search for exact Scryfall printing lookup.
+- Radar search and printing results are paper-only in the active UI until Digital/MTGO pricing can be supported with matching price intelligence.
 - Admin JSON backup export/import for localStorage-backed user data.
 - Contextual right-side Help drawer with initial workflow topics.
+- App notices render through a toast stack instead of layout-shifting inline status.
+- Positions sell uses an app-styled confirmation flow with one-copy, custom quantity, and sell-all choices.
 - Shared card notes from Card Detail, keyed by exact printing identity.
 - Thesis retired from active navigation while preserving existing Thesis code and data.
 - Compact card-detail Market Evaluation from observable/local data only.
@@ -85,19 +92,17 @@ Current discipline: do not expand sideways until the core singles workflow has b
 
 ### Next
 
-1. Signals deep-linking
-   - Jump to the exact Radar idea or Position from a signal.
-   - Prefer highlight, temporary filter, or scroll-to-card over broad module navigation.
+1. Signals source workflow validation
+   - Exact View actions now filter/focus the source Radar idea or Position; validate highlight, scroll, and edge cases during beta smoke testing.
+   - Prefer source context preservation over broad module navigation when adding new Signal paths.
 
 2. Ledger migration plan
    - Draft the transaction migration path before changing the storage model.
    - Preserve existing localStorage data while defining computed Positions from transactions.
 
 3. UX polish candidates from beta notes
-   - Continue tightening app notice styling now that shared toasts are opaque and layered above app UI.
-   - Replace browser-native sell confirmation with an app-styled workflow.
-   - Simplify Radar search mode selection toward unified smart search.
-   - Archive Digital search until ManaSpec can render MTGO tix prices. Digital results and digital pricing must ship together so search does not imply unsupported price intelligence.
+   - Continue tightening labels, empty states, disabled states, confirmations, dense table scan behavior, and Help from beta notes.
+   - Keep Radar search unified and paper-only until Digital/MTGO results can ship with supported pricing.
 
 ## 1.0 Beta Track
 
@@ -119,7 +124,8 @@ Goal: turn the current alpha preview into a usable beta product, not a wider pro
    - [x] Support chosen-quantity and sell-all exits from Positions.
    - [x] Remove Signals plan editing so Signals behaves as an attention layer.
    - [x] Make Card Detail plan saves source-specific.
-   - [ ] Deep-link Signals to exact Radar/Position rows.
+   - [x] Filter/focus exact Radar/Position rows from Signals View actions.
+   - [ ] Validate Signals source highlighting, scrolling, and exact-card filtering in the next core-loop retest.
    - [ ] Re-test Transactions, History, and Dashboard after another complete core-loop pass.
 
 3. Card Detail command center
@@ -142,7 +148,7 @@ Goal: turn the current alpha preview into a usable beta product, not a wider pro
 6. Beta polish and freeze
    - [x] Restore table layout integrity after Radar/Positions column changes.
    - [x] Fix shared toast readability and layering.
-   - [ ] Replace native sell confirmation with an app-styled workflow.
+   - [x] Replace native sell confirmation with an app-styled workflow.
    - [ ] Tighten labels, empty states, confirmations, disabled states, table scan behavior, and Help.
    - [ ] Smoke test the complete beta path.
    - [x] Mark friend-preview status as `v0.9.0-alpha.1`.
@@ -227,11 +233,11 @@ Capture notes in this format:
    - Current experiment: narrower side-drawer width before deciding whether to collapse forms/sections by default.
 
 4. Current open beta notes
-   - Signals deep-linking: jump to the exact Radar idea or Position instead of only switching modules.
-   - Signals hierarchy: make each signal communicate why it appears and what action is expected.
-   - Global notifications: replace layout-shifting save notices with toast notifications.
-   - Radar search UX: reduce search-mode confusion, likely by moving toward unified smart search.
-   - Positions sell confirmation: replace browser-native confirm with an app-styled workflow.
+   - Signals source workflow: View actions now filter/focus exact Radar or Position rows; validate edge cases, highlight quality, and scroll behavior.
+   - Signals hierarchy: improved with Dashboard-style attention queue rows; continue validating why/action clarity during smoke testing.
+   - Global notifications: toast stack exists; continue minor styling only if beta notes expose issues.
+   - Radar search UX: keep active search unified and paper-only until Digital/MTGO pricing is supported.
+   - Positions sell confirmation: app-styled confirmation exists; watch for quantity-selection friction during beta testing.
 
 5. Ledger migration sketch
    - Write the plan before changing storage.

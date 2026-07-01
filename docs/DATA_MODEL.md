@@ -106,7 +106,7 @@ Radar Item owns:
 - Market observation summary fields.
 - Pre-purchase planning context.
 
-Radar Item does not own active position management after purchase.
+Radar Item does not own active position management after purchase. For plan ownership, Radar only needs Entry Target for Missing Plan/No Plan checks; Exit Target and Hold belong to owned Positions.
 
 Relationship:
 
@@ -149,7 +149,7 @@ Position currently owns:
 - Hold target.
 - Active management actions.
 
-Position does not own pre-purchase discovery. That belongs to Radar.
+Position does not own pre-purchase discovery or Radar entry intent. That belongs to Radar. For plan ownership, Positions need Exit Target and Hold for Missing Plan/No Plan checks.
 
 Current relationship:
 
@@ -237,7 +237,7 @@ Position
 
 A Signal is an attention item.
 
-Current backing store: partly computed from local Radar/Position plan data and partly saved in `signals`.
+Current backing store: active Signals are computed from local Radar, Position, plan, price, hold-timing, and market-check state. Legacy saved `signals` records may remain in storage and backups for compatibility, but they are not the normal active Signals workflow.
 
 Signals can represent:
 
@@ -245,13 +245,15 @@ Signals can represent:
 - Exit target hits.
 - Approaching target states.
 - Missing plans.
-- Manual reminders or saved signal records.
+- Closest target-watch rows outside the near-target threshold when preview tiles need useful fallback rows.
 - Market check needs.
 
 Signal ownership rules:
 
 - Signals are read-only attention, not source data.
-- Signals deep-link back to Radar or Positions.
+- Signals filter or deep-link back to Radar or Positions.
+- Radar No Plan ownership means missing Entry Target.
+- Position No Plan ownership means missing Exit Target, missing Hold, or both.
 - Any edit shortcut must update canonical Radar or Position plan data.
 
 Relationship:
@@ -267,6 +269,10 @@ Plan fields
 Signal
 -> opens source in
 Radar, Positions, or Card Detail
+
+Signal
+-> can filter inspection table by
+bucket or exact tracked printing
 ```
 
 ## Card Note

@@ -28,7 +28,7 @@ Use these terms consistently in UI copy, docs, and future implementation names w
 - **Printing**: a specific version of a card, including set, collector number, finish, and Scryfall identity.
 - **Position**: an owned holding after money has been committed.
 - **Radar Item**: a watched idea before purchase, or a card still being monitored for scaling.
-- **Signal**: an attention item derived from local plan, price, target, or saved signal data.
+- **Signal**: an attention item derived from local plan, price, target, hold, or market-check data.
 - **Market Check**: a user-saved review of current market data, usually pasted from TCGplayer Price Points.
 - **Card Detail**: the command center for one exact tracked printing.
 - **Module Context Band**: the compact summary/action band above workflow filters and tables.
@@ -114,6 +114,19 @@ Rules:
 - Dashboard action tiles should make the reason and source clear before the user opens Detail or jumps to Radar or Positions.
 - Do not use placeholder labels for unsupported concepts such as downside or stop tracking.
 - Preserve a little left/right padding inside queue rows so dense text does not feel jammed against tile borders.
+
+## Attention Queues
+
+Dashboard and Signals should feel like two views of one attention workflow.
+
+Rules:
+
+- Use compact queue rows when a tile shows cards that need action or inspection.
+- Line one should prioritize exact card identity, such as `Card Name - SET #No`.
+- Secondary text should explain the reason, target state, note preview, or current-to-target context.
+- Dashboard queue rows open Card Detail or route to work on the source item.
+- Signals tile/header clicks filter by bucket, while Signals queue-row clicks filter to the exact tracked printing.
+- Card names in attention rows should remain primary text; muted color is for supporting context, not row titles.
 
 ## Colors
 

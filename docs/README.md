@@ -112,12 +112,12 @@ Current workflow direction:
 - Dashboard queue rows should open Card Detail or route to the exact Radar or Position source when practical.
 - Radar is for discovery, watched ideas, entry planning, and planned quantity before money is committed.
 - Positions is for owned holdings, exit planning, and active position management.
-- Signals is a read-only attention layer for alerts, reminders, and deep-links back to Radar or Positions.
+- Signals is a read-only computed attention layer for target hits, approaching/watch states, missing plans, stale market checks, and navigation/filtering back to source workflows.
 - Card Detail is the unified editor for a specific printing and edits canonical plan data.
 - Transactions and History are for what happened and what can be audited later.
 - Notes are for why the user cared and what changed over time.
 - Admin includes Data Safety controls for JSON backup export/import of local user data.
-- Radar, Positions, Signals, Transactions, and History use a shared module context band above filters and tables so workflow tables keep a consistent visual rhythm. Dashboard remains a broader daily work queue rather than a table workflow.
+- Radar, Positions, Transactions, and History use a shared module context band above filters and tables so workflow tables keep a consistent visual rhythm. Dashboard and Signals use shared attention queue language for compact "click to work/inspect" rows.
 
 Near-term product focus:
 
@@ -316,10 +316,10 @@ Current behavior:
 Current limitations:
 
 - Positions are directly mutated.
-- There is no transaction ledger yet.
+- Transactions is an early ledger/audit surface, but it is not yet the ownership source of truth.
 - Delete is destructive and not auditable.
 - Fees are not modeled.
-- Partial sale history is not preserved.
+- Position rows do not preserve lot-level partial sale history; Transactions holds the current audit trail.
 
 Near-term requirements:
 
@@ -416,26 +416,29 @@ Ownership model:
 - Signals is a read-only attention layer.
 - Signals owns alerts, reminders, target-state awareness, and navigation back to the source workflow.
 - Signals does not own entry, exit, hold, quantity, notes, transaction, or position state.
-- Signals should deep-link to the relevant Radar idea or Position whenever possible.
+- Signals should filter or deep-link to the relevant Radar idea or Position whenever possible.
 - Any quick edit shown in Signals is a shortcut to canonical Radar or Positions plan data, not Signals-owned data.
+- Active Signals are computed from Radar, Positions, current prices, hold timing, and market-check state. Legacy saved `signals` storage may remain in backups, but it is not the normal active Signals workflow.
 
 Current behavior:
 
-- Signals uses the shared module context band for attention buckets.
-- Signals summary tiles filter the attention table, and the table header includes a `Show all` reset when a bucket is active.
-- Manual signal records can still be added.
-- Target panels show exit hits, entry hits, approaching targets, and tracked cards with no plan.
+- Signals uses Dashboard-style attention tiles and shared compact queue rows.
+- Clicking a tile header/background filters the Signals table by that bucket; clicking a queue row filters the table to that exact tracked printing.
+- The table header includes a `Show all` reset when a bucket or exact-card filter is active.
+- Target panels show exit hits, entry hits, approaching targets, tracked cards with no plan, and stale market checks.
 - Target states are based on local `entryTarget`, `exitTarget`, month-based `holdTime`, ownership, elapsed hold time, and current price snapshots.
+- Approaching uses the true near-target threshold first, then fills remaining preview rows with the closest cards outside that threshold so the tile stays useful on quiet days.
 - Target signal rows show compact printing identity, source workflow, and action context such as buy, sell, review, watch, or market check.
 - Target signal rows include a compact reason column so the user can see why the row exists before opening Detail.
-- Target signal rows can open card detail or jump to Radar/Positions.
-- No Plan signal rows show tracked cards without plan data and link back to the source workflow for edits.
+- Target signal rows can open Card Detail or filter/focus the exact Radar or Positions source row.
+- No Plan uses ownership-specific rules: Radar items require Entry Target only; Positions require Exit Target and Hold.
+- No Plan reason text should name what is missing, such as `Missing Entry`, `Missing Exit`, `Missing Hold`, or `Missing Exit + Hold`.
 
 Current limitations:
 
 - Signals do not yet create transaction actions.
 - Signals do not use external listing count or unusual-activity data.
-- Signals navigation currently jumps to the module rather than always preserving exact card context.
+- Signals exact-card/source filtering exists, but source highlight and scroll behavior should continue to be validated during beta workflow testing.
 
 Workflow rule:
 

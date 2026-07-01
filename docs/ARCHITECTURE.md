@@ -68,7 +68,7 @@ ManaSpec currently uses global runtime state loaded from browser localStorage:
 - `radar`: watched Radar ideas.
 - `transactions`: early ledger events.
 - `cardNotes`: notes keyed to exact tracked printing identity.
-- `signals`: manual or saved signal records.
+- `signals`: legacy saved signal records preserved for compatibility/backups; the active Signals view is computed from Radar, Positions, prices, plans, and market-check state.
 - `thesisNotes`: archived/retired thesis data.
 - `cash`: available cash.
 - `priceSnapshots`: dated price snapshots.
@@ -98,7 +98,7 @@ Workflow modules own user workflows:
 - Dashboard: current awareness and next-action summary.
 - Radar: discovery, exact printing selection, watched ideas, entry planning, and planned quantity.
 - Positions: owned holdings, exit planning, active management, buy/sell/delete actions, and current value.
-- Signals: read-only attention layer and deep-links back to Radar or Positions.
+- Signals: computed read-only attention layer with bucket filters, exact-card filters, and source navigation back to Radar or Positions.
 - Card Detail: command center for one exact tracked printing and canonical plan edits.
 - Transactions: early ledger event surface.
 - History: review trail across transactions, Radar, and notes.
@@ -125,6 +125,7 @@ Important current flows:
 - Card Detail edits canonical plan fields on the source Radar item or Position.
 - Notes are stored outside Radar/Positions rows so they survive sell/rebuy workflows.
 - Market Check saves pasted market observations locally for the tracked printing.
+- Dashboard and Signals compute attention queues from local plan, price, hold, note, and market-check state; Dashboard rows open work destinations, while Signals rows filter the inspection table.
 
 This model intentionally avoids hidden synchronization layers. If a future store, event bus, database, or module loader is introduced, it should make these flows clearer, not more opaque.
 
@@ -165,6 +166,7 @@ ManaSpec has a few shared UI systems that should be treated as app-level contrac
 
 - Standard tables.
 - Module context bands.
+- Dashboard/Signals attention queue rows.
 - Global summary.
 - Toast notices.
 - Confirmation dialog.

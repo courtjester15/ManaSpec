@@ -121,13 +121,21 @@ Search should be context-specific:
 
 Card Search currently belongs inside Radar because adding a spec starts as a watched idea before purchase.
 
+## Signals
+
+### Signals are computed attention
+
+Signals should be derived from current Radar, Positions, plan, price, hold, and market-check state instead of being treated as a separate planning database.
+
+Legacy saved `signals` records may stay in localStorage backups for compatibility, but the active Signals workflow is computed, read-only attention. If manual reminders return later, they should be deliberately designed instead of silently reusing stale saved signal records.
+
 ## Transactions
 
 ### Ledger before real history
 
 History, realized P/L, partial exits, and accurate reviews require a transaction ledger.
 
-Until then, current portfolio state is useful but not auditable.
+ManaSpec now has an early transaction ledger for BUY/SELL audit context, balances, and realized SELL P/L where possible. Until the ledger migration is complete, Positions remain directly mutated current state and Transactions are audit context, not the ownership source of truth.
 
 ### Buy/sell means event creation
 

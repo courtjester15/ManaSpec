@@ -26,6 +26,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Fixed Dashboard Missing Plans so Radar cards only require entry targets, Positions require exit and hold targets, and Recent Notes show note preview text again.
 - Aligned Signals attention tiles with Dashboard queue rows, including richer reason/price context, closest-target Approaching fallbacks, and clearer No Plan ownership copy.
 - Polished Signals tile interactions so bucket clicks filter by bucket, queue-row clicks filter to an exact printing, and preview titles retain primary Dashboard-style emphasis.
+- Reconciled active docs and Help with current Signals, Dashboard attention queues, plan ownership, early transaction ledger behavior, Roadmap status, and documentation ownership workflow.
 - Added a repeated-issue workflow reminder to pause and diagnose root causes before continuing small adjustment loops.
 - Standardized Codex browser QA on `python -m http.server 8000 --bind 127.0.0.1` and documented that `file://` browser blocks should not be troubleshot.
 

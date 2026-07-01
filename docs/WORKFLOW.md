@@ -35,6 +35,8 @@ Audit files in `docs/audits/` are point-in-time review records. Use them for con
 6. Update `docs/DECISIONS.md` only when a meaningful choice was made.
 7. Put new raw notes in `dev notes/inbox/`, then promote durable behavior, priorities, or decisions into active docs.
 
+When a change alters a workflow model, interaction contract, or data ownership rule, update the owning active docs in the same pass. Examples include manual-to-computed behavior, shared Dashboard/Signals attention queues, canonical plan ownership, native-to-app confirmation flows, and ledger/source-of-truth changes. `CHANGELOG.md` records that the change happened; it is not a substitute for updating README, Architecture, Data Model, Style Guide, Roadmap, or Decisions when those docs own the current truth.
+
 ## Pasted Notes Workflow
 
 When the user pastes full notes from GPT, chat history, beta testing, or another planning session, treat them as project memory that may need to be saved before the thread moves on.

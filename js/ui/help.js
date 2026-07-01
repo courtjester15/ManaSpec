@@ -22,7 +22,7 @@ const helpTopics = {
     intro: "Radar is for cards you are watching before committing cash.",
     steps: [
       "Search by card name to discover printings. Name search tolerates partial words and likely misspellings.",
-      "Paper results are shown by default. Turn on Digital only when you want MTGO or Arena printings.",
+      "Radar search is paper-only until Digital/MTGO results can ship with supported pricing.",
       "Use Set # search for exact printings, such as FIN 123, FIN #123, FIN123, or MH3 123.",
       "Use the nonfoil or foil Add button on a printing to add it to Radar. Printing names open art previews.",
       "Click outside the search area or open Card Detail to collapse active search and printing results.",
@@ -46,13 +46,14 @@ const helpTopics = {
   },
   signals: {
     title: "Signals",
-    intro: "Signals turns local targets into an attention list.",
+    intro: "Signals turns local plan, price, hold, and market-check state into an attention list.",
     steps: [
       "Exit Hits are owned positions at or above the exit target.",
       "Entry Hits are Radar ideas at or below the entry target.",
-      "Approaching means the current price is close to a target or the hold is nearly due.",
-      "Use Source, Action, Why, and Distance together to tell whether the row points to Radar buying, Position selling, review, or a market check.",
-      "Use No Plan rows to find cards that need planning, then open Detail or jump to the source workflow.",
+      "Approaching shows true near-target cards first, then the closest target-watch cards so the tile stays useful.",
+      "Click a tile header or background to filter the table by that bucket.",
+      "Click a queue row or card title to filter the table to that exact tracked printing.",
+      "No Plan uses ownership rules: Radar needs Entry, while Positions need Exit and Hold.",
       "Use Detail to review the card, or View to filter Radar/Positions to the exact source row.",
     ],
   },
