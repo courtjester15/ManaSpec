@@ -13,6 +13,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added a docs ownership map and workflow routing rules so future documentation updates land in the right active source of truth.
 - Added a Codex friction log and browser QA friction guidance for recurring tooling, harness, and workflow detours.
 - Added a generated repository snapshot utility for faster GPT/Codex orientation.
+- Enriched the generated repository snapshot with runtime architecture, workflow ownership, localStorage contracts, dependency hints, DOM/CSS summaries, and architecture hotspots.
 - Moved point-in-time audit docs into `docs/audits/` and documented their role as diagnostic context rather than active authority.
 
 ### Changed
