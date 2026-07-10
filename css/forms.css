@@ -88,9 +88,10 @@ button[disabled] {
 .toolbar-tab {
   height: 36px;
   min-height: 36px;
+  min-width: 104px;
   width: auto;
   flex: 0 0 auto;
-  padding: 0 11px;
+  padding: 0 12px;
   font-size: 14px;
   font-weight: 600;
 }
@@ -700,6 +701,30 @@ input[type="number"]:focus {
   margin: 0;
 }
 
+.money-input-wrap {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.money-input-wrap em {
+  padding-left: 9px;
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  line-height: var(--control-h);
+}
+
+.money-input-wrap input {
+  border: 0;
+  background: transparent;
+  padding-left: 4px;
+}
+
 .intent-modal-grid textarea {
   min-height: 64px;
   margin: 0;
@@ -772,14 +797,22 @@ input[type="number"]:focus {
 }
 
 .intent-modal-note,
-.intent-hold-field,
 .add-printing-plan-note {
   grid-column: 1 / -1;
 }
 
+.intent-entry-field,
+.intent-hold-field {
+  grid-column: 2;
+}
+
 .intent-hold-field .hold-time-helper {
+  grid-column: auto;
+  grid-row: auto;
   align-self: start;
+  justify-self: start;
   white-space: normal;
+  text-align: left;
 }
 
 .add-printing-plan-note textarea {

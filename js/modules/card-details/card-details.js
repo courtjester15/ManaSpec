@@ -556,7 +556,7 @@ function saveTcgObservation(item, card, source) {
     return;
   }
 
-  const parsed = parseTcgPricePoints(rawText);
+  const parsed = parseTcgPricePoints(rawText, item);
   const observations = loadMarketObservations();
   const observation = {
     id: `${item.id}|tcgplayer|${Date.now()}`,
@@ -578,12 +578,12 @@ function saveTcgObservation(item, card, source) {
   renderCardDetail(item, card, source);
 }
 
-function parseTcgPricePoints(text) {
+function parseTcgPricePoints(text, item = {}) {
   return {
     condition: parseTextValue(text, /^(Near Mint|Lightly Played|Moderately Played|Heavily Played|Damaged)$/im),
-    marketPrice: parseMoneyValue(text, /Market Price\s*\$?([\d,.]+)/i),
-    mostRecentSale: parseMoneyValue(text, /Most Recent Sale\s*\$?([\d,.]+)/i),
-    listedMedian: parseMoneyValue(text, /Listed Median:\s*\$?([\d,.]+)/i),
+    marketPrice: parseFinishAwareMoney(text, "Market Price", item),
+    mostRecentSale: parseFinishAwareMoney(text, "Most Recent Sale", item),
+    listedMedian: parseFinishAwareMoney(text, "Listed Median", item),
     currentQuantity: parseNumberValue(text, /Current Quantity:\s*([\d,]+)/i),
     currentSellers: parseNumberValue(text, /Current Sellers:\s*([\d,]+)/i),
     lowSalePrice: parseMoneyValue(text, /Low Sale Price:\s*\$?([\d,.]+)/i),
@@ -592,6 +592,26 @@ function parseTcgPricePoints(text) {
     avgDailySold: parseNumberValue(text, /Avg\. Daily Sold:\s*([\d,.]+)/i),
     volatility: parseTextValue(text, /(Low|Medium|High) Volatility/i),
   };
+}
+
+function parseFinishAwareMoney(text, label, item = {}) {
+  const generic = parseMoneyValue(text, buildTcgMoneyPattern(label));
+  const foil = parseMoneyValue(text, buildTcgMoneyPattern(`Foil ${label}`));
+  const nonfoil = parseMoneyValue(text, buildTcgMoneyPattern(`Nonfoil ${label}`))
+    ?? parseMoneyValue(text, buildTcgMoneyPattern(`Non-Foil ${label}`))
+    ?? parseMoneyValue(text, buildTcgMoneyPattern(`Normal ${label}`));
+
+  if (item.foil === true && foil !== null) return foil;
+  if (item.foil === false && nonfoil !== null) return nonfoil;
+  if (generic !== null) return generic;
+
+  const available = [foil, nonfoil].filter(value => value !== null);
+  return available.length === 1 ? available[0] : null;
+}
+
+function buildTcgMoneyPattern(label) {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
+  return new RegExp(`(?:^|\\n)\\s*${escaped}\\s*:?\\s*\\$?([\\d,.]+)`, "i");
 }
 
 function parseMoneyValue(text, pattern) {

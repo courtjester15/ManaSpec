@@ -305,7 +305,17 @@ function formatPositionScryfallPriceTitle(item) {
   const detail = item.priceUpdatedAt
     ? `updated ${new Date(item.priceUpdatedAt).toLocaleString()}`
     : "not refreshed this session";
-  return `Scryfall price snapshot, ${detail}`;
+  const observation = typeof getLatestMarketObservation === "function"
+    ? getLatestMarketObservation(item.id, "tcgplayer")
+    : null;
+  if (!observation?.marketPrice) {
+    return `Scryfall price snapshot, ${detail}. No saved manual TCGplayer Market Check.`;
+  }
+
+  const checkedAt = observation.checkedAt
+    ? new Date(observation.checkedAt).toLocaleString()
+    : "unknown time";
+  return `Scryfall price snapshot, ${detail}. Manual TCGplayer Market Check: ${formatOptionalMoney(observation.marketPrice)} saved ${checkedAt}.`;
 }
 
 function getHoldMonthsInputValue(value) {

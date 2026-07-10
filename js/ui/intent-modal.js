@@ -23,6 +23,9 @@ function requestCardIntentModal(options = {}) {
   const notePlaceholder = options.notePlaceholder || "Optional note";
   const priceLabel = options.priceLabel || "Current app price";
   const showPrice = Boolean(options.showPrice);
+  const showBuyPrice = Boolean(options.showBuyPrice);
+  const showEntry = options.showEntry !== false;
+  const showHold = options.showHold !== false;
   const finishOptions = options.finishOptions || [];
   const selectedFinish = options.selectedFinish || finishOptions[0]?.value || "";
 
@@ -42,18 +45,34 @@ function requestCardIntentModal(options = {}) {
           </div>
         ` : ""}
         <label>
-          <span>${escapeHtml(options.qtyLabel || "Qty Target")}</span>
+          <span>${escapeHtml(options.qtyLabel || "Qty Wanted")}</span>
           <input id="intentQty" type="number" min="1" step="1" value="${escapeAttribute(qtyValue)}" placeholder="Optional">
         </label>
+        ${showBuyPrice ? `
         <label>
-          <span>${escapeHtml(options.entryLabel || "Entry Target")}</span>
-          <input id="intentEntry" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeAttribute(entryValue)}" placeholder="Optional">
+          <span>${escapeHtml(options.buyPriceLabel || "Buy Price")}</span>
+          <span class="money-input-wrap">
+            <em>$</em>
+            <input id="intentBuyPrice" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeAttribute(options.buyPriceValue ?? price)}" placeholder="0.00">
+          </span>
         </label>
+        ` : ""}
+        ${showEntry ? `
+        <label class="intent-entry-field">
+          <span>${escapeHtml(options.entryLabel || "Entry Target")}</span>
+          <span class="money-input-wrap">
+            <em>$</em>
+            <input id="intentEntry" type="text" inputmode="decimal" pattern="[0-9$,.]*" value="${escapeAttribute(entryValue)}" placeholder="Optional">
+          </span>
+        </label>
+        ` : ""}
+        ${showHold ? `
         <label class="intent-hold-field">
           <span>${escapeHtml(options.holdLabel || "Hold Duration")}</span>
           <input id="intentHold" type="text" inputmode="numeric" pattern="[0-9-]*" value="${escapeAttribute(holdValue)}" placeholder="Months">
           <small class="hold-time-helper">Examples: 3, 6-12, 12-18 months</small>
         </label>
+        ` : ""}
         <label class="intent-modal-note">
           <span>${escapeHtml(options.noteLabel || "First Note")}</span>
           <textarea id="intentNote" placeholder="${escapeAttribute(notePlaceholder)}"></textarea>
@@ -72,16 +91,21 @@ function requestCardIntentModal(options = {}) {
       const rawQty = dialog.querySelector("#intentQty")?.value || "";
       const rawEntry = dialog.querySelector("#intentEntry")?.value || "";
       const rawHold = dialog.querySelector("#intentHold")?.value || "";
+      const rawBuyPrice = dialog.querySelector("#intentBuyPrice")?.value || "";
       const holdMonths = typeof parseHoldMonthsInput === "function"
         ? parseHoldMonthsInput(rawHold)
         : Number(rawHold || 0);
       const entryTarget = typeof parseWholeDollarInput === "function"
         ? parseWholeDollarInput(rawEntry)
         : Number(rawEntry || 0);
+      const buyPrice = typeof parseWholeDollarInput === "function"
+        ? parseWholeDollarInput(rawBuyPrice)
+        : Number(String(rawBuyPrice || "").replace(/[^\d.]/g, "") || 0);
 
       return {
         quantity: rawQty === "" ? 0 : Math.max(1, Number(rawQty || 1)),
         entryTarget: entryTarget === null ? 0 : entryTarget,
+        buyPrice: buyPrice === null ? 0 : buyPrice,
         holdTime: typeof formatHoldTime === "function"
           ? formatHoldTime(holdMonths)
           : (holdMonths ? `${holdMonths} mo` : ""),
@@ -110,6 +134,7 @@ function requestRadarAddIntent(card) {
     item: card,
     title: "Add to Radar",
     confirmLabel: "Save to Radar",
+    qtyLabel: "Qty Wanted",
     qtyValue: "",
     entryValue: price ? Math.round(price) : "",
     notePlaceholder: "Optional initial thesis",
@@ -133,18 +158,16 @@ function requestRadarBuyIntent(item, options = {}) {
     item,
     title: "Buy from Radar",
     confirmLabel: "Buy",
-    qtyLabel: "Qty Bought",
-    entryLabel: "Entry Target",
-    holdLabel: "Hold Duration",
+    qtyLabel: "Qty Purchased",
     qtyValue: options.quantity || 1,
-    entryValue: item.entryTarget ? Math.round(Number(item.entryTarget || 0)) : "",
-    holdValue: typeof formatHoldInputValue === "function"
-      ? formatHoldInputValue(item.holdTime)
-      : (typeof getHoldMonths === "function" ? getHoldMonths(item.holdTime) || "" : ""),
+    showEntry: false,
+    showHold: false,
+    showBuyPrice: true,
+    buyPriceValue: price ? price.toFixed(2) : "",
     notePlaceholder: "Optional buy note",
     showPrice: true,
     price,
-    priceLabel: "Sim buy price",
+    priceLabel: "Scryfall reference",
     tone: "trade",
   });
 }

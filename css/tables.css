@@ -426,7 +426,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 
 .ms-table__stepper {
   display: grid;
-  grid-template-columns: 18px minmax(20px, 1fr) 18px;
+  grid-template-columns: 22px minmax(20px, 1fr) 22px;
   gap: 2px;
   align-items: center;
   align-self: center;
@@ -437,10 +437,14 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
   margin: 0 auto !important;
 }
 
+.ms-table__row > div.ms-table__stepper {
+  display: grid;
+}
+
 .ms-table__stepper-btn {
-  width: 18px !important;
-  height: var(--table-control-h) !important;
-  min-height: var(--table-control-h) !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-height: 22px !important;
   padding: 0 !important;
   border-color: var(--border-strong);
   background: var(--panel-strong);
@@ -555,7 +559,7 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     58px
     74px
     72px
-    58px
+    68px
     50px
     50px
     72px

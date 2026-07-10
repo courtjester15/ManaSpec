@@ -386,7 +386,13 @@ function buyRadarItem(id) {
   const buyQty = getRadarPlannedQty(item);
   const runBuy = options => {
     const quantity = Math.max(1, Number(options?.quantity || buyQty));
-    const totalCost = price * quantity;
+    const buyPrice = Math.max(0, Number(options?.buyPrice || price));
+    const totalCost = buyPrice * quantity;
+
+    if (!buyPrice) {
+      showAppNotice("Enter a buy price before buying from Radar.", "warning");
+      return;
+    }
 
     if (cash < totalCost) {
       showAppNotice("Not enough cash for this buy.", "warning");
@@ -412,16 +418,6 @@ function buyRadarItem(id) {
       position.buyDate = new Date().toISOString();
     }
 
-    if (options?.holdTime) {
-      position.holdTime = options.holdTime;
-      item.holdTime = options.holdTime;
-    }
-
-    if (options?.entryTarget) {
-      position.entryTarget = options.entryTarget;
-      item.entryTarget = options.entryTarget;
-    }
-
     if (options?.initialNote) {
       addCardNote(position, options.initialNote);
     }
@@ -431,7 +427,7 @@ function buyRadarItem(id) {
     position.buyPrice = ((position.buyPrice * (position.qty - quantity)) + totalCost) / position.qty;
 
     if (typeof logTransaction === "function") {
-      logTransaction(position, "BUY", quantity, price);
+      logTransaction(position, "BUY", quantity, buyPrice);
     }
 
     updatePL();

@@ -45,6 +45,7 @@ function buySpec(positionOrEvent, maybeCell) {
 
   updatePL();
   save();
+  refreshPositionsWorkflowAfterTrade();
 
   if (typeof showAppNotice === "function") {
     showAppNotice(`Bought 1 ${s.name} for ${money(price)}.`, "trade");
@@ -128,6 +129,7 @@ function sellSpec(positionOrEvent, maybeCell, requestedQuantity = 1) {
 
     updatePL();
     save();
+    refreshPositionsWorkflowAfterTrade();
 
     if (typeof showAppNotice === "function") {
       const suffix = s.qty === 0 ? " Position is now closed." : "";
@@ -146,6 +148,7 @@ function deleteSpec(positionOrEvent, maybeCell) {
 
   specs = specs.filter(x => x.id !== s.id);
   save();
+  refreshPositionsWorkflowAfterTrade();
 
   if (typeof showAppNotice === "function") {
     showAppNotice(`${s.name} deleted from Positions. No transaction was logged.`, "warning");
@@ -163,4 +166,14 @@ function getTradeNumber(value, fallback = 0) {
 
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
+}
+
+function refreshPositionsWorkflowAfterTrade() {
+  if (!document.querySelector(".portfolio-workflow")) return;
+
+  if (typeof renderPortfolioView === "function") {
+    renderPortfolioView();
+  } else if (typeof refreshPortfolioTable === "function") {
+    refreshPortfolioTable();
+  }
 }
