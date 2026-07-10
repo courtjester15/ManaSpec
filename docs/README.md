@@ -14,6 +14,7 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 - [Roadmap](ROADMAP.md): current phase, next work, and future phases.
 - [Workflow](WORKFLOW.md): lightweight rules for working on the app.
 - [Beta Deployment](BETA_DEPLOYMENT.md): GitHub Pages setup, localStorage behavior, backup workflow, and tester handoff checklist.
+- [Beta Tester Guide](BETA_TESTER_GUIDE.md): short trusted-tester handoff guide for beta usage, safety, and feedback.
 - [Decisions](DECISIONS.md): short log of durable product, architecture, and data choices.
 - [Parking Lot](PARKING_LOT.md): useful ideas that are not yet roadmap commitments.
 - [Changelog](../CHANGELOG.md): human-readable history of meaningful workflow, product, and process changes.
@@ -31,6 +32,7 @@ Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), t
 - `ROADMAP.md`: active phase, next work, beta gates, and future phases.
 - `WORKFLOW.md`: how humans, Codex, and GPT should work on the project.
 - `BETA_DEPLOYMENT.md`: closed beta GitHub Pages deployment, update workflow, storage expectations, and tester instructions.
+- `BETA_TESTER_GUIDE.md`: public-ish closed beta tester instructions, backup guidance, feedback expectations, and known limits.
 - `DECISIONS.md`: durable choices and why they were made.
 - `PARKING_LOT.md`: useful but uncommitted ideas.
 - `CHANGELOG.md`: human-readable history of meaningful changes.

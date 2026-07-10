@@ -21,10 +21,12 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added `.nojekyll` so GitHub Pages serves the root static app directly without Jekyll processing.
 - Added `CONTRIBUTING.md` to welcome contributors, explain contribution expectations, and document the preferred workflow for future community and AI contributors.
 - Added storage compatibility guidance for future GitHub Pages beta updates, including localStorage key/data-shape cautions and release-review expectations.
+- Added a short beta tester guide covering the beta URL, backup expectations, suggested smoke-test workflows, feedback guidance, local data safety, public Pages hosting, and known limits.
 
 ### Changed
 
 - Marked the current project status as `v0.9.0-alpha.1` friend preview while reserving `v1.0.0-beta` for the formal beta gates.
+- Aligned backup metadata with the current `v0.9.0-alpha.1` app version instead of the future `v1.0.0-beta` milestone.
 - Refreshed the public-facing `README.md` to better explain ManaSpec's purpose, current status, project philosophy, workflow-first design, intended audience, current limitations, and open-source direction.
 - Polished first friend-test UI notes: tightened Radar Add wording/layout, made Buy from Radar execution-only, enlarged dense quantity stepper targets, balanced toolbar buttons, aligned toast dismiss actions, and surfaced manual TCG Market Checks through Positions price hover text.
 - Refocused Dashboard around a compact daily work queue with action tiles for target hits, near targets, market checks, hold reviews, missing plans, and recent notes.

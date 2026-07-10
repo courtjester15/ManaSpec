@@ -73,7 +73,7 @@ function loadMarketObservations() {
 
 const MANASPEC_BACKUP_SCHEMA = "manaspec-localstorage-backup";
 const MANASPEC_BACKUP_SCHEMA_VERSION = 1;
-const MANASPEC_BACKUP_APP_VERSION = "1.0.0-beta";
+const MANASPEC_BACKUP_APP_VERSION = "0.9.0-alpha.1";
 const MANASPEC_BACKUP_ARRAY_KEYS = [
   "specs",
   "radar",

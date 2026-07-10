@@ -114,6 +114,7 @@ After Pages publishes, run this closed-beta smoke test from the Pages URL:
 ## Known Risks
 
 - GitHub Pages is public static hosting. Treat the beta URL as a trusted-tester handoff, not access control.
+- ManaSpec is currently a local simulation tool. User-entered notes, positions, targets, and market checks stay in that browser's local storage unless the tester exports or shares a backup file.
 - localStorage is per browser and per device. It does not sync across testers, devices, profiles, or browsers.
 - Clearing site data deletes ManaSpec beta data unless the tester has exported a backup.
 - Browser privacy tools or strict storage settings can clear localStorage.
@@ -123,6 +124,7 @@ After Pages publishes, run this closed-beta smoke test from the Pages URL:
 ## Tester Handoff Checklist
 
 - Send the Pages URL: `https://courtjester15.github.io/ManaSpec/`.
+- Send the tester guide: `docs/BETA_TESTER_GUIDE.md`.
 - Tell testers their data stays in their own browser.
 - Ask testers to use the same URL every time.
 - Ask testers to export a backup before serious testing and before major updates.
