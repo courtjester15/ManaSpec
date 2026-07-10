@@ -13,9 +13,11 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 - [Style Guide](STYLE_GUIDE.md): UI language, terminology, table conventions, and design rules.
 - [Roadmap](ROADMAP.md): current phase, next work, and future phases.
 - [Workflow](WORKFLOW.md): lightweight rules for working on the app.
+- [Beta Deployment](BETA_DEPLOYMENT.md): GitHub Pages setup, localStorage behavior, backup workflow, and tester handoff checklist.
 - [Decisions](DECISIONS.md): short log of durable product, architecture, and data choices.
 - [Parking Lot](PARKING_LOT.md): useful ideas that are not yet roadmap commitments.
 - [Changelog](../CHANGELOG.md): human-readable history of meaningful workflow, product, and process changes.
+- [History](../HISTORY.md): reconstructed narrative of how ManaSpec evolved and why major milestones mattered.
 
 Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), then use the ownership map below when a change touches architecture, data, style, or process.
 
@@ -28,9 +30,11 @@ Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), t
 - `STYLE_GUIDE.md`: terminology, UI language, dense table rules, formatting conventions, and product feel.
 - `ROADMAP.md`: active phase, next work, beta gates, and future phases.
 - `WORKFLOW.md`: how humans, Codex, and GPT should work on the project.
+- `BETA_DEPLOYMENT.md`: closed beta GitHub Pages deployment, update workflow, storage expectations, and tester instructions.
 - `DECISIONS.md`: durable choices and why they were made.
 - `PARKING_LOT.md`: useful but uncommitted ideas.
 - `CHANGELOG.md`: human-readable history of meaningful changes.
+- `HISTORY.md`: project evolution narrative, origin story, major milestones, and retrospective context.
 - `audits/`: dated reviews, audit plans, and diagnostic snapshots; not active authority unless findings are promoted into active docs.
 - `dev notes/`: raw or historical project memory, not active authority.
 
@@ -309,7 +313,7 @@ Current behavior:
 - Local Radar and Positions filters include reset actions and plan-state filters.
 - Local Radar and Positions filters use visible labels so filter meaning is clear while scanning.
 - Radar filter heading shows the current idea count and filtered count.
-- Buying from Radar buys the planned quantity, defaults to 1, creates or updates the card in Positions, and keeps the Radar item watched.
+- Buying from Radar buys the planned quantity, defaults to 1, asks only for execution details such as purchased quantity, buy price, and optional note, creates or updates the card in Positions, and keeps the Radar item watched.
 - Radar entry target is editable directly from the Radar table.
 - Existing owned positions are backfilled into opening `BUY` transactions when no ledger quantity already covers them.
 
@@ -353,7 +357,7 @@ Current behavior:
 - Radar rows show current price, added date, planned quantity, market observation summary fields, and actions.
 - Radar rows show entry target, a compact target delta column, and display-first click-to-edit entry target controls as part of pre-purchase planning.
 - Duplicate exact printings are blocked within Radar.
-- Buying from Radar uses the planned quantity, defaults to 1, creates or updates an owned Position, logs a transaction when available, and keeps the Radar item watched.
+- Buying from Radar uses the planned quantity, defaults to 1, asks only for execution details such as purchased quantity, buy price, and optional note, creates or updates an owned Position, logs a transaction when available, and keeps the Radar item watched.
 - Removing from Radar only removes the watched idea and does not affect owned Positions.
 
 Workflow rule:

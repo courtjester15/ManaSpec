@@ -8,17 +8,24 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Added `HISTORY.md` as a reconstructed narrative of ManaSpec's origin, major milestones, design shifts, workflow evolution, beta-readiness path, and current state.
 - Added focused Architecture, Data Model, and Style Guide docs for current app structure, entity relationships, and UI language.
 - Added Product Principles as a stable product-philosophy document for future human and AI contributors.
 - Added a docs ownership map and workflow routing rules so future documentation updates land in the right active source of truth.
+- Added post-beta finance workflow ideas to the Parking Lot, centered on review/learning, lightweight analytics, optional metadata, and ledger extensions that preserve ManaSpec's decision-loop focus.
 - Added a Codex friction log and browser QA friction guidance for recurring tooling, harness, and workflow detours.
 - Added a generated repository snapshot utility for faster GPT/Codex orientation.
 - Enriched the generated repository snapshot with runtime architecture, workflow ownership, localStorage contracts, dependency hints, DOM/CSS summaries, and architecture hotspots.
 - Moved point-in-time audit docs into `docs/audits/` and documented their role as diagnostic context rather than active authority.
+- Added a GitHub Pages closed beta deployment runbook covering Pages settings, project-path asset readiness, localStorage persistence, backup/restore expectations, update workflow, known risks, and tester handoff.
+- Added `.nojekyll` so GitHub Pages serves the root static app directly without Jekyll processing.
+- Added `CONTRIBUTING.md` to welcome contributors, explain contribution expectations, and document the preferred workflow for future community and AI contributors.
 
 ### Changed
 
 - Marked the current project status as `v0.9.0-alpha.1` friend preview while reserving `v1.0.0-beta` for the formal beta gates.
+- Refreshed the public-facing `README.md` to better explain ManaSpec's purpose, current status, project philosophy, workflow-first design, intended audience, current limitations, and open-source direction.
+- Polished first friend-test UI notes: tightened Radar Add wording/layout, made Buy from Radar execution-only, enlarged dense quantity stepper targets, balanced toolbar buttons, aligned toast dismiss actions, and surfaced manual TCG Market Checks through Positions price hover text.
 - Refocused Dashboard around a compact daily work queue with action tiles for target hits, near targets, market checks, hold reviews, missing plans, and recent notes.
 - Polished Dashboard tile density, empty-state language, concise row reasons, Signals tile navigation, and unique-card Recent Notes behavior.
 - Refined Dashboard summary hierarchy, uniform action tile height, left-aligned queue rows, quieter empty states, and compact printing identifiers.
@@ -67,6 +74,8 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Improved dense table and search-result rhythm so rows stay compact and scan-friendly.
 
 ### Fixed
+
+- Added finish-aware TCGplayer Market Check parsing fallback so foil-only or nonfoil-only printings can use the single available pasted market value without guessing between ambiguous finishes.
 
 - Restored transaction table layout after Balance and Realized columns caused header/data misalignment.
 - Removed duplicate Radar search/loading spinner treatment.
