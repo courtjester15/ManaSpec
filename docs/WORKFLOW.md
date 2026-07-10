@@ -21,7 +21,8 @@ When working on ManaSpec, use context in this order:
 3. [Roadmap](ROADMAP.md) for current phase, next work, and deferred work.
 4. [Architecture](ARCHITECTURE.md), [Data Model](DATA_MODEL.md), or [Style Guide](STYLE_GUIDE.md) when a change touches internals, entities, UI language, or design consistency.
 5. [Decisions](DECISIONS.md) when rationale matters.
-6. `dev notes/inbox/` for current raw observations, or `dev notes/archive/` only if a current doc points there or the user asks for history.
+6. [History](../HISTORY.md) when the project origin, major milestones, or older context matters.
+7. `dev notes/inbox/` for current raw observations, or `dev notes/archive/` only if a current doc points there or the user asks for history.
 
 Audit files in `docs/audits/` are point-in-time review records. Use them for context, but promote durable findings into the active docs above before treating them as current truth.
 
@@ -194,6 +195,7 @@ Use the docs ownership map in [README](README.md) before adding or moving docume
 - Put process rules in [WORKFLOW](WORKFLOW.md).
 - Put durable rationale in [DECISIONS](DECISIONS.md).
 - Put uncommitted ideas in [PARKING_LOT](PARKING_LOT.md).
+- Put reconstructed origin, milestone, and project-evolution context in [HISTORY](../HISTORY.md).
 - Put dated audits, audit plans, and diagnostic snapshots in `docs/audits/`.
 - Put raw session memory in `dev notes/inbox/`.
 

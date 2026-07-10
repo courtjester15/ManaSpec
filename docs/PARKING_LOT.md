@@ -43,10 +43,12 @@ The missing layer is a small, pruneable place for promising ideas before they ar
 ## Positions
 
 - Review whether bulk actions are useful after the core single-position buy/sell loop is stable.
+- Consider position lifecycle states only if beta usage shows they make real workflows clearer, such as holding, listed, sold, or archived. Avoid status bookkeeping that duplicates transaction history or makes a simple owned-position table feel like an accounting system.
 
 ## Signals
 
 - Expand Signals beyond target states into attention categories such as missing plan, stale market check, newly purchased, thesis missing, and never reviewed.
+- Consider break-even, stale-hold review, and more advanced target-condition alerts after the core attention workflow is stable. Keep these as computed "inspect this" prompts that explain why they exist and route back to Radar, Positions, or Card Detail.
 - Revisit View navigation after beta: smoother transitions, destination row highlighting, and clearer context after jumping from Signals into Radar or Positions.
 - Consider lightweight local usage analytics later to understand whether users naturally prefer row clicks, Detail, or View before simplifying Signals actions.
 - Evolve static Hold Months toward an expected review or target date, such as "Hold: 12 months" plus "Expected Review: Jun 2027"; this is UX polish, not a beta requirement.
@@ -61,6 +63,21 @@ The missing layer is a small, pruneable place for promising ideas before they ar
 
 - Preserve uncertainty in historical backfill with explicit estimated date, estimated price, confidence, and source-note fields.
 - Review non-buy acquisition methods such as opened, trade, prize, promo, gift, store credit, and correction when the ledger shape is ready.
+- Review optional platform fee presets, shipping/friction costs, and advanced lot accounting only after the append-first ledger is stable. These should help decision review and realized P/L without making ManaSpec feel like tax or bookkeeping software.
+
+## History, Review, And Learning
+
+- Explore a post-beta trading-journal surface that helps users learn from past specs rather than predict future winners. Possible review slices include best trades, worst trades, sold-too-early examples, average hold time, profitable strategies, best-performing sets, and historical lessons.
+- Review portfolio analytics only when enough transaction and snapshot history exists to make them meaningful. Candidate views include allocation by set, format, rarity, or asset type; concentration/exposure; cash allocation over time; realized vs unrealized P/L; win rate; average gain/loss; capital deployment history; and an equity curve.
+- Keep review analytics decision-oriented and lightweight. They should support the Search -> Evaluate -> Radar -> Buy -> Manage -> Exit -> Review -> Learn loop, not turn ManaSpec into a portfolio terminal or accounting package.
+
+## Optional Metadata
+
+- Consider optional strategy/review metadata such as custom tags, entry catalyst, exit reason, confidence level, and reprint-risk notes if they improve later review. Keep them optional, user-authored, and attached to the appropriate printing, transaction, or review record rather than required fields in the core workflow.
+
+## Asset Expansion
+
+- Revisit sibling asset types beyond singles and sealed product later, including Secret Lairs and other MTG investment products, only when the singles workflow is stable and the identity/source model is clear. Do not merge these into the single-card printing model.
 
 ## Admin And Data Safety
 
@@ -72,6 +89,7 @@ The missing layer is a small, pruneable place for promising ideas before they ar
 - Standardize empty, filtered, loading, and network-failure states across Radar, Positions, Signals, Transactions, History, and Dashboard.
 - Review a shared formatting and escaping helper pass once beta UI settles.
 - Responsive Desktop Layout Contract (Post-Beta Review): after beta and more real-world desktop usage, evaluate whether ManaSpec needs an intentional desktop layout. First answer whether the current laptop-first layout limits usability, which screens benefit from width, whether ManaSpec should remain dense like a trading terminal or become more fluid, whether Dashboard should preserve fixed grouped tile rhythm, and whether wider monitors should gain breathing room rather than different layouts. Do not begin another responsive CSS pass until a clear visual contract has been defined from 1366x768, 1440x900, and 1920x1080 usage.
+- Workflow Guidance Review (Post-Beta Feedback): after friend and beta testing, review where users naturally hesitate or become unsure of the next step. The goal is not to add more text throughout the app, but to identify small workflow guidance that reduces friction while preserving ManaSpec's dense terminal feel. Evaluate better empty-state guidance, improved action labels, stronger click affordances, hover hints or tooltips, context-sensitive helper icons, better visual hierarchy, and small "next step" prompts only where users consistently pause. Avoid large help boxes, persistent instructional text, pop-up tours, onboarding overlays, and UI clutter. ManaSpec should quietly answer "What would I probably do next?" without feeling like it is teaching the user how to use software. Base any future implementation on observed beta feedback rather than assumptions.
 
 ## Technical Follow-Ups
 
