@@ -5,7 +5,7 @@ const path = require("path");
 const { execFileSync } = require("child_process");
 
 const root = path.resolve(__dirname, "..");
-const outputPath = path.join(root, "dev notes", "snapshots", "repo-snapshot-latest.md");
+const outputPath = path.join(root, "repo-snapshot-latest.md");
 const gitCommand = findGitCommand();
 
 const EXCLUDED_DIRS = new Set([
@@ -24,6 +24,7 @@ const EXCLUDED_DIRS = new Set([
 ]);
 
 const GENERATED_PATHS = new Set([
+  path.normalize("repo-snapshot-latest.md"),
   path.normalize(path.join("dev notes", "snapshots", "repo-snapshot-latest.md")),
 ]);
 
@@ -1210,6 +1211,7 @@ function readGitIndex() {
 }
 
 function isIgnoredForApproxStatus(posixPath) {
+  if (posixPath === "repo-snapshot-latest.md") return true;
   if (posixPath === "dev notes/snapshots/repo-snapshot-latest.md") return true;
   if (posixPath.startsWith("node_modules/")) return true;
   if (posixPath.startsWith("releases/")) return true;

@@ -32,4 +32,5 @@ coverage/
 playwright-report/
 test-results/
 test-fixtures/*.json
+repo-snapshot-latest.md
 dev notes/snapshots/repo-snapshot-latest.md
