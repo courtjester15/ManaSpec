@@ -179,6 +179,23 @@ Keep ManaSpec vanilla-first unless a library clearly removes repeated infrastruc
 
 Current rule: one tool at a time. Add a library only when it directly supports the beta path or removes a recurring source of bugs.
 
+### Post-Beta Architecture Review
+
+After the closed beta produces real workflow feedback, review whether ManaSpec should stay vanilla longer or begin a React/Vite migration.
+
+This is not part of the current beta gate. Treat it as a future architecture decision informed by maintenance pain, state coordination issues, table complexity, Card Detail pressure, and what the project learns from GalleyFlow.
+
+Use [React Migration Notes](REACT_MIGRATION_NOTES.md) and [React Migration And GalleyFlow Pattern Audit](audits/react-migration-galleyflow-audit.md) when this review begins.
+
+Candidate direction if migration is approved:
+
+- Keep the vanilla app as the working reference during migration.
+- Use a separate `react-app/` workspace or branch.
+- Preserve localStorage keys, backup/import behavior, and beta user data.
+- Rebuild the shell and storage boundaries before heavy workflows.
+- Port Admin, Radar, and Positions before Dashboard, Signals, and Card Detail.
+- Require parity checks before replacing the deployed app.
+
 ### Next Session Review Plan
 
 Use this as the starting point for the next working session. This pass is for cataloging, not fixing.

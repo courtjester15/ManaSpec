@@ -13,6 +13,7 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 - [Style Guide](STYLE_GUIDE.md): UI language, terminology, table conventions, and design rules.
 - [Roadmap](ROADMAP.md): current phase, next work, and future phases.
 - [Workflow](WORKFLOW.md): lightweight rules for working on the app.
+- [React Migration Notes](REACT_MIGRATION_NOTES.md): deferred migration thinking, parity risks, and future GalleyFlow review prompts.
 - [Beta Deployment](BETA_DEPLOYMENT.md): GitHub Pages setup, localStorage behavior, backup workflow, and tester handoff checklist.
 - [Beta Tester Guide](BETA_TESTER_GUIDE.md): short trusted-tester handoff guide for beta usage, safety, and feedback.
 - [Decisions](DECISIONS.md): short log of durable product, architecture, and data choices.
@@ -31,6 +32,7 @@ Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), t
 - `STYLE_GUIDE.md`: terminology, UI language, dense table rules, formatting conventions, and product feel.
 - `ROADMAP.md`: active phase, next work, beta gates, and future phases.
 - `WORKFLOW.md`: how humans, Codex, and GPT should work on the project.
+- `REACT_MIGRATION_NOTES.md`: non-committed React migration notes, candidate libraries, parity checklist, and GalleyFlow pattern review prompts.
 - `BETA_DEPLOYMENT.md`: closed beta GitHub Pages deployment, update workflow, storage expectations, and tester instructions.
 - `BETA_TESTER_GUIDE.md`: public-ish closed beta tester instructions, backup guidance, feedback expectations, and known limits.
 - `DECISIONS.md`: durable choices and why they were made.

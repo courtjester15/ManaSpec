@@ -22,6 +22,8 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added `CONTRIBUTING.md` to welcome contributors, explain contribution expectations, and document the preferred workflow for future community and AI contributors.
 - Added storage compatibility guidance for future GitHub Pages beta updates, including localStorage key/data-shape cautions and release-review expectations.
 - Added a short beta tester guide covering the beta URL, backup expectations, suggested smoke-test workflows, feedback guidance, local data safety, public Pages hosting, and known limits.
+- Added deferred React migration notes and a GalleyFlow pattern audit checklist for future post-beta architecture review.
+- Added a Roadmap post-beta architecture review lane for deciding whether and how to pursue a React/Vite migration after closed beta feedback.
 
 ### Changed
 

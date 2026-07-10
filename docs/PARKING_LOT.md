@@ -95,3 +95,4 @@ The missing layer is a small, pruneable place for promising ideas before they ar
 
 - Revisit dormant bulk lookup helpers and related CSS after the Admin/import direction is clearer.
 - Consider shared pure helpers for market parsing and evaluation if Card Detail gains a second caller or becomes harder to maintain.
+- Review React/Vite migration only after beta feedback exposes real maintenance or state-coordination pain. Use [React Migration Notes](REACT_MIGRATION_NOTES.md) and the GalleyFlow pattern audit before deciding whether to migrate.
