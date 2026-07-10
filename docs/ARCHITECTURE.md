@@ -160,6 +160,28 @@ Storage ownership rules:
 
 `js/core/storage.js` owns general load/save helpers and backup safety. Workflow modules may still call `localStorage.setItem()` directly in existing code, but new storage-sensitive changes should prefer the established helpers or make ownership clearer.
 
+### Beta Storage Compatibility
+
+Once ManaSpec has external GitHub Pages users, localStorage compatibility is part of the product contract.
+
+Changing application code is easy; changing a user's stored browser data safely is not. Treat localStorage keys and data shapes as compatibility boundaries during every beta update.
+
+Avoid:
+
+- Renaming storage keys casually.
+- Renaming important data fields without planning.
+- Deleting fields without considering existing users.
+- Breaking older saved data during normal application updates.
+
+When a future change requires modifying stored data:
+
+- Decide whether backward compatibility is needed.
+- Prefer a small migration over silently breaking user data.
+- Ensure JSON backup/export/import continues to work.
+- Test existing saved data before release.
+
+ManaSpec does not need a storage schema version or migration framework today. The important rule is simpler: once users exist, storage compatibility belongs in release review.
+
 ## Shared UI Systems
 
 ManaSpec has a few shared UI systems that should be treated as app-level contracts:

@@ -145,6 +145,19 @@ ManaSpec now uses Git for recovery points and version history.
 - Treat existing `releases/` folders as legacy snapshots until they are removed in a deliberate cleanup commit.
 - Keep `archive/` only for reference material that is still useful outside Git history.
 
+## Beta Release Review
+
+Before releasing updates to GitHub Pages beta users, review whether the change affects existing browser data.
+
+- Treat localStorage keys and data shape as compatibility boundaries.
+- Do not rename keys or important fields without a plan.
+- Do not delete stored fields without considering existing users.
+- Prefer a small migration over silently breaking older saved data.
+- Confirm Admin JSON backup/export/import still works for changed data.
+- Test with existing saved data when a change touches storage, imports, trading flows, notes, market observations, price snapshots, or startup state.
+
+ManaSpec does not need a migration framework yet, but storage compatibility is now part of the release checklist.
+
 ## Changelog Maintenance
 
 Maintain `CHANGELOG.md` as the human-readable history of meaningful work.

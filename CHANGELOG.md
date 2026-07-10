@@ -20,6 +20,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added a GitHub Pages closed beta deployment runbook covering Pages settings, project-path asset readiness, localStorage persistence, backup/restore expectations, update workflow, known risks, and tester handoff.
 - Added `.nojekyll` so GitHub Pages serves the root static app directly without Jekyll processing.
 - Added `CONTRIBUTING.md` to welcome contributors, explain contribution expectations, and document the preferred workflow for future community and AI contributors.
+- Added storage compatibility guidance for future GitHub Pages beta updates, including localStorage key/data-shape cautions and release-review expectations.
 
 ### Changed
 
