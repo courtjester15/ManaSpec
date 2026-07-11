@@ -10,28 +10,54 @@ App shell, header, workbar, summary, and view headings.
 .app-header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.app-logo-frame {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  overflow: hidden;
+  border: 1px solid rgba(125, 211, 252, 0.46);
+  border-radius: var(--radius);
+  background: #07101a;
 }
 
 .app-logo {
   flex: 0 0 auto;
-  width: 46px;
-  height: 46px;
+  width: 54px;
+  height: 54px;
   object-fit: contain;
 }
 
 .app-header h2 {
   margin-bottom: 0;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.05;
   color: var(--text-strong);
 }
 
+.app-header h2 small {
+  margin-left: 4px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .app-subtitle {
-  margin: 2px 0 0;
+  margin: 4px 0 0;
   color: var(--muted);
   font-size: 13px;
+  line-height: 1.2;
 }
 
 .app-header-actions {
@@ -45,7 +71,7 @@ App shell, header, workbar, summary, and view headings.
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 8px 0;
+  margin: 8px 0 10px;
 }
 
 .toolbar {
@@ -54,7 +80,7 @@ App shell, header, workbar, summary, and view headings.
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-start;
-  gap: 8px;
+  gap: 7px;
   max-width: 100%;
   margin: 0;
 }
@@ -62,7 +88,7 @@ App shell, header, workbar, summary, and view headings.
 .toolbar-tab,
 .global-search-bar input,
 .global-search-bar button {
-  height: 36px;
+  height: 38px;
   margin: 0;
 }
 

@@ -80,20 +80,65 @@ button[disabled] {
 }
 
 .toolbar-tab.active {
-  border-color: var(--accent);
-  background: var(--accent-soft);
+  border-color: rgba(125, 211, 252, 0.7);
+  background: rgba(125, 211, 252, 0.14);
   color: var(--text-strong);
 }
 
 .toolbar-tab {
-  height: 36px;
-  min-height: 36px;
-  min-width: 104px;
+  height: 38px;
+  min-height: 38px;
+  min-width: 122px;
   width: auto;
   flex: 0 0 auto;
-  padding: 0 12px;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 13px;
+  border-color: var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
   font-size: 14px;
   font-weight: 600;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+.toolbar-tab:hover {
+  border-color: rgba(125, 211, 252, 0.34);
+  background: var(--panel-strong);
+  color: var(--text-strong);
+}
+
+.toolbar-tab:focus-visible {
+  outline: 2px solid rgba(125, 211, 252, 0.58);
+  outline-offset: 2px;
+}
+
+.toolbar-tab-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+}
+
+.toolbar-tab-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.toolbar-tab.active .toolbar-tab-icon {
+  color: var(--accent);
 }
 
 .help-open-btn,
@@ -210,7 +255,7 @@ button[disabled] {
 .global-search-bar input {
   padding-top: 0;
   padding-bottom: 0;
-  line-height: 36px;
+  line-height: 38px;
 }
 
 .radar-search-controls input,
