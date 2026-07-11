@@ -28,7 +28,7 @@ Context: UI QA and browser inspection.
 
 What happened: Browser automation can behave differently against `file://` URLs, and browser `evaluate()` has been unreliable for inspecting localStorage/app state in the Codex browser harness.
 
-Workaround: Use the checked-in Node static server and test through `http://127.0.0.1:8000/index.html`. Prefer visible UI, DOM snapshots, screenshots when useful, and console checks over localStorage inspection through `evaluate()`.
+Workaround: Use the documented localhost QA path and test through `http://127.0.0.1:8000/index.html`. Prefer visible UI, DOM snapshots, screenshots when useful, and console checks over localStorage inspection through `evaluate()`.
 
 Promoted: yes, recorded in `docs/WORKFLOW.md`.
 
@@ -231,3 +231,19 @@ What happened: Long analysis can burn momentum when the user wants quick action 
 Workaround: Answer directly first when the user is in rapid-fire mode, then explain only as useful. Avoid unnecessary clarifying questions when context is enough. If a rabbit hole appears, call it out early.
 
 Promote to Workflow: no, keep as collaboration memory unless it repeatedly affects project outcomes.
+
+### Market Check Visual Help Guide
+
+Date: 2026-07-10
+
+Context: Market Check visual help guide implementation and browser QA.
+
+What happened: Several small environment and tool frictions appeared. Patch anchors failed around existing encoded/icon text. The local browser DOM snapshot API failed even though the app rendered normally. Browser evaluation could not directly inspect localStorage. Screenshot capture produced JPEG bytes despite `.png` filenames. Browser clip capture selected the wrong region. QA used existing browser-local data and created a sample Market Check observation during save-path verification. A one-off `node --check` timeout and a minor PowerShell option mismatch also occurred.
+
+Workaround: Anchor patches on ASCII function names, IDs, classes, or nearby structural markup instead of icon strings. For browser QA, use the documented localhost QA path, visible UI checks, targeted selectors when available, screenshots, and console logs when DOM snapshot or localStorage inspection is unavailable. For screenshot assets, verify they load in the running app; use full viewport plus measured crop when clip capture is unreliable. Treat browser QA state as disposable unless explicitly restored from a known fixture.
+
+Classification: repeat risk for encoded patch anchors, image-format mismatch, mystery browser QA state, and Card Detail complexity; known workaround for DOM/localStorage inspection limits, screenshot clipping, and local-server cleanup; one-off unless repeated for quick-check timeout and PowerShell option mismatch.
+
+Screenshot guidance: keep externally sourced screenshots cropped and free of personal/private information. Frame marketplace screenshots as manually gathered examples, never as official integration, scraping, or verified price data. Refresh screenshots only when the pictured workflow materially changes.
+
+Promote to Workflow: later, if these frictions recur or affect QA confidence.

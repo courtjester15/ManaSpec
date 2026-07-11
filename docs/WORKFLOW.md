@@ -185,6 +185,8 @@ Maintain `CHANGELOG.md` as the human-readable history of meaningful work.
 
 Use `dev notes/inbox/codex-friction-log.md` for recurring tool, environment, browser harness, command, or workflow snags that make Codex take non-obvious detours.
 
+Before substantial frontend or browser QA work, check `dev notes/inbox/codex-friction-log.md`. If present, also check the local-only `dev notes/local/codex-local-qa-notes.md` for current machine or browser-harness workarounds. These notes are aids, not blockers.
+
 Log friction when it is surprising, repeated, safety-relevant, or likely to save future time. Do not log every harmless typo, one-off retry, or normal command failure.
 
 Promote a friction note into this Workflow doc only after it becomes a durable operating rule.
