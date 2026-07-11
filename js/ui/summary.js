@@ -27,20 +27,21 @@ function updateTotals() {
   const totalEquity = toFiniteNumber(cash) + value;
 
   // CASH / CORE METRICS
-  document.getElementById("cash").innerText = toFiniteNumber(cash).toFixed(2);
-  document.getElementById("invested").innerText = invested.toFixed(2);
-  document.getElementById("value").innerText = value.toFixed(2);
+  const summaryNumberOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+  document.getElementById("cash").innerText = formatNumber(cash, summaryNumberOptions);
+  document.getElementById("invested").innerText = formatNumber(invested, summaryNumberOptions);
+  document.getElementById("value").innerText = formatNumber(value, summaryNumberOptions);
 
   // TOTAL EQUITY (SAFE)
   const eqEl = document.getElementById("totalEquity");
   if (eqEl) {
-    eqEl.innerText = totalEquity.toFixed(2);
+    eqEl.innerText = formatNumber(totalEquity, summaryNumberOptions);
   }
 
   // P/L
   const plEl = document.getElementById("totalPL");
   if (plEl) {
-    plEl.innerText = `${pl >= 0 ? "+" : ""}${pl.toFixed(2)} (${plPercent.toFixed(1)}%)`;
+    plEl.innerText = `${pl >= 0 ? "+" : ""}${formatNumber(pl, summaryNumberOptions)} (${formatNumber(plPercent, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%)`;
     plEl.style.color = pl >= 0 ? "green" : "red";
   }
 }
@@ -68,7 +69,7 @@ function renderPriceRefreshStatus() {
     return;
   }
 
-  statusEl.innerText = `Prices checked ${checkedAt.toLocaleString()} (${toFiniteNumber(status.updatedCount)} cards)`;
+  statusEl.innerText = `Prices checked ${checkedAt.toLocaleString()} (${formatNumber(status.updatedCount, { maximumFractionDigits: 0 })} cards)`;
 }
 
 function toFiniteNumber(value, fallback = 0) {

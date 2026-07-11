@@ -35,9 +35,14 @@ function getSpec(positionOrEvent, maybeCell) {
   return null;
 }
 
-function money(n) {
+function formatNumber(n, options = {}) {
   const number = Number(n);
-  return `$${Number.isFinite(number) ? number.toFixed(2) : "0.00"}`;
+  const { fallback = 0, ...formatOptions } = options;
+  return new Intl.NumberFormat("en-US", formatOptions).format(Number.isFinite(number) ? number : fallback);
+}
+
+function money(n) {
+  return `$${formatNumber(n, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function tableMoney(n) {
@@ -47,7 +52,7 @@ function tableMoney(n) {
   const sign = number < 0 ? "-" : "";
   const absolute = Math.abs(number);
   const decimals = absolute >= 5 ? 0 : 2;
-  return `${sign}$${absolute.toFixed(decimals)}`;
+  return `${sign}$${formatNumber(absolute, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
 }
 
 function showAppNotice(message, tone = "success") {
