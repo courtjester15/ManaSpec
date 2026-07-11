@@ -30,7 +30,7 @@ ManaSpec currently:
 - Uses Scryfall for card identity and pricing reference.
 - Uses manual Market Checks for richer market observations.
 - Stores data locally in the user's browser.
-- Is still evolving toward full beta.
+- Is moving from validated solo core-loop testing into friend feedback and additional user-facing features.
 
 ## Project Philosophy
 

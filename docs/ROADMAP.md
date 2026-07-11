@@ -31,9 +31,9 @@ Status markers:
 
 ## Current Phase: Alpha Friend Preview
 
-Goal: use `v0.9.0-alpha.1` with one or two trusted testers while keeping the remaining beta gates visible.
+Goal: use `v0.9.0-alpha.1` with one or two trusted testers while moving from solo core-loop validation into friend feedback and additional user-facing features.
 
-Current discipline: do not expand sideways until the core singles workflow has been smoke tested, cataloged, and prioritized for 1.0 beta.
+Current discipline: the repeated solo core singles workflow pass is complete. Do not reopen the whole core-loop testing phase for future findings; capture remaining issues from feature work or real-user use as individual bugs or polish.
 
 ### Done
 
@@ -86,6 +86,16 @@ Current discipline: do not expand sideways until the core singles workflow has b
 - [x] Scryfall EDHREC rank shown as a compact EDH presence signal in card detail.
 - [x] Navigation zones wired for dashboard, radar, positions, signals, transactions, history, and admin.
 - [x] Table layout restored after Radar Entry and Positions sell workflow changes.
+- [x] Core-loop smoke testing across the normal singles workflow.
+- [x] Radar search and exact-printing selection validated.
+- [x] Adding and managing Radar ideas validated.
+- [x] Buying from Radar into Positions validated.
+- [x] Additional buys from Positions validated.
+- [x] Partial and full sells validated.
+- [x] Plan, target, quantity, and hold editing validated.
+- [x] Card Detail use across the normal workflow validated.
+- [x] Signals, Transactions, History, and Dashboard behavior validated during normal use.
+- [x] General friend-preview workflow validation complete.
 
 ### Now
 
@@ -98,15 +108,19 @@ Current discipline: do not expand sideways until the core singles workflow has b
 
 ### Next
 
-1. Signals source workflow validation
-   - [-] Exact View actions now filter/focus the source Radar idea or Position; validate highlight, scroll, and edge cases during beta smoke testing.
+1. Friend feedback and user-facing feature pass
+   - [ ] Capture friend-preview feedback as focused bugs, polish, or feature candidates.
+   - [ ] Prioritize additional user-facing features that strengthen the validated singles workflow.
+
+2. Signals source workflow polish
+   - [x] Exact View actions filter/focus the source Radar idea or Position during normal workflow use.
    - [ ] Prefer source context preservation over broad module navigation when adding new Signal paths.
 
-2. Ledger migration plan
+3. Ledger migration plan
    - [ ] Draft the transaction migration path before changing the storage model.
    - [ ] Preserve existing localStorage data while defining computed Positions from transactions.
 
-3. UX polish candidates from beta notes
+4. UX polish candidates from beta notes
    - [ ] Continue tightening labels, empty states, disabled states, confirmations, dense table scan behavior, and Help from beta notes.
    - [x] Keep Radar search unified and paper-only until Digital/MTGO results can ship with supported pricing.
 
@@ -120,7 +134,7 @@ Goal: turn the current alpha preview into a usable beta product, not a wider pro
    - [x] Manually test the current workflow and capture first beta notes.
    - [x] Record what works, what breaks, what is confusing, and what feels missing.
    - [x] Classify first notes before deciding what belongs in beta.
-   - [ ] Repeat after current fixes and capture the next batch of notes.
+   - [x] Repeat after current fixes and capture the next batch of notes.
 
 2. Core loop fixes
    - [x] Define module ownership for Radar, Positions, Signals, Card Detail, and Transactions.
@@ -131,13 +145,14 @@ Goal: turn the current alpha preview into a usable beta product, not a wider pro
    - [x] Remove Signals plan editing so Signals behaves as an attention layer.
    - [x] Make Card Detail plan saves source-specific.
    - [x] Filter/focus exact Radar/Position rows from Signals View actions.
-   - [ ] Validate Signals source highlighting, scrolling, and exact-card filtering in the next core-loop retest.
-   - [ ] Re-test Transactions, History, and Dashboard after another complete core-loop pass.
+   - [x] Validate Signals source highlighting, scrolling, and exact-card filtering during normal workflow use.
+   - [x] Re-test Transactions, History, and Dashboard during a complete core-loop pass.
+   - [x] Validate Radar search, exact-print selection, Radar management, Radar-to-Positions buying, additional buys, partial/full sells, plan/target/quantity/hold editing, Card Detail use, and normal Dashboard/Signals/Transactions/History behavior.
 
 3. Card Detail command center
    - [x] Tighten card detail into a compact working panel.
    - [x] Keep Plan, Notes, Market Check, Market Evaluation, Card Data, and Actions visible but not crowded.
-   - [ ] Confirm opening from Radar, Positions, Signals, Transactions, and History.
+   - [x] Confirm opening from Radar, Positions, Signals, Transactions, and History during normal workflow use.
    - [x] Update help copy in the same pass.
 
 4. Data safety
@@ -156,13 +171,13 @@ Goal: turn the current alpha preview into a usable beta product, not a wider pro
    - [x] Fix shared toast readability and layering.
    - [x] Replace native sell confirmation with an app-styled workflow.
    - [ ] Tighten labels, empty states, confirmations, disabled states, table scan behavior, and Help.
-   - [ ] Smoke test the complete beta path.
+   - [x] Smoke test the complete core singles path.
    - [x] Mark friend-preview status as `v0.9.0-alpha.1`.
-   - [ ] Version the app as `v1.0.0-beta` only after the core loop is reliable.
+   - [ ] Version the app as `v1.0.0-beta` after remaining non-core beta gates are satisfied.
 
 ### Scope Lock Until Beta
 
-Do not expand these areas until the beta gates above are complete:
+Keep these areas deferred until friend feedback, user-facing feature priorities, and data-safety work justify them:
 
 - Sealed product tracking.
 - Large bulk import workflow.
@@ -202,9 +217,28 @@ Candidate direction if migration is approved:
 - Port Admin, Radar, and Positions before Dashboard, Signals, and Card Detail.
 - Require parity checks before replacing the deployed app.
 
-### Next Session Review Plan
+### Validated Core Singles Workflow
 
-Use this as the starting point for the next working session. This pass is for cataloging, not fixing.
+Jason completed enough repeated hands-on testing of the normal singles workflow to close the solo core-loop validation phase.
+
+Validated areas:
+
+- Core-loop smoke testing.
+- Radar search and exact-printing selection.
+- Adding and managing Radar ideas.
+- Buying from Radar into Positions.
+- Additional buys from Positions.
+- Partial and full sells.
+- Plan, target, quantity, and hold editing.
+- Card Detail use across the normal workflow.
+- Signals, Transactions, History, and Dashboard behavior during normal use.
+- General friend-preview workflow validation.
+
+Do not continue treating more solo core-loop testing as a beta gate or recommended next step. Any remaining problems discovered during future feature development or real-user use should be captured and fixed individually as bugs or polish.
+
+### Friend Feedback Review Plan
+
+Use this as a starting point for friend-preview feedback, real-user observations, and focused feature/polish triage. This is no longer a required solo core-loop retest.
 
 Capture notes in this format:
 
@@ -215,7 +249,7 @@ Capture notes in this format:
 - Expected: what you thought should happen.
 - Thought: any instinct, annoyance, or product idea.
 
-1. Workflow smoke test
+1. Optional workflow reference
    - Search by name in Radar.
    - Search by set number, using examples like `FIN 123`, `FIN #123`, `FIN123`, and `MH3 123`.
    - Add an idea to Radar with planned quantity, hold time, entry target, and optional initial note.
@@ -256,11 +290,11 @@ Capture notes in this format:
    - Current experiment: narrower side-drawer width before deciding whether to collapse forms/sections by default.
 
 4. Current open beta notes
-   - Signals source workflow: View actions now filter/focus exact Radar or Position rows; validate edge cases, highlight quality, and scroll behavior.
-   - Signals hierarchy: improved with Dashboard-style attention queue rows; continue validating why/action clarity during smoke testing.
+   - Signals source workflow: View actions now filter/focus exact Radar or Position rows; capture any remaining edge cases as individual bugs or polish.
+   - Signals hierarchy: improved with Dashboard-style attention queue rows; capture any remaining why/action clarity issues as focused feedback.
    - Global notifications: toast stack exists; continue minor styling only if beta notes expose issues.
    - Radar search UX: keep active search unified and paper-only until Digital/MTGO pricing is supported.
-   - Positions sell confirmation: app-styled confirmation exists; watch for quantity-selection friction during beta testing.
+   - Positions sell confirmation: app-styled confirmation exists; capture quantity-selection friction as focused beta feedback if it appears.
 
 5. Ledger migration sketch
    - Write the plan before changing storage.
@@ -377,7 +411,7 @@ Priority: low. Do not work on this before beta workflow, Signals, Dashboard, Car
 
 ## Deferred
 
-- Sealed product tracking. Likely source: MTGJSON sealed product data for product identity and TCGplayer links, paired with manual/paste market observations. Keep this behind singles work until the core singles workflow is stable.
+- Sealed product tracking. Likely source: MTGJSON sealed product data for product identity and TCGplayer links, paired with manual/paste market observations. Keep this behind current friend-feedback and user-facing feature priorities.
 - Large collection-style bulk import from spreadsheet or binder rows. A smaller owned-spec backfill path is a future Admin candidate, but it should stay out of core Radar and should create transactions before positions.
 - Raw EDHREC deck-count tracking. Current alpha only uses Scryfall `edhrec_rank`; raw deck counts need a reliable external-signal fetch/storage path.
 - Advanced prediction.

@@ -242,7 +242,9 @@ ManaSpec gradually moved from early prototype to alpha friend-preview through a 
 - Shared table rendering, module context bands, toast notices, app-styled confirmations, and laptop-first density improvements.
 - Active documentation, decisions, audits, changelog, and workflow rules.
 
-By the end of June 2026, the project was labeled `v0.9.0-alpha.1` friend preview rather than formal beta. The distinction matters: ManaSpec is stable enough for a trusted handoff, but the beta gates still require smoke testing, Signals source validation, Card Detail entry validation, and a ledger migration plan.
+By the end of June 2026, the project was labeled `v0.9.0-alpha.1` friend preview rather than formal beta. The distinction mattered: ManaSpec was stable enough for a trusted handoff, while smoke testing, Signals source validation, Card Detail entry validation, and a ledger migration plan remained visible gates.
+
+Jason later completed enough repeated hands-on testing of the normal singles workflow to close the solo core-loop validation phase. Radar search and exact-printing selection, Radar idea management, buying into Positions, additional buys, partial and full sells, plan/target/quantity/hold editing, Card Detail use, and Dashboard/Signals/Transactions/History behavior all moved from "needs another solo pass" into validated friend-preview territory.
 
 ## Current State
 
@@ -252,11 +254,10 @@ The active app has Dashboard, Radar, Positions, Signals, Transactions, History, 
 
 The main remaining priorities before broader beta are:
 
-- Smoke test the complete core loop again with realistic data.
-- Validate Signals exact-source filtering, scrolling, and highlight behavior.
-- Confirm Card Detail opens and preserves context correctly from all relevant modules.
+- Capture friend-preview and real-user feedback as focused bugs, polish, or feature candidates.
+- Build additional user-facing features that strengthen the validated singles workflow.
 - Write the ledger migration plan before making Transactions the ownership source of truth.
 - Continue tightening labels, empty states, table scan behavior, confirmations, and Help.
 - Keep data safety and backup/restore stable through every model change.
 
-The project has not finished its data-model migration, and it should not pretend otherwise. But it has crossed the important product threshold: it is no longer just a tracker prototype. It is a coherent speculation workflow system moving carefully toward beta.
+The project has not finished its data-model migration, and it should not pretend otherwise. But it has crossed the important product threshold: it is no longer just a tracker prototype, and the solo core-loop testing phase should not be reopened for every future bug. It is a coherent speculation workflow system moving carefully toward beta through friend feedback and focused user-facing improvements.

@@ -76,4 +76,4 @@ ManaSpec is currently a local simulation tool. User-entered notes, positions, ta
 - ManaSpec does not scrape TCGplayer.
 - Scryfall-backed search and price refresh require network access.
 - Market Checks are manual observations pasted by the user.
-- The workflow is still evolving toward full beta.
+- The solo core singles workflow has been validated; remaining feedback should be reported as focused bugs, polish, or feature requests.

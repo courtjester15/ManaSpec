@@ -27,6 +27,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Marked the solo core singles workflow testing phase complete in active status docs, including Radar search/exact printing, Radar management, Radar-to-Positions buying, additional buys, partial/full sells, plan edits, Card Detail, Dashboard, Signals, Transactions, History, and friend-preview workflow validation.
 - Marked the current project status as `v0.9.0-alpha.1` friend preview while reserving `v1.0.0-beta` for the formal beta gates.
 - Aligned backup metadata with the current `v0.9.0-alpha.1` app version instead of the future `v1.0.0-beta` milestone.
 - Refreshed the public-facing `README.md` to better explain ManaSpec's purpose, current status, project philosophy, workflow-first design, intended audience, current limitations, and open-source direction.

@@ -129,8 +129,7 @@ Current workflow direction:
 
 Near-term product focus:
 
-- First, polish the current workflow by testing it end to end.
-- Then, clean up card detail as the working command center for a tracked printing.
+- First, use friend-preview feedback and feature work to capture focused bugs, polish, and user-facing feature opportunities.
 - Then, draft the transaction migration path before changing storage.
 - Database or storage upgrades can become a learning project later, after the workflow shape is clearer.
 
@@ -446,7 +445,7 @@ Current limitations:
 
 - Signals do not yet create transaction actions.
 - Signals do not use external listing count or unusual-activity data.
-- Signals exact-card/source filtering exists, but source highlight and scroll behavior should continue to be validated during beta workflow testing.
+- Signals exact-card/source filtering exists; any remaining highlight, scroll, or edge-case problems should be tracked as individual bugs or polish.
 
 Workflow rule:
 
