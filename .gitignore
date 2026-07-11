@@ -31,7 +31,6 @@ coverage/
 .nyc_output/
 playwright-report/
 test-results/
-dev notes/local/
 test-fixtures/*.json
 repo-snapshot-latest.md
 dev notes/snapshots/repo-snapshot-latest.md
