@@ -12,6 +12,12 @@ This roadmap represents committed future work. If an item is here, the project h
 
 Use [PARKING_LOT.md](PARKING_LOT.md) for promising ideas that still need validation, workflow testing, prioritization, or a product decision.
 
+Status markers:
+
+- `[x]` Done
+- `[-]` Partially done
+- `[ ]` Not done
+
 ## Workflow Lineup
 
 - App Shell: stable frame, navigation, global summary, active view mount.
@@ -31,78 +37,78 @@ Current discipline: do not expand sideways until the core singles workflow has b
 
 ### Done
 
-- Vanilla app shell with module navigation buttons.
-- Global summary bar for cash, invested value, portfolio value, equity, and P/L.
-- Radar workflow with Scryfall search and printing selection.
-- Positions workflow with ManaSpec-native holdings table.
-- Positions/Radar code separated into search, printings, trading, pricing, snapshots, and table modules under the existing `js/modules/portfolio/` path.
-- Basic buy/sell/delete actions.
-- Clear feedback after add, buy, sell, delete, and Radar remove actions.
-- Confirmation copy for sell, delete, and Radar remove actions.
-- Scryfall price refresh for current holdings.
-- Pagination and Positions count display.
-- Compact Positions table default for laptop-height scan workflows.
-- Filter reset controls for local Radar and Positions filters.
-- Optional entry target, exit target, and hold-time fields on tracked cards.
-- Radar entry target editing directly from the Radar table.
-- Radar and Positions target delta columns for faster target scanning.
-- Radar planned quantity editing directly from the Radar table.
-- Radar buy flow creates or updates a Position while keeping the Radar item watched.
-- Optional target and hold-time columns in the Positions scan table.
-- Inline target and hold-time editing from the Positions scan table.
-- Display-first click-to-edit treatment for Radar entry target and Positions target/hold fields.
-- Positions sell workflow supports a chosen quantity or all copies.
-- Plan-state filters for planned, unplanned, hit, and approaching cards.
-- Dashboard target panels backed by local target fields.
-- Signals target panels backed by local Radar and Positions target fields.
-- Signals summary tiles filter the attention table and include a visible reset back to all signals.
-- Signals rows show compact source, action context, and exact printing identity for beta workflow scanning.
-- Signals quick actions for opening card detail or jumping to Radar/Positions.
-- Signals is now a read-only attention layer for plan data; plan edits happen in Radar, Positions, or Card Detail.
-- Dashboard and Signals share compact attention queue row language for target hits, approaching states, missing plans, stale checks, and recent note context.
-- Signals attention tiles support bucket filtering from the tile/header and exact-card filtering from queue rows.
-- Signals Approaching previews fill quiet days with closest target-watch rows outside the true near-target threshold.
-- Signals No Plan ownership is explicit: Radar requires Entry Target, while Positions require Exit Target and Hold.
-- Hold-time planning accepts simple month ranges such as `6-12` and `12-18`.
-- Shared note indicators use compact notepad icons in table workflows.
-- Card Detail saves plan edits to the source that opened the printing instead of cross-writing Radar and Positions.
-- Transaction ledger filters for text and buy/sell type.
-- History filters for text and event type.
-- Radar set-number search for exact Scryfall printing lookup.
-- Radar search and printing results are paper-only in the active UI until Digital/MTGO pricing can be supported with matching price intelligence.
-- Admin JSON backup export/import for localStorage-backed user data.
-- Contextual right-side Help drawer with initial workflow topics.
-- App notices render through a toast stack instead of layout-shifting inline status.
-- Positions sell uses an app-styled confirmation flow with one-copy, custom quantity, and sell-all choices.
-- Shared card notes from Card Detail, keyed by exact printing identity.
-- Thesis retired from active navigation while preserving existing Thesis code and data.
-- Compact card-detail Market Evaluation from observable/local data only.
-- Scryfall EDHREC rank shown as a compact EDH presence signal in card detail.
-- Navigation zones wired for dashboard, radar, positions, signals, transactions, history, and admin.
-- Table layout restored after Radar Entry and Positions sell workflow changes.
+- [x] Vanilla app shell with module navigation buttons.
+- [x] Global summary bar for cash, invested value, portfolio value, equity, and P/L.
+- [x] Radar workflow with Scryfall search and printing selection.
+- [x] Positions workflow with ManaSpec-native holdings table.
+- [x] Positions/Radar code separated into search, printings, trading, pricing, snapshots, and table modules under the existing `js/modules/portfolio/` path.
+- [x] Basic buy/sell/delete actions.
+- [x] Clear feedback after add, buy, sell, delete, and Radar remove actions.
+- [x] Confirmation copy for sell, delete, and Radar remove actions.
+- [x] Scryfall price refresh for current holdings.
+- [x] Pagination and Positions count display.
+- [x] Compact Positions table default for laptop-height scan workflows.
+- [x] Filter reset controls for local Radar and Positions filters.
+- [x] Optional entry target, exit target, and hold-time fields on tracked cards.
+- [x] Radar entry target editing directly from the Radar table.
+- [x] Radar and Positions target delta columns for faster target scanning.
+- [x] Radar planned quantity editing directly from the Radar table.
+- [x] Radar buy flow creates or updates a Position while keeping the Radar item watched.
+- [x] Optional target and hold-time columns in the Positions scan table.
+- [x] Inline target and hold-time editing from the Positions scan table.
+- [x] Display-first click-to-edit treatment for Radar entry target and Positions target/hold fields.
+- [x] Positions sell workflow supports a chosen quantity or all copies.
+- [x] Plan-state filters for planned, unplanned, hit, and approaching cards.
+- [x] Dashboard target panels backed by local target fields.
+- [x] Signals target panels backed by local Radar and Positions target fields.
+- [x] Signals summary tiles filter the attention table and include a visible reset back to all signals.
+- [x] Signals rows show compact source, action context, and exact printing identity for beta workflow scanning.
+- [x] Signals quick actions for opening card detail or jumping to Radar/Positions.
+- [x] Signals is now a read-only attention layer for plan data; plan edits happen in Radar, Positions, or Card Detail.
+- [x] Dashboard and Signals share compact attention queue row language for target hits, approaching states, missing plans, stale checks, and recent note context.
+- [x] Signals attention tiles support bucket filtering from the tile/header and exact-card filtering from queue rows.
+- [x] Signals Approaching previews fill quiet days with closest target-watch rows outside the true near-target threshold.
+- [x] Signals No Plan ownership is explicit: Radar requires Entry Target, while Positions require Exit Target and Hold.
+- [x] Hold-time planning accepts simple month ranges such as `6-12` and `12-18`.
+- [x] Shared note indicators use compact notepad icons in table workflows.
+- [x] Card Detail saves plan edits to the source that opened the printing instead of cross-writing Radar and Positions.
+- [x] Transaction ledger filters for text and buy/sell type.
+- [x] History filters for text and event type.
+- [x] Radar set-number search for exact Scryfall printing lookup.
+- [x] Radar search and printing results are paper-only in the active UI until Digital/MTGO pricing can be supported with matching price intelligence.
+- [x] Admin JSON backup export/import for localStorage-backed user data.
+- [x] Contextual right-side Help drawer with initial workflow topics.
+- [x] App notices render through a toast stack instead of layout-shifting inline status.
+- [x] Positions sell uses an app-styled confirmation flow with one-copy, custom quantity, and sell-all choices.
+- [x] Shared card notes from Card Detail, keyed by exact printing identity.
+- [x] Thesis retired from active navigation while preserving existing Thesis code and data.
+- [x] Compact card-detail Market Evaluation from observable/local data only.
+- [x] Scryfall EDHREC rank shown as a compact EDH presence signal in card detail.
+- [x] Navigation zones wired for dashboard, radar, positions, signals, transactions, history, and admin.
+- [x] Table layout restored after Radar Entry and Positions sell workflow changes.
 
 ### Now
 
-- Keep `index.html` as a static shell.
-- Keep `app.js` as bootstrapping and view coordination.
-- Treat Radar and Positions as sibling singles workflows.
-- Keep card discovery in Radar and owned holdings in Positions.
-- Separate card discovery search from local position filtering.
-- Document current behavior before refactoring the trading model.
+- [x] Keep `index.html` as a static shell.
+- [x] Keep `app.js` as bootstrapping and view coordination.
+- [x] Treat Radar and Positions as sibling singles workflows.
+- [x] Keep card discovery in Radar and owned holdings in Positions.
+- [x] Separate card discovery search from local position filtering.
+- [ ] Document current behavior before refactoring the trading model.
 
 ### Next
 
 1. Signals source workflow validation
-   - Exact View actions now filter/focus the source Radar idea or Position; validate highlight, scroll, and edge cases during beta smoke testing.
-   - Prefer source context preservation over broad module navigation when adding new Signal paths.
+   - [-] Exact View actions now filter/focus the source Radar idea or Position; validate highlight, scroll, and edge cases during beta smoke testing.
+   - [ ] Prefer source context preservation over broad module navigation when adding new Signal paths.
 
 2. Ledger migration plan
-   - Draft the transaction migration path before changing the storage model.
-   - Preserve existing localStorage data while defining computed Positions from transactions.
+   - [ ] Draft the transaction migration path before changing the storage model.
+   - [ ] Preserve existing localStorage data while defining computed Positions from transactions.
 
 3. UX polish candidates from beta notes
-   - Continue tightening labels, empty states, disabled states, confirmations, dense table scan behavior, and Help from beta notes.
-   - Keep Radar search unified and paper-only until Digital/MTGO results can ship with supported pricing.
+   - [ ] Continue tightening labels, empty states, disabled states, confirmations, dense table scan behavior, and Help from beta notes.
+   - [x] Keep Radar search unified and paper-only until Digital/MTGO results can ship with supported pricing.
 
 ## 1.0 Beta Track
 
@@ -273,20 +279,20 @@ Capture notes in this format:
 
 Goal: remove "what just happened?" moments from the current app.
 
-- Make Add Card clearly create a Radar idea.
-- Keep watched ideas out of Positions.
-- Clarify buy, sell, and delete actions.
+- [x] Make Add Card clearly create a Radar idea.
+- [x] Keep watched ideas out of Positions.
+- [x] Clarify buy, sell, and delete actions.
 
 ## Phase 2: Ledger Foundation
 
 Goal: move from direct position mutation toward transaction history.
 
-- Use `docs/README.md` as the implementation guide until the ledger becomes large enough to deserve its own spec.
-- Introduce a transaction record shape.
-- Add a transaction creation flow for buy/sell.
-- Compute positions from transactions.
-- Preserve current position data during migration.
-- Add history view backed by transaction events.
+- [-] Use `docs/README.md` as the implementation guide until the ledger becomes large enough to deserve its own spec.
+- [x] Introduce a transaction record shape.
+- [x] Add a transaction creation flow for buy/sell.
+- [ ] Compute positions from transactions.
+- [ ] Preserve current position data during migration.
+- [x] Add history view backed by transaction events.
 
 Important rule: long term, positions are computed views. Transactions are the source of truth.
 
@@ -294,45 +300,45 @@ Important rule: long term, positions are computed views. Transactions are the so
 
 Goal: separate ideas from owned positions and add decision triggers.
 
-- Keep Radar as the explicit home for ideas without ownership.
-- Add optional entry targets.
-- Add optional exit targets.
-- Add target-zone states such as hit, near hit, and stop triggered.
-- Keep notes user-authored.
+- [x] Keep Radar as the explicit home for ideas without ownership.
+- [x] Add optional entry targets.
+- [x] Add optional exit targets.
+- [-] Add target-zone states such as hit, near hit, and stop triggered.
+- [x] Keep notes user-authored.
 
 ## Phase 4: Signals And Dashboard
 
 Goal: turn tracked data into fast decision awareness.
 
-- Position movers up/down.
-- Radar movers.
-- Target hits and approaching targets.
-- Basic radar signals for price movement and unusual activity when data supports it.
-- Dashboard remains a dense scan view, not a marketing page or decorative home screen.
+- [ ] Position movers up/down.
+- [ ] Radar movers.
+- [x] Target hits and approaching targets.
+- [ ] Basic radar signals for price movement and unusual activity when data supports it.
+- [x] Dashboard remains a dense scan view, not a marketing page or decorative home screen.
 
 ## Phase 5: Persistence Upgrade
 
 Goal: make data portable and safer.
 
-- JSON export/import.
-- Backup and restore flow.
-- Optional desktop wrapper later if local file saves become important.
+- [x] JSON export/import.
+- [x] Backup and restore flow.
+- [ ] Optional desktop wrapper later if local file saves become important.
 
 ## Future Admin: Owned Spec Backfill
 
 Goal: let users add older owned specs without turning ManaSpec into a collection manager.
 
-- Build this only after the beta path, export/import, and ledger direction are stable enough to protect user data.
-- Start with a small Admin workflow for manual paste or spreadsheet rows, not a broad collection importer.
-- Import historical/opening transactions first, then create or update Positions from those transactions.
-- Treat Positions as the current holdings view and Transactions as the source of truth.
-- Support exact Scryfall printing matching from card name, set code or set name, collector number, and foil/nonfoil where possible.
-- Preview all matches before saving and allow correction for unresolved or ambiguous printings.
-- Accept practical spreadsheet-style headers such as card name, set code or set name, collector number, foil/nonfoil, quantity, buy date, entry price, acquisition method, notes or thesis, target hold time, and target price.
-- Allow the user to paste cleaned parsed data from GPT or another tool as an early low-build path.
-- Preserve estimates with flags such as `estimatedDate`, `estimatedPrice`, `confidence`, and `sourceNote` instead of pretending uncertain history is exact.
-- Support non-buy acquisition methods over time, including `OPENED`, `TRADE_IN`, `PRIZE`, `PROMO`, `GIFT`, `STORE_CREDIT`, and `CORRECTION`.
-- Keep the workflow scoped to cards with a speculation thesis, exit interest, or finance relevance.
+- [ ] Build this only after the beta path, export/import, and ledger direction are stable enough to protect user data.
+- [ ] Start with a small Admin workflow for manual paste or spreadsheet rows, not a broad collection importer.
+- [ ] Import historical/opening transactions first, then create or update Positions from those transactions.
+- [ ] Treat Positions as the current holdings view and Transactions as the source of truth.
+- [ ] Support exact Scryfall printing matching from card name, set code or set name, collector number, and foil/nonfoil where possible.
+- [ ] Preview all matches before saving and allow correction for unresolved or ambiguous printings.
+- [ ] Accept practical spreadsheet-style headers such as card name, set code or set name, collector number, foil/nonfoil, quantity, buy date, entry price, acquisition method, notes or thesis, target hold time, and target price.
+- [ ] Allow the user to paste cleaned parsed data from GPT or another tool as an early low-build path.
+- [ ] Preserve estimates with flags such as `estimatedDate`, `estimatedPrice`, `confidence`, and `sourceNote` instead of pretending uncertain history is exact.
+- [ ] Support non-buy acquisition methods over time, including `OPENED`, `TRADE_IN`, `PRIZE`, `PROMO`, `GIFT`, `STORE_CREDIT`, and `CORRECTION`.
+- [ ] Keep the workflow scoped to cards with a speculation thesis, exit interest, or finance relevance.
 
 ## Future Admin: Lightweight Module Exports
 
@@ -342,8 +348,8 @@ This is separate from Full Backup. Full Backup is for safety and recovery; modul
 
 Potential exports:
 
-- Export Positions Snapshot.
-- Export Radar Watchlist.
+- [ ] Export Positions Snapshot.
+- [ ] Export Radar Watchlist.
 
 Possible future formats:
 
