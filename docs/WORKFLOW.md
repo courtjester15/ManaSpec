@@ -187,7 +187,7 @@ Use `dev notes/inbox/codex-friction-log.md` for recurring tool, environment, bro
 
 Before substantial frontend or browser QA work, check `dev notes/inbox/codex-friction-log.md`. If present, also check the shared local machine note at `C:\Users\Jase\Documents\Codex\machine\CODEX_FRICTION.md` for current browser-harness or local-development workarounds. These notes are aids, not blockers.
 
-Log friction when it is surprising, repeated, safety-relevant, or likely to save future time. Do not log every harmless typo, one-off retry, or normal command failure.
+Log friction when it is surprising, repeated, safety-relevant, or likely to save future time. Early on, include small-but-real detours such as surprising timeouts, sandbox/network blocks, browser harness limits, screenshot/crop issues, path quoting problems, or ambiguous QA state so patterns can emerge. Do not log every harmless typo, routine exploration miss, or expected test failure.
 
 Promote a friction note into this Workflow doc only after it becomes a durable operating rule.
 

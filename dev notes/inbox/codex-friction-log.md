@@ -6,7 +6,7 @@ This is not an active rules document. Use it as raw project memory for environme
 
 ## How To Use
 
-Add an entry when Codex has to take a non-obvious detour, retry a command because of tooling/environment behavior, or work around a harness limitation.
+Add an entry when Codex has to take a non-obvious detour, retry a command because of tooling/environment behavior, or work around a harness limitation. Early on, err toward logging small-but-real friction so repeated patterns can surface, especially timeouts, sandbox/network blocks, browser harness limits, screenshot/crop issues, path quoting problems, or ambiguous QA state.
 
 Useful entry shape:
 
@@ -18,7 +18,7 @@ Workaround:
 Promote to Workflow? yes/no/later
 ```
 
-Keep entries short. The goal is to improve future navigation, not document every normal typo or harmless retry.
+Keep entries short. The goal is to improve future navigation, not document every normal typo, routine exploration miss, expected test failure, or raw command transcript.
 
 ## Current Patterns
 
