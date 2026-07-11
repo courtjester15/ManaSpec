@@ -78,6 +78,8 @@ The missing layer is a small, pruneable place for promising ideas before they ar
 ## Asset Expansion
 
 - Revisit sibling asset types beyond singles and sealed product later, including Secret Lairs and other MTG investment products, only when the singles workflow is stable and the identity/source model is clear. Do not merge these into the single-card printing model.
+- Sealed product discussion outcome: a lightweight sealed MVP may be simpler than it first appears if it stays scoped to product identity, quantity, buy price, manual/current TCGplayer observation, exit target, and notes. MTGJSON can likely help with sealed product identity and TCGplayer links, while price automation should not be assumed. Keep this behind more important user-facing features and do not pull it into beta polish.
+- Treat sealed as a sibling asset type, not a subtype of single-card positions. Avoid automatic unpacking or single-card conversion at first; if a user opens a Secret Lair or other sealed product and wants to track the singles, that should become a deliberate future "open/convert product" workflow rather than hidden bookkeeping.
 
 ## Admin And Data Safety
 
