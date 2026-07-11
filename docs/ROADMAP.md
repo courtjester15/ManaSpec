@@ -124,6 +124,41 @@ Current discipline: the repeated solo core singles workflow pass is complete. Do
    - [ ] Continue tightening labels, empty states, disabled states, confirmations, dense table scan behavior, and Help from beta notes.
    - [x] Keep Radar search unified and paper-only until Digital/MTGO results can ship with supported pricing.
 
+### Near-Term Feature Candidates: 2026-07-11 Planning Pass
+
+The core singles workflow is considered complete. The next likely user-facing builds are ordered provisionally as follows; this is planning direction, not a commitment to start implementation before the next product turn is understood.
+
+Execution note: feature work is paused pending the Data Ownership and Storage Readiness Audit logged in `dev notes/inbox/2026-07-11-data-ownership-storage-readiness-audit.md`. The audit will determine whether foundation work must precede this provisional order.
+
+1. Comparable Printings
+   - Safest and most likely first build because Oracle-based Scryfall printing lookup, exact-printing identity, finish handling, and Card Detail already exist.
+   - Smallest useful scope: a compact Card Detail section for paper printings with set, collector number, finish, release date, supported Scryfall price, exact links, and a clear highlight for the currently tracked printing and finish.
+   - No persistence or migration change should be required.
+
+2. Price-History Chart
+   - Use existing `priceSnapshots` for one exact owned printing in Card Detail.
+   - Smallest useful scope: a compact native SVG line chart with current/previous price context, observed date range, and an honest insufficient-history state.
+   - Do not combine manual market observations with the Scryfall series, invent missing dates, or imply continuous history.
+   - Current snapshots are saved only for owned Positions when price refresh runs, so sparse history is expected.
+
+3. Owned-Spec Backfill / Import
+   - Keep this in Admin and frame it as historical owned-spec backfill, not collection management.
+   - Smallest useful scope: paste cleaned CSV/TSV-style rows, match exact Scryfall printings, preview every result, correct ambiguous or unresolved rows, and confirm one safe batch.
+   - Resolve transaction provenance, uncertain dates/prices, duplicate-position behavior, cash impact, acquisition methods, atomic rollback, and startup-backfill interaction before frontend implementation.
+   - Default planning direction: imported history should not silently change current cash, uncertain history should remain explicitly marked, and name-only identity is never sufficient.
+
+4. Portfolio Performance Dashboard
+   - Start only with metrics supported honestly by current state: deployed cost basis, current value, unrealized P/L, recorded or derivable realized P/L, and cash versus deployed capital.
+   - Defer total-return-over-time and equity charts until ManaSpec records enough portfolio, quantity, cash, and transaction history to reconstruct them without invention.
+   - Present-tense metrics may be called Portfolio Summary; do not label them historical performance.
+
+Library direction for these candidates:
+
+- Keep a first compact price chart native rather than adding Chart.js for one series.
+- Consider Papa Parse only when import scope expands beyond cleaned paste data into robust quoted CSV/file handling.
+- Preserve existing localStorage keys and backup schema compatibility. Any new top-level key must be added deliberately to backup/export/import.
+- Continue treating Scryfall printing UUID plus finish as the mandatory identity boundary.
+
 ## 1.0 Beta Track
 
 Goal: turn the current alpha preview into a usable beta product, not a wider prototype.

@@ -8,6 +8,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Added the completed 2026-07-11 Data Ownership and Storage Readiness Audit, covering current storage shapes, field ownership, identity, transaction authority, backup safety, localStorage versus Dexie, and a controlled foundation sequence.
 - Added `HISTORY.md` as a reconstructed narrative of ManaSpec's origin, major milestones, design shifts, workflow evolution, beta-readiness path, and current state.
 - Added focused Architecture, Data Model, and Style Guide docs for current app structure, entity relationships, and UI language.
 - Added Product Principles as a stable product-philosophy document for future human and AI contributors.
@@ -27,6 +28,8 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Paused the provisional feature-building sequence pending a logged Data Ownership and Storage Readiness Audit covering entity boundaries, identity, transaction authority, backup compatibility, and localStorage versus Dexie readiness.
+- Consolidated the next likely user-facing feature candidates in the Roadmap: Comparable Printings, exact-printing price history, owned-spec backfill, and honest portfolio summary/performance work, including provisional build order, minimum scopes, and data-model gates.
 - Marked the solo core singles workflow testing phase complete in active status docs, including Radar search/exact printing, Radar management, Radar-to-Positions buying, additional buys, partial/full sells, plan edits, Card Detail, Dashboard, Signals, Transactions, History, and friend-preview workflow validation.
 - Marked the current project status as `v0.9.0-alpha.1` friend preview while reserving `v1.0.0-beta` for the formal beta gates.
 - Aligned backup metadata with the current `v0.9.0-alpha.1` app version instead of the future `v1.0.0-beta` milestone.
