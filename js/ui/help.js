@@ -66,7 +66,7 @@ const helpTopics = {
       "Plan fields save on Enter or click-away, so the visible plan is the current saved plan.",
       "Open the TCGplayer link and find the Price Points block.",
       "Copy the visible text that includes Market Price, Recent Sale, Listed Median, Quantity, and Sellers.",
-      "Screenshot guidance is deferred until the Market Check surface stabilizes.",
+      "Use the ? How to use Market Check guide in Card Detail for visual examples.",
       "Paste it into the TCG Price Points box and save the check.",
       "Saved TCG checks are manual observations with timestamps, not a live TCGplayer price feed.",
       "ManaSpec evaluates only observable market mechanics: supply, velocity, price confidence, Scryfall EDH rank, target math, freshness, and data gaps.",

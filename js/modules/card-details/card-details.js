@@ -101,6 +101,7 @@ function renderCardDetail(item, card, source, options = {}) {
   `;
 
   document.getElementById("closeCardDetail").onclick = closeCardDetail;
+  document.getElementById("openMarketCheckHelp")?.addEventListener("click", openMarketCheckHelp);
   document.getElementById("saveTcgObservation").onclick = () => saveTcgObservation(item, card, source);
   document.getElementById("tcgPricePaste").addEventListener("keydown", event => {
     event.stopPropagation();
@@ -278,8 +279,11 @@ function renderMarketCheckSection(item, latestTcg, marketLinks = []) {
 
   return `
     <section class="detail-command-section signal-section">
-      <div class="detail-section-heading">
-        <h4>Market Check</h4>
+      <div class="detail-section-heading market-check-heading">
+        <div class="detail-heading-title">
+          <h4>Market Check</h4>
+          <button type="button" class="market-check-help-trigger" id="openMarketCheckHelp" title="Show Market Check guide">? How to use Market Check</button>
+        </div>
         <span>${latestTcg ? `Saved ${new Date(latestTcg.checkedAt).toLocaleString()}` : "TCG snapshot"}</span>
       </div>
       <div class="signal-grid">
@@ -306,6 +310,77 @@ function renderMarketCheckSection(item, latestTcg, marketLinks = []) {
       </div>
     </section>
   `;
+}
+
+function renderMarketCheckHelpModal() {
+  return `
+    <div class="market-check-help-modal" id="marketCheckHelpModal" aria-hidden="true">
+      <div class="market-check-help-backdrop" data-action="close-market-check-help"></div>
+      <section class="market-check-help-panel" role="dialog" aria-modal="true" aria-labelledby="marketCheckHelpTitle">
+        <header class="market-check-help-header">
+          <div>
+            <h3 id="marketCheckHelpTitle">How to use Market Check</h3>
+            <p>Save dated market evidence and your own read for this exact printing.</p>
+          </div>
+          <button type="button" class="detail-close" id="closeMarketCheckHelp" data-action="close-market-check-help">Close</button>
+        </header>
+        <div class="market-check-guide-intro">
+          Market Check saves your dated market evidence and observations for this exact printing. It does not scrape marketplaces, verify prices, guarantee accuracy, or tell you to buy or sell.
+        </div>
+        <div class="market-check-guide-steps">
+          <article class="market-check-guide-step">
+            <div class="market-check-guide-copy">
+              <span>1</span>
+              <h4>Find the market text to copy</h4>
+              <p>Use visible price points, listing context, sold-price notes, buylist numbers, vendor notes, Discord discussion, or your own market read.</p>
+            </div>
+            <figure class="market-check-guide-figure">
+              <img src="assets/help/market-check-tcgplayer-example.png" alt="Example TCGplayer price points area">
+              <figcaption>Copy this kind of manually gathered context. ManaSpec does not connect to TCGplayer.</figcaption>
+            </figure>
+          </article>
+          <article class="market-check-guide-step">
+            <div class="market-check-guide-copy">
+              <span>2</span>
+              <h4>Paste it into Market Check</h4>
+              <p>Paste raw relevant text. It does not need perfect formatting; save the context future-you should remember.</p>
+            </div>
+            <figure class="market-check-guide-figure">
+              <img src="assets/help/market-check-paste.jpg" alt="ManaSpec Market Check paste area">
+              <figcaption>Open the Market Check action, paste the text, then save the check.</figcaption>
+            </figure>
+          </article>
+          <article class="market-check-guide-step">
+            <div class="market-check-guide-copy">
+              <span>3</span>
+              <h4>Save it for future review</h4>
+              <p>The saved observation becomes dated context for this printing, helping you review why the card mattered and what the market looked like.</p>
+            </div>
+            <figure class="market-check-guide-figure">
+              <img src="assets/help/market-check-saved.jpg" alt="ManaSpec saved Market Check state">
+              <figcaption>Saved checks power freshness and market evaluation signals without becoming a live price feed.</figcaption>
+            </figure>
+          </article>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function openMarketCheckHelp() {
+  const help = document.getElementById("marketCheckHelpModal");
+  if (!help) return;
+  help.classList.add("open");
+  help.setAttribute("aria-hidden", "false");
+  document.getElementById("closeMarketCheckHelp")?.focus();
+}
+
+function closeMarketCheckHelp() {
+  const help = document.getElementById("marketCheckHelpModal");
+  if (!help) return;
+  help.classList.remove("open");
+  help.setAttribute("aria-hidden", "true");
+  document.getElementById("openMarketCheckHelp")?.focus();
 }
 
 function getMarketCheckCta(observation) {
@@ -476,10 +551,14 @@ function ensureCardDetailModal() {
   modal.innerHTML = `
     <div class="card-detail-backdrop" data-action="close-detail"></div>
     <section class="card-detail-panel" id="cardDetailBody"></section>
+    ${renderMarketCheckHelpModal()}
   `;
 
   document.body.appendChild(modal);
   modal.querySelector('[data-action="close-detail"]').onclick = closeCardDetail;
+  modal.querySelectorAll('[data-action="close-market-check-help"]').forEach(element => {
+    element.addEventListener("click", closeMarketCheckHelp);
+  });
   ensureCardDetailEscapeHandler();
 }
 
@@ -492,7 +571,12 @@ function ensureCardDetailEscapeHandler() {
   if (window.cardDetailEscapeHandlerInstalled) return;
   window.cardDetailEscapeHandlerInstalled = true;
   document.addEventListener("keydown", event => {
-    if (event.key === "Escape") closeCardDetail();
+    if (event.key !== "Escape") return;
+    if (document.getElementById("marketCheckHelpModal")?.classList.contains("open")) {
+      closeMarketCheckHelp();
+      return;
+    }
+    closeCardDetail();
   });
 }
 
