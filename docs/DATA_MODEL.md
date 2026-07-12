@@ -475,6 +475,42 @@ Transaction events
 
 ## Migration Notes
 
+### Backend Foundation Contract (Batch 1)
+
+This contract defines target ownership without changing current persistence. Batch 1 helpers are read-only adapters: they are not connected to application load/save paths, do not write normalized values to localStorage, and do not make Transactions authoritative.
+
+Data categories:
+
+- Persisted user-authored data: Tracked Spec status, nested Plan fields, Notes, and future user-authored metadata.
+- Historical event facts: Transactions, including quantity, price/value, date, costs, source, method, and uncertainty/provenance flags.
+- Cached external reference data: Scryfall printing metadata and current-price cache.
+- Calculated fields: Position quantity, weighted-average cost, deployed basis, realized/unrealized P/L, and open/closed state.
+- Compatibility fields: current `specs`, `radar`, legacy `signals`, archived `thesisNotes`, duplicated metadata, and transitional stored calculations.
+
+Target ownership shapes do not imply new localStorage keys:
+
+- Tracked Spec: ManaSpec UUID, normalized tracked-printing key, Scryfall/Oracle identity, explicit finish, explicit language or null, lifecycle status, created date, nested Plan, and optional strategy tags. Radar will eventually become a status/view of this entity.
+- Nested Plan: planned quantity, entry/exit targets, hold time, thesis, conviction, catalyst, review date, risk note, and exit criteria.
+- Transaction: UUID, future Tracked Spec relationship, tracked-printing key, event type, quantity, unit value, date, fees/shipping/costs, cash effect, condition, source, notes, uncertainty flags, and import provenance. Transactions own event facts; stored derived P/L or balance values are compatibility context only.
+- Computed Position: identity relationship, quantity, weighted-average cost, deployed basis, realized/unrealized P/L, open/closed state, projection safety, and issues. It is calculated, not authored.
+- Note: UUID, explicit scope and scoped entity, text, and timestamps. Current exact-printing Notes remain valid.
+- Price Snapshot: normalized identity, observed date/time, price, source, and saved time. It is external reference history, not an acquisition fact.
+- Market Observation: normalized identity, source, checked time, raw evidence, parsed values, and URL. It remains distinct from Scryfall snapshots.
+- Future Account Event: starting balance, deposit, withdrawal, or correction with amount, date, notes, and provenance. Account Events are required before historical performance reporting but are not added in Batch 1.
+
+Batch 1 rules:
+
+- Use weighted-average cost.
+- Acquisition costs increase deployed basis; selling costs reduce proceeds.
+- Include startup backfill Transactions as opening acquisitions and identify them separately.
+- Missing language normalizes to null/unknown, never assumed English.
+- Invalid identity, quantity, price, or date makes a Transaction unsafe for projection.
+- Report oversells and ambiguous ordering; do not clamp values and continue as if history were valid.
+- Calculate realized P/L from event facts rather than trusting stored derived values.
+- Treat zero-quantity projections as closed history, not automatic mismatches with current `specs`.
+- Preserve compatible unknown record-level fields through normalization.
+- Keep every Batch 1 normalizer and projector disconnected from production persistence.
+
 Known transitional facts:
 
 - `specs` currently stores owned Positions directly.

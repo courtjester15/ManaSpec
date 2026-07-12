@@ -8,6 +8,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Added Backend Foundation Batch 1 as a read-only compatibility layer: concrete ownership contracts, pure legacy normalizers, a weighted-average Transaction-to-Position projector, a discrepancy comparison harness, and fixture-backed validation without production persistence changes.
 - Added the completed 2026-07-11 Data Ownership and Storage Readiness Audit, covering current storage shapes, field ownership, identity, transaction authority, backup safety, localStorage versus Dexie, and a controlled foundation sequence.
 - Added `HISTORY.md` as a reconstructed narrative of ManaSpec's origin, major milestones, design shifts, workflow evolution, beta-readiness path, and current state.
 - Added focused Architecture, Data Model, and Style Guide docs for current app structure, entity relationships, and UI language.
