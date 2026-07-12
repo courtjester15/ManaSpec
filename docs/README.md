@@ -198,7 +198,8 @@ Current behavior:
 - The app shell has a Help button that opens a right-side drawer.
 - Help defaults to the currently active workflow.
 - Users can switch between help topics inside the drawer.
-- Current topics cover Dashboard, Radar, Positions, Signals, TCG Price Points, Transactions, History, and Admin.
+- Current topics cover Dashboard, Radar, Positions, Signals, Market Check, Transactions, History, and Admin.
+- Tutorial entries live with the shared Help content so future module-level guides can deep-link to a topic without duplicating walkthroughs.
 
 Rules:
 

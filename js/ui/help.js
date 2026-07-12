@@ -18,6 +18,7 @@ const helpTopics = {
     ],
   },
   radar: {
+    label: "Radar",
     title: "Radar Search And Ideas",
     intro: "Radar is for cards you are watching before committing cash.",
     steps: [
@@ -33,10 +34,11 @@ const helpTopics = {
     ],
   },
   portfolio: {
+    label: "Positions",
     title: "Positions",
     intro: "Positions is for owned cards and compact trade management.",
     steps: [
-      "Use +1 to buy one more copy at the current price.",
+      "Use Buy to add copies and record the quantity and purchase price.",
       "Now is the saved/refreshed Scryfall price used for current value and target math.",
       "Use Sell to choose one copy, all copies, or a custom quantity before confirming the exit.",
       "Edit Target and Hold inline when you have a plan.",
@@ -58,7 +60,8 @@ const helpTopics = {
     ],
   },
   tcgPaste: {
-    title: "TCG Price Points",
+    label: "Market Check",
+    title: "Market Check",
     intro: "Use the card detail Market Check area to save visible TCGplayer price-point text and power market evaluation.",
     steps: [
       "Open card detail from Radar, Positions, or Signals.",
@@ -80,7 +83,6 @@ const helpTopics = {
       "Use filters to review specific cards, sets, or BUY/SELL events.",
       "Signed totals show cash direction: buys are negative, sells are positive.",
       "Balance shows cash after each event, and SELL rows show realized gain/loss when cost basis is available.",
-      "Long term, Positions should be computed from these events.",
     ],
   },
   history: {
@@ -100,9 +102,15 @@ const helpTopics = {
       "Use admin actions carefully because localStorage is the current backing store.",
       "Reset Cash requires confirmation and changes only available cash, not Positions, Radar, notes, transactions, or history.",
       "Export a backup before risky maintenance or restore work.",
-      "Storage upgrades should wait until the workflow shape is clearer.",
     ],
   },
+};
+
+// Tutorial entries can later supply: title, description, image, steps, and action.
+// Keeping them here lets global and module-level Help open the same shared content.
+const helpTutorials = {
+  dashboard: [], radar: [], portfolio: [], signals: [], tcgPaste: [],
+  transactions: [], history: [], admin: [],
 };
 
 let activeHelpTopic = "dashboard";
@@ -170,7 +178,7 @@ function renderHelpTopic(topicId) {
   document.getElementById("helpTopicList").innerHTML = Object.entries(helpTopics)
     .map(([id, item]) => `
       <button type="button" class="${id === activeHelpTopic ? "active" : ""}" data-help-topic="${id}">
-        ${item.title}
+        ${item.label || item.title}
       </button>
     `).join("");
 
@@ -184,5 +192,30 @@ function renderHelpTopic(topicId) {
     <ol>
       ${topic.steps.map(step => `<li>${step}</li>`).join("")}
     </ol>
+    ${renderHelpTutorials(topicId)}
+  `;
+}
+
+function renderHelpTutorials(topicId) {
+  const tutorials = helpTutorials[topicId] || [];
+  return `
+    <section class="help-tutorials" aria-labelledby="helpTutorialsTitle">
+      <h5 id="helpTutorialsTitle">Tutorials</h5>
+      ${tutorials.length
+        ? tutorials.map(renderHelpTutorialEntry).join("")
+        : `<p class="help-tutorials-placeholder">Visual walkthroughs coming soon</p>`}
+    </section>
+  `;
+}
+
+function renderHelpTutorialEntry(tutorial) {
+  return `
+    <article class="help-tutorial-entry">
+      <h6>${tutorial.title}</h6>
+      ${tutorial.description ? `<p>${tutorial.description}</p>` : ""}
+      ${tutorial.image ? `<img src="${tutorial.image}" alt="">` : ""}
+      ${tutorial.steps?.length ? `<ol>${tutorial.steps.map(step => `<li>${step}</li>`).join("")}</ol>` : ""}
+      ${tutorial.action ? `<a href="${tutorial.action.href}">${tutorial.action.label}</a>` : ""}
+    </article>
   `;
 }
