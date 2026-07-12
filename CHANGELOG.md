@@ -29,6 +29,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Centralized normal persistence for Positions, Radar, Transactions, and cash; connected read-only runtime normalization with compatibility-safe serialization; preserved unknown fields and stored shapes; and retained the read-only ledger discrepancy warning without automatic reconciliation.
 - Paused the provisional feature-building sequence pending a logged Data Ownership and Storage Readiness Audit covering entity boundaries, identity, transaction authority, backup compatibility, and localStorage versus Dexie readiness.
 - Consolidated the next likely user-facing feature candidates in the Roadmap: Comparable Printings, exact-printing price history, owned-spec backfill, and honest portfolio summary/performance work, including provisional build order, minimum scopes, and data-model gates.
 - Marked the solo core singles workflow testing phase complete in active status docs, including Radar search/exact printing, Radar management, Radar-to-Positions buying, additional buys, partial/full sells, plan edits, Card Detail, Dashboard, Signals, Transactions, History, and friend-preview workflow validation.

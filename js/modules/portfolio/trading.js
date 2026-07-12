@@ -157,7 +157,7 @@ function deleteSpec(positionOrEvent, maybeCell) {
 
 function resetCash() {
   cash = startingCash;
-  localStorage.setItem("cash", cash);
+  saveCashState(cash);
   updateTotals();
 }
 

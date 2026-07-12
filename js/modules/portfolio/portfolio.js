@@ -364,7 +364,7 @@ function savePositionPlanEdit(id, field, value) {
     }
   }
 
-  localStorage.setItem("specs", JSON.stringify(specs));
+  saveSpecsState(specs);
   refreshPortfolioTable();
 
   if (typeof showAppNotice === "function") {

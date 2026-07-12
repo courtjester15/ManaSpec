@@ -4,11 +4,73 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (root) root.ManaSpecDataFoundation = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function createFoundation() {
+  const COMPATIBILITY_META = typeof Symbol === "function"
+    ? Symbol("manaspecCompatibilityMeta")
+    : "__manaspecCompatibilityMeta";
   const TRANSACTION_TYPES = new Set(["BUY", "SELL"]);
   const FINISHES = new Set(["nonfoil", "foil", "etched"]);
 
   function copy(record) {
     return record && typeof record === "object" && !Array.isArray(record) ? { ...record } : {};
+  }
+
+  function comparable(value) {
+    if (value === undefined) return "__undefined__";
+    try {
+      return JSON.stringify(value);
+    } catch (err) {
+      return String(value);
+    }
+  }
+
+  function attachCompatibilityMeta(normalized, original, derivedFields = []) {
+    const raw = copy(original);
+    derivedFields.forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(raw, key)) return;
+      if (!Object.prototype.hasOwnProperty.call(normalized, key)) return;
+      Object.defineProperty(normalized, key, {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: normalized[key],
+      });
+    });
+    const baseline = {};
+    Object.getOwnPropertyNames(normalized).forEach(key => {
+      baseline[key] = comparable(normalized[key]);
+    });
+
+    Object.defineProperty(normalized, COMPATIBILITY_META, {
+      configurable: false,
+      enumerable: false,
+      writable: false,
+      value: {
+        raw,
+        baseline,
+        derivedFields: new Set(derivedFields),
+      },
+    });
+    return normalized;
+  }
+
+  function serializeCompatibleRecord(record) {
+    if (!record || typeof record !== "object" || Array.isArray(record)) return record;
+    const meta = record[COMPATIBILITY_META];
+    if (!meta) return { ...record };
+
+    const stored = { ...meta.raw };
+    Object.keys(record).forEach(key => {
+      const changed = comparable(record[key]) !== meta.baseline[key];
+      const existed = Object.prototype.hasOwnProperty.call(meta.raw, key);
+      if (!changed) return;
+      if (!existed && meta.derivedFields.has(key)) return;
+      stored[key] = record[key];
+    });
+    return stored;
+  }
+
+  function serializeCompatibleRecords(records = []) {
+    return Array.isArray(records) ? records.map(serializeCompatibleRecord) : [];
   }
 
   function text(value) {
@@ -81,7 +143,7 @@
   function trackedRecord(record, source) {
     const original = copy(record);
     const normalizedFinish = finish(original);
-    return {
+    const normalized = {
       ...original,
       id: text(original.id),
       scryfall_id: scryfallId(original),
@@ -99,15 +161,34 @@
       plan: plan(original),
       compatibilitySource: source,
     };
+    return attachCompatibilityMeta(normalized, original, [
+      "oracle_id",
+      "trackedPrintingKey",
+      "finish",
+      "lang",
+      "plan",
+      "compatibilitySource",
+    ]);
   }
 
   function normalizeSpec(record) {
-    return {
-      ...trackedRecord(record, "specs"),
+    const original = copy(record);
+    const tracked = trackedRecord(original, "specs");
+    const normalized = {
+      ...tracked,
+      oracle_id: tracked.oracle_id,
+      trackedPrintingKey: tracked.trackedPrintingKey,
+      finish: tracked.finish,
+      lang: tracked.lang,
+      plan: tracked.plan,
+      compatibilitySource: tracked.compatibilitySource,
       qty: nonNegativeNumber(record?.qty),
       buyPrice: nonNegativeNumber(record?.buyPrice),
       buyDate: date(record?.buyDate),
     };
+    return attachCompatibilityMeta(normalized, original, [
+      "oracle_id", "trackedPrintingKey", "finish", "lang", "plan", "compatibilitySource",
+    ]);
   }
 
   function normalizeRadarItem(record) {
@@ -117,7 +198,7 @@
   function normalizeTransaction(record, inputIndex = 0) {
     const original = copy(record);
     const normalizedFinish = finish(original);
-    return {
+    const normalized = {
       ...original,
       id: text(original.id),
       cardId: text(original.cardId),
@@ -139,6 +220,17 @@
       backfilledFromPositionId: text(original.backfilledFromPositionId),
       __inputIndex: inputIndex,
     };
+    return attachCompatibilityMeta(normalized, original, [
+      "trackedPrintingKey",
+      "finish",
+      "lang",
+      "shipping",
+      "extraCosts",
+      "cashEffect",
+      "estimatedDate",
+      "estimatedPrice",
+      "__inputIndex",
+    ]);
   }
 
   function validateTransaction(transaction) {
@@ -345,5 +437,7 @@
     validateTransaction,
     projectPositionsFromTransactions,
     compareProjectedPositions,
+    serializeCompatibleRecord,
+    serializeCompatibleRecords,
   });
 });

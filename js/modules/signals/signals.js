@@ -696,7 +696,7 @@ function saveSignalTargetEdit(row, value) {
 
   if (row.source === "portfolio") {
     item.exitTarget = target;
-    localStorage.setItem("specs", JSON.stringify(specs));
+    saveSpecsState(specs);
   } else {
     item.entryTarget = target;
     saveRadarState(radar);

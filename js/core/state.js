@@ -30,8 +30,8 @@ if (migratedRadarItems.length) {
   radar = mergeRadarItems(radar, migratedRadarItems);
   specs = specs.filter(s => Number(s.qty || 0) > 0);
 
-  localStorage.setItem("radar", JSON.stringify(radar));
-  localStorage.setItem("specs", JSON.stringify(specs));
+  saveRadarState(radar);
+  saveSpecsState(specs);
 }
 
 // Cash balance
@@ -110,7 +110,7 @@ function backfillTransactionsFromCurrentPositions() {
   if (!changed) return;
 
   transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-  localStorage.setItem("transactions", JSON.stringify(transactions));
+  saveTransactionsState(transactions);
 }
 
 function getLedgerQuantityForPosition(cardId) {
@@ -153,6 +153,6 @@ function enrichTransactionsFromCurrentPositions() {
   });
 
   if (changed) {
-    localStorage.setItem("transactions", JSON.stringify(transactions));
+    saveTransactionsState(transactions);
   }
 }

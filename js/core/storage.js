@@ -31,12 +31,34 @@ function loadJsonArray(key) {
   return [];
 }
 
+function getDataFoundation() {
+  return typeof ManaSpecDataFoundation !== "undefined" ? ManaSpecDataFoundation : null;
+}
+
+function loadCoreRecordArray(key, normalizerName) {
+  const records = loadJsonArray(key);
+  const foundation = getDataFoundation();
+  const normalizer = foundation?.[normalizerName];
+  return typeof normalizer === "function" ? records.map(normalizer) : records;
+}
+
+function serializeCoreRecords(records) {
+  const foundation = getDataFoundation();
+  return typeof foundation?.serializeCompatibleRecords === "function"
+    ? foundation.serializeCompatibleRecords(records)
+    : records;
+}
+
+function saveCoreRecordArray(key, records) {
+  localStorage.setItem(key, JSON.stringify(serializeCoreRecords(records)));
+}
+
 function loadSpecs() {
-  return loadJsonArray("specs");
+  return loadCoreRecordArray("specs", "normalizeSpec");
 }
 
 function loadRadar() {
-  return loadJsonArray("radar");
+  return loadCoreRecordArray("radar", "normalizeRadarItem");
 }
 
 function loadSignals() {
@@ -52,7 +74,7 @@ function loadCardNotes() {
 }
 
 function loadTransactions() {
-  return loadJsonArray("transactions");
+  return loadCoreRecordArray("transactions", "normalizeTransaction");
 }
 
 function loadCash(startingCash) {
@@ -102,9 +124,9 @@ function createManaSpecBackup() {
 
 function readManaSpecBackupData() {
   return {
-    specs: loadSpecs(),
-    radar: loadRadar(),
-    transactions: loadTransactions(),
+    specs: serializeCoreRecords(loadSpecs()),
+    radar: serializeCoreRecords(loadRadar()),
+    transactions: serializeCoreRecords(loadTransactions()),
     cardNotes: loadCardNotes(),
     thesisNotes: loadThesisNotes(),
     signals: loadSignals(),
@@ -221,6 +243,8 @@ function restoreManaSpecBackup(normalizedBackup) {
   const emergencyBackup = createManaSpecBackup();
 
   try {
+    // Intentional restore exception: full backup restore must replace the
+    // allowlisted storage keys atomically rather than use normal workflow saves.
     localStorage.setItem(MANASPEC_PRE_IMPORT_BACKUP_KEY, JSON.stringify({
       createdAt: new Date().toISOString(),
       reason: "pre-import",
@@ -239,6 +263,7 @@ function restoreManaSpecBackup(normalizedBackup) {
 }
 
 function restoreManaSpecBackupData(data) {
+  // Intentional rollback exception paired with restoreManaSpecBackup().
   MANASPEC_BACKUP_ARRAY_KEYS.forEach(key => {
     localStorage.setItem(key, JSON.stringify(Array.isArray(data[key]) ? data[key] : []));
   });
@@ -248,14 +273,22 @@ function restoreManaSpecBackupData(data) {
 
 // Save state
 function saveState(specs, cash, updateTotals) {
-  localStorage.setItem("specs", JSON.stringify(specs));
-  localStorage.setItem("cash", cash);
+  saveSpecsState(specs);
+  saveCashState(cash);
 
   updateTotals();
 }
 
+function saveSpecsState(specs) {
+  saveCoreRecordArray("specs", specs);
+}
+
+function saveCashState(cash) {
+  localStorage.setItem("cash", String(cash));
+}
+
 function saveRadarState(radar) {
-  localStorage.setItem("radar", JSON.stringify(radar));
+  saveCoreRecordArray("radar", radar);
 
   if (typeof renderRadarItems === "function") {
     renderRadarItems();
@@ -275,7 +308,7 @@ function saveCardNotesState(cardNotes) {
 }
 
 function saveTransactionsState(transactions) {
-  localStorage.setItem("transactions", JSON.stringify(transactions));
+  saveCoreRecordArray("transactions", transactions);
 }
 
 function saveMarketObservations(observations) {

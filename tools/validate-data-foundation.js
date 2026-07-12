@@ -8,12 +8,29 @@ function tx(id, cardId, type, quantity, price, date, extra = {}) {
 }
 
 function runFocusedCases() {
-  const unknown = foundation.normalizeSpec({
+  const legacyRaw = {
     id: "printing-a", scryfall_id: "printing-a", foil: false, qty: "2", buyPrice: "4.50", customFutureField: "preserved",
-  });
+  };
+  const unknown = foundation.normalizeSpec(legacyRaw);
   assert.equal(unknown.lang, null);
   assert.equal(unknown.customFutureField, "preserved");
   assert.equal(unknown.trackedPrintingKey, "printing-a|nonfoil");
+  assert.deepEqual(foundation.serializeCompatibleRecord(unknown), legacyRaw);
+  assert.equal(JSON.stringify(foundation.serializeCompatibleRecord(unknown)), JSON.stringify(legacyRaw));
+  unknown.exitTarget = 12;
+  const edited = foundation.serializeCompatibleRecord(unknown);
+  assert.equal(edited.exitTarget, 12);
+  assert.equal(edited.customFutureField, "preserved");
+  assert.equal(Object.prototype.hasOwnProperty.call(edited, "lang"), false);
+  assert.equal(Object.prototype.hasOwnProperty.call(edited, "trackedPrintingKey"), false);
+  const normalizedRadarClone = { ...foundation.normalizeRadarItem({
+    id: "printing-radar", scryfall_id: "printing-radar", foil: false, name: "Radar Card",
+  }) };
+  assert.equal(Object.prototype.hasOwnProperty.call(normalizedRadarClone, "lang"), false);
+  assert.equal(Object.prototype.hasOwnProperty.call(normalizedRadarClone, "trackedPrintingKey"), false);
+  assert.equal(Object.prototype.hasOwnProperty.call(normalizedRadarClone, "plan"), false);
+  assert.equal(normalizedRadarClone.scryfall_id, "printing-radar");
+  assert.equal(normalizedRadarClone.foil, false);
 
   const multipleBuys = foundation.projectPositionsFromTransactions([
     tx("b1", "printing-a", "BUY", 4, 5, "2026-01-01"),
@@ -51,7 +68,7 @@ function runFocusedCases() {
     id: "bad", cardId: "printing-d", foil: false, type: "BUY", quantity: "bad", price: "?", date: "bad",
   });
   assert.deepEqual(foundation.validateTransaction(malformed).sort(), ["invalid_date", "invalid_price", "invalid_quantity"].sort());
-  return { status: "passed", caseCount: 8 };
+  return { status: "passed", caseCount: 12 };
 }
 
 function newestFixture() {
@@ -66,7 +83,16 @@ function auditFixture() {
   const fixture = newestFixture();
   if (!fixture) return { status: "skipped", reason: "No local JSON backup fixture found." };
   const backup = JSON.parse(fs.readFileSync(fixture.path, "utf8"));
-  const comparison = foundation.compareProjectedPositions(backup?.data?.specs || [], backup?.data?.transactions || []);
+  const rawSpecs = backup?.data?.specs || [];
+  const rawRadar = backup?.data?.radar || [];
+  const rawTransactions = backup?.data?.transactions || [];
+  const normalizedSpecs = rawSpecs.map(foundation.normalizeSpec);
+  const normalizedRadar = rawRadar.map(foundation.normalizeRadarItem);
+  const normalizedTransactions = rawTransactions.map(foundation.normalizeTransaction);
+  assert.equal(JSON.stringify(foundation.serializeCompatibleRecords(normalizedSpecs)), JSON.stringify(rawSpecs));
+  assert.equal(JSON.stringify(foundation.serializeCompatibleRecords(normalizedRadar)), JSON.stringify(rawRadar));
+  assert.equal(JSON.stringify(foundation.serializeCompatibleRecords(normalizedTransactions)), JSON.stringify(rawTransactions));
+  const comparison = foundation.compareProjectedPositions(rawSpecs, rawTransactions);
   const discrepancyTypes = comparison.results.reduce((counts, result) => {
     counts[result.status] = (counts[result.status] || 0) + 1;
     return counts;
@@ -78,6 +104,7 @@ function auditFixture() {
   return {
     status: "completed",
     fixture: fixture.name,
+    byteEquivalentLoadOnlySerialization: true,
     summary: comparison.summary,
     discrepancyTypes,
     projectionSummary: comparison.projection.summary,

@@ -511,6 +511,27 @@ Batch 1 rules:
 - Preserve compatible unknown record-level fields through normalization.
 - Keep every Batch 1 normalizer and projector disconnected from production persistence.
 
+### Backend Foundation Contract (Batch 2)
+
+Runtime loading now uses the Batch 1 normalizers as compatibility adapters for `specs`, `radar`, and `transactions`. This does not make Transactions authoritative or migrate stored records.
+
+- Normal loading never writes to localStorage.
+- Runtime-only derived fields and missing future defaults are not serialized automatically.
+- Each normalized record retains a non-serialized raw compatibility baseline.
+- An unchanged record serializes to its prior compatible shape.
+- A real workflow edit is merged over the raw record, preserving unknown fields and avoiding unrelated field additions.
+- Startup backfills remain identifiable through `backfilledFromPositionId`.
+- Normal core persistence for `specs`, `radar`, `transactions`, and `cash` is centralized in `js/core/storage.js`.
+- Full confirmed backup restore and emergency rollback remain intentional direct-write exceptions.
+- The projector remains a read-only proof and reconciliation tool; current `specs` still drives Positions.
+
+Reconciliation policy:
+
+- An open holding projected from Transactions but absent from `specs` is a warning, not an automatic repair.
+- ManaSpec must not silently recreate the Position, remove the Transaction, fabricate a SELL, or alter cash.
+- Valid future resolutions are restoring a still-owned Position, recording an approved historical disposition/correction, or explicitly identifying invalid/test history.
+- Closed projected lifecycles remain valid historical results when no current Position exists.
+
 Known transitional facts:
 
 - `specs` currently stores owned Positions directly.

@@ -173,16 +173,18 @@ ManaSpec currently uses ordered global scripts from `index.html`. Do not convert
 
 Current order:
 
-1. `js/core/storage.js`: localStorage load/save helpers.
-2. `js/core/state.js`: global arrays, cash state, and startup migrations/backfills.
-3. Metadata, Notes, filters, table, and Dashboard helpers.
-4. Positions/Radar modules: trading, table rendering, printing search, Radar, Transactions, Signals, archived Thesis code, History, Admin, and Card Detail.
-5. Global UI/status helpers: summary and help.
-6. Price snapshots and pricing refresh.
-7. `js/core/app.js`: navigation, universal search, boot, and initial render.
+1. `js/core/data-foundation.js`: pure compatibility normalization, serialization, and read-only ledger projection helpers.
+2. `js/core/storage.js`: centralized localStorage load/save helpers and backup safety.
+3. `js/core/state.js`: global arrays, cash state, and startup migrations/backfills.
+4. Metadata, Notes, filters, table, and Dashboard helpers.
+5. Positions/Radar modules: trading, table rendering, printing search, Radar, Transactions, Signals, archived Thesis code, History, Admin, and Card Detail.
+6. Global UI/status helpers: summary and help.
+7. Price snapshots and pricing refresh.
+8. `js/core/app.js`: navigation, universal search, boot, and initial render.
 
 Dependency rules:
 
+- `data-foundation.js` must load before `storage.js`.
 - `storage.js` must load before `state.js`.
 - `state.js` must load before modules that read `specs`, `radar`, `signals`, `cardNotes`, `thesisNotes`, `transactions`, or `cash`.
 - `js/ui/table.js` must load before modules that call shared table render, sort, or pagination helpers.

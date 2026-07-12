@@ -43,15 +43,17 @@ ManaSpec loads through ordered global scripts.
 
 Current sequence:
 
-1. `js/core/storage.js` defines localStorage load/save, backup, import, and restore helpers.
-2. `js/core/state.js` loads global runtime state from storage and runs startup backfills/enrichment.
-3. Metadata, notes, filters, shared table UI, context band UI, intent modal UI, and dashboard helpers load.
-4. Workflow modules load: trading, Positions, printings, search, Radar, Transactions, Signals, Thesis, History, Admin, and Card Detail.
-5. Global UI/status helpers and pricing helpers load.
-6. `js/core/app.js` initializes navigation, universal search, help, status, and the first rendered view.
+1. `js/core/data-foundation.js` defines pure compatibility normalizers, serialization helpers, and the read-only Transaction projector/comparison tools.
+2. `js/core/storage.js` defines centralized localStorage load/save boundaries, backup, import, and restore helpers.
+3. `js/core/state.js` loads normalized global runtime state from storage and runs startup backfills/enrichment.
+4. Metadata, notes, filters, shared table UI, context band UI, intent modal UI, and dashboard helpers load.
+5. Workflow modules load: trading, Positions, printings, search, Radar, Transactions, Signals, Thesis, History, Admin, and Card Detail.
+6. Global UI/status helpers and pricing helpers load.
+7. `js/core/app.js` initializes navigation, universal search, help, status, and the first rendered view.
 
 Dependency rules:
 
+- `data-foundation.js` must load before `storage.js` so core records can use read-only normalization and compatibility serialization.
 - `storage.js` must load before `state.js`.
 - `state.js` must load before modules that read or mutate global arrays.
 - `js/ui/table.js` must load before workflow tables.
@@ -158,7 +160,11 @@ Storage ownership rules:
 - Import is replace-only unless a future migration explicitly changes that rule.
 - Ledger migration must be planned before storage behavior changes.
 
-`js/core/storage.js` owns general load/save helpers and backup safety. Workflow modules may still call `localStorage.setItem()` directly in existing code, but new storage-sensitive changes should prefer the established helpers or make ownership clearer.
+`js/core/storage.js` owns normal load/save boundaries for `specs`, `radar`, `transactions`, and `cash`, plus backup safety. Workflow modules route those core records through `loadSpecs()`, `loadRadar()`, `loadTransactions()`, `loadCash()`, `saveSpecsState()`, `saveRadarState()`, `saveTransactionsState()`, and `saveCashState()`.
+
+Core load boundaries use `js/core/data-foundation.js` as a read adapter. Compatibility metadata is kept outside serialized record fields. Unchanged normalized records serialize to their original compatible shape; real workflow edits are merged over the original raw record so unknown fields survive and future/default fields are not added accidentally.
+
+Full backup restore and emergency rollback intentionally write the allowlisted keys directly because restore is a confirmed replacement operation, not a normal workflow save. UI preferences, price snapshots, refresh status, notes, and market observations retain their existing owning boundaries and are outside the core centralization batch.
 
 ### Beta Storage Compatibility
 
