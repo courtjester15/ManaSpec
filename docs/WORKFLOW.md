@@ -228,7 +228,7 @@ When performing UI QA, browser inspection, console debugging, or regression test
 - Start the standard ManaSpec browser QA server from the project root:
 
 ```bash
-python -m http.server 8000 --bind 127.0.0.1
+python -m http.server 8000
 ```
 
 Then open:
@@ -238,11 +238,15 @@ http://127.0.0.1:8000/index.html
 ```
 
 Notes:
-- If the browser reports `file://` is blocked, do not troubleshoot file access. Start or reconnect to the local static server and continue testing at the localhost URL.
-- Avoid `file://`, inline `node -e` scripts, checked-in Node static server launches, or hidden `Start-Process` server launches for the standard browser QA path.
+- Use this Python server by default. Do not substitute another local server unless the Python server genuinely fails.
+- Confirm `http://127.0.0.1:8000/index.html` responds before troubleshooting the browser.
+- Never use `file://`, inline `node -e` scripts, Node static servers, or hidden `Start-Process` server launches for the standard browser QA path.
 - Prefer browser inspection and console validation over screenshot-only debugging when available.
 - Browser `evaluate()` is not a reliable way to inspect localStorage or app state in the Codex browser harness. Prefer visible UI, DOM snapshots, screenshots when useful, and console checks.
-- If the browser harness becomes sluggish, loops, hangs, or returns inconsistent inspection results after extended debugging, restart the browser session, reopen the page, and continue from a fresh state.
+- After a browser disconnect, obtain a fresh browser and fresh tab. Do not reuse stale tabs, locators, sessions, or browser handles.
+- If the confirmed preview responds but the browser cannot attach or rejects localhost, treat it as browser-tooling friction rather than a ManaSpec application defect.
+- Make one clean retry with the healthy server and a fresh browser session. If it still fails, stop and report the exact blocker.
+- Do not repeatedly restart servers or modify application code to compensate for browser-tool failure.
 
 ### Card Detail Browser QA
 

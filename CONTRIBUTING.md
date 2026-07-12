@@ -68,13 +68,13 @@ ManaSpec is currently a vanilla static app.
 Use a local HTTP server from the project root:
 
 ```bash
-python -m http.server 8000 --bind 127.0.0.1
+python -m http.server 8000
 ```
 
 Then open:
 
 ```text
-http://127.0.0.1:8000/
+http://127.0.0.1:8000/index.html
 ```
 
 The app stores data in browser `localStorage`. Use Admin -> Data Safety -> Export Backup before testing changes that touch storage, imports, trading flows, or workflow state.
