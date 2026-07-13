@@ -20,6 +20,14 @@ Design priorities:
 
 The interface should feel focused, quiet, and operational. It should help the user notice what matters, move between workflows, and update plans without losing context.
 
+## ManaSpec-Native UI
+
+Reuse existing ManaSpec UI before creating new UI. New features should inherit established components, CSS classes, helpers, formatting, and interaction patterns by default. When an existing pattern solves most of the need, extend it with a scoped variation rather than building a parallel implementation.
+
+A feature is ManaSpec-native when its colors, typography, spacing, alignment, borders, table density, financial formatting, button sizes, hover states, loading and empty behavior, modal rhythm, and header hierarchy match the rest of the application. A user should not be able to identify a feature as newer simply because its visual language drifted.
+
+Completely new UI is appropriate only when no shared component exists, no reasonable extension fits, and no installed project library solves the problem. The reason for introducing it should be explicit in the feature review.
+
 ## Terminology
 
 Use these terms consistently in UI copy, docs, and future implementation names when practical.

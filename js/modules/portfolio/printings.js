@@ -252,12 +252,13 @@ function renderPrintingPriceCell(printing, finish) {
 }
 
 function buildPrintingFinishCard(printing, finish) {
-  if (finish !== "foil") return { ...printing, foil: false };
+  if (finish === "nonfoil") return { ...printing, finish, foil: false };
 
   return {
     ...printing,
-    id: `${printing.id}|foil`,
+    id: `${printing.id}|${finish}`,
     scryfall_id: printing.id,
-    foil: true,
+    finish,
+    foil: finish === "foil",
   };
 }

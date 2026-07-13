@@ -632,6 +632,22 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
     var(--col-actions);
 }
 
+.ms-table--comparable-printings {
+  --table-row-h: 24px;
+  --table-cell-pad-x: 5px;
+  --table-min-width: 100%;
+  --table-columns: minmax(112px, 1fr) 58px 72px 62px 74px minmax(190px, 1.25fr);
+  overflow-x: hidden;
+  border-radius: var(--radius-sm);
+}
+
+.ms-table--comparable-printings .ms-table__body { padding-bottom: 0; }
+.ms-table--comparable-printings .ms-table__header { font-size: 9px; }
+.ms-table--comparable-printings .ms-table__row { cursor: default; font-size: 10px; }
+.ms-table--comparable-printings .ms-table__row.is-current { background: rgba(125, 211, 252, 0.09); }
+.ms-table--comparable-printings .ms-table__row.is-current:hover { background: rgba(125, 211, 252, 0.13); }
+.ms-table--comparable-printings .ms-table__row > span:first-child { gap: 0; }
+
 .printing-picker-header,
 .printing-picker-row {
   display: grid;

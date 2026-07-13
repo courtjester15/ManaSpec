@@ -132,11 +132,10 @@ The core singles workflow is considered complete. The next likely user-facing bu
 Execution note: the Data Ownership and Storage Readiness Audit and its three approved foundation batches are complete. Compatibility boundaries, centralized persistence, schema/migration readiness, reconciliation reporting, and the unsafe Position-delete guard are in place. User-facing feature work may resume in this provisional order; the separate transaction-authority migration remains unapproved future work.
 
 1. Comparable Printings
-   - Safest and most likely first build because Oracle-based Scryfall printing lookup, exact-printing identity, finish handling, and Card Detail already exist.
-   - Smallest useful scope: a compact Card Detail section for paper printings with set, collector number, finish, release date, supported Scryfall price, exact links, and a clear highlight for the currently tracked printing and finish.
-   - No persistence or migration change should be required.
+   - [x] Shipped v1 in Card Detail with same-Oracle paper printings, finish-aware Scryfall prices, exact links, optional Add to Radar, current UUID-plus-finish highlighting, deterministic price sorting, and progressive row expansion.
+   - [x] Kept the feature runtime-only with no persistence, schema, backup, migration, or ledger changes.
 
-2. Price-History Chart
+2. Price-History Chart (next likely user-facing candidate)
    - Use existing `priceSnapshots` for one exact owned printing in Card Detail.
    - Smallest useful scope: a compact native SVG line chart with current/previous price context, observed date range, and an honest insufficient-history state.
    - Do not combine manual market observations with the Scryfall series, invent missing dates, or imply continuous history.

@@ -8,18 +8,22 @@ Live item check panel for price, movement, and market signals.
 */
 
 let activeCardDetail = null;
+let cardDetailRequestSequence = 0;
 
 async function openCardDetail(cardId, source = "portfolio", options = {}) {
   const tracked = findTrackedCardSource(cardId, source);
   const item = tracked?.item;
   if (!item) return;
 
-  activeCardDetail = { cardId, source: tracked.source, focusNotes: Boolean(options.focusNotes) };
+  const requestToken = ++cardDetailRequestSequence;
+  activeCardDetail = { cardId, source: tracked.source, focusNotes: Boolean(options.focusNotes), requestToken };
   renderCardDetailShell(item);
 
   try {
     const res = await fetch(`https://api.scryfall.com/cards/${getScryfallCardId(item)}`);
     const card = await res.json();
+
+    if (!isActiveCardDetailRequest(requestToken, getScryfallCardId(item))) return;
 
     if (card.object === "error") {
       renderCardDetailError(item, "Could not load live card data.");
@@ -28,10 +32,10 @@ async function openCardDetail(cardId, source = "portfolio", options = {}) {
 
     syncCardMetadata(item, card);
     syncTrackedCardPrice(item, card);
-    renderCardDetail(item, card, tracked.source, options);
+    renderCardDetail(item, card, tracked.source, options, requestToken);
   } catch (err) {
     console.error(err);
-    renderCardDetailError(item, "Live check failed.");
+    if (isActiveCardDetailRequest(requestToken, getScryfallCardId(item))) renderCardDetailError(item, "Live check failed.");
   }
 }
 
@@ -52,7 +56,17 @@ function findTrackedCardSource(cardId, preferredSource) {
 }
 
 function getScryfallCardId(item) {
-  return item.scryfall_id || String(item.id || "").replace(/\|(foil|nonfoil)$/i, "");
+  return item.scryfall_id || String(item.id || "").replace(/\|(foil|nonfoil|etched)$/i, "");
+}
+
+function isActiveCardDetailRequest(requestToken, scryfallId) {
+  const currentItem = activeCardDetail
+    ? findTrackedCard(activeCardDetail.cardId, activeCardDetail.source)
+    : null;
+  return Boolean(activeCardDetail)
+    && activeCardDetail.requestToken === requestToken
+    && getScryfallCardId(currentItem || {}) === scryfallId
+    && document.getElementById("cardDetailModal")?.classList.contains("open");
 }
 
 function renderCardDetailShell(item) {
@@ -74,7 +88,7 @@ function renderCardDetailError(item, message) {
   `;
 }
 
-function renderCardDetail(item, card, source, options = {}) {
+function renderCardDetail(item, card, source, options = {}, requestToken = activeCardDetail?.requestToken) {
   const movement = getCardMovement(item.id);
   const marketLinks = getMarketLinks(card, item);
   const owned = specs.find(spec => spec.id === item.id);
@@ -97,6 +111,7 @@ function renderCardDetail(item, card, source, options = {}) {
         ${renderNotesSection(item)}
         ${renderOracleSection(card)}
       </div>
+      ${renderComparablePrintingsSection({ status: "loading" })}
     </div>
   `;
 
@@ -126,6 +141,8 @@ function renderCardDetail(item, card, source, options = {}) {
   } else {
     saveRadarState(radar);
   }
+
+  loadComparablePrintings(item, card, requestToken);
 }
 
 function renderOverviewSection(item, movement, owned) {
@@ -565,6 +582,8 @@ function ensureCardDetailModal() {
 function closeCardDetail() {
   const modal = document.getElementById("cardDetailModal");
   if (modal) modal.classList.remove("open");
+  cardDetailRequestSequence += 1;
+  activeCardDetail = null;
 }
 
 function ensureCardDetailEscapeHandler() {

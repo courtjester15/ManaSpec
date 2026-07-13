@@ -14,6 +14,7 @@ The architecture should stay boring until the product earns more structure:
 - Keep workflow ownership visible in the code.
 - Keep user-owned data safe during every change.
 - Keep dense scan surfaces fast to reason about.
+- Reuse and extend ManaSpec's existing UI systems before creating new ones.
 - Extract shared helpers only after repeated behavior is stable.
 - Do not optimize architecture ahead of beta workflow clarity.
 
@@ -47,7 +48,7 @@ Current sequence:
 2. `js/core/storage.js` defines centralized localStorage load/save boundaries, backup, import, and restore helpers.
 3. `js/core/state.js` loads normalized global runtime state from storage and runs startup backfills/enrichment.
 4. Metadata, notes, filters, shared table UI, context band UI, intent modal UI, and dashboard helpers load.
-5. Workflow modules load: trading, Positions, printings, search, Radar, Transactions, Signals, Thesis, History, Admin, and Card Detail.
+5. Workflow modules load: trading, Positions, printings, search, Radar, Transactions, Signals, Thesis, History, Admin, Comparable Printings, and Card Detail.
 6. Global UI/status helpers and pricing helpers load.
 7. `js/core/app.js` initializes navigation, universal search, help, status, and the first rendered view.
 
@@ -57,7 +58,7 @@ Dependency rules:
 - `storage.js` must load before `state.js`.
 - `state.js` must load before modules that read or mutate global arrays.
 - `js/ui/table.js` must load before workflow tables.
-- Card Detail must load after tracked-card, note, market observation, target, and price helper dependencies are available.
+- Comparable Printings must load immediately before Card Detail; Card Detail must load after tracked-card, note, market observation, and target helper dependencies are available.
 - `app.js` stays last because it calls `initApp()` immediately.
 
 Do not convert to ES modules until dependency boundaries are documented and the beta workflow is stable.
@@ -101,7 +102,7 @@ Workflow modules own user workflows:
 - Radar: discovery, exact printing selection, watched ideas, entry planning, and planned quantity.
 - Positions: owned holdings, exit planning, active management, buy/sell/delete actions, and current value.
 - Signals: computed read-only attention layer with bucket filters, exact-card filters, and source navigation back to Radar or Positions.
-- Card Detail: command center for one exact tracked printing and canonical plan edits.
+- Card Detail: command center for one exact tracked printing, canonical plan edits, and runtime-only same-Oracle printing research.
 - Transactions: early ledger event surface.
 - History: review trail across transactions, Radar, and notes.
 - Admin: local data safety and maintenance tools.
@@ -206,6 +207,37 @@ ManaSpec has a few shared UI systems that should be treated as app-level contrac
 
 Changing any shared UI system can affect multiple workflows. Table changes are especially broad because Radar, Positions, Signals, Transactions, and History all rely on the shared dense-table rhythm.
 
+## UI Reuse-First Architecture
+
+New features must begin with ManaSpec's existing visual and interaction language. Before writing new markup or CSS, inspect the application for an existing component, helper, class, or pattern that already solves most of the problem.
+
+Use this order:
+
+1. Reuse an existing ManaSpec component or pattern.
+2. If it solves most of the need, add a scoped variation instead of duplicating it.
+3. Use an existing project library when it meaningfully reduces infrastructure work.
+4. Build a completely new UI implementation only when no shared component, reasonable extension, or existing library fits. Document why.
+
+The reuse inventory includes, but is not limited to:
+
+- Standard tables, context bands, modal layouts, and row actions.
+- Buttons, action links, badges, icons, and status indicators.
+- Loading, empty, confirmation, toast, pagination, and Show More patterns.
+- Typography, spacing, colors, borders, hover states, and header hierarchy.
+- Financial formatting and other shared display helpers.
+
+An existing solution that covers roughly 80% of a feature's need should normally be extended. For example, prefer a scoped Comparable Printings variation of the standard table over a second table system.
+
+This is an architectural maintainability rule, not an aesthetic preference. A smaller set of mature shared systems is preferable to many slightly different implementations. New features should strengthen those systems and feel as though they have always belonged beside Radar, Positions, Signals, Transactions, History, and Card Detail.
+
+Every feature design review must record:
+
+- Which existing components and visual patterns were reused.
+- Which existing CSS classes or helpers were reused or extended.
+- Whether an existing library simplified the implementation; if not, why not.
+- What completely new UI was introduced and why extension was not reasonable.
+- Whether the result matches the established workflows in color, typography, spacing, alignment, borders, density, financial formatting, controls, hover behavior, loading and empty states, modal rhythm, and header hierarchy.
+
 ## Table Architecture
 
 `js/ui/table.js` owns the standard table markup contract.
@@ -247,6 +279,7 @@ It owns:
 - Adding notes through shared exact-printing note helpers.
 - Saving market observations for the current printing.
 - Showing observable market evaluation without producing buy/sell recommendations.
+- Loading and presenting finish-aware, paper-only comparable printings from Scryfall without persisting them.
 
 Card Detail does not own separate planning state. If a field belongs to the card plan, it should update the canonical Radar item or Position.
 

@@ -30,11 +30,13 @@ Audit files in `docs/audits/` are point-in-time review records. Use them for con
 
 1. Pick one module or workflow.
 2. Read the relevant section in [README](README.md), the roadmap phase, and any ownership doc affected by the change.
-3. Make the smallest code change that satisfies the current goal.
-4. Verify the app still works.
-5. Update the owning doc if behavior, architecture, data relationships, or UI language changed.
-6. Update `docs/DECISIONS.md` only when a meaningful choice was made.
-7. Put new raw notes in `dev notes/inbox/`, then promote durable behavior, priorities, or decisions into active docs.
+3. For UI work, inventory reusable components, styles, helpers, interaction patterns, and installed libraries before writing new markup or CSS.
+4. Reuse an existing solution, add a scoped variation when it covers most of the need, and create new UI only when neither approach reasonably fits.
+5. Make the smallest code change that satisfies the current goal.
+6. Verify the app still works.
+7. Update the owning doc if behavior, architecture, data relationships, or UI language changed.
+8. Update `docs/DECISIONS.md` only when a meaningful choice was made.
+9. Put new raw notes in `dev notes/inbox/`, then promote durable behavior, priorities, or decisions into active docs.
 
 When a change alters a workflow model, interaction contract, or data ownership rule, update the owning active docs in the same pass. Examples include manual-to-computed behavior, shared Dashboard/Signals attention queues, canonical plan ownership, native-to-app confirmation flows, and ledger/source-of-truth changes. `CHANGELOG.md` records that the change happened; it is not a substitute for updating README, Architecture, Data Model, Style Guide, Roadmap, or Decisions when those docs own the current truth.
 
@@ -297,6 +299,9 @@ Before calling a task done:
 - For UI-facing changes, verify behavior through the Codex in-app Browser on localhost when browser automation is available.
 - If a change affects table structure, rendering, styling, sorting, pagination, or dense cell content, complete the table contract verification below.
 - Any new rule or workflow is documented.
+- UI work identifies the ManaSpec components, CSS classes, helpers, visual patterns, and libraries it reused or extended.
+- Any completely new UI implementation records why no shared component, reasonable extension, or existing project library fit.
+- New UI visually matches Radar, Positions, Signals, Transactions, History, and Card Detail, or the intentional difference is documented.
 - The roadmap status still makes sense.
 - No old note has silently become the new source of truth.
 

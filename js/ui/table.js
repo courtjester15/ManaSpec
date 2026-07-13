@@ -93,8 +93,9 @@ function renderStandardTableHeader(column, config) {
 function renderStandardTableRow(row, index, config) {
   const rowId = config.getRowId ? config.getRowId(row) : index;
   const cells = config.columns.map(column => renderStandardTableCell(row, index, column)).join("");
+  const rowClass = typeof config.rowClass === "function" ? config.rowClass(row, index) : config.rowClass;
   return `
-    <div class="ms-table__row ${config.rowClass || ""}" role="row" data-ms-row="${index}" data-row-id="${msEscapeAttr(rowId)}">
+    <div class="ms-table__row ${rowClass || ""}" role="row" data-ms-row="${index}" data-row-id="${msEscapeAttr(rowId)}">
       ${cells}
     </div>
   `;

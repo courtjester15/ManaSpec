@@ -188,7 +188,7 @@ Panels, rows, lists, modals, metrics, and status elements.
   bottom: auto;
   width: min(760px, calc(100vw - 24px));
   max-height: min(520px, calc(100vh - 24px));
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
   padding: 2px;
 }
@@ -1387,6 +1387,100 @@ button.dashboard-queue-row:focus-visible {
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.018);
 }
+
+.comparable-printings-section { min-width: 0; }
+
+.current-printing-badge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  margin-left: 5px;
+  padding: 0 4px;
+  border: 1px solid rgba(125, 211, 252, 0.35);
+  border-radius: 999px;
+  background: rgba(125, 211, 252, 0.08);
+  color: var(--text-strong);
+  font-size: 8px;
+  line-height: 13px;
+}
+
+.comparable-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.comparable-row-actions a,
+.comparable-row-actions button {
+  width: auto;
+  height: 19px !important;
+  min-height: 19px !important;
+  margin: 0;
+  padding: 0 5px !important;
+  font-size: 9px !important;
+  line-height: 1;
+}
+
+.comparable-row-actions a {
+  display: inline-flex;
+  align-items: center;
+}
+
+.comparable-tracked-state {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.comparable-printings-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+  padding-top: 4px;
+}
+
+.comparable-printings-controls button {
+  width: auto;
+  height: 21px;
+  min-height: 21px;
+  margin: 0;
+  padding: 0 7px;
+  font-size: 10px;
+}
+
+.comparable-printings-status,
+.comparable-printings-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.comparable-printings-status {
+  min-height: 24px;
+  padding: 5px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.comparable-printings-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.comparable-printings-retry {
+  width: auto;
+  min-height: 22px;
+  height: 22px;
+  margin: 0;
+  padding: 0 7px;
+  font-size: 10px;
+}
+
+.comparable-printings-note { padding: 3px 2px 0; }
 
 .detail-plan-section {
   border-color: rgba(125, 211, 252, 0.22);

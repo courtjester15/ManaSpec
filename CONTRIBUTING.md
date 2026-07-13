@@ -52,6 +52,7 @@ Please avoid large rewrites without discussion first.
 ## Contribution Rules
 
 - Keep pull requests small and focused.
+- Reuse or extend existing ManaSpec components and visual patterns before creating new UI.
 - Open an issue before large feature work.
 - Do not add new libraries unless they clearly remove repeated complexity.
 - Do not change localStorage keys casually.
@@ -88,5 +89,6 @@ Before opening a pull request:
 - Check the browser console for errors.
 - Export a backup before storage-sensitive testing.
 - Update relevant docs and `CHANGELOG.md` for user-visible or workflow-relevant changes.
+- For UI changes, note what was reused or extended and justify any completely new implementation.
 
 Thanks for helping keep ManaSpec focused, practical, and safe for user data.

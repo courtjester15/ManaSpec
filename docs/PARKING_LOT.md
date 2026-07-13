@@ -56,6 +56,7 @@ The missing layer is a small, pruneable place for promising ideas before they ar
 ## Card Detail
 
 - Revisit whether card-name clicks should open Card Detail instead of art preview. Possible future alternative: card name opens Detail, and a small art icon/button opens art preview. Do not change before beta unless usage shows real friction or the user explicitly asks.
+- Review editable saved notes after product discussion: allow editing and deletion, and decide whether History should record those changes as audit events before implementation.
 - Review whether Market Check history should display trend deltas for sellers, market price, and buylist from user-pasted observations.
 - Keep Oracle and card metadata available as supporting context, but do not let them crowd the active decision workflow.
 
