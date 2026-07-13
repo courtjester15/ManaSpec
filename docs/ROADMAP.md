@@ -129,7 +129,7 @@ Current discipline: the repeated solo core singles workflow pass is complete. Do
 
 The core singles workflow is considered complete. The next likely user-facing builds are ordered provisionally as follows; this is planning direction, not a commitment to start implementation before the next product turn is understood.
 
-Execution note: feature work is paused pending the Data Ownership and Storage Readiness Audit logged in `dev notes/inbox/2026-07-11-data-ownership-storage-readiness-audit.md`. The audit will determine whether foundation work must precede this provisional order.
+Execution note: the Data Ownership and Storage Readiness Audit and its three approved foundation batches are complete. Compatibility boundaries, centralized persistence, schema/migration readiness, reconciliation reporting, and the unsafe Position-delete guard are in place. User-facing feature work may resume in this provisional order; the separate transaction-authority migration remains unapproved future work.
 
 1. Comparable Printings
    - Safest and most likely first build because Oracle-based Scryfall printing lookup, exact-printing identity, finish handling, and Card Detail already exist.
@@ -197,8 +197,9 @@ Goal: turn the current alpha preview into a usable beta product, not a wider pro
    - [x] Treat localStorage as user data that must be portable.
 
 5. Ledger foundation
-   - [ ] Write the migration plan before changing storage behavior.
-   - [ ] Preserve current `specs`, `radar`, `transactions`, `cardNotes`, archived `thesisNotes`, market observations, cash, and price snapshots.
+   - [x] Complete the data ownership/readiness audit and approved three-batch compatibility foundation.
+   - [x] Define preservation, schema-version, migration-fixture, and reconciliation contracts for current stored data.
+   - [ ] Write and approve the transaction-authority migration plan before changing ownership behavior.
    - [ ] Move toward transactions as the source of truth and Positions as a computed view.
    - [ ] Keep historical owned-spec backfill in view, but do not build it before export/import and transaction safety are clear.
 

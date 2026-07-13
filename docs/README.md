@@ -129,8 +129,9 @@ Current workflow direction:
 
 Near-term product focus:
 
-- First, use friend-preview feedback and feature work to capture focused bugs, polish, and user-facing feature opportunities.
-- Then, draft the transaction migration path before changing storage.
+- The Data Ownership and Storage Readiness Audit and all three approved foundation batches are complete; user-facing feature work can resume.
+- Use friend-preview feedback and feature work to capture focused bugs, polish, and user-facing feature opportunities.
+- Draft and separately approve the transaction-authority migration path before changing ownership behavior.
 - Database or storage upgrades can become a learning project later, after the workflow shape is clearer.
 
 ## Current Module Lineup
@@ -327,7 +328,7 @@ Current limitations:
 
 - Positions are directly mutated.
 - Transactions is an early ledger/audit surface, but it is not yet the ownership source of truth.
-- Delete is destructive and not auditable.
+- Position Delete is correction-only and is blocked when Transactions still project an open holding; real exits use Sell. A future reconciliation workflow will make quantity corrections append-only and auditable.
 - Fees are not modeled.
 - Position rows do not preserve lot-level partial sale history; Transactions holds the current audit trail.
 

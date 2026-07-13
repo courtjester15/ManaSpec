@@ -14,6 +14,8 @@ ManaSpec is intentionally workflow-focused rather than automation-focused. It he
 
 ManaSpec is currently `v0.9.0-alpha.1` in Friend Preview / Closed Beta preparation.
 
+The Data Ownership and Storage Readiness Audit and its three approved foundation batches are complete. The app now has compatibility-safe core persistence boundaries, explicit schema/migration readiness, read-only reconciliation reporting, and protection against Position deletion leaving open transaction history. Planned user-facing feature work can resume; making Transactions authoritative remains a separate future migration.
+
 The app is built with vanilla HTML, CSS, and JavaScript. It uses Scryfall API data for card identity and pricing reference, and it stores user data in browser `localStorage`. A GitHub Pages deployment is planned for closed beta so a few trusted testers can use the app from a URL without downloading a ZIP.
 
 The current app has a modular terminal shell with Dashboard, Radar, Positions, Signals, Transactions, History, and Admin views. Radar and Positions are the active singles workflow: Scryfall search and exact printing selection feed Radar, Radar captures planning fields and optional notes, Radar can buy planned quantities into Positions through an execution-only quantity/price/note dialog, and Positions supports owned holdings, buy/sell actions, price refresh, target/hold tracking, shared notes, and summary totals.
