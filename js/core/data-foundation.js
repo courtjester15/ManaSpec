@@ -9,6 +9,27 @@
     : "__manaspecCompatibilityMeta";
   const TRANSACTION_TYPES = new Set(["BUY", "SELL"]);
   const FINISHES = new Set(["nonfoil", "foil", "etched"]);
+  const CURRENT_DATA_SCHEMA_VERSION = 1;
+  const RECONCILIATION_EVENT_SEMANTICS = Object.freeze({
+    POSITION_QUANTITY_CORRECTION: Object.freeze({
+      purpose: "Correct current owned quantity without representing a market sale.",
+      requires: Object.freeze(["trackedPrintingKey", "quantityDelta", "reason", "occurredAt", "provenance"]),
+      affectsCash: false,
+      reversibleByAnotherEvent: true,
+    }),
+    TRANSACTION_VOID: Object.freeze({
+      purpose: "Mark a specific invalid or test transaction as excluded without deleting history.",
+      requires: Object.freeze(["transactionId", "reason", "occurredAt", "provenance"]),
+      affectsCash: "explicit_cash_correction_required_if_needed",
+      reversibleByAnotherEvent: true,
+    }),
+    ACCOUNT_CORRECTION: Object.freeze({
+      purpose: "Correct cash independently from card ownership.",
+      requires: Object.freeze(["amount", "reason", "occurredAt", "provenance"]),
+      affectsCash: true,
+      reversibleByAnotherEvent: true,
+    }),
+  });
 
   function copy(record) {
     return record && typeof record === "object" && !Array.isArray(record) ? { ...record } : {};
@@ -422,7 +443,89 @@
     };
   }
 
+  function getSchemaVersionStatus(value) {
+    if (value === null || value === undefined || value === "") {
+      return {
+        status: "legacy_unversioned",
+        version: null,
+        assumedVersion: 1,
+        currentVersion: CURRENT_DATA_SCHEMA_VERSION,
+        migrationRequired: false,
+      };
+    }
+    const version = Number(value);
+    if (!Number.isInteger(version) || version < 1) {
+      return { status: "invalid", version: value, currentVersion: CURRENT_DATA_SCHEMA_VERSION, migrationRequired: false };
+    }
+    if (version > CURRENT_DATA_SCHEMA_VERSION) {
+      return { status: "future_unsupported", version, currentVersion: CURRENT_DATA_SCHEMA_VERSION, migrationRequired: false };
+    }
+    if (version < CURRENT_DATA_SCHEMA_VERSION) {
+      return { status: "migration_required", version, currentVersion: CURRENT_DATA_SCHEMA_VERSION, migrationRequired: true };
+    }
+    return { status: "current", version, currentVersion: CURRENT_DATA_SCHEMA_VERSION, migrationRequired: false };
+  }
+
+  function getLegacyBackfillProvenance(record = {}) {
+    const transaction = normalizeTransaction(record);
+    if (!transaction.backfilledFromPositionId) return null;
+    return {
+      source: "legacy_startup_backfill",
+      sourcePositionId: transaction.backfilledFromPositionId,
+      dateEstimateStatus: transaction.estimatedDate === null ? "unknown" : transaction.estimatedDate ? "estimated" : "confirmed",
+      priceEstimateStatus: transaction.estimatedPrice === null ? "unknown" : transaction.estimatedPrice ? "estimated" : "confirmed",
+      runtimeOnly: true,
+    };
+  }
+
+  function findPositionDeletionRisk(specRecord, transactionRecords = []) {
+    const spec = normalizeSpec(specRecord);
+    if (!spec.trackedPrintingKey) return { blocked: true, reason: "invalid_position_identity", projected: null };
+    const projection = projectPositionsFromTransactions(transactionRecords);
+    const projected = projection.positions.find(position => position.trackedPrintingKey === spec.trackedPrintingKey) || null;
+    if (!projected || projected.state !== "open") return { blocked: false, reason: "no_open_transaction_projection", projected };
+    return {
+      blocked: true,
+      reason: "would_leave_open_transaction_projection",
+      projected: {
+        trackedPrintingKey: projected.trackedPrintingKey,
+        quantity: projected.quantity,
+        averageCost: projected.averageCost,
+        transactionCount: projected.transactionCount,
+      },
+    };
+  }
+
+  function buildReconciliationReport(input = {}) {
+    const data = input.data && typeof input.data === "object" ? input.data : input;
+    const specs = Array.isArray(data.specs) ? data.specs : [];
+    const transactions = Array.isArray(data.transactions) ? data.transactions : [];
+    const comparison = compareProjectedPositions(specs, transactions);
+    const findings = comparison.results.filter(result => !["matched", "closed_history_only"].includes(result.status));
+    const legacyBackfillProvenance = transactions.map(getLegacyBackfillProvenance).filter(Boolean);
+    return {
+      readOnly: true,
+      dataSchema: getSchemaVersionStatus(input.dataSchemaVersion),
+      summary: {
+        ...comparison.summary,
+        findingCount: findings.length,
+        legacyBackfillCount: legacyBackfillProvenance.length,
+        legacyBackfillUnknownDateEstimateCount: legacyBackfillProvenance.filter(item => item.dateEstimateStatus === "unknown").length,
+        legacyBackfillUnknownPriceEstimateCount: legacyBackfillProvenance.filter(item => item.priceEstimateStatus === "unknown").length,
+      },
+      findings,
+      projectionIssues: comparison.projection.positions.flatMap(position => position.issues.map(issue => ({
+        trackedPrintingKey: position.trackedPrintingKey,
+        name: position.name,
+        ...issue,
+      }))),
+      legacyBackfillProvenance,
+    };
+  }
+
   return Object.freeze({
+    CURRENT_DATA_SCHEMA_VERSION,
+    RECONCILIATION_EVENT_SEMANTICS,
     normalizeOptionalText: text,
     normalizeFiniteNumber: number,
     normalizeBoolean: boolean,
@@ -437,6 +540,10 @@
     validateTransaction,
     projectPositionsFromTransactions,
     compareProjectedPositions,
+    getSchemaVersionStatus,
+    getLegacyBackfillProvenance,
+    findPositionDeletionRisk,
+    buildReconciliationReport,
     serializeCompatibleRecord,
     serializeCompatibleRecords,
   });

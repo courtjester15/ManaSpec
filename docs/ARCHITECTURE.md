@@ -186,7 +186,9 @@ When a future change requires modifying stored data:
 - Ensure JSON backup/export/import continues to work.
 - Test existing saved data before release.
 
-ManaSpec does not need a storage schema version or migration framework today. The important rule is simpler: once users exist, storage compatibility belongs in release review.
+ManaSpec data schema version `1` is now explicit and distinct from backup-envelope schema version `1`. New backups record both versions. Unversioned backups remain accepted as legacy version-1 data; future unsupported versions are rejected before restore. Migration code must remain explicit, fixture-backed, and separate from normal load normalization.
+
+Migration fixtures live under `test-fixtures/migrations/`. Every future data-schema change must retain an unmodified fixture for each supported source version, an expected migrated shape, idempotence coverage, backup round-trip coverage, and a future-version rejection case. Normal app startup must not claim a migration version or rewrite stored data unless that migration has been separately approved.
 
 ## Shared UI Systems
 

@@ -142,6 +142,20 @@ function deleteSpec(positionOrEvent, maybeCell) {
   const s = getSpec(positionOrEvent, maybeCell);
   if (!s) return;
 
+  const foundation = globalThis.ManaSpecDataFoundation;
+  if (!foundation?.findPositionDeletionRisk) {
+    showAppNotice(`Cannot verify whether deleting ${s.name} is safe. No data was changed.`, "warning");
+    return;
+  }
+  const deletionRisk = foundation.findPositionDeletionRisk(s, transactions);
+  if (deletionRisk?.blocked) {
+    showAppNotice(
+      `Cannot delete ${s.name}: its transaction history still projects an open holding. Use Sell for a real exit; quantity corrections require reconciliation.`,
+      "warning"
+    );
+    return;
+  }
+
   if (!confirm(`Delete ${s.name} from Positions? This removes the current position without logging a transaction.`)) {
     return;
   }

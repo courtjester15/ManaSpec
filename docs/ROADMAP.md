@@ -117,7 +117,8 @@ Current discipline: the repeated solo core singles workflow pass is complete. Do
    - [ ] Prefer source context preservation over broad module navigation when adding new Signal paths.
 
 3. Ledger migration plan
-   - [ ] Draft the transaction migration path before changing the storage model.
+   - [x] Define migration-readiness contracts, schema policy, reconciliation semantics, and a repeatable read-only discrepancy report.
+   - [ ] Draft and approve the transaction-authority migration path before changing the storage model.
    - [ ] Preserve existing localStorage data while defining computed Positions from transactions.
 
 4. UX polish candidates from beta notes

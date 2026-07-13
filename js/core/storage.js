@@ -95,6 +95,7 @@ function loadMarketObservations() {
 
 const MANASPEC_BACKUP_SCHEMA = "manaspec-localstorage-backup";
 const MANASPEC_BACKUP_SCHEMA_VERSION = 1;
+const MANASPEC_DATA_SCHEMA_VERSION = 1;
 const MANASPEC_BACKUP_APP_VERSION = "0.9.0-alpha.1";
 const MANASPEC_BACKUP_ARRAY_KEYS = [
   "specs",
@@ -115,6 +116,7 @@ function createManaSpecBackup() {
     app: "ManaSpec",
     schema: MANASPEC_BACKUP_SCHEMA,
     schemaVersion: MANASPEC_BACKUP_SCHEMA_VERSION,
+    dataSchemaVersion: MANASPEC_DATA_SCHEMA_VERSION,
     appVersion: MANASPEC_BACKUP_APP_VERSION,
     exportedAt: new Date().toISOString(),
     data,
@@ -181,6 +183,19 @@ function normalizeManaSpecBackup(backup) {
     };
   }
 
+  const backupSchemaVersion = Number(backup.schemaVersion || MANASPEC_BACKUP_SCHEMA_VERSION);
+  if (!Number.isInteger(backupSchemaVersion) || backupSchemaVersion < 1 || backupSchemaVersion > MANASPEC_BACKUP_SCHEMA_VERSION) {
+    return { ok: false, message: "That backup uses an unsupported backup schema version. No data was changed." };
+  }
+
+  const dataSchemaVersion = backup.dataSchemaVersion === undefined
+    ? null
+    : Number(backup.dataSchemaVersion);
+  if (dataSchemaVersion !== null
+    && (!Number.isInteger(dataSchemaVersion) || dataSchemaVersion < 1 || dataSchemaVersion > MANASPEC_DATA_SCHEMA_VERSION)) {
+    return { ok: false, message: "That backup uses an unsupported ManaSpec data schema version. No data was changed." };
+  }
+
   if (!backup.data || typeof backup.data !== "object" || Array.isArray(backup.data)) {
     return {
       ok: false,
@@ -220,7 +235,8 @@ function normalizeManaSpecBackup(backup) {
   const normalized = {
     app: "ManaSpec",
     schema: MANASPEC_BACKUP_SCHEMA,
-    schemaVersion: Number(backup.schemaVersion || MANASPEC_BACKUP_SCHEMA_VERSION),
+    schemaVersion: backupSchemaVersion,
+    dataSchemaVersion: dataSchemaVersion || MANASPEC_DATA_SCHEMA_VERSION,
     appVersion: backup.appVersion || "",
     exportedAt: backup.exportedAt || "",
     data,

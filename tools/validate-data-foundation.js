@@ -68,7 +68,26 @@ function runFocusedCases() {
     id: "bad", cardId: "printing-d", foil: false, type: "BUY", quantity: "bad", price: "?", date: "bad",
   });
   assert.deepEqual(foundation.validateTransaction(malformed).sort(), ["invalid_date", "invalid_price", "invalid_quantity"].sort());
-  return { status: "passed", caseCount: 12 };
+
+  assert.equal(foundation.getSchemaVersionStatus(null).status, "legacy_unversioned");
+  assert.equal(foundation.getSchemaVersionStatus(1).status, "current");
+  assert.equal(foundation.getSchemaVersionStatus(2).status, "future_unsupported");
+  const deletionRisk = foundation.findPositionDeletionRisk(
+    { id: "printing-a", scryfall_id: "printing-a", foil: false, qty: 1, buyPrice: 5 },
+    [tx("b1", "printing-a", "BUY", 1, 5, "2026-01-01")]
+  );
+  assert.equal(deletionRisk.blocked, true);
+  assert.equal(deletionRisk.reason, "would_leave_open_transaction_projection");
+  const report = foundation.buildReconciliationReport({
+    dataSchemaVersion: 1,
+    data: {
+      specs: [],
+      transactions: [tx("b1", "printing-a", "BUY", 1, 5, "2026-01-01")],
+    },
+  });
+  assert.equal(report.readOnly, true);
+  assert.equal(report.summary.openProjectionWithoutSpecCount, 1);
+  return { status: "passed", caseCount: 18 };
 }
 
 function newestFixture() {

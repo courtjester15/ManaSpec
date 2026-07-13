@@ -542,3 +542,23 @@ Known transitional facts:
 - Backup/import must remain stable during model changes.
 
 Do not make broad data model changes without updating this document, `ARCHITECTURE.md`, and backup/import expectations.
+
+### Backend Foundation Contract (Batch 3)
+
+Batch 3 completes migration readiness without making Transactions authoritative or rewriting existing stored records.
+
+- Application data schema version `1` is distinct from backup-envelope schema version `1`.
+- New backups declare `dataSchemaVersion: 1`; legacy unversioned backups are treated as version-1 inputs, while unsupported future versions are rejected before restore.
+- Normalizers remain compatibility adapters, not migrations.
+- The repeatable `tools/report-data-reconciliation.js` command reads a backup and reports discrepancies without writing the fixture or browser storage.
+- Legacy startup backfills receive runtime-only provenance: source `legacy_startup_backfill`, source Position ID, and explicit `unknown`, `estimated`, or `confirmed` status for date and price. Existing records are not rewritten merely to add those labels.
+
+Future reconciliation events use explicit, append-only semantics:
+
+- `POSITION_QUANTITY_CORRECTION`: changes owned quantity without pretending a market sale occurred and never changes cash implicitly.
+- `TRANSACTION_VOID`: excludes an identified invalid/test event without deleting it; any related cash correction must be explicit.
+- `ACCOUNT_CORRECTION`: changes cash without changing card ownership.
+
+Every reconciliation event requires a reason, occurrence time, and provenance. Corrections are reversed by another event, never by deleting history. These event types are contracts only in Batch 3; the current BUY/SELL projector does not execute them yet.
+
+Current Position deletion is blocked when Transactions still project an open holding. A real exit must use Sell. A future approved reconciliation workflow will handle inventory corrections. Radar Remove remains independent because Radar is watched state, not ownership.

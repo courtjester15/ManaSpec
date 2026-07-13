@@ -8,6 +8,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Added Backend Foundation Batch 3: explicit data-schema readiness, migration fixtures, reconciliation/correction semantics, runtime-only legacy-backfill provenance, and a repeatable read-only reconciliation report.
 - Added Backend Foundation Batch 1 as a read-only compatibility layer: concrete ownership contracts, pure legacy normalizers, a weighted-average Transaction-to-Position projector, a discrepancy comparison harness, and fixture-backed validation without production persistence changes.
 - Added the completed 2026-07-11 Data Ownership and Storage Readiness Audit, covering current storage shapes, field ownership, identity, transaction authority, backup safety, localStorage versus Dexie, and a controlled foundation sequence.
 - Added `HISTORY.md` as a reconstructed narrative of ManaSpec's origin, major milestones, design shifts, workflow evolution, beta-readiness path, and current state.
@@ -29,6 +30,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Prevented Position deletion when Transactions still project an open holding, closing the silent orphan path identified through the Simulacrum Synthesizer audit; real exits continue to use Sell.
 - Centralized normal persistence for Positions, Radar, Transactions, and cash; connected read-only runtime normalization with compatibility-safe serialization; preserved unknown fields and stored shapes; and retained the read-only ledger discrepancy warning without automatic reconciliation.
 - Paused the provisional feature-building sequence pending a logged Data Ownership and Storage Readiness Audit covering entity boundaries, identity, transaction authority, backup compatibility, and localStorage versus Dexie readiness.
 - Consolidated the next likely user-facing feature candidates in the Roadmap: Comparable Printings, exact-printing price history, owned-spec backfill, and honest portfolio summary/performance work, including provisional build order, minimum scopes, and data-model gates.

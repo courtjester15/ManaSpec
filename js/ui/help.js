@@ -43,7 +43,7 @@ const helpTopics = {
       "Use Sell to choose one copy, all copies, or a custom quantity before confirming the exit.",
       "Edit Target and Hold inline when you have a plan.",
       "Card Detail plan fields also save on Enter or click-away.",
-      "Delete removes the position without logging a transaction, so use it only for corrections.",
+      "Delete is only available when it cannot leave an open holding in transaction history. Use Sell for a real exit; reconciliation handles quantity corrections.",
     ],
   },
   signals: {
