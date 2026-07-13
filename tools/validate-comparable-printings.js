@@ -32,17 +32,40 @@ assert.strictEqual(context.getSupportedFinishPrice(cards[1], "etched"), null, "m
 assert.strictEqual(context.isCurrentTrackedPrinting(rows.find(row => row.id === "current" && row.finish === "nonfoil"), tracked), true);
 assert.strictEqual(context.isCurrentTrackedPrinting(rows.find(row => row.id === "current" && row.finish === "foil"), tracked), false, "same UUID with another finish must not be current");
 
-const sorted = context.sortComparablePrintingRows(rows, tracked);
-assert.strictEqual(sorted[0].key, "current|nonfoil", "current row should be pinned");
-assert.strictEqual(sorted[1].key, "cheap|nonfoil", "other priced rows should sort lowest first");
-assert.strictEqual(sorted.at(-1).key, "cheap|etched", "unpriced rows should sort last");
+const releaseDesc = context.sortComparablePrintingRows(rows, tracked, { field: "releasedAt", direction: "desc" });
+assert.strictEqual(releaseDesc[0].key, "current|nonfoil", "current row should be pinned");
+assert.strictEqual(releaseDesc[1].key, "current|foil", "default release sort should put newer non-current rows first");
+assert.strictEqual(releaseDesc.at(-1).key, "cheap|nonfoil", "stable ties should remain deterministic");
+
+const releaseAsc = context.sortComparablePrintingRows(rows, tracked, { field: "releasedAt", direction: "asc" });
+assert.strictEqual(releaseAsc[0].key, "current|nonfoil", "current should stay pinned in oldest-first sorting");
+assert.strictEqual(releaseAsc[1].id, "cheap", "oldest valid release should sort first after current");
+
+const priceAsc = context.sortComparablePrintingRows(rows, tracked, { field: "price", direction: "asc" });
+assert.strictEqual(priceAsc[0].key, "current|nonfoil", "current should stay pinned in low-price sorting");
+assert.strictEqual(priceAsc[1].key, "cheap|nonfoil", "priced rows should sort lowest first");
+assert.strictEqual(priceAsc.at(-1).key, "cheap|etched", "unpriced rows should remain last");
+
+const priceDesc = context.sortComparablePrintingRows(rows, tracked, { field: "price", direction: "desc" });
+assert.strictEqual(priceDesc[0].key, "current|nonfoil", "current should stay pinned in high-price sorting");
+assert.strictEqual(priceDesc[1].key, "current|foil", "priced rows should sort highest first");
+assert.strictEqual(priceDesc.at(-1).key, "cheap|etched", "unpriced rows should remain last when descending");
+
+const missingValueRows = [
+  { id: "dated", key: "dated|nonfoil", finish: "nonfoil", releasedAt: "2020-01-01", price: 2, setCode: "DAT", collectorNumber: "1" },
+  { id: "missing-date", key: "missing-date|nonfoil", finish: "nonfoil", releasedAt: "", price: 1, setCode: "MIS", collectorNumber: "1" },
+  { id: "invalid-date", key: "invalid-date|nonfoil", finish: "nonfoil", releasedAt: "invalid", price: 3, setCode: "INV", collectorNumber: "1" },
+];
+const missingDatesSorted = context.sortComparablePrintingRows(missingValueRows, tracked, { field: "releasedAt", direction: "asc" });
+assert.strictEqual(missingDatesSorted[0].id, "dated", "valid dates should precede missing or invalid dates");
+assert.ok(missingDatesSorted.slice(1).every(row => !context.getComparableReleaseTimestamp(row.releasedAt)), "missing dates should remain after valid dates");
 assert.strictEqual(context.formatComparablePriceDifference(-5, false), "-$5.00");
 assert.strictEqual(context.formatComparablePriceDifference(0, false), "Same");
 assert.strictEqual(context.formatComparablePriceDifference(null, true), "—", "current row should stay neutral in the comparison column");
 assert.ok(context.renderComparablePrintingsSection({ status: "loading" }).includes("Loading comparable printings"));
 assert.ok(!context.renderComparablePrintingsSection({ status: "loading" }).includes("aria-busy"), "loading state must not trigger Pico's duplicate spinner");
 assert.ok(context.renderComparablePrintingsSection({ status: "error" }).includes("Retry"));
-assert.ok(context.renderComparablePrintingsSection({ status: "ready", rows: [sorted[0]], trackedContext: tracked }).includes("No other supported paper printings found"));
+assert.ok(context.renderComparablePrintingsSection({ status: "ready", rows: [releaseDesc[0]], trackedContext: tracked }).includes("No other supported paper printings found"));
 assert.ok(context.renderComparablePrintingsControls(10, 87).includes("Show 10 More"));
 assert.ok(context.renderComparablePrintingsControls(10, 87).includes("Show All (87)"));
 assert.ok(context.renderComparablePrintingsControls(20, 87).includes("Collapse"));

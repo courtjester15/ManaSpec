@@ -55,18 +55,38 @@ function isCurrentTrackedPrinting(row, trackedContext) {
   return row?.id === trackedContext?.scryfallId && row?.finish === trackedContext?.finish;
 }
 
-function sortComparablePrintingRows(rows, trackedContext) {
+function sortComparablePrintingRows(rows, trackedContext, sortState = { field: "releasedAt", direction: "desc" }) {
+  const direction = sortState.direction === "asc" ? 1 : -1;
   return [...rows].sort((a, b) => {
     const currentDifference = Number(isCurrentTrackedPrinting(b, trackedContext)) - Number(isCurrentTrackedPrinting(a, trackedContext));
     if (currentDifference) return currentDifference;
-    if (a.price === null && b.price !== null) return 1;
-    if (a.price !== null && b.price === null) return -1;
-    if (a.price !== null && b.price !== null && a.price !== b.price) return a.price - b.price;
-    return String(a.releasedAt).localeCompare(String(b.releasedAt))
+
+    if (sortState.field === "price") {
+      if (a.price === null && b.price !== null) return 1;
+      if (a.price !== null && b.price === null) return -1;
+      if (a.price !== null && b.price !== null && a.price !== b.price) return (a.price - b.price) * direction;
+    } else {
+      const dateA = getComparableReleaseTimestamp(a.releasedAt);
+      const dateB = getComparableReleaseTimestamp(b.releasedAt);
+      if (dateA === null && dateB !== null) return 1;
+      if (dateA !== null && dateB === null) return -1;
+      if (dateA !== null && dateB !== null && dateA !== dateB) return (dateA - dateB) * direction;
+    }
+
+    return getComparableReleaseTieBreak(b) - getComparableReleaseTieBreak(a)
       || a.setCode.localeCompare(b.setCode)
       || a.collectorNumber.localeCompare(b.collectorNumber, undefined, { numeric: true })
       || a.finish.localeCompare(b.finish);
   });
+}
+
+function getComparableReleaseTimestamp(value) {
+  const timestamp = value ? Date.parse(`${value}T00:00:00Z`) : NaN;
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function getComparableReleaseTieBreak(row) {
+  return getComparableReleaseTimestamp(row.releasedAt) ?? -Infinity;
 }
 
 function getComparableTrackedContext(item, currentCard) {
@@ -140,8 +160,8 @@ function getComparablePrintingColumns(trackedContext, currentPrice) {
       title: row => row.setName,
     },
     { label: "Finish", value: row => formatComparableFinish(row.finish) },
-    { label: "Released", value: row => formatComparableRelease(row.releasedAt), align: "center" },
-    { label: "Price", value: row => row.price === null ? "—" : money(row.price), align: "money" },
+    { label: "Released", value: row => formatComparableRelease(row.releasedAt), align: "center", sortKey: "releasedAt" },
+    { label: "Price", value: row => row.price === null ? "—" : money(row.price), align: "money", sortKey: "price" },
     {
       label: "vs Current",
       value: row => formatComparablePriceDifference(
@@ -157,9 +177,9 @@ function getComparablePrintingColumns(trackedContext, currentPrice) {
 function renderComparablePrintingActions(row, index) {
   const trackedState = getComparablePrintingTrackedState(row);
   return `<span class="comparable-row-actions">
-    ${row.tcgplayerUri ? `<a href="${msEscapeAttr(row.tcgplayerUri)}" target="_blank" rel="noopener">TCG</a>` : ""}
-    ${row.scryfallUri ? `<a href="${msEscapeAttr(row.scryfallUri)}" target="_blank" rel="noopener">Scryfall</a>` : ""}
-    ${trackedState ? `<span class="comparable-tracked-state">${msEscapeHtml(trackedState)}</span>` : `<button type="button" data-ms-action="add-radar" data-ms-row="${index}">Add to Radar</button>`}
+    ${row.tcgplayerUri ? `<a class="comparable-action-slot comparable-action-slot--tcg" href="${msEscapeAttr(row.tcgplayerUri)}" target="_blank" rel="noopener">TCG</a>` : '<span class="comparable-action-slot comparable-action-slot--tcg is-unavailable" aria-label="TCGplayer unavailable">—</span>'}
+    ${row.scryfallUri ? `<a class="comparable-action-slot comparable-action-slot--scryfall" href="${msEscapeAttr(row.scryfallUri)}" target="_blank" rel="noopener">Scryfall</a>` : '<span class="comparable-action-slot comparable-action-slot--scryfall is-unavailable" aria-label="Scryfall unavailable">—</span>'}
+    ${trackedState ? `<span class="comparable-action-slot comparable-action-slot--state comparable-tracked-state">${msEscapeHtml(trackedState)}</span>` : `<button type="button" class="comparable-action-slot comparable-action-slot--state" data-ms-action="add-radar" data-ms-row="${index}">Add to Radar</button>`}
   </span>`;
 }
 
@@ -198,6 +218,16 @@ function showComparablePrintings(state) {
     columns: getComparablePrintingColumns(state.trackedContext, state.currentPrice),
     getRowId: row => row.key,
     rowClass: row => isCurrentTrackedPrinting(row, state.trackedContext) ? "is-current" : "",
+    sortState: state.sortState,
+    onSort: field => {
+      const sortState = { ...state.sortState };
+      updateStandardSort(sortState, field, field === "releasedAt" ? "desc" : "asc");
+      showComparablePrintings({
+        ...state,
+        rows: sortComparablePrintingRows(state.rows, state.trackedContext, sortState),
+        sortState,
+      });
+    },
     onAction: async (action, row) => {
       if (action !== "add-radar") return;
       const exactFinishCard = { ...row.card, finishes: [row.finish], finish: row.finish, foil: row.finish === "foil" };
@@ -225,10 +255,11 @@ async function loadComparablePrintings(item, currentCard, requestToken) {
   try {
     const cards = await fetchAllComparablePrintings(currentCard?.prints_search_uri);
     if (!isActiveCardDetailRequest(requestToken, trackedContext.scryfallId)) return;
-    const rows = sortComparablePrintingRows(getComparablePrintingFinishRows(cards), trackedContext);
+    const sortState = { field: "releasedAt", direction: "desc" };
+    const rows = sortComparablePrintingRows(getComparablePrintingFinishRows(cards), trackedContext, sortState);
     const currentRow = rows.find(row => isCurrentTrackedPrinting(row, trackedContext));
     const currentPrice = currentRow?.price ?? getSupportedFinishPrice(currentCard, trackedContext.finish);
-    showComparablePrintings({ status: "ready", rows, trackedContext, currentPrice, visibleCount: COMPARABLE_PRINTINGS_INITIAL_ROWS, requestToken });
+    showComparablePrintings({ status: "ready", rows, trackedContext, currentPrice, visibleCount: COMPARABLE_PRINTINGS_INITIAL_ROWS, sortState, requestToken });
   } catch (error) {
     console.error(error);
     if (!isActiveCardDetailRequest(requestToken, trackedContext.scryfallId)) return;

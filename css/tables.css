@@ -644,7 +644,15 @@ Card | Set | # | Rarity | Color | price-like columns | module columns.
 .ms-table--comparable-printings .ms-table__body { padding-bottom: 0; }
 .ms-table--comparable-printings .ms-table__header { font-size: 9px; }
 .ms-table--comparable-printings .ms-table__row { cursor: default; font-size: 10px; }
-.ms-table--comparable-printings .ms-table__row.is-current { background: rgba(125, 211, 252, 0.09); }
+.ms-table--comparable-printings .ms-table__row.is-current {
+  height: 28px;
+  min-height: 28px;
+  margin-bottom: 3px;
+  outline: 1px solid rgba(125, 211, 252, 0.32);
+  outline-offset: -1px;
+  border-bottom: 2px solid rgba(125, 211, 252, 0.22);
+  background: rgba(125, 211, 252, 0.11);
+}
 .ms-table--comparable-printings .ms-table__row.is-current:hover { background: rgba(125, 211, 252, 0.13); }
 .ms-table--comparable-printings .ms-table__row > span:first-child { gap: 0; }
 

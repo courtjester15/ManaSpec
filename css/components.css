@@ -1404,33 +1404,40 @@ button.dashboard-queue-row:focus-visible {
 }
 
 .comparable-row-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 42px 54px 76px;
   align-items: center;
-  justify-content: flex-end;
-  gap: 5px;
+  justify-content: end;
+  gap: 4px;
   width: 100%;
   white-space: nowrap;
 }
 
-.comparable-row-actions a,
-.comparable-row-actions button {
-  width: auto;
+.comparable-action-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 19px !important;
   min-height: 19px !important;
   margin: 0;
   padding: 0 5px !important;
+  box-sizing: border-box;
   font-size: 9px !important;
   line-height: 1;
+  text-align: center;
 }
 
-.comparable-row-actions a {
-  display: inline-flex;
-  align-items: center;
+.comparable-action-slot.is-unavailable {
+  border: 1px solid transparent;
+  color: var(--muted);
 }
 
 .comparable-tracked-state {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   color: var(--muted);
-  font-size: 9px;
 }
 
 .comparable-printings-controls {
