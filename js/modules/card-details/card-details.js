@@ -636,8 +636,13 @@ function getCardMovement(cardId) {
 }
 
 function getMarketLinks(card, item) {
-  const tcgLink = card.purchase_uris?.tcgplayer
+  const tcgUrl = card.purchase_uris?.tcgplayer
     || `https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=${encodeURIComponent(item.name)}`;
+  const tcgLink = getFinishAwareTcgplayerUrl(
+    tcgUrl,
+    ManaSpecDataFoundation.normalizeFinish(item),
+    card.finishes
+  );
   const cardKingdomSearch = `https://www.cardkingdom.com/catalog/search?search=header&filter%5Bname%5D=${encodeURIComponent(item.name)}`;
   const cardKingdomBuylist = `https://www.cardkingdom.com/purchasing/mtg_singles?filter%5Bname%5D=${encodeURIComponent(item.name)}`;
 

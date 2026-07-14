@@ -176,8 +176,9 @@ function getComparablePrintingColumns(trackedContext, currentPrice) {
 
 function renderComparablePrintingActions(row, index) {
   const trackedState = getComparablePrintingTrackedState(row);
+  const tcgplayerUrl = getFinishAwareTcgplayerUrl(row.tcgplayerUri, row.finish, row.card?.finishes);
   return `<span class="comparable-row-actions">
-    ${row.tcgplayerUri ? `<a class="comparable-action-slot comparable-action-slot--tcg" href="${msEscapeAttr(row.tcgplayerUri)}" target="_blank" rel="noopener">TCG</a>` : '<span class="comparable-action-slot comparable-action-slot--tcg is-unavailable" aria-label="TCGplayer unavailable">—</span>'}
+    ${tcgplayerUrl ? `<a class="comparable-action-slot comparable-action-slot--tcg" href="${msEscapeAttr(tcgplayerUrl)}" target="_blank" rel="noopener">TCG</a>` : '<span class="comparable-action-slot comparable-action-slot--tcg is-unavailable" aria-label="TCGplayer unavailable">—</span>'}
     ${row.scryfallUri ? `<a class="comparable-action-slot comparable-action-slot--scryfall" href="${msEscapeAttr(row.scryfallUri)}" target="_blank" rel="noopener">Scryfall</a>` : '<span class="comparable-action-slot comparable-action-slot--scryfall is-unavailable" aria-label="Scryfall unavailable">—</span>'}
     ${trackedState ? `<span class="comparable-action-slot comparable-action-slot--state comparable-tracked-state">${msEscapeHtml(trackedState)}</span>` : `<button type="button" class="comparable-action-slot comparable-action-slot--state" data-ms-action="add-radar" data-ms-row="${index}">Add to Radar</button>`}
   </span>`;

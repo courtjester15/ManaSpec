@@ -1,6 +1,7 @@
 const fs = require("fs");
 const vm = require("vm");
 const assert = require("assert");
+const { getFinishAwareTcgplayerUrl } = require("../js/core/market-links.js");
 
 const source = fs.readFileSync("js/modules/card-details/comparable-printings.js", "utf8");
 const printingsSource = fs.readFileSync("js/modules/portfolio/printings.js", "utf8");
@@ -14,6 +15,10 @@ const context = {
   msEscapeAttr: value => String(value),
   money: value => `$${Number(value).toFixed(2)}`,
   openCardArtPreview: card => previewedCards.push(card),
+  getFinishAwareTcgplayerUrl,
+  getScryfallCardId: item => item.scryfall_id || String(item.id || "").split("|")[0],
+  specs: [],
+  radar: [],
   ManaSpecDataFoundation: { normalizeFinish: item => item.finish || (item.foil ? "foil" : "nonfoil") },
 };
 vm.createContext(context);
@@ -21,7 +26,7 @@ vm.runInContext(source, context);
 vm.runInContext(printingsSource, context);
 
 const cards = [
-  { id: "current", name: "Exact Art Card", games: ["paper"], digital: false, finishes: ["nonfoil", "foil"], set: "abc", collector_number: "2", released_at: "2024-01-01", prices: { usd: "10", usd_foil: "20" }, image_uris: { normal: "https://img.example/current.jpg" }, scryfall_uri: "https://scryfall.com/card/abc/2" },
+  { id: "current", name: "Exact Art Card", games: ["paper"], digital: false, finishes: ["nonfoil", "foil"], set: "abc", collector_number: "2", released_at: "2024-01-01", prices: { usd: "10", usd_foil: "20" }, image_uris: { normal: "https://img.example/current.jpg" }, scryfall_uri: "https://scryfall.com/card/abc/2", purchase_uris: { tcgplayer: "https://www.tcgplayer.com/product/123?page=1" } },
   { id: "cheap", games: ["paper", "mtgo"], digital: false, finishes: ["nonfoil", "etched"], set: "xyz", collector_number: "10", released_at: "2020-01-01", prices: { usd: "5", usd_etched: null } },
   { id: "digital", games: ["arena"], digital: true, finishes: ["nonfoil"], prices: { usd: "1" } },
   { id: "current", games: ["paper"], digital: false, finishes: ["nonfoil"], set: "abc", collector_number: "2", prices: { usd: "10" } },
@@ -79,6 +84,8 @@ const currentRow = rows.find(row => row.key === "current|nonfoil");
 const printingMarkup = printingColumn.html(currentRow, 0);
 assert.ok(printingMarkup.includes('data-ms-action="art"'), "card name should use the standard table action binding");
 assert.ok(printingMarkup.includes("Exact Art Card"), "the exact printing card name should be the preview control");
+const foilActions = context.renderComparablePrintingActions(rows.find(row => row.key === "current|foil"), 1);
+assert.ok(foilActions.includes("Printing=Foil"), "comparable printing links should select the row finish");
 context.openComparablePrintingArtPreview(currentRow);
 assert.strictEqual(previewedCards[0], currentRow.card, "art preview should receive the exact Scryfall printing object");
 assert.deepStrictEqual(
