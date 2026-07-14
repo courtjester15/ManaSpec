@@ -232,6 +232,18 @@ Workaround: Answer directly first when the user is in rapid-fire mode, then expl
 
 Promote to Workflow: no, keep as collaboration memory unless it repeatedly affects project outcomes.
 
+### Proportional Validation For Small UI Fixes
+
+Date: 2026-07-13
+
+Context: Adding the existing card-art helper to Comparable Printings.
+
+What happened: The implementation was a small reuse-only UI change, but validation expanded into several separate browser calls plus full data-foundation and storage-boundary suites. A slow patch operation and an unrelated browser telemetry timeout added more delay. The focused helper test, syntax check, and one combined browser smoke test would have provided sufficient evidence for this scoped change.
+
+Workaround: Match validation depth to change risk. For narrow, module-scoped UI fixes, start with the focused test, syntax/diff checks, and one combined browser smoke test covering the acceptance criteria. Expand into full regression, storage, or cross-surface validation only when shared infrastructure, persistence, global CSS, failures, or observed regressions justify it. Batch browser assertions where practical and stop once authoritative evidence covers the requested behavior.
+
+Promote to Workflow: later, if this prevents repeated over-testing or becomes a durable validation rule.
+
 ### Market Check Visual Help Guide
 
 Date: 2026-07-10

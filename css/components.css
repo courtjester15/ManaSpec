@@ -1403,6 +1403,18 @@ button.dashboard-queue-row:focus-visible {
   line-height: 13px;
 }
 
+.comparable-card-helper {
+  flex: 1 1 auto;
+  font-weight: 650;
+}
+
+.comparable-printing-identity {
+  flex: 0 0 auto;
+  margin-left: 5px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
 .comparable-row-actions {
   display: grid;
   grid-template-columns: 42px 54px 76px;

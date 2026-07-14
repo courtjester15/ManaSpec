@@ -8,7 +8,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
-- Added Comparable Printings to Card Detail: same-Oracle paper printings expand into finish-aware native rows with sortable release/price columns, aligned exact Scryfall and TCGplayer actions, optional Add to Radar, a pinned comparison baseline, progressive expansion, and local loading/error states.
+- Added Comparable Printings to Card Detail: same-Oracle paper printings expand into finish-aware native rows with sortable release/price columns, exact-printing card-art previews, aligned Scryfall and TCGplayer actions, optional Add to Radar, a pinned comparison baseline, progressive expansion, and local loading/error states.
 - Added Backend Foundation Batch 3: explicit data-schema readiness, migration fixtures, reconciliation/correction semantics, runtime-only legacy-backfill provenance, and a repeatable read-only reconciliation report.
 - Added Backend Foundation Batch 1 as a read-only compatibility layer: concrete ownership contracts, pure legacy normalizers, a weighted-average Transaction-to-Position projector, a discrepancy comparison harness, and fixture-backed validation without production persistence changes.
 - Added the completed 2026-07-11 Data Ownership and Storage Readiness Audit, covering current storage shapes, field ownership, identity, transaction authority, backup safety, localStorage versus Dexie, and a controlled foundation sequence.

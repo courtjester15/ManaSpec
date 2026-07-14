@@ -156,7 +156,7 @@ function getComparablePrintingColumns(trackedContext, currentPrice) {
   return [
     {
       label: "Printing",
-      html: row => `<strong>${msEscapeHtml(row.setCode || "-")} &middot; #${msEscapeHtml(row.collectorNumber || "-")}</strong>${isCurrentTrackedPrinting(row, trackedContext) ? '<mark class="current-printing-badge">Current</mark>' : ""}`,
+      html: (row, index) => `<button type="button" class="link-action comparable-card-helper" data-ms-action="art" data-ms-row="${index}" aria-label="Preview exact artwork for ${msEscapeAttr(row.card?.name || "card")}">${msEscapeHtml(row.card?.name || "Unknown card")}</button><span class="comparable-printing-identity">${msEscapeHtml(row.setCode || "-")} &middot; #${msEscapeHtml(row.collectorNumber || "-")}</span>${isCurrentTrackedPrinting(row, trackedContext) ? '<mark class="current-printing-badge">Current</mark>' : ""}`,
       title: row => row.setName,
     },
     { label: "Finish", value: row => formatComparableFinish(row.finish) },
@@ -229,6 +229,10 @@ function showComparablePrintings(state) {
       });
     },
     onAction: async (action, row) => {
+      if (action === "art") {
+        openComparablePrintingArtPreview(row);
+        return;
+      }
       if (action !== "add-radar") return;
       const exactFinishCard = { ...row.card, finishes: [row.finish], finish: row.finish, foil: row.finish === "foil" };
       await addSpec(exactFinishCard);
@@ -248,6 +252,10 @@ function showComparablePrintings(state) {
       document.getElementById("comparablePrintingsSection")?.scrollIntoView({ block: "nearest" });
     });
   });
+}
+
+function openComparablePrintingArtPreview(row) {
+  if (typeof openCardArtPreview === "function") openCardArtPreview(row.card);
 }
 
 async function loadComparablePrintings(item, currentCard, requestToken) {
