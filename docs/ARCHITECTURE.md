@@ -49,7 +49,7 @@ Current sequence:
 3. `js/core/state.js` loads normalized global runtime state from storage and runs startup backfills/enrichment.
 4. Metadata, notes, filters, shared table UI, context band UI, intent modal UI, and dashboard helpers load.
 5. Workflow modules load: trading, Positions, printings, search, Radar, Transactions, Signals, Thesis, History, Admin, Comparable Printings, and Card Detail.
-6. Global UI/status helpers and pricing helpers load.
+6. Global UI/status helpers, the price snapshot foundation, vendored Chart.js, the Price History modal, and pricing refresh helpers load.
 7. `js/core/app.js` initializes navigation, universal search, help, status, and the first rendered view.
 
 Dependency rules:
@@ -59,7 +59,10 @@ Dependency rules:
 - `state.js` must load before modules that read or mutate global arrays.
 - `js/ui/table.js` must load before workflow tables.
 - Comparable Printings must load immediately before Card Detail; Card Detail must load after tracked-card, note, market observation, and target helper dependencies are available.
+- Price snapshots must load before Price History; the local Chart.js UMD build must load before the Price History modal; pricing refresh loads after both.
 - `app.js` stays last because it calls `initApp()` immediately.
+
+Chart.js 4.5.1 is vendored at `assets/vendor/chart.js/` for the reusable Price History line chart. It is loaded locally, works offline, and does not introduce a framework or CDN runtime dependency.
 
 Do not convert to ES modules until dependency boundaries are documented and the beta workflow is stable.
 

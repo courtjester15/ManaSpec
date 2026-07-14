@@ -20,6 +20,8 @@ The app is built with vanilla HTML, CSS, and JavaScript. It uses Scryfall API da
 
 The current app has a modular terminal shell with Dashboard, Radar, Positions, Signals, Transactions, History, and Admin views. Radar and Positions are the active singles workflow: Scryfall search and exact printing selection feed Radar, Radar captures planning fields and optional notes, Radar can buy planned quantities into Positions through an execution-only quantity/price/note dialog, and Positions supports owned holdings, buy/sell actions, price refresh, target/hold tracking, shared notes, and summary totals.
 
+Radar and Positions also expose local exact-printing price history. History begins when ManaSpec records successful Scryfall refreshes, keeps foil and nonfoil separate, and offers 7D, 30D, 90D, 6M, 1Y, and All views with plan reference lines. ManaSpec does not fetch earlier external history or invent missing daily observations.
+
 Card Detail is a compact command center with primary plan editing, market check context, notes, and reference data. Signals explains why cards need attention, Transactions shows buy/sell context, and Admin includes local data-safety tools such as backup export/import and cash reset.
 
 ## Current Limitations

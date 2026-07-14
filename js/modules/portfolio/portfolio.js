@@ -99,6 +99,7 @@ function renderPortfolioRows() {
     onAction: (action, item) => {
       if (action === "art") openPositionArtPreview(item);
       if (action === "notes") openCardDetail(item.id, "portfolio", { focusNotes: true });
+      if (action === "price-history") openPriceHistoryModal(item, "portfolio");
       if (action === "buy") buySpec(item);
       if (action === "sell") sellSpec(item);
       if (action === "delete") deleteSpec(item);
@@ -120,6 +121,7 @@ function getPortfolioTableColumns() {
     { label: "Now", sortKey: "currentPrice", align: "money", value: item => tableMoney(item.currentPrice), title: formatPositionScryfallPriceTitle },
     { label: "Qty", sortKey: "qty", align: "center", value: item => Number(item.qty || 0) },
     { label: "Age", sortKey: "buyDate", align: "center", value: item => formatPositionAge(item.buyDate), title: item => item.buyDate ? `Buy Date ${formatTableDate(item.buyDate)}` : "" },
+    { label: "Added", sortKey: "buyDate", align: "center", value: item => formatTableDate(item.buyDate) || "-", title: item => item.buyDate ? `Added to Positions ${new Date(item.buyDate).toLocaleString()}` : "No added date" },
     { label: "Value", sortKey: "positionValue", align: "money", value: item => tableMoney(getPositionValue(item)) },
     { label: "P/L", sortKey: "pl", align: "money", className: item => getGainLossClass(Number(item.pl || 0)), value: item => tableMoney(Number(item.pl || 0)) },
     { label: "P/L %", sortKey: "plPct", align: "money", className: item => getGainLossClass(getPositionPlPct(item)), value: item => formatPercent(getPositionPlPct(item)) },
@@ -127,6 +129,7 @@ function getPortfolioTableColumns() {
     { label: "Δ", sortKey: "exitDistance", align: "money", className: getPositionExitDistanceClass, value: formatPositionExitDistance, title: formatPositionExitDistanceTitle },
     { label: "Hold", sortKey: "holdTime", align: "center", type: "editableWithSuffix", name: "holdTime", inputAttrs: 'inputmode="numeric" pattern="[0-9-]*" title="Examples: 3, 6-12, 12-18 months"', placeholder: "Set", suffix: "mo", value: item => getHoldMonthsInputValue(item.holdTime) },
     { label: "Notes", align: "center", html: renderNotesTableControl },
+    { label: "History", align: "center", className: "history-table-cell", html: renderPriceHistoryTableControl },
     {
       label: "Actions",
       align: "actions",

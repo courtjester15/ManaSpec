@@ -8,6 +8,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Added exact-printing local Price History for Radar and Positions, including finish-aware daily snapshots, compact coverage indicators, range filtering, summary metrics, plan reference lines, and a reusable offline chart modal.
 - Added Comparable Printings to Card Detail: same-Oracle paper printings expand into finish-aware native rows with sortable release/price columns, exact-printing card-art previews, aligned Scryfall and TCGplayer actions, optional Add to Radar, a pinned comparison baseline, progressive expansion, and local loading/error states.
 - Added Backend Foundation Batch 3: explicit data-schema readiness, migration fixtures, reconciliation/correction semantics, runtime-only legacy-backfill provenance, and a repeatable read-only reconciliation report.
 - Added Backend Foundation Batch 1 as a read-only compatibility layer: concrete ownership contracts, pure legacy normalizers, a weighted-average Transaction-to-Position projector, a discrepancy comparison harness, and fixture-backed validation without production persistence changes.
@@ -31,6 +32,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Refined Price History with a continuous calendar-time axis, real-snapshot-only points and hover targets, a shorter non-scrolling laptop modal, and a cleaner compact trend icon.
 - Prevented Position deletion when Transactions still project an open holding, closing the silent orphan path identified through the Simulacrum Synthesizer audit; real exits continue to use Sell.
 - Centralized normal persistence for Positions, Radar, Transactions, and cash; connected read-only runtime normalization with compatibility-safe serialization; preserved unknown fields and stored shapes; and retained the read-only ledger discrepancy warning without automatic reconciliation.
 - Completed the Data Ownership and Storage Readiness Audit and its three approved foundation batches, clearing the provisional user-facing feature sequence to resume while keeping transaction authority and computed Positions as a separately approved future migration.

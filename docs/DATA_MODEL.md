@@ -321,9 +321,13 @@ Current backing store: `priceSnapshots`.
 
 Snapshots currently support:
 
-- Owned Position price history.
+- Radar and open Position price history.
 - Current/reference price context.
-- Future trend or review surfaces.
+- Exact-printing History indicators and the Price History modal.
+
+Snapshot identity is `Scryfall id + finish`, with nonfoil and foil kept separate. ManaSpec records only a valid live Scryfall price for that exact finish; it never substitutes the other finish or a cached price. The observation date is the user's local calendar date.
+
+Each local date, exact printing, finish, and source has one usable point. A later successful refresh replaces the earlier point for that day, while a missing or invalid later price leaves the valid point untouched. Older snapshot records are normalized at read time rather than destructively migrated.
 
 Relationship:
 
@@ -339,7 +343,7 @@ History
 Market Evaluation
 ```
 
-Snapshots are not a full pricing database. They are lightweight local history.
+Snapshots are not a full pricing database. They are lightweight local history that begins when ManaSpec successfully refreshes a tracked Radar item or open Position. No external historical series or missed-day values are fetched or fabricated.
 
 ## Market Observation
 

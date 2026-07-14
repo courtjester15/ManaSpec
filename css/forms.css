@@ -719,6 +719,49 @@ input[type="number"]:focus {
   color: var(--text-strong);
 }
 
+.history-control {
+  position: relative;
+  width: 100%;
+  height: var(--table-control-h, 20px);
+  min-height: var(--table-control-h, 20px);
+  padding: 0 18px 0 3px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--text);
+}
+
+.history-control__icon {
+  width: 17px;
+  height: 15px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.history-control__axis { stroke-width: 1; opacity: 0.65; }
+.history-control__trend { stroke-width: 1.7; }
+
+.history-control__badge {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  min-width: 17px;
+  height: 12px;
+  padding: 0 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-strong);
+  font-size: 8px;
+  line-height: 10px;
+}
+
+.history-control--empty { color: var(--muted-2); opacity: 0.65; }
+.history-control--limited { color: var(--muted); }
+.history-control--active { color: var(--good); }
+
 .intent-modal-grid,
 .add-printing-plan-grid {
   display: grid;

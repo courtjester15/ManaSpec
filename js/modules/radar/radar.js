@@ -122,6 +122,7 @@ function renderRadarItems() {
     onAction: (action, item) => {
       if (action === "art") openRadarArtPreview(item);
       if (action === "notes") openRadarCardDetail(item.id, { focusNotes: true });
+      if (action === "price-history") openPriceHistoryModal(item, "radar");
       if (action === "buy") buyRadarItem(item.id);
       if (action === "remove") removeRadarItem(item.id);
     },
@@ -148,6 +149,7 @@ function getRadarTableColumns() {
     { label: "Qty", sortKey: "marketQty", align: "center", value: item => getRadarMarketValue(item, "currentQuantity") },
     { label: "TCG Check", sortKey: "marketPrice", align: "money", value: formatRadarTcgCheckValue, title: formatRadarTcgCheckTitle },
     { label: "Notes", align: "center", html: renderNotesTableControl },
+    { label: "History", align: "center", className: "history-table-cell", html: renderPriceHistoryTableControl },
     {
       label: "Actions",
       align: "actions",

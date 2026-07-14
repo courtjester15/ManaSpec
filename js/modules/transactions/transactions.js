@@ -392,25 +392,3 @@ function formatTransactionVersion(tx) {
 
   return pieces.filter(Boolean).join(" / ") || "-";
 }
-
-function getTransactionMetadata(position) {
-  return {
-    rarity: position.rarity || "",
-    released_at: position.released_at || "",
-    type_line: position.type_line || "",
-    colors: position.colors || [],
-    color_identity: position.color_identity || [],
-    mana_cost: position.mana_cost || "",
-    cmc: Number(position.cmc || 0),
-    edhrec_rank: position.edhrec_rank || null,
-    reserved: Boolean(position.reserved),
-    reprint: Boolean(position.reprint),
-    set_type: position.set_type || "",
-    artist: position.artist || "",
-    promo: Boolean(position.promo),
-    finishes: position.finishes || [],
-    frame: position.frame || "",
-    border_color: position.border_color || "",
-    security_stamp: position.security_stamp || "",
-  };
-}

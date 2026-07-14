@@ -40,6 +40,7 @@ async function refreshPrices(options = {}) {
 async function runPriceRefresh() {
   const startedAt = new Date();
   let updatedCount = 0;
+  const successfulObservations = [];
 
   for (let s of specs) {
     try {
@@ -55,6 +56,7 @@ async function runPriceRefresh() {
         s.currentPrice = nextPrice;
         s.priceUpdatedAt = startedAt.toISOString();
         updatedCount += 1;
+        successfulObservations.push({ item: s, price: nextPrice, savedAt: startedAt.toISOString() });
       }
     } catch (err) {
       console.warn("Price refresh failed", s.name, err);
@@ -75,6 +77,7 @@ async function runPriceRefresh() {
         item.currentPrice = nextPrice;
         item.priceUpdatedAt = startedAt.toISOString();
         updatedCount += 1;
+        successfulObservations.push({ item, price: nextPrice, savedAt: startedAt.toISOString() });
       }
     } catch (err) {
       console.warn("Radar price refresh failed", item.name, err);
@@ -84,9 +87,9 @@ async function runPriceRefresh() {
   updatePL();
 
   if (typeof saveDailyPriceSnapshots === "function") {
-    const snapshotResult = saveDailyPriceSnapshots();
+    const snapshotResult = saveDailyPriceSnapshots(successfulObservations);
     console.info(
-      `Price snapshots: ${snapshotResult.saved} saved for ${snapshotResult.date}`
+      `Price snapshots: ${snapshotResult.saved} saved, ${snapshotResult.updated} updated for ${snapshotResult.date}`
     );
   }
 
@@ -104,11 +107,16 @@ async function runPriceRefresh() {
 
 function getScryfallUsdPrice(card, position) {
   const prices = card.prices || {};
-  const price = position.foil
-    ? parseFloat(prices.usd_foil || prices.usd || position.currentPrice || 0)
-    : parseFloat(prices.usd || position.currentPrice || 0);
+  const finish = typeof getTrackedPrintingFinish === "function"
+    ? getTrackedPrintingFinish(position)
+    : (position.foil ? "foil" : "nonfoil");
+  const price = finish === "foil"
+    ? parseFloat(prices.usd_foil)
+    : finish === "nonfoil"
+      ? parseFloat(prices.usd)
+      : NaN;
 
-  return Number.isFinite(price) ? price : 0;
+  return Number.isFinite(price) && price > 0 ? price : 0;
 }
 
 function getPricingScryfallId(item) {
