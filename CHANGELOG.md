@@ -27,8 +27,10 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added `CONTRIBUTING.md` to welcome contributors, explain contribution expectations, and document the preferred workflow for future community and AI contributors.
 - Added storage compatibility guidance for future GitHub Pages beta updates, including localStorage key/data-shape cautions and release-review expectations.
 - Added a short beta tester guide covering the beta URL, backup expectations, suggested smoke-test workflows, feedback guidance, local data safety, public Pages hosting, and known limits.
-- Added deferred React migration notes and a GalleyFlow pattern audit checklist for future post-beta architecture review.
-- Added a Roadmap post-beta architecture review lane for deciding whether and how to pursue a React/Vite migration after closed beta feedback.
+- Added an approved React modernization spike charter and retained the GalleyFlow audit as historical evaluation evidence; the vanilla app remains the production/beta source of truth.
+- Added a dedicated React target architecture, dependency inventory and selection guide, and dual vanilla/React deployment runbook covering portable local opening, Pages isolation, rollback, and spike removal.
+- Audited the copied GalleyFlow offline package archive, verified its Windows x64 React/Vite and feature-library dependency closures, classified direct candidates and duplicates, and established `/lib` as an ignored local cache rather than tracked application source.
+- Added a Roadmap React spike lane for workspace isolation, portable and Pages-path proofs, storage compatibility, full feature parity, responsive validation, and a separate promotion decision.
 
 ### Changed
 

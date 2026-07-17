@@ -149,6 +149,52 @@ Not every owned spec is acquired through a normal buy.
 
 Future transaction history should be able to represent methods such as `BUY`, `OPENED`, `TRADE_IN`, `TRADE_OUT`, `PRIZE`, `PROMO`, `GIFT`, `STORE_CREDIT`, and `CORRECTION`, while still keeping Positions as a computed current-holdings view.
 
+## React Modernization Spike
+
+### React is an isolated experiment, not a production cutover
+
+ManaSpec will reconstruct the complete current application in React on a dedicated experimental branch and in an isolated `react-app/` workspace. The purpose is to evaluate parity, maintainability, responsive foundations, libraries, tooling, and deployment before deciding whether React should become the long-term frontend.
+
+The vanilla root remains functional, publicly available, and authoritative throughout the spike. Finishing the spike does not authorize replacing it; promotion requires a separate evidence-based decision.
+
+### Parity comes before redesign and new features
+
+The React version must preserve current workflows, terminology, data ownership, visual identity, dense desktop experience, and user mental models. Small alignment, consistency, focus, accessibility, and responsive corrections are allowed, but broad redesign and speculative features cannot delay parity.
+
+### React shares ManaSpec's data compatibility contract
+
+The spike initially reads and writes the existing localStorage keys and backup format through an explicit compatibility adapter. It does not create a silently incompatible second user-data model.
+
+Storage keys, printing/finish identity, unknown-field preservation, schema versions, migration fixtures, and replace-only backup behavior remain contracts. React-written records must remain readable by vanilla unless a separately approved reversible migration explicitly changes that rule.
+
+Because the vanilla root and `/ManaSpec/react-spike/` share an origin, they also share localStorage. Live spike testing therefore requires a backup and controlled cross-implementation read/write validation.
+
+### Portable local opening is a required deliverable
+
+The React spike must commit a prebuilt artifact with a documented `index.html` that opens without npm, terminal commands, a development server, or a runtime CDN. A normal Vite development or deployment build alone does not satisfy this requirement.
+
+The portable output may use a separate build configuration to emit file-compatible scripts and relative assets. Browser `file://` storage limitations must be documented, and backup/export/import is the supported bridge to the Pages origin.
+
+### React uses an isolated Pages subpath
+
+The vanilla application remains at the existing GitHub Pages root. The React experiment is published separately under `/ManaSpec/react-spike/` using an artifact that preserves the vanilla root and adds the React build beneath `react-spike/`.
+
+Hash-based routing is the preferred starting direction because it supports the Pages subpath, refresh-safe navigation, and portable local opening without server rewrites. It remains subject to implementation validation.
+
+### Production dependencies are bundled locally
+
+React may use npm and normal build tooling during development, but delivered dependencies are bundled into the output. Runtime CDNs are not part of the production or portable architecture. This preserves reproducibility, offline opening, version control, and ManaSpec's user-controlled-data direction.
+
+### Library choices require evidence
+
+The local library collection must be inventoried before equivalent packages are downloaded. Availability does not require adoption. Each selected dependency must solve a current problem, avoid category overlap, work in normal and portable builds, and have its purpose, alternatives, current/future value, bundle cost, and maintenance cost recorded in [LIBRARIES](LIBRARIES.md).
+
+State management, table, styling, form, dialog, and other library choices remain proposed until focused implementation evidence supports them.
+
+### Desktop parity leads responsive work
+
+The 1366 x 768 desktop experience is the parity baseline. Tablet and phone support must be intentional through responsive navigation, layouts, dialogs, column priorities, expandable details, and touch-friendly controls, but it cannot derail desktop parity.
+
 ## Docs
 
 ### Active docs beat dev notes
@@ -159,11 +205,14 @@ Raw notes in `dev notes/inbox/` and historical notes in `dev notes/archive/` are
 
 Use flat docs until the project is large enough to need per-module specs.
 
-ManaSpec has earned three focused ownership docs because README was carrying too much durable project truth:
+ManaSpec has earned focused ownership docs because README was carrying too much durable project truth:
 
 - [PRODUCT_PRINCIPLES](PRODUCT_PRINCIPLES.md) owns stable product philosophy and decision mindset.
 - [ARCHITECTURE](ARCHITECTURE.md) owns how the app is built.
 - [DATA_MODEL](DATA_MODEL.md) owns entities and relationships.
 - [STYLE_GUIDE](STYLE_GUIDE.md) owns UI language and visual conventions.
+- [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md) owns the proposed architecture for the approved experiment without redefining current vanilla truth.
+- [LIBRARIES](LIBRARIES.md) owns dependency inventory, evaluation, and adoption records.
+- [DEPLOYMENT](DEPLOYMENT.md) owns the dual vanilla/React delivery model and portable React usage.
 
 These docs should absorb complexity from README without duplicating product behavior, roadmap priority, or decision rationale.

@@ -223,35 +223,45 @@ Keep these areas deferred until friend feedback, user-facing feature priorities,
 - Heavy charting.
 - New market integrations beyond exact external links and saved manual observations.
 
-### Library Candidates To Review
+### Vanilla Library Candidates To Review
 
-Keep ManaSpec vanilla-first unless a library clearly removes repeated infrastructure work.
+Keep the production/beta app vanilla-first unless a library clearly removes repeated infrastructure work. React-spike dependency evaluation is tracked separately in [LIBRARIES](LIBRARIES.md).
 
 - Data-grid library: possible future candidate if native table helpers stop being enough for Positions, Radar, Transactions, History, and Signals. Review only after beta needs prove it.
 - Dexie.js: likely candidate when moving from localStorage to IndexedDB. Use only after the ledger shape is clear.
 - Day.js: useful candidate for buy dates, added dates, hold windows, stale checks, sorting, and readable timestamps.
 - Fuse.js: possible candidate for local fuzzy search across Radar, Positions, Transactions, Notes, and History.
 - Papa Parse: future candidate for CSV/spreadsheet import and owned-spec backfill, but keep import tooling deferred until core singles workflow and data safety are stable.
-- Chart.js: future candidate once transaction history and price snapshots have enough data to deserve charts.
+- Chart.js 4.5.1: adopted and vendored locally for Price History; continue to review its React integration separately.
 
-Current rule: one tool at a time. Add a library only when it directly supports the beta path or removes a recurring source of bugs.
+Current vanilla rule: one tool at a time. Add a library only when it directly supports the beta path or removes a recurring source of bugs.
 
-### Post-Beta Architecture Review
+### React Modernization Spike
 
-After the closed beta produces real workflow feedback, review whether ManaSpec should stay vanilla longer or begin a React/Vite migration.
+The React/Vite experiment is approved as a separate evidence-gathering track. It is not a beta gate, production cutover, or reason to stop maintaining the vanilla application.
 
-This is not part of the current beta gate. Treat it as a future architecture decision informed by maintenance pain, state coordination issues, table complexity, Card Detail pressure, and what the project learns from GalleyFlow.
+Active preparation:
 
-Use [React Migration Notes](REACT_MIGRATION_NOTES.md) and [React Migration And GalleyFlow Pattern Audit](audits/react-migration-galleyflow-audit.md) when this review begins.
+- [x] Establish the spike charter, parity rules, architecture target, library audit structure, and deployment model in active docs.
+- [x] Locate and inventory the GalleyFlow offline package archive, verify its Windows x64 dependency closure, classify direct candidates, and keep `/lib` as an ignored local cache.
+- [ ] Create the dedicated spike branch and isolated `react-app/` workspace.
+- [ ] Prove normal Vite development, `/ManaSpec/react-spike/` build behavior, and direct portable `index.html` opening before feature migration.
+- [ ] Build the storage compatibility adapter and fixture-backed cross-read/write tests before using real data.
 
-Candidate direction if migration is approved:
+Implementation sequence:
 
-- Keep the vanilla app as the working reference during migration.
-- Use a separate `react-app/` workspace or branch.
-- Preserve localStorage keys, backup/import behavior, and beta user data.
-- Rebuild the shell and storage boundaries before heavy workflows.
-- Port Admin, Radar, and Positions before Dashboard, Signals, and Card Detail.
-- Require parity checks before replacing the deployed app.
+- [ ] Shell, hash-safe navigation, shared tokens, and error handling.
+- [ ] Persistence, backup/restore, normalization, and migration compatibility.
+- [ ] Shared forms, dialogs, notices, and table foundation.
+- [ ] Radar, Positions, Transactions, and History parity.
+- [ ] Notes, Card Detail, Comparable Printings, Price History, Signals, and Dashboard parity.
+- [ ] Help, Admin, external links, and remaining utilities.
+- [ ] Corrective UI/accessibility polish and desktop/tablet/phone validation.
+- [ ] Bundle review, Pages deployment, full parity evidence, and promotion recommendation.
+
+Use [React Modernization Spike](REACT_MIGRATION_NOTES.md), [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md), [Libraries](LIBRARIES.md), [Deployment](DEPLOYMENT.md), and the earlier [React Migration And GalleyFlow Pattern Audit](audits/react-migration-galleyflow-audit.md).
+
+The vanilla app remains the working reference and current deployment. React cannot replace it without a separate decision after parity, storage compatibility, portable/local use, Pages isolation, responsive quality, and maintainability have been demonstrated.
 
 ### Validated Core Singles Workflow
 

@@ -210,6 +210,10 @@ Use the docs ownership map in [README](README.md) before adding or moving docume
 - Put terminology, UI language, visual design philosophy, table conventions, formatting, wrapping, and copy rules in [STYLE_GUIDE](STYLE_GUIDE.md).
 - Put active priority and sequencing in [ROADMAP](ROADMAP.md).
 - Put process rules in [WORKFLOW](WORKFLOW.md).
+- Put React spike scope and parity gates in [REACT_MIGRATION_NOTES](REACT_MIGRATION_NOTES.md).
+- Put proposed React-only structure and boundaries in [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md), without rewriting current vanilla architecture as though the spike already exists.
+- Put dependency inventory, evaluation, and adoption records in [LIBRARIES](LIBRARIES.md).
+- Put dual-deployment, portable-output, rollback, and spike-removal instructions in [DEPLOYMENT](DEPLOYMENT.md).
 - Put durable rationale in [DECISIONS](DECISIONS.md).
 - Put uncommitted ideas in [PARKING_LOT](PARKING_LOT.md).
 - Put reconstructed origin, milestone, and project-evolution context in [HISTORY](../HISTORY.md).
@@ -222,7 +226,7 @@ Audit docs are allowed to be more diagnostic and time-bound than active docs. Th
 
 ## Browser Testing
 
-When performing UI QA, browser inspection, console debugging, or regression testing:
+When performing UI QA, browser inspection, console debugging, or regression testing against the current vanilla application:
 
 - Use the Codex in-app Browser when available.
 - Never open the app using `file://`.
@@ -249,6 +253,12 @@ Notes:
 - If the confirmed preview responds but the browser cannot attach or rejects localhost, treat it as browser-tooling friction rather than a ManaSpec application defect.
 - Make one clean retry with the healthy server and a fresh browser session. If it still fails, stop and report the exact blocker.
 - Do not repeatedly restart servers or modify application code to compensate for browser-tool failure.
+
+### React Portable Build Exception
+
+The standard vanilla QA path above still forbids `file://`. The approved React spike has a separate required deliverable: its committed portable `index.html` must be tested by direct file opening without a server.
+
+Portable-file testing is an additional React release check, not a replacement for development-server, preview-server, or Pages-subpath testing. Record the browser used, asset/routing results, storage limitations, and any unavoidable fallback. Use [DEPLOYMENT](DEPLOYMENT.md) as the owning guide.
 
 ### Card Detail Browser QA
 
@@ -285,7 +295,7 @@ Prefer narrow, durable steps:
 
 ## Doc Size
 
-Keep docs flat until the app earns more structure. ManaSpec has earned focused ownership docs for architecture, data model, and style; do not add more active docs casually.
+Keep docs flat until the app earns more structure. ManaSpec has earned focused ownership docs for architecture, data model, style, and the approved React experiment; do not add more active docs casually.
 
 - Prefer updating the existing ownership doc before creating another doc.
 - Do not create module folders for early ideas.

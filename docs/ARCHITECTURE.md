@@ -1,8 +1,10 @@
 # ManaSpec Architecture
 
-This document explains how ManaSpec is built internally.
+This document explains how the current vanilla ManaSpec application is built internally.
 
 It is not a code walkthrough. It is the architectural map future contributors should read before changing implementation.
+
+The experimental React reconstruction has a separate proposed architecture in [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md). Until a separate production-promotion decision, this document and the vanilla application remain the implementation source of truth.
 
 ## Design Philosophy
 
@@ -307,9 +309,25 @@ Future direction:
 
 Do not implement a full ledger-source-of-truth migration without a written migration plan and backup/import safety review.
 
+## React Spike Boundary
+
+ManaSpec has approved a complete React modernization spike as an isolated evidence-gathering track. This does not reverse the current vanilla architecture or make React the production source of truth.
+
+Boundary rules:
+
+- Keep the vanilla root application operational and publicly available.
+- Put React source and generated outputs under an isolated `react-app/` workspace on a dedicated spike branch.
+- Preserve current workflow, terminology, data ownership, storage keys, backup behavior, and visual identity.
+- Treat vanilla behavior as the parity oracle.
+- Require controlled cross-read/write storage tests because the deployed root and `/react-spike/` share an origin.
+- Require a committed portable React build that opens without npm, alongside the normal developer build.
+- Do not promote React until parity, data safety, deployment, maintainability, and responsive evidence support a separate decision.
+
+The target module layout, state boundaries, routing direction, responsive foundation, build outputs, and validation gates live in [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md). Dependency decisions live in [LIBRARIES](LIBRARIES.md), and delivery topology lives in [DEPLOYMENT](DEPLOYMENT.md).
+
 ## Future Architectural Direction
 
-Likely future cleanup, after beta workflow stability:
+Likely future cleanup for the vanilla application, independent of the spike:
 
 - Extract pure Card Detail helpers.
 - Add a small shared formatting/parsing utility.
@@ -319,4 +337,4 @@ Likely future cleanup, after beta workflow stability:
 - Revisit ES modules only after dependencies are mapped.
 - Consider stronger storage only after the entity model is clear.
 
-Architecture work should make ManaSpec easier to use, test, and reason about. It should not become a parallel project.
+Architecture work should make ManaSpec easier to use, test, and reason about. The React spike is the one explicitly approved parallel experiment; other architecture work should remain narrow unless separately authorized.

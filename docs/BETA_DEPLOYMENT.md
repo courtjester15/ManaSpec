@@ -1,6 +1,6 @@
 # ManaSpec Beta Deployment
 
-ManaSpec closed beta uses the existing vanilla HTML/CSS/JavaScript app. React migration, build tooling, backend services, accounts, database storage, and shared server state are out of scope for this beta path.
+ManaSpec closed beta uses the existing vanilla HTML/CSS/JavaScript app. React build tooling, backend services, accounts, database storage, and shared server state are out of scope for this beta path. A separate React modernization spike is approved, but it does not change the vanilla beta deployment or authorize a production cutover; see [DEPLOYMENT](DEPLOYMENT.md).
 
 ## Deployment Target
 
@@ -129,4 +129,4 @@ After Pages publishes, run this closed-beta smoke test from the Pages URL:
 - Ask testers to use the same URL every time.
 - Ask testers to export a backup before serious testing and before major updates.
 - Ask testers not to clear site data unless they have a backup.
-- Keep React migration explicitly out of closed beta deployment work.
+- Keep React spike builds and deployment changes isolated from the closed-beta root workflow; use [DEPLOYMENT](DEPLOYMENT.md) for the separate experimental path.

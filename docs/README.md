@@ -8,12 +8,15 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 
 - [README](README.md): product shape, current workflow behavior, and module lineup.
 - [Product Principles](PRODUCT_PRINCIPLES.md): stable product philosophy and decision mindset.
-- [Architecture](ARCHITECTURE.md): how ManaSpec is built internally.
+- [Architecture](ARCHITECTURE.md): how the current vanilla ManaSpec application is built internally.
+- [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md): proposed structure, state, persistence, UI, build, and validation boundaries for the experiment.
 - [Data Model](DATA_MODEL.md): important entities and how they relate.
 - [Style Guide](STYLE_GUIDE.md): UI language, terminology, table conventions, and design rules.
 - [Roadmap](ROADMAP.md): current phase, next work, and future phases.
 - [Workflow](WORKFLOW.md): lightweight rules for working on the app.
-- [React Migration Notes](REACT_MIGRATION_NOTES.md): deferred migration thinking, parity risks, and future GalleyFlow review prompts.
+- [React Modernization Spike](REACT_MIGRATION_NOTES.md): approved experiment scope, parity order, compatibility rules, and promotion gates.
+- [Libraries](LIBRARIES.md): local inventory, React dependency evaluation, adoption records, and CDN-versus-local policy.
+- [Deployment](DEPLOYMENT.md): dual vanilla/React Pages model, portable local use, validation, rollback, and removal.
 - [Beta Deployment](BETA_DEPLOYMENT.md): GitHub Pages setup, localStorage behavior, backup workflow, and tester handoff checklist.
 - [Beta Tester Guide](BETA_TESTER_GUIDE.md): short trusted-tester handoff guide for beta usage, safety, and feedback.
 - [Decisions](DECISIONS.md): short log of durable product, architecture, and data choices.
@@ -27,12 +30,15 @@ Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), t
 
 - `README.md`: what ManaSpec is, current workflow behavior, module lineup, and where to start.
 - `PRODUCT_PRINCIPLES.md`: stable product philosophy and decision mindset.
-- `ARCHITECTURE.md`: how the app is built, boot flow, module ownership, rendering flow, storage ownership, and future architecture direction.
+- `ARCHITECTURE.md`: how the current vanilla app is built, including boot flow, module ownership, rendering flow, and storage ownership.
+- `REACT_SPIKE_ARCHITECTURE.md`: proposed React-only architecture and validation gates; it does not describe current implementation.
 - `DATA_MODEL.md`: conceptual entities, relationships, ownership, lifecycle, and ledger migration context.
 - `STYLE_GUIDE.md`: terminology, UI language, dense table rules, formatting conventions, and product feel.
 - `ROADMAP.md`: active phase, next work, beta gates, and future phases.
 - `WORKFLOW.md`: how humans, Codex, and GPT should work on the project.
-- `REACT_MIGRATION_NOTES.md`: non-committed React migration notes, candidate libraries, parity checklist, and GalleyFlow pattern review prompts.
+- `REACT_MIGRATION_NOTES.md`: active React spike charter, parity sequence, compatibility contract, and promotion decision criteria.
+- `LIBRARIES.md`: dependency inventory, category audit, selection rules, and adoption records.
+- `DEPLOYMENT.md`: dual Pages artifact, React portable output, redeploy, rollback, and removal.
 - `BETA_DEPLOYMENT.md`: closed beta GitHub Pages deployment, update workflow, storage expectations, and tester instructions.
 - `BETA_TESTER_GUIDE.md`: public-ish closed beta tester instructions, backup guidance, feedback expectations, and known limits.
 - `DECISIONS.md`: durable choices and why they were made.
@@ -66,6 +72,8 @@ ManaSpec is not a collection tracker, inventory nostalgia tool, prediction engin
 - Scryfall API for card identity, printings, and pricing snapshots.
 - localStorage for persistence.
 - No backend.
+
+The React stack is proposed but not yet implemented. Do not describe candidate packages or deployment outputs as current until they are installed, built, and verified. See [React Modernization Spike](REACT_MIGRATION_NOTES.md) and [Libraries](LIBRARIES.md).
 
 ManaSpec is local-first for user state, but it is not offline-only. Scryfall-backed search, printing data, and price refresh require network access.
 

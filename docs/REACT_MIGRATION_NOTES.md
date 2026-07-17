@@ -1,198 +1,269 @@
-# React Migration Notes
+# React Modernization Spike
 
-These notes preserve the React migration idea without starting the migration.
+This document is the active execution charter and parity plan for a complete React reconstruction of ManaSpec.
 
-ManaSpec is currently a working vanilla HTML/CSS/JavaScript app deployed through GitHub Pages. The beta priority remains workflow validation, tester feedback, and localStorage data safety. React should be treated as a possible future implementation upgrade, not the next default step.
+The spike is approved as an experiment. It is not a production rewrite, does not replace the current roadmap automatically, and does not authorize a cutover from the vanilla app. Its purpose is to produce enough working evidence to decide whether React should become ManaSpec's long-term frontend.
 
-## Current Position
+Use [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md) for the proposed technical structure, [Libraries](LIBRARIES.md) for dependency evaluation, and [Deployment](DEPLOYMENT.md) for local and GitHub Pages delivery.
 
-ManaSpec has enough product shape to benefit from better structure later:
+## Objectives
 
-- App shell, navigation, summary, toast, confirmation, and Help are repeated app-level surfaces.
-- Radar, Positions, Signals, Transactions, History, Admin, and Card Detail are clear workflow zones.
-- Shared table rendering and dense controls are already acting like component contracts.
-- Storage keys, backup/import, and user data safety are now product contracts.
+Reconstruct the complete existing ManaSpec application in React while:
 
-The main risk is behavioral parity. The app's value is not just its screens; it is the exact workflow behavior around Radar, Positions, Card Detail, notes, market checks, transactions, backup/import, and localStorage compatibility.
+1. Preserving current behavior and user workflows.
+2. Achieving feature parity before redesign or speculative expansion.
+3. Preserving the visual identity and compact desktop experience.
+4. Establishing a maintainable React architecture and professional toolchain.
+5. Correcting small UI and accessibility inconsistencies encountered during parity work.
+6. Establishing intentional tablet and phone foundations after desktop parity.
+7. Evaluating mature libraries against actual ManaSpec needs.
+8. Delivering clear architecture, dependency, development, deployment, and validation evidence.
 
-## Why React Might Help Later
+## Non-Goals
 
-A React conversion could help if ManaSpec starts hitting these limits:
+- Replacing the vanilla production/beta app during the spike.
+- Broadly redesigning ManaSpec.
+- Changing terminology or user mental models to suit a library.
+- Introducing a backend, accounts, sync, or a new persistence model.
+- Renaming localStorage keys for cleanliness.
+- Adding new product features before parity.
+- Adopting libraries because they are popular or already downloaded.
+- Treating a working shell as proof of complete migration.
 
-- View rendering and event binding become hard to reason about.
-- Shared UI behavior is duplicated across modules.
-- Card Detail becomes too large to maintain safely.
-- Tables need stronger state handling, pagination, sorting, filtering, or editing contracts.
-- Storage and derived state need clearer boundaries.
-- More beta users expose workflow bugs caused by implicit global state.
+## Isolation
 
-React would not automatically improve the product. It would mainly make state, components, and data flow more explicit if the migration is done carefully.
+- Use a dedicated React spike branch.
+- Keep React source in an isolated `react-app/` workspace.
+- Keep the root vanilla app functional and reviewable.
+- Permit side-by-side comparison throughout implementation.
+- Keep the experiment removable without repairing the vanilla app.
+- Record the final branch name, folder layout, and generated-output policy when the workspace is created.
 
-## Why Not Yet
+## Source Of Truth
 
-Do not start the React migration before beta feedback unless there is a specific blocker.
+Until a separate promotion decision:
 
-Reasons:
+- Vanilla behavior is the parity oracle.
+- [README](README.md) owns current workflow truth.
+- [ARCHITECTURE](ARCHITECTURE.md) owns current vanilla implementation architecture.
+- [DATA_MODEL](DATA_MODEL.md) owns entity and compatibility semantics.
+- [STYLE_GUIDE](STYLE_GUIDE.md) owns visual and interaction language.
+- This document owns spike scope, sequence, and acceptance gates.
+- React architecture and implementation choices must not silently redefine current product behavior.
 
-- The current app is deployed and usable.
-- Beta testers can now produce real workflow feedback.
-- React migration would compete with learning from the current product.
-- Behavior parity is more expensive than component creation.
-- localStorage compatibility must be preserved.
-- The current vanilla app is still small enough to reason about.
+## Required Scope
 
-The safer path is to validate the workflow first, then decide whether React solves real pain.
+Parity includes all current user-facing modules and supporting behavior, including:
 
-## Migration Shape
+- application shell and navigation;
+- Dashboard;
+- Radar and Scryfall discovery;
+- Positions;
+- Signals;
+- Transactions and History;
+- Card Detail;
+- Comparable Printings;
+- shared Notes;
+- Price History;
+- Help and tutorials;
+- Admin;
+- import/export and backup/restore;
+- price refresh and refresh status;
+- market observations;
+- TCGplayer and other external links;
+- dialogs, confirmations, toasts, pickers, filters, tables, and row actions;
+- localStorage keys, normalization, backup envelopes, migrations, and compatibility behavior.
 
-If ManaSpec migrates later, prefer a staged rewrite rather than a full replacement.
+Archived or unreachable code is not automatically a parity requirement. Active documentation and current navigation determine product truth; uncertain legacy behavior must be classified before porting.
 
-1. Create a React/Vite prototype in a branch or separate workspace.
-2. Preserve the current localStorage keys and backup format.
-3. Recreate the app shell first: header, navigation, summary, toast, confirmation, Help, and active view mount.
-4. Convert Admin early because it validates storage, backup, import, and version behavior.
-5. Convert one workflow at a time.
-6. Keep Radar and Positions behavior stable before touching Signals and Dashboard.
-7. Convert Card Detail late, after smaller shared pieces are extracted.
-8. Compare against the vanilla app using a parity checklist before replacing the deployed app.
+## Implementation Order
 
-## Suggested Conversion Order
+Parity work follows dependency risk rather than visual convenience:
 
-1. Project shell and deployment setup.
-2. Storage service: load, save, backup, import, localStorage compatibility.
-3. App shell: navigation, summary, toast, confirmation, Help.
-4. Admin: backup/export/import and cash reset.
-5. Shared primitives: money formatting, inputs, target editors, note indicators, market-check summary.
-6. Radar: search, exact printing selection, add-to-Radar, planned quantity, entry target.
-7. Positions: holdings table, buy/sell/delete, target/hold edits, P/L.
-8. Transactions and History.
-9. Signals and Dashboard.
-10. Card Detail command center.
+1. Documentation baseline, branch/workspace isolation, and library inventory.
+2. Vite/React foundation, normal build, portable build, and Pages-path proof.
+3. Application shell, navigation, route strategy, global error handling, and shared tokens.
+4. Pure domain helpers and persistence compatibility adapter.
+5. Backup/export/import and migration-fixture tests.
+6. Shared components: forms, dialogs, notices, table primitives, loading, and empty states.
+7. Radar and Scryfall discovery.
+8. Positions and transaction calculations.
+9. Transactions and History.
+10. Notes, Card Detail, Comparable Printings, and Price History.
+11. Signals and Dashboard derived views.
+12. Help, Admin utilities, external links, and remaining parity details.
+13. Corrective UI polish, accessibility, and responsive behavior.
+14. Bundle/performance review, full parity validation, Pages deployment, and evidence summary.
 
-Card Detail should not be first. It touches too many product contracts.
+This order may change when a dependency is discovered, but convenience features and redesign do not move ahead of data safety and core workflow parity.
 
-## Data Compatibility Rules
+## Data Compatibility Contract
 
-The React version should initially read and write the same storage keys:
+The React app initially recognizes the current ManaSpec keys and records, including:
 
-- `specs`
-- `radar`
-- `transactions`
-- `cardNotes`
-- `thesisNotes`
-- `signals`
-- `cash`
-- `priceSnapshots`
-- `priceRefreshStatus`
-- `marketObservations`
-- `cardDetailNotesExpanded`
-- `manaspec_pre_import_backup`
+- `specs`;
+- `radar`;
+- `transactions`;
+- `cardNotes`;
+- legacy `signals`;
+- `thesisNotes`;
+- `cash`;
+- `priceSnapshots`;
+- `priceRefreshStatus`;
+- `marketObservations`;
+- current UI preference keys included by the active storage/backup documentation.
 
-Do not use the React migration as an excuse to rename keys, silently drop fields, or change backup shape. If a migration is needed, write it explicitly and test old backups.
+Rules:
 
-## Component Candidates
+- Read existing data without requiring manual conversion.
+- Preserve exact printing and finish identity.
+- Preserve unknown fields through normal compatible edits where current adapters do so.
+- Do not perform destructive startup migrations.
+- Keep data schema and backup-envelope schema versions distinct.
+- Keep import replace-only unless a separately approved design changes it.
+- Reject unsupported future schema versions before writing.
+- Test migrations with retained fixtures and idempotence/round-trip coverage.
+- Confirm vanilla can read controlled React-written data before live spike use.
+- Export a backup before testing the deployed React app against real user data.
 
-Likely reusable components:
+## Local No-Build Deliverable
 
-- App shell
-- Header summary
-- Navigation toolbar
-- Toast stack
-- Confirmation dialog
-- Help drawer
-- Context band
-- Standard table
-- Table pagination/page-size control
-- Money input
-- Quantity stepper
-- Target editor
-- Hold-time editor
-- Intent modal
-- Card art preview
-- Card Detail sections
-- Note indicator and note editor
-- Market Check panel
-- Backup preview
+The spike must commit a prebuilt static version with a stable local entry:
 
-## Library Candidates
+```text
+react-app/dist-portable/index.html
+```
 
-Possible future choices, to be decided only after beta needs are clearer:
+Opening it should require no package installation, npm command, terminal, development server, or CDN. The portable build must use relative assets, local dependencies, file-compatible script output, and hash-safe navigation.
 
-- Vite for a light React build.
-- React Router only if ManaSpec earns real URLs or deep links.
-- Zustand or a small reducer/store if state coordination becomes painful.
-- TanStack Table only if the current table contract becomes too costly to maintain.
-- Dexie.js only when localStorage is no longer enough and the ledger shape is clear.
-- Day.js for date/hold/stale-check behavior if native date handling becomes repetitive.
-- Fuse.js for local fuzzy search across stored ManaSpec data.
-- Papa Parse for CSV/backfill work after the owned-spec import shape is validated.
+This is not satisfied merely by a normal Vite `dist/` directory. Direct opening must be tested. Browser-specific `file://` storage limitations and the lack of shared storage with the Pages origin must be documented honestly. See [Deployment](DEPLOYMENT.md).
 
-Avoid adding libraries simply because React exists. Every library should remove real complexity or protect data/workflow behavior.
+## Developer Workflow
 
-## GalleyFlow Pattern Review
+The React workspace also provides a conventional workflow with explicit scripts for:
 
-GalleyFlow was inspected at `D:\projects\galleyflow`.
+- development server;
+- normal production build;
+- portable build;
+- preview;
+- linting;
+- formatting checks;
+- focused automated tests;
+- browser/responsive tests where adopted;
+- bundle analysis where useful.
 
-Useful GalleyFlow patterns:
+The lockfile is committed. `node_modules`, normal generated deployment output, coverage, caches, and temporary assembly artifacts are ignored. The portable output is committed intentionally.
 
-- Keep the vanilla app as the working reference while building React separately.
-- Use `react-app/` as an npm-managed React + Vite workspace.
-- Use JavaScript/JSX, not TypeScript, to keep migration friction low.
-- Bind Vite dev and preview servers to `127.0.0.1`.
-- Use `base: './'` so built assets are relative and portable.
-- Keep runtime CDNs out of the React app.
-- Start with a module/navigation shell before rebuilding heavy workflows.
-- Store module metadata in one array and render navigation/page headers from it.
-- Use small shell components such as `AppLayout`, `Header`, `Navigation`, `PageHeader`, `Toolbar`, `Panel`, `EmptyState`, `StatusBar`, and `Button`.
-- Preserve a portable build option for non-developer testing.
+## UI Fidelity And Corrective Polish
 
-GalleyFlow patterns to adapt carefully:
+Preserve:
 
-- GalleyFlow uses hash routing (`#/home`, `#/menus`, etc.). ManaSpec does not need routes today, but hash routes could become useful if testers need shareable workflow URLs or if React needs stable navigation state.
-- GalleyFlow's current React app is mostly a shell with placeholders. It is useful for project setup and layout patterns, not for complex data workflows yet.
-- GalleyFlow's portable build emits classic browser JavaScript for double-click `index.html` testing. ManaSpec is already hosted on GitHub Pages, so this is optional rather than core.
-- GalleyFlow's docs emphasize offline-first package discipline. ManaSpec can reuse that mindset but should not copy the offline tarball archive process unless dependency management becomes a real need.
-- GalleyFlow does not yet prove how to migrate complex localStorage/data workflows into React; ManaSpec would still need its own storage and parity plan.
+- ManaSpec colors and typography;
+- layout hierarchy and information density;
+- navigation and terminology;
+- dense table workflows;
+- compact 1366 x 768 desktop usability;
+- current financial formatting and status language.
 
-Best-fit reuse for ManaSpec:
+Small corrections are allowed when they improve correctness: associated labels, consistent control heights, button alignment, dialog padding, table spacing, icon centering, wrapping, focus/hover states, keyboard access, accessible naming, and touch targets.
 
-- React/Vite shell setup.
-- `base: './'` relative asset configuration.
-- Hash-routing approach only if ManaSpec wants deep links.
-- Metadata-driven module list for navigation and page titles.
-- Small component organization.
-- Local-only dev server scripts.
-- Docs discipline around vanilla reference versus React target.
+When uncertain, reproduce current behavior first and make the smallest correction in a separately reviewable change.
 
-Poor-fit or defer:
+## Responsive Requirements
 
-- Portable double-click build as a primary target.
-- Routing before ManaSpec has a user-facing reason.
-- Large dependency archive workflow.
-- Generic placeholder page patterns beyond the earliest shell.
-- Any migration that treats vanilla code as mechanical copy/paste instead of behavior reference.
+Priority order:
 
-## Parity Checklist
+1. Desktop parity at 1366 x 768.
+2. Tablet usability.
+3. Phone usability.
 
-Before a React version can replace the vanilla app:
+Tablet and phone layouts may stack panels, condense navigation, prioritize columns, expose expandable details, or use deliberate list/card alternatives. They should not shrink an unusable desktop table onto a phone. Breakpoint strategy belongs in [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md) and must be validated at representative viewports.
 
-- Existing backups import successfully.
-- Existing localStorage data loads without manual conversion.
-- Radar search and exact printing selection work.
-- Radar add/buy/remove behavior matches current app.
-- Positions buy/sell/delete and P/L behavior match current app.
-- Notes survive buy, sell, close, and rebuy flows.
-- Card Detail edits the correct source item.
-- Market Check parsing and saved observations still work.
-- Signals, Dashboard, Transactions, and History show the same expected state.
-- Admin export/import remains safe and understandable.
-- GitHub Pages project-path deployment works.
-- Dense table layout remains usable at laptop width.
+## Library Audit And Selection
 
-## Recommendation
+Before installing dependencies:
 
-Do not start React migration as part of closed beta deployment.
+1. Inventory the local library collection and exact versions.
+2. Identify the problem each candidate solves.
+3. Determine React compatibility and official/maintained wrappers.
+4. Compare a React-native alternative and the simplest no-library approach where material.
+5. Record selection, alternatives, present benefit, future benefit, bundle cost, and maintenance cost.
+6. Avoid overlapping state, table, styling, dialog, date, icon, notification, and animation systems.
 
-Use beta feedback to decide whether the migration is worth it. If the app's pain is mostly workflow wording, table layout, or small localStorage safeguards, stay vanilla longer. If the pain becomes state coordination, duplicated UI behavior, or risky cross-module edits, React becomes more attractive.
+The active audit and adoption records live in [LIBRARIES](LIBRARIES.md). No candidate listed there is approved merely by being listed.
 
-The best near-term move is to keep these notes, run beta, then revisit GalleyFlow's shell/deploy patterns with real ManaSpec pain in hand.
+## High-Risk Validation
+
+At minimum, produce evidence that:
+
+- existing localStorage fixtures load correctly without destructive writes;
+- backup and restore remain safe;
+- transaction and position calculations match vanilla behavior;
+- notes remain attached to the correct printing and finish;
+- price snapshots remain compatible;
+- Comparable Printings matches current identity and link behavior;
+- Scryfall, TCGplayer, and other external links are correct;
+- shared dialogs, focus management, and confirmations work;
+- hash navigation works in development, portable output, and `/ManaSpec/react-spike/`;
+- direct portable `index.html` works without npm or a server;
+- desktop, tablet, and phone layouts are intentionally usable;
+- the vanilla root remains unchanged and operational;
+- React-controlled writes remain readable by vanilla.
+
+Automate high-risk pure logic, persistence, migration, and repeatable interaction checks. Do not delay the spike for exhaustive low-value coverage.
+
+## Performance And Accessibility
+
+Use code splitting, lazy loading, memoized derivation, efficient table rendering, and asset optimization where measurement justifies them. The portable build may trade code splitting for file compatibility; record that difference.
+
+Accessibility is UI correctness. Review labels, focus, keyboard navigation, dialog behavior, contrast, button names, icon-only controls, table access, and touch targets during each shared-component milestone rather than deferring all work to the end.
+
+## Documentation Deliverables
+
+Maintain:
+
+- README and docs index status/pointers;
+- current vanilla architecture;
+- React target architecture;
+- data compatibility rules;
+- development workflow;
+- deployment and portable usage;
+- library inventory and adoption records;
+- decision log/ADRs;
+- responsive strategy;
+- progress and validation results;
+- roadmap status.
+
+Clearly label `Current`, `Proposed`, `Implemented`, and `Verified`. Documentation must not describe an unbuilt workflow or live deployment as complete.
+
+## Milestones And Version Control
+
+Commit meaningful milestones separately:
+
+- workspace/build foundation;
+- portable local-launch proof;
+- shell/routing;
+- persistence compatibility;
+- shared tables/forms/dialogs;
+- feature migration groups;
+- responsive foundation;
+- parity completion;
+- Pages deployment;
+- documentation and validation.
+
+Before each milestone commit, review unrelated working-tree changes and stage only files belonging to that milestone.
+
+## Promotion Decision
+
+Completing the spike does not automatically replace vanilla. A promotion review must answer:
+
+- Is full workflow parity demonstrated?
+- Is user data safe and cross-readable?
+- Does React materially improve maintenance, testing, responsiveness, or feature work?
+- Are library and bundle costs acceptable?
+- Does desktop remain excellent and are smaller viewports intentionally usable?
+- Are local portable and Pages deployments reliable?
+- Is the React architecture easier for Pete and Dex to understand?
+- Is rollback credible?
+
+Possible outcomes are: abandon the spike, retain it for further experiments, continue incremental parity work, or approve a separately planned production cutover.
