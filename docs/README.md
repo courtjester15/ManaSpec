@@ -15,6 +15,7 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 - [Roadmap](ROADMAP.md): current phase, next work, and future phases.
 - [Workflow](WORKFLOW.md): lightweight rules for working on the app.
 - [React Modernization Spike](REACT_MIGRATION_NOTES.md): approved experiment scope, parity order, compatibility rules, and promotion gates.
+- [React Spike Progress](REACT_SPIKE_PROGRESS.md): implementation milestones, validation evidence, and unresolved checks.
 - [Libraries](LIBRARIES.md): local inventory, React dependency evaluation, adoption records, and CDN-versus-local policy.
 - [Deployment](DEPLOYMENT.md): dual vanilla/React Pages model, portable local use, validation, rollback, and removal.
 - [Beta Deployment](BETA_DEPLOYMENT.md): GitHub Pages setup, localStorage behavior, backup workflow, and tester handoff checklist.
@@ -37,6 +38,7 @@ Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), t
 - `ROADMAP.md`: active phase, next work, beta gates, and future phases.
 - `WORKFLOW.md`: how humans, Codex, and GPT should work on the project.
 - `REACT_MIGRATION_NOTES.md`: active React spike charter, parity sequence, compatibility contract, and promotion decision criteria.
+- `REACT_SPIKE_PROGRESS.md`: dated implementation and validation evidence for the experiment.
 - `LIBRARIES.md`: dependency inventory, category audit, selection rules, and adoption records.
 - `DEPLOYMENT.md`: dual Pages artifact, React portable output, redeploy, rollback, and removal.
 - `BETA_DEPLOYMENT.md`: closed beta GitHub Pages deployment, update workflow, storage expectations, and tester instructions.

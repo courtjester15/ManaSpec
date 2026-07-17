@@ -1,0 +1,91 @@
+.app-title-block h1 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 22px;
+  line-height: 1.05;
+}
+
+.app-title-block h1 small {
+  margin-left: 4px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.toolbar-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.toolbar-tab:hover,
+.toolbar-tab.active {
+  border-color: rgba(125, 211, 252, 0.38);
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.toolbar-tab-icon {
+  width: 18px;
+  color: var(--accent);
+  font-size: 17px;
+  line-height: 1;
+  text-align: center;
+}
+
+.react-foundation-panel {
+  min-height: 180px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.react-foundation-panel p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+footer {
+  padding: 14px 0 4px;
+  color: var(--muted-2);
+  text-align: center;
+}
+
+@media (max-width: 639px) {
+  body {
+    padding: 8px;
+  }
+
+  main.container {
+    padding: 0;
+  }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .toolbar-tab {
+    min-width: 0;
+    padding: 0 5px;
+    font-size: 11px;
+  }
+
+  .app-logo-frame {
+    width: 48px;
+    height: 48px;
+  }
+
+  .app-logo {
+    width: 44px;
+    height: 44px;
+  }
+}

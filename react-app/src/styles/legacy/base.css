@@ -1,0 +1,65 @@
+/*
+====================================
+MANASPEC BASE
+====================================
+
+Design tokens and app-wide defaults.
+Keep raw color values here when possible.
+====================================
+*/
+
+:root {
+  --bg: #0b0f14;
+  --surface: #111821;
+  --surface-2: #101720;
+  --panel: rgba(255, 255, 255, 0.03);
+  --panel-strong: rgba(255, 255, 255, 0.055);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #e6edf3;
+  --text-strong: #f8fbfd;
+  --muted: #93a4b1;
+  --muted-2: #64748b;
+  --accent: #7dd3fc;
+  --accent-soft: rgba(125, 211, 252, 0.12);
+  --warning: #fde68a;
+  --good: #86efac;
+  --bad: #fca5a5;
+  --danger: #f87171;
+  --radius: 8px;
+  --radius-sm: 6px;
+  --control-h: 34px;
+  --control-h-sm: 28px;
+  --row-h: 34px;
+  --row-gap: 6px;
+  --row-pad-x: 8px;
+  --row-hover: rgba(125, 211, 252, 0.06);
+  --font-ui: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+body {
+  padding: 12px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  line-height: 1.4;
+}
+
+main.container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+hr {
+  margin: 10px 0;
+  border-color: var(--border);
+}

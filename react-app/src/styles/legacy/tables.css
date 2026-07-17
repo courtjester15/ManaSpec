@@ -1,0 +1,808 @@
+/*
+====================================
+TABLES
+====================================
+
+Shared financial table system.
+Every money-oriented module starts with:
+Card | Set | # | Rarity | Color | price-like columns | module columns.
+====================================
+*/
+
+.ms-table {
+  --table-row-h: 27px;
+  --table-control-h: 20px;
+  --table-cell-pad-x: 6px;
+  --col-card: minmax(170px, 1.45fr);
+  --col-set: 48px;
+  --col-number: 48px;
+  --col-rarity: 44px;
+  --col-color: 44px;
+  --col-price: 64px;
+  --col-qty: 38px;
+  --col-date: 68px;
+  --col-type: 58px;
+  --col-notes: 54px;
+  --col-history: 54px;
+  --col-actions: 116px;
+  --col-actions-wide: 124px;
+  width: 100%;
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.ms-table {
+  scrollbar-color: rgba(147, 164, 177, 0.45) var(--surface);
+  scrollbar-width: thin;
+}
+
+.ms-table::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+.ms-table::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+.ms-table::-webkit-scrollbar-thumb {
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  background: rgba(147, 164, 177, 0.45);
+}
+
+.ms-table__body {
+  display: grid;
+  padding-bottom: 4px;
+}
+
+.ms-table__header,
+.ms-table__row {
+  display: grid;
+  grid-template-columns: var(--table-columns);
+  align-items: center;
+  min-width: var(--table-min-width, 960px);
+}
+
+.ms-table__header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  min-height: var(--table-row-h);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.ms-table__row {
+  height: var(--table-row-h);
+  min-height: var(--table-row-h);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ms-table__row:last-child {
+  border-bottom: 0;
+}
+
+.ms-table__row:hover {
+  background: var(--row-hover);
+}
+
+.ms-table__row--focused {
+  outline: 2px solid rgba(125, 211, 252, 0.72);
+  outline-offset: -2px;
+  background: rgba(125, 211, 252, 0.14);
+}
+
+.ms-table__header > *,
+.ms-table__row > * {
+  min-width: 0;
+  margin: 0;
+  padding: 3px var(--table-cell-pad-x);
+  border-right: 1px solid rgba(255, 255, 255, 0.035);
+  box-sizing: border-box;
+}
+
+.ms-table__row > span,
+.ms-table__row > button,
+.ms-table__row > label,
+.ms-table__row > div {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.ms-table__header > *:last-child,
+.ms-table__row > *:last-child {
+  border-right: 0;
+}
+
+.ms-table__header > * {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--table-row-h);
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.ms-table__header .ms-table__head-cell,
+.ms-table__header .ms-table__sort,
+.ms-table__header .ms-table__cell--center,
+.ms-table__header .ms-table__cell--number,
+.ms-table__header .ms-table__cell--money,
+.ms-table__header .ms-table__cell--actions {
+  justify-content: center;
+  text-align: center;
+}
+
+.ms-table__row > span,
+.ms-table__row > button.link-action {
+  overflow: hidden;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-table [data-ms-tooltip] {
+  position: relative;
+}
+
+.ms-table [data-ms-tooltip]:hover::after,
+.ms-table [data-ms-tooltip]:focus-visible::after {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  z-index: 8;
+  width: max-content;
+  max-width: 220px;
+  padding: 5px 7px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-strong);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  content: attr(data-ms-tooltip);
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+  transform: translateX(-50%);
+  animation: tooltip-enter 150ms ease 180ms both;
+  pointer-events: none;
+}
+
+@keyframes tooltip-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.ms-table__row > .ms-table__cell:not(.ms-table__cell--center):not(.ms-table__cell--number):not(.ms-table__cell--money):not(.ms-table__cell--actions) {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.ms-table__row > button.link-action.ms-table__cell:not(.ms-table__cell--center):not(.ms-table__cell--number):not(.ms-table__cell--money):not(.ms-table__cell--actions) {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.ms-table__cell--center,
+.ms-table__cell--center > * {
+  justify-content: center;
+  text-align: center;
+}
+
+.ms-table__cell--number,
+.ms-table__cell--money,
+.ms-table__cell--number > *,
+.ms-table__cell--money > * {
+  justify-content: flex-end;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-table__row > .ms-table__cell--money {
+  padding-right: calc(var(--table-cell-pad-x) + 4px);
+}
+
+.ms-table__cell--actions {
+  justify-content: center;
+  text-align: center;
+}
+
+.ms-table__sort {
+  width: 100%;
+  height: var(--table-row-h);
+  min-height: var(--table-row-h);
+  margin: 0;
+  padding: 0 var(--table-cell-pad-x);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  text-align: center;
+  justify-content: center;
+}
+
+.ms-table__sort.ms-table__cell--center {
+  justify-content: center;
+  text-align: center;
+}
+
+.ms-table__sort:hover,
+.ms-table__sort.active {
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.ms-table__input,
+.quick-plan-input {
+  width: calc(100% - 10px);
+  height: var(--table-control-h) !important;
+  min-height: var(--table-control-h) !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+  align-self: center;
+  justify-self: center;
+  border-width: 1px;
+  box-sizing: border-box;
+  background: var(--surface);
+  color: var(--text-strong);
+  font-size: 12px;
+  line-height: var(--table-control-h);
+}
+
+.ms-table__input[type="number"] {
+  padding-right: 1px !important;
+}
+
+.ms-table__input.ms-table__cell--center {
+  text-align: center;
+}
+
+.ms-table__input.ms-table__cell--money,
+.ms-table__input.ms-table__cell--number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-table__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: calc(100% - 10px);
+  height: var(--table-control-h);
+  min-height: var(--table-control-h);
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: var(--table-control-h);
+}
+
+.ms-table__editable {
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: var(--text-strong);
+}
+
+.ms-table__editable.ms-table__cell--money {
+  justify-content: flex-end;
+}
+
+.ms-table__editable.ms-table__cell--center {
+  justify-content: center;
+}
+
+.ms-table__editable-display {
+  display: inline-flex;
+  align-items: center;
+  justify-content: inherit;
+  gap: 3px;
+  width: calc(100% - 10px);
+  height: var(--table-control-h);
+  min-height: var(--table-control-h);
+  padding: 0 4px;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ms-table__editable.ms-table__cell--center .ms-table__editable-display {
+  justify-content: center;
+}
+
+.ms-table__editable.ms-table__cell--money .ms-table__editable-display,
+.ms-table__editable.ms-table__cell--number .ms-table__editable-display {
+  justify-content: flex-end;
+  padding-right: 6px;
+}
+
+.ms-table__editable-display span {
+  min-width: 0;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.ms-table__editable-display em {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.ms-table__editable.empty .ms-table__editable-display {
+  color: var(--muted-2);
+  font-weight: 500;
+}
+
+.ms-table__editable-display::after {
+  content: "";
+  display: none;
+}
+
+.ms-table__editable:hover .ms-table__editable-display,
+.ms-table__editable:focus-within .ms-table__editable-display {
+  color: var(--text-strong);
+}
+
+.ms-table__editable:hover .ms-table__editable-display::after,
+.ms-table__editable:focus-within .ms-table__editable-display::after {
+  opacity: 1;
+}
+
+.ms-table__editable-input-wrap {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  width: calc(100% - 10px);
+  height: var(--table-control-h);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: var(--table-control-h);
+}
+
+.ms-table__editable-input-wrap .ms-table__input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.ms-table__editable-input-wrap > span {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.ms-table__editable.editing .ms-table__editable-display {
+  display: none;
+}
+
+.ms-table__editable.editing .ms-table__editable-input-wrap {
+  display: flex;
+}
+
+.ms-table__input-wrap .ms-table__input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  justify-self: auto;
+}
+
+.ms-table__input-wrap span {
+  flex: 0 0 auto;
+}
+
+.ms-table__stepper {
+  display: grid;
+  grid-template-columns: 22px minmax(20px, 1fr) 22px;
+  gap: 2px;
+  align-items: center;
+  align-self: center;
+  justify-self: center;
+  width: calc(100% - 8px);
+  height: var(--table-control-h);
+  min-height: var(--table-control-h);
+  margin: 0 auto !important;
+}
+
+.ms-table__row > div.ms-table__stepper {
+  display: grid;
+}
+
+.ms-table__stepper-btn {
+  width: 22px !important;
+  height: 22px !important;
+  min-height: 22px !important;
+  padding: 0 !important;
+  border-color: var(--border-strong);
+  background: var(--panel-strong);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.ms-table__stepper-btn:hover {
+  border-color: rgba(125, 211, 252, 0.32);
+  background: var(--accent-soft);
+  color: var(--text-strong);
+}
+
+.ms-table__stepper-input {
+  width: 100%;
+  height: var(--table-control-h) !important;
+  min-height: var(--table-control-h) !important;
+  margin: 0 !important;
+  padding: 0 2px !important;
+  border-width: 1px;
+  box-sizing: border-box;
+  background: var(--surface);
+  color: var(--text-strong);
+  font-size: 11px;
+  line-height: var(--table-control-h);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-table button,
+.ms-table input,
+.ms-table select {
+  margin: 0;
+}
+
+.ms-table .row-actions {
+  flex-wrap: nowrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.ms-table .row-actions button {
+  height: var(--table-control-h) !important;
+  min-height: var(--table-control-h) !important;
+  padding: 0 6px !important;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ms-table .status-pill {
+  min-width: 34px;
+  min-height: 18px;
+  padding: 1px 6px;
+  align-items: center;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.target-distance {
+  font-weight: 650;
+}
+
+.target-distance.good {
+  color: var(--good);
+}
+
+.target-distance.bad {
+  color: var(--bad);
+}
+
+.target-distance.neutral {
+  color: var(--muted);
+}
+
+.ms-table__cell--actions .row-actions {
+  justify-content: center;
+}
+
+.ms-table--positions {
+  --table-cell-pad-x: 4px;
+  --table-min-width: 100%;
+  --table-columns:
+    minmax(170px, 1.45fr)
+    44px
+    44px
+    40px
+    40px
+    60px
+    60px
+    32px
+    42px
+    64px
+    60px
+    54px
+    58px
+    68px
+    52px
+    62px
+    42px
+    46px
+    110px;
+}
+
+.ms-table--positions .row-actions {
+  gap: 3px;
+}
+
+.ms-table--positions .row-actions button {
+  padding-right: 5px !important;
+  padding-left: 5px !important;
+}
+
+.ms-table--radar {
+  --table-min-width: 100%;
+  --table-columns:
+    minmax(150px, 1.2fr)
+    var(--col-set)
+    var(--col-number)
+    var(--col-rarity)
+    var(--col-color)
+    72px
+    58px
+    74px
+    72px
+    68px
+    50px
+    50px
+    72px
+    var(--col-notes)
+    var(--col-history)
+    112px;
+}
+
+.ms-table--ledger {
+  --table-min-width: 100%;
+  --table-columns:
+    minmax(150px, 1.2fr)
+    var(--col-set)
+    var(--col-number)
+    var(--col-rarity)
+    var(--col-color)
+    var(--col-price)
+    var(--col-qty)
+    74px
+    82px
+    76px
+    var(--col-date)
+    var(--col-type);
+}
+
+.ms-table--history {
+  --table-min-width: 1020px;
+  --table-columns:
+    var(--col-card)
+    var(--col-set)
+    var(--col-number)
+    var(--col-rarity)
+    var(--col-color)
+    var(--col-price)
+    var(--col-date)
+    var(--col-type)
+    var(--col-notes)
+    minmax(220px, 2fr);
+}
+
+.ms-table--signals {
+  --table-min-width: 100%;
+  --table-columns:
+    minmax(150px, 1.3fr)
+    var(--col-set)
+    var(--col-number)
+    58px
+    68px
+    112px
+    minmax(120px, 1fr)
+    58px
+    68px
+    86px
+    76px
+    96px;
+}
+
+.ms-table--plan {
+  --table-min-width: 1040px;
+  --table-columns:
+    var(--col-card)
+    var(--col-set)
+    var(--col-number)
+    var(--col-rarity)
+    var(--col-color)
+    var(--col-price)
+    var(--col-price)
+    var(--col-price)
+    62px
+    var(--col-type)
+    var(--col-actions);
+}
+
+.ms-table--comparable-printings {
+  --table-row-h: 24px;
+  --table-cell-pad-x: 5px;
+  --table-min-width: 100%;
+  --table-columns: minmax(112px, 1fr) 58px 72px 62px 74px minmax(190px, 1.25fr);
+  overflow-x: hidden;
+  border-radius: var(--radius-sm);
+}
+
+.ms-table--comparable-printings .ms-table__body { padding-bottom: 0; }
+.ms-table--comparable-printings .ms-table__header { font-size: 9px; }
+.ms-table--comparable-printings .ms-table__row { cursor: default; font-size: 10px; }
+.ms-table--comparable-printings .ms-table__row.is-current {
+  height: 28px;
+  min-height: 28px;
+  margin-bottom: 3px;
+  outline: 1px solid rgba(125, 211, 252, 0.32);
+  outline-offset: -1px;
+  border-bottom: 2px solid rgba(125, 211, 252, 0.22);
+  background: rgba(125, 211, 252, 0.11);
+}
+.ms-table--comparable-printings .ms-table__row.is-current:hover { background: rgba(125, 211, 252, 0.13); }
+.ms-table--comparable-printings .ms-table__row > span:first-child { gap: 0; }
+
+.printing-picker-header,
+.printing-picker-row {
+  display: grid;
+  grid-template-columns: 44px 48px minmax(150px, 1.15fr) minmax(170px, 1.5fr) 70px 70px 54px;
+  gap: 0;
+  align-items: center;
+  min-width: 0;
+}
+
+.printing-picker-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  min-height: 22px;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.printing-picker-header [data-sort] {
+  cursor: pointer;
+}
+
+.printing-picker-header [data-sort]:hover {
+  color: var(--text-strong);
+}
+
+.printing-picker-row {
+  min-height: 22px;
+  padding: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.printing-picker-row:hover {
+  background: var(--row-hover);
+}
+
+.printing-picker-header > *,
+.printing-picker-row > * {
+  min-width: 0;
+  padding: 3px 6px;
+  border-left: 1px solid rgba(255, 255, 255, 0.035);
+  font-weight: inherit;
+  line-height: 1.2;
+}
+
+.printing-picker-header > *:first-child,
+.printing-picker-row > *:first-child {
+  border-left: 0;
+}
+
+.printing-picker-set,
+.printing-picker-number {
+  color: var(--muted);
+  text-align: center;
+}
+
+.printing-picker-card {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+}
+
+.printing-picker-card:hover {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+}
+
+.printing-picker-card,
+.printing-picker-set-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.printing-picker-set-name {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+
+.printing-picker-price {
+  padding-right: 8px;
+  color: var(--text);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  overflow: visible;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.printing-picker-row .search-row-action {
+  width: 100%;
+  height: 18px;
+  min-height: 18px;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.value-positive {
+  color: var(--good);
+}
+
+.value-negative {
+  color: var(--bad);
+}
+
+@media (max-width: 900px) {
+  .ms-table {
+    max-height: none;
+  }
+}
