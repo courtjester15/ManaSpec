@@ -45,7 +45,7 @@ Implemented:
 
 Validated:
 
-- Eleven focused Node tests pass: backup compatibility/safety, unknown-field preservation, portfolio math, atomic Radar buy, weighted cost basis, partial/full sells, realized P/L, foil printing identity, and card-name/set-number parsing.
+- Thirteen focused Node tests pass: backup compatibility/safety, unknown-field preservation, portfolio math, atomic Radar buy, weighted cost basis, partial/full sells, realized P/L, foil printing identity, card-name/set-number parsing, and portable HTML finalization.
 - Source-policy and format checks pass.
 - Normal, `/ManaSpec/react-spike/` Pages, and portable IIFE builds complete.
 - Browser smoke tests render the existing stored ManaSpec data and pass all seven routes.
@@ -58,3 +58,9 @@ Open validation:
 - Perform direct `file://` launch manually because the in-app browser policy rejects local-file navigation; the regenerated artifact has a classic script, relative CSS/assets, no CDN URL, no `import.meta`, and no source-map reference.
 - A Pages publication workflow and live URL are intentionally not enabled by this spike branch.
 - Representative tablet/phone rules are implemented, but a second manual device/browser pass remains appropriate before calling the spike production-ready.
+
+## 2026-07-17: Portable Bootstrap Correction
+
+- Corrected the portable HTML finalizer to add `defer` when converting Vite's module entry into a classic script. Without it, the head script executed before `<div id="root">` existed and produced a blank page.
+- Added regression coverage for deferred execution and idempotent finalization.
+- Regenerated `dist-portable/` and verified the entry now uses `<script defer src="./assets/manaspec.js"></script>`.
