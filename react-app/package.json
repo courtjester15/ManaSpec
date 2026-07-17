@@ -12,12 +12,11 @@
     "build:pages": "vite build --mode pages",
     "build:portable": "vite build --config vite.portable.config.js && node tools/finalize-portable.mjs",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node --test",
+    "test": "node --test --test-isolation=none",
     "lint": "node tools/check-source.mjs",
     "format:check": "node tools/check-format.mjs"
   },
   "dependencies": {
-    "chart.js": "4.5.1",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-router-dom": "7.18.1"

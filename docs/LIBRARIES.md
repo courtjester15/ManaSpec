@@ -45,11 +45,11 @@ The archive contains a complete Windows x64 foundation set for the reviewed Reac
 
 | Direct package | Archived version | Status | Purpose and notes |
 | --- | --- | --- | --- |
-| `react` | 19.2.7 | Foundation | Component/runtime foundation. |
-| `react-dom` | 19.2.7 | Foundation | Browser renderer; archived `scheduler@0.27.0` satisfies its runtime dependency. |
-| `vite` | 8.1.3 | Foundation | Development and build pipeline. Requires Node `^20.19.0 || >=22.12.0`. |
-| `@vitejs/plugin-react` | 6.0.3 | Foundation | React integration for Vite 8. Optional compiler/Babel peers are intentionally absent and not required for the baseline. |
-| `react-router-dom` | 7.18.1 | Proposed | Hash-safe routing for portable and Pages-subpath navigation. Requires Node `>=20` for tooling and React/React DOM `>18`. |
+| `react` | 19.2.7 | Adopted | Component/runtime foundation. |
+| `react-dom` | 19.2.7 | Adopted | Browser renderer; archived `scheduler@0.27.0` satisfies its runtime dependency. |
+| `vite` | 8.1.3 | Adopted | Development and build pipeline. Requires Node `^20.19.0 || >=22.12.0`. |
+| `@vitejs/plugin-react` | 6.0.3 | Adopted | React integration for Vite 8. Optional compiler/Babel peers are intentionally absent and not required for the baseline. |
+| `react-router-dom` | 7.18.1 | Adopted | Hash-safe routing for portable and Pages-subpath navigation. Requires Node `>=20` for tooling and React/React DOM `>18`. |
 
 Use a Node version that satisfies the strictest archived engine range. Record the exact selected Node/npm versions when the workspace is created.
 
@@ -59,7 +59,7 @@ The archive's Vite/Rolldown and Lightning CSS native bindings cover Windows x64 
 
 | Package | Preferred archived version | Status | ManaSpec assessment |
 | --- | --- | --- | --- |
-| `chart.js` | 4.5.1 | Proposed | Preserve current Price History behavior. Direct React lifecycle integration is small enough to try before adding a wrapper. |
+| `chart.js` | 4.5.1 | Evaluated, not adopted | The spike's compact Price History needs are served by an accessible inline SVG with no runtime dependency. Reconsider only when richer chart interaction is approved. |
 | `tabulator-tables` | 6.5.2 | Evaluate | Strong dense-grid candidate, but it is framework-neutral/imperative. Compare against the current ManaSpec contract and a React-first headless table using real Radar/Positions data. |
 | `dayjs` | 1.11.21 | Evaluate | Small, dependency-free date helper. Adopt only if hold windows, parsing, stale checks, and sorting remain meaningfully clearer than pure helpers plus `Intl`. |
 | `fuse.js` | 7.4.2 | Deferred | Good dependency-free fuzzy search option when cross-workflow local search is in active scope; not needed for initial shell/persistence parity. |

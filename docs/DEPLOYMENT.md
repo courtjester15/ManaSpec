@@ -18,8 +18,8 @@ The React deployment described here is a target until its workflow and live URLs
 | Surface | Intended URL or entry | Source | Status |
 | --- | --- | --- | --- |
 | Vanilla production/beta | Existing GitHub Pages root | Repository root on the current vanilla deployment source | Current path; see [BETA_DEPLOYMENT](BETA_DEPLOYMENT.md) |
-| React spike | Existing root plus `react-spike/` | `react-app/dist/` generated from the dedicated spike branch/workspace | Planned; verify after implementation |
-| React portable | `react-app/dist-portable/index.html` | Committed portable build | Planned; must be tested directly |
+| React spike | Existing root plus `react-spike/` | `react-app/dist/` generated from the dedicated spike branch/workspace | Pages-path build verified; publication not yet configured |
+| React portable | `react-app/dist-portable/index.html` | Committed portable build | Generated and statically verified; direct `file://` test remains pending |
 | React development | Local Vite URL on `127.0.0.1` | `react-app/src/` | Developer-only |
 
 ## Isolation Model
