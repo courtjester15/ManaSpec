@@ -5,13 +5,13 @@ import { calculatePortfolioSummary, formatMoney, formatPriceRefreshStatus } from
 import { useAppState } from "../state/AppState.jsx";
 
 const navigation = [
-  ["dashboard", "Dashboard", "◔"],
-  ["radar", "Radar", "◎"],
-  ["positions", "Positions", "▣"],
-  ["signals", "Signals", "⌁"],
-  ["transactions", "Transactions", "⇄"],
-  ["history", "History", "↶"],
-  ["admin", "Admin", "⚙"],
+  ["dashboard", "Dashboard", <><path d="M12 3v9h9" /><path d="M20.5 15.5A9 9 0 1 1 8.5 3.5" /></>],
+  ["radar", "Radar", <><circle cx="12" cy="12" r="7" /><circle cx="12" cy="12" r="2" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3" /></>],
+  ["positions", "Positions", <><rect x="4" y="7" width="16" height="12" rx="2" /><path d="M9 7V5h6v2M4 12h16M10 12v2h4v-2" /></>],
+  ["signals", "Signals", <><path d="M5 12a7 7 0 0 1 14 0M8 12a4 4 0 0 1 8 0M12 12v6M9 18h6" /></>],
+  ["transactions", "Transactions", <><path d="M7 7h11m-3-3 3 3-3 3M17 17H6m3-3-3 3 3 3" /></>],
+  ["history", "History", <><path d="M4 12a8 8 0 1 0 2.3-5.7M4 5v5h5M12 8v5l3 2" /></>],
+  ["admin", "Admin", <><circle cx="12" cy="12" r="3" /><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a7.8 7.8 0 0 0-1.7-1L14.5 3h-5l-.4 3.1a7.8 7.8 0 0 0-1.7 1l-2.4-1-2 3.4L5 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a7.8 7.8 0 0 0 1.7 1l.4 3.1h5l.4-3.1a7.8 7.8 0 0 0 1.7-1l2.4 1 2-3.4-2-1.5a7 7 0 0 0 .1-1z" /></>],
 ];
 
 export function AppShell() {
@@ -35,7 +35,7 @@ export function AppShell() {
         </div>
         <div className="app-title-block">
           <h1>
-            ManaSpec <small>React spike</small>
+            ManaSpec <small>v0.9.0-alpha.1</small>
           </h1>
           <p className="app-subtitle">MTG speculation workflow and positions terminal</p>
         </div>
@@ -60,7 +60,7 @@ export function AppShell() {
               className={({ isActive }) => `toolbar-tab${isActive ? " active" : ""}`}
               to={`/${path}`}
             >
-              <span className="toolbar-tab-icon" aria-hidden="true">{icon}</span>
+              <span className="toolbar-tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{icon}</svg></span>
               <span>{label}</span>
             </NavLink>
           ))}
@@ -83,7 +83,7 @@ export function AppShell() {
         <Outlet />
       </section>
       <footer>
-        <small>ManaSpec React modernization spike<br />&copy; 2026 Jason Elie</small>
+        <small>ManaSpec v0.9.0-alpha.1<br />&copy; 2026 Jason Elie</small>
       </footer>
       {helpOpen && (
         <div className="help-scrim" onClick={() => setHelpOpen(false)}>

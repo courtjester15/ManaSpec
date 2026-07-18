@@ -2,11 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { formatMoney } from "../../domain/portfolio.js";
 
 export function ViewHeader({ title, description, actions }) {
-  return <div className="view-heading"><div><h3>{title}</h3><p>{description}</p></div>{actions && <div className="view-actions">{actions}</div>}</div>;
+  return <div className="view-heading"><h3>{title}</h3><p>{description}</p>{actions && <div className="view-actions">{actions}</div>}</div>;
 }
 
 export function MetricBand({ items }) {
-  return <section className="react-metric-band" aria-label="View summary">{items.map(item => <article key={item.label}><span>{item.label}</span><strong className={item.tone || ""}>{item.value}</strong><small>{item.detail}</small></article>)}</section>;
+  return <section className="module-context-band" aria-label="View summary">{items.map(item => <article className="module-context-card" key={item.label}><span>{item.label}</span><strong className={item.tone || ""}>{item.value}</strong><small>{item.detail}</small>{item.preview && <em>{item.preview}</em>}</article>)}</section>;
 }
 
 export function FilterBar({ value, onChange, placeholder = "Filter cards, sets, or notes", children }) {
@@ -23,7 +23,7 @@ export function DataTable({ columns, rows, empty = "No rows yet.", onRowClick })
     return sort.direction === "asc" ? result : -result;
   }), [columns, rows, sort]);
   if (!rows.length) return <div className="react-empty">{empty}</div>;
-  return <div className="react-table-wrap"><table className="react-table"><thead><tr>{columns.map(column => <th key={column.key} className={column.align || ""}>{column.sort !== false ? <button type="button" onClick={() => setSort(current => ({ key: column.key, direction: current.key === column.key && current.direction === "asc" ? "desc" : "asc" }))}>{column.label}{sort.key === column.key ? (sort.direction === "asc" ? " ↑" : " ↓") : ""}</button> : column.label}</th>)}</tr></thead><tbody>{sorted.map((row, index) => <tr key={row.id || index} onClick={onRowClick ? () => onRowClick(row) : undefined} className={onRowClick ? "clickable" : ""}>{columns.map(column => <td key={column.key} className={column.align || ""} data-label={column.label}>{column.render ? column.render(row) : row[column.key]}</td>)}</tr>)}</tbody></table></div>;
+  return <div className="react-table-wrap"><table className="react-table"><thead><tr>{columns.map(column => <th key={column.key} className={column.align || ""}>{column.sort !== false ? <button type="button" onClick={() => setSort(current => ({ key: column.key, direction: current.key === column.key && current.direction === "asc" ? "desc" : "asc" }))}>{column.label}{sort.key === column.key ? (sort.direction === "asc" ? " ↑" : " ↓") : ""}</button> : column.label}</th>)}</tr></thead><tbody>{sorted.map((row, index) => <tr key={row.id || index} onClick={onRowClick ? event => { if (!event.target.closest("button,input,select,a,textarea,label")) onRowClick(row); } : undefined} className={onRowClick ? "clickable" : ""}>{columns.map(column => <td key={column.key} className={column.align || ""} data-label={column.label}>{column.render ? column.render(row) : row[column.key]}</td>)}</tr>)}</tbody></table></div>;
 }
 
 export function Modal({ title, open, onClose, children, wide = false }) {
