@@ -14,6 +14,8 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 - [Style Guide](STYLE_GUIDE.md): UI language, terminology, table conventions, and design rules.
 - [Roadmap](ROADMAP.md): current phase, next work, and future phases.
 - [Workflow](WORKFLOW.md): lightweight rules for working on the app.
+- [Engineering Execution Brief Standard](standards/APEX_ENGINEERING_EXECUTION_BRIEF_STANDARD.md): shared requirements for implementation-ready briefs used by human and AI contributors.
+- [Implementation Brief Template](templates/IMPLEMENTATION_BRIEF_TEMPLATE.md): copy/paste starting point for Small, Standard, and High-Risk implementation work.
 - [React Modernization Spike](REACT_MIGRATION_NOTES.md): approved experiment scope, parity order, compatibility rules, and promotion gates.
 - [React Spike Progress](REACT_SPIKE_PROGRESS.md): implementation milestones, validation evidence, and unresolved checks.
 - [Libraries](LIBRARIES.md): local inventory, React dependency evaluation, adoption records, and CDN-versus-local policy.
@@ -37,6 +39,8 @@ Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), t
 - `STYLE_GUIDE.md`: terminology, UI language, dense table rules, formatting conventions, and product feel.
 - `ROADMAP.md`: active phase, next work, beta gates, and future phases.
 - `WORKFLOW.md`: how humans, Codex, and GPT should work on the project.
+- `standards/APEX_ENGINEERING_EXECUTION_BRIEF_STANDARD.md`: how implementation briefs are written, sized, and approved for human and AI contributors.
+- `templates/IMPLEMENTATION_BRIEF_TEMPLATE.md`: reusable structure for implementation briefs; it is a planning artifact, not a completion log.
 - `REACT_MIGRATION_NOTES.md`: active React spike charter, parity sequence, compatibility contract, and promotion decision criteria.
 - `REACT_SPIKE_PROGRESS.md`: dated implementation and validation evidence for the experiment.
 - `LIBRARIES.md`: dependency inventory, category audit, selection rules, and adoption records.

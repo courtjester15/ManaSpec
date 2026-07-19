@@ -28,8 +28,8 @@ Audit files in `docs/audits/` are point-in-time review records. Use them for con
 
 ## Work Loop
 
-1. Pick one module or workflow.
-2. Read the relevant section in [README](README.md), the roadmap phase, and any ownership doc affected by the change.
+1. Pick one module or workflow and use the approved implementation brief. Write briefs according to the [Engineering Execution Brief Standard](standards/APEX_ENGINEERING_EXECUTION_BRIEF_STANDARD.md) using the [Implementation Brief Template](templates/IMPLEMENTATION_BRIEF_TEMPLATE.md), with depth proportional to risk.
+2. Read the relevant section in [README](README.md), the roadmap phase, the implementation brief, and any ownership doc affected by the change.
 3. For UI work, inventory reusable components, styles, helpers, interaction patterns, and installed libraries before writing new markup or CSS.
 4. Reuse an existing solution, add a scoped variation when it covers most of the need, and create new UI only when neither approach reasonably fits.
 5. Make the smallest code change that satisfies the current goal.
