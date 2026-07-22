@@ -8,6 +8,10 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Added Tabulator 6.5.2 as the shared React table foundation behind a ManaSpec-owned wrapper, with Radar as the only Phase 1 pilot and later table modules intentionally deferred.
+- Implemented the React 19/Vite 8 ManaSpec reconstruction across Dashboard, Radar, Positions, Signals, Transactions, History, and Admin with hash routing, compatibility-backed local state, shared UI primitives, tests/checks, normal output, a tracked Pages artifact, and a stable directly openable portable build.
+- Added paired vanilla/React parity evidence and a dedicated implementation progress record covering the full UI pass plus table and Card Detail correction.
+
 - Added exact-printing local Price History for Radar and Positions, including finish-aware daily snapshots, compact coverage indicators, range filtering, summary metrics, plan reference lines, and a reusable offline chart modal.
 - Added Comparable Printings to Card Detail: same-Oracle paper printings expand into finish-aware native rows with sortable release/price columns, exact-printing card-art previews, aligned Scryfall and TCGplayer actions, optional Add to Radar, a pinned comparison baseline, progressive expansion, and local loading/error states.
 - Added Backend Foundation Batch 3: explicit data-schema readiness, migration fixtures, reconciliation/correction semantics, runtime-only legacy-backfill provenance, and a repeatable read-only reconciliation report.
@@ -19,6 +23,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added a docs ownership map and workflow routing rules so future documentation updates land in the right active source of truth.
 - Added post-beta finance workflow ideas to the Parking Lot, centered on review/learning, lightweight analytics, optional metadata, and ledger extensions that preserve ManaSpec's decision-loop focus.
 - Added a Codex friction log and browser QA friction guidance for recurring tooling, harness, and workflow detours.
+- Added a library-integration workflow guardrail requiring native configuration/runtime inspection before compatibility workarounds or replacement mechanics.
 - Added a generated repository snapshot utility for faster GPT/Codex orientation.
 - Enriched the generated repository snapshot with runtime architecture, workflow ownership, localStorage contracts, dependency hints, DOM/CSS summaries, and architecture hotspots.
 - Moved point-in-time audit docs into `docs/audits/` and documented their role as diagnostic context rather than active authority.
@@ -33,6 +38,12 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added a Roadmap React spike lane for workspace isolation, portable and Pages-path proofs, storage compatibility, full feature parity, responsive validation, and a separate promotion decision.
 
 ### Changed
+
+- Migrated React Radar to the shared grid contract with compact vanilla-aligned columns, sorting, editable entry targets, quantity steppers, market values, ownership/note/history indicators, isolated row actions, and responsive styling.
+- Corrected the shared Tabulator sizing contract by preserving omitted library defaults, allowing Radar to fill its container, give remaining horizontal space to Card, and keep numeric, indicator, and action columns compact.
+- Moved the React modernization lane from an unbuilt experiment into active implementation and stabilization. React is now the likely forward frontend candidate, while vanilla remains the behavioral and production/beta source of truth until a separate promotion decision.
+- Corrected React dense tables to the established compact scan contract and restored row-body Card Detail opening with action isolation; corrected React Card Detail toward the compact vanilla command-center model.
+- Refreshed the core architecture, roadmap, workflow, dependency, deployment, style, decision, migration, progress, and history documentation to match the implemented React milestone and next library-evaluation phase.
 
 - Refined Price History with a continuous calendar-time axis, real-snapshot-only points and hover targets, a shorter non-scrolling laptop modal, and a cleaner compact trend icon.
 - Prevented Position deletion when Transactions still project an open holding, closing the silent orphan path identified through the Simulacrum Synthesizer audit; real exits continue to use Sell.

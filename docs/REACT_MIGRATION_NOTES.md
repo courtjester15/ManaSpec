@@ -1,10 +1,19 @@
 # React Modernization Spike
 
-This document is the active execution charter and parity plan for a complete React reconstruction of ManaSpec.
+This document is the active execution charter and parity plan for the implemented React reconstruction of ManaSpec.
 
-The spike is approved as an experiment. It is not a production rewrite, does not replace the current roadmap automatically, and does not authorize a cutover from the vanilla app. Its purpose is to produce enough working evidence to decide whether React should become ManaSpec's long-term frontend.
+The spike is in implementation and stabilization mode. It now reproduces the full application shape and is the likely forward project path, subject to remaining parity, data compatibility, deployment, responsive/accessibility, and promotion evidence. It is not yet the production frontend and does not authorize a cutover from vanilla.
 
-Use [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md) for the proposed technical structure, [Libraries](LIBRARIES.md) for dependency evaluation, and [Deployment](DEPLOYMENT.md) for local and GitHub Pages delivery.
+Vanilla remains the behavioral and production/beta source of truth until an explicit promotion decision. Use [React Spike Architecture](REACT_SPIKE_ARCHITECTURE.md) for implemented structure, [React Spike Progress](REACT_SPIKE_PROGRESS.md) and [React Parity Log](REACT_PARITY_LOG.md) for evidence, [Libraries](LIBRARIES.md) for the next dependency-evaluation phase, and [Deployment](DEPLOYMENT.md) for local and GitHub Pages delivery.
+
+## Current Implementation Status
+
+- The seven primary routes, shared shell, compatibility-backed local state, normal build, tracked Pages artifact, and stable portable build are implemented.
+- The UI has completed broad parity plus focused table and Card Detail corrections; the user's current directional assessment is roughly 80-90% familiar, not a declaration of full parity.
+- The shared Tabulator foundation is implemented with Radar as the Phase 1 pilot. Remaining table modules stay unchanged until a deliberate Phase 2 migration after Radar visual/interaction approval.
+- The 2026-07-21 [workflow and CSS audit](audits/vanilla-react-workflow-css-audit-2026-07-21.md) identifies open data-safety, exact-printing identity, Signals, Card Detail, and dense-table workflow blockers that must be closed before promotion.
+- The next phase closes remaining workflow/UI/accessibility/responsive gaps, completes Radar browser evidence, and evaluates the next useful libraries against the working baseline.
+- React may make small correctness and consistency improvements, but vanilla defines expected behavior wherever the implementations disagree until promotion.
 
 ## Objectives
 
@@ -37,7 +46,7 @@ Reconstruct the complete existing ManaSpec application in React while:
 - Keep the root vanilla app functional and reviewable.
 - Permit side-by-side comparison throughout implementation.
 - Keep the experiment removable without repairing the vanilla app.
-- Record the final branch name, folder layout, and generated-output policy when the workspace is created.
+- Keep the implemented branch, `react-app/` source layout, tracked `react-spike/` Pages artifact, and committed portable-output policy documented as they evolve.
 
 ## Source Of Truth
 

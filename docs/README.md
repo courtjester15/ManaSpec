@@ -8,8 +8,8 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 
 - [README](README.md): product shape, current workflow behavior, and module lineup.
 - [Product Principles](PRODUCT_PRINCIPLES.md): stable product philosophy and decision mindset.
-- [Architecture](ARCHITECTURE.md): how the current vanilla ManaSpec application is built internally.
-- [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md): proposed structure, state, persistence, UI, build, and validation boundaries for the experiment.
+- [Architecture](ARCHITECTURE.md): how the authoritative vanilla application is built and how the implemented React spike is bounded from it.
+- [React Spike Architecture](REACT_SPIKE_ARCHITECTURE.md): implemented React structure, state, persistence, UI, build, and remaining validation boundaries.
 - [Data Model](DATA_MODEL.md): important entities and how they relate.
 - [Style Guide](STYLE_GUIDE.md): UI language, terminology, table conventions, and design rules.
 - [Roadmap](ROADMAP.md): current phase, next work, and future phases.
@@ -33,8 +33,8 @@ Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), t
 
 - `README.md`: what ManaSpec is, current workflow behavior, module lineup, and where to start.
 - `PRODUCT_PRINCIPLES.md`: stable product philosophy and decision mindset.
-- `ARCHITECTURE.md`: how the current vanilla app is built, including boot flow, module ownership, rendering flow, and storage ownership.
-- `REACT_SPIKE_ARCHITECTURE.md`: proposed React-only architecture and validation gates; it does not describe current implementation.
+- `ARCHITECTURE.md`: how the authoritative vanilla app is built, including boot flow, module ownership, rendering flow, storage ownership, and the React boundary.
+- `REACT_SPIKE_ARCHITECTURE.md`: implemented React-only architecture, delivery outputs, and remaining validation gates; it does not redefine vanilla product truth.
 - `DATA_MODEL.md`: conceptual entities, relationships, ownership, lifecycle, and ledger migration context.
 - `STYLE_GUIDE.md`: terminology, UI language, dense table rules, formatting conventions, and product feel.
 - `ROADMAP.md`: active phase, next work, beta gates, and future phases.
@@ -71,15 +71,17 @@ ManaSpec does not make trading decisions. It provides visibility, structure, and
 
 ManaSpec is not a collection tracker, inventory nostalgia tool, prediction engine, automated trading advisor, or multi-user finance platform.
 
-## Current Stack
+## Current Stack And Implementation Status
 
-- Vanilla HTML/CSS/JavaScript.
-- ManaSpec-native table rendering through `js/ui/table.js`.
-- Scryfall API for card identity, printings, and pricing snapshots.
-- localStorage for persistence.
-- No backend.
+ManaSpec currently has two maintained frontend implementations over the same product and storage contracts:
 
-The React stack is proposed but not yet implemented. Do not describe candidate packages or deployment outputs as current until they are installed, built, and verified. See [React Modernization Spike](REACT_MIGRATION_NOTES.md) and [Libraries](LIBRARIES.md).
+- The vanilla HTML/CSS/JavaScript application at the repository root remains the production/beta and behavioral source of truth.
+- The React 19 + Vite 8 application under `react-app/` is implemented and in active parity, stabilization, and library-evaluation work.
+- React Router provides hash-safe workflow routes for development, the portable build, and the `/ManaSpec/react-spike/` Pages artifact.
+- Both implementations use Scryfall for card identity, printings, and pricing snapshots and use compatible localStorage records with no backend.
+- Vanilla uses ManaSpec-native table rendering through `js/ui/table.js`; React currently uses a small shared ManaSpec table wrapper while the next table-library decision is evaluated.
+
+React is now the likely forward implementation path because it has demonstrated the full application shape and improves maintainability. That direction is not a production cutover: vanilla remains the parity oracle and authoritative deployed behavior until a separate promotion decision is recorded.
 
 ManaSpec is local-first for user state, but it is not offline-only. Scryfall-backed search, printing data, and price refresh require network access.
 
@@ -109,7 +111,7 @@ Rules:
 
 ## App Shape
 
-ManaSpec is a modular trading terminal running inside one static app shell. It has workflow zones exposed through module navigation, but it is not currently a routed SPA.
+ManaSpec is a modular trading terminal running inside one application shell. Vanilla exposes workflow zones through module navigation without routes; the React implementation exposes the same recognizable workflows through hash-safe routes.
 
 For internal build structure, boot flow, module ownership, rendering flow, storage ownership, and future architecture direction, use [ARCHITECTURE.md](ARCHITECTURE.md) as the owning doc.
 

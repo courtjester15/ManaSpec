@@ -151,11 +151,11 @@ Future transaction history should be able to represent methods such as `BUY`, `O
 
 ## React Modernization Spike
 
-### React is an isolated experiment, not a production cutover
+### React is the active implementation candidate, not a production cutover
 
-ManaSpec will reconstruct the complete current application in React on a dedicated experimental branch and in an isolated `react-app/` workspace. The purpose is to evaluate parity, maintainability, responsive foundations, libraries, tooling, and deployment before deciding whether React should become the long-term frontend.
+ManaSpec has reconstructed the complete application shape in React on a dedicated branch and in an isolated `react-app/` workspace. The React version is now in active implementation and stabilization, and it is the likely long-term frontend if the remaining parity, compatibility, deployment, and promotion evidence is satisfactory.
 
-The vanilla root remains functional, publicly available, and authoritative throughout the spike. Finishing the spike does not authorize replacing it; promotion requires a separate evidence-based decision.
+The vanilla root remains functional, publicly available, and authoritative for current behavior and production/beta delivery. React implementation progress does not authorize replacing it; promotion requires a separate evidence-based decision.
 
 ### Parity comes before redesign and new features
 
@@ -179,7 +179,29 @@ The portable output may use a separate build configuration to emit file-compatib
 
 The vanilla application remains at the existing GitHub Pages root. The React experiment is published separately under `/ManaSpec/react-spike/` using an artifact that preserves the vanilla root and adds the React build beneath `react-spike/`.
 
-Hash-based routing is the preferred starting direction because it supports the Pages subpath, refresh-safe navigation, and portable local opening without server rewrites. It remains subject to implementation validation.
+Hash-based routing is adopted because it supports the Pages subpath, refresh-safe navigation, and portable local opening without server rewrites. It has been validated in development, build, and portable output; the active GitHub Pages publishing source still requires confirmation.
+
+### The React baseline uses local context and compatibility adapters
+
+React 19, React DOM, Vite 8, React Router hash routing, local context/state, and an explicit persistence compatibility layer are the implemented foundation. A larger state framework is not justified while the current domain and persistence model remain understandable through this baseline.
+
+The shared React table wrapper, native/shared dialogs, and inline SVG chart are deliberate parity-stage implementations. They establish one controllable baseline; they do not prevent focused replacement when a mature library proves a material benefit.
+
+### Parity baseline precedes selective library adoption
+
+The migration is intentionally staged. First, establish a recognizable end-to-end React implementation without changing several infrastructure variables at once. Second, compare the most useful candidate libraries against real ManaSpec workflows and adopt them only where they reduce custom code or improve capability without weakening the product contract.
+
+The first focused comparison is the shared table system. Fuse.js, Chart.js, and Day.js follow when their real workflow triggers justify them. The decision order and evidence belong in [LIBRARIES](LIBRARIES.md).
+
+### Tabulator is the shared React table engine behind a ManaSpec wrapper
+
+ManaSpec adopts Tabulator 6.5.2 for the long-term React table foundation, beginning with Radar as the Phase 1 pilot. Product modules configure a ManaSpec-owned `TabulatorTable`; they do not instantiate Tabulator or depend on vendor components directly.
+
+The wrapper owns imperative lifecycle cleanup, modular feature registration, cloned row data, React cell roots, sort-value adapters, edit callbacks, row/action isolation, empty states, accessibility naming, and shared responsive styling. Only the modules needed by ManaSpec are registered so unused spreadsheet, range, export, grouping, and other full-build features do not enter the bundle.
+
+The wrapper is an adapter, not a replacement table engine. It passes only intentionally defined options so Tabulator defaults remain intact, and delegates sizing, sorting, editing, row rendering, responsive behavior, and redraw mechanics to Tabulator. ManaSpec-specific code is limited to data, column intent, formatters, indicators, actions, and minimal theming unless a documented compatibility exception is required.
+
+Positions, Signals, Transactions, and History intentionally retain the interim native `DataTable` during Phase 1. Their later migration is configuration work through the established wrapper and must not introduce module-specific grid systems. Vanilla remains the behavior and visual oracle throughout that sequence.
 
 ### Production dependencies are bundled locally
 
@@ -189,7 +211,7 @@ React may use npm and normal build tooling during development, but delivered dep
 
 The local library collection must be inventoried before equivalent packages are downloaded. Availability does not require adoption. Each selected dependency must solve a current problem, avoid category overlap, work in normal and portable builds, and have its purpose, alternatives, current/future value, bundle cost, and maintenance cost recorded in [LIBRARIES](LIBRARIES.md).
 
-State management, table, styling, form, dialog, and other library choices remain proposed until focused implementation evidence supports them.
+The React foundation packages are adopted and the parity-stage UI primitives are implemented. Replacing the table, search, chart, date, dialog, form, styling, or state layers remains an evidence-based decision rather than an assumed modernization step.
 
 ### Desktop parity leads responsive work
 
@@ -211,7 +233,7 @@ ManaSpec has earned focused ownership docs because README was carrying too much 
 - [ARCHITECTURE](ARCHITECTURE.md) owns how the app is built.
 - [DATA_MODEL](DATA_MODEL.md) owns entities and relationships.
 - [STYLE_GUIDE](STYLE_GUIDE.md) owns UI language and visual conventions.
-- [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md) owns the proposed architecture for the approved experiment without redefining current vanilla truth.
+- [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md) owns the implemented React architecture and remaining validation without redefining current vanilla truth.
 - [LIBRARIES](LIBRARIES.md) owns dependency inventory, evaluation, and adoption records.
 - [DEPLOYMENT](DEPLOYMENT.md) owns the dual vanilla/React delivery model and portable React usage.
 

@@ -41,7 +41,7 @@ The vendored Chart.js runtime under `assets/vendor/` is application source and r
 
 ## React Foundation Set
 
-The archive contains a complete Windows x64 foundation set for the reviewed React/Vite versions:
+The archive supplied the reviewed Windows x64 foundation set now used by the React implementation:
 
 | Direct package | Archived version | Status | Purpose and notes |
 | --- | --- | --- | --- |
@@ -50,8 +50,9 @@ The archive contains a complete Windows x64 foundation set for the reviewed Reac
 | `vite` | 8.1.3 | Adopted | Development and build pipeline. Requires Node `^20.19.0 || >=22.12.0`. |
 | `@vitejs/plugin-react` | 6.0.3 | Adopted | React integration for Vite 8. Optional compiler/Babel peers are intentionally absent and not required for the baseline. |
 | `react-router-dom` | 7.18.1 | Adopted | Hash-safe routing for portable and Pages-subpath navigation. Requires Node `>=20` for tooling and React/React DOM `>18`. |
+| `tabulator-tables` | 6.5.2 | Adopted | Shared dense-grid engine behind the ManaSpec-owned `TabulatorTable` wrapper. Radar is the Phase 1 pilot; remaining table modules intentionally retain the interim React table until Phase 2. |
 
-Use a Node version that satisfies the strictest archived engine range. Record the exact selected Node/npm versions when the workspace is created.
+Use a Node version that satisfies the strictest engine range. The tracked manifest and lockfile, not the ignored archive, are authoritative for the implemented workspace.
 
 The archive's Vite/Rolldown and Lightning CSS native bindings cover Windows x64 only. On macOS, Linux, Windows ARM, or another optional toolchain, use normal package installation to obtain platform-specific dependencies.
 
@@ -59,10 +60,9 @@ The archive's Vite/Rolldown and Lightning CSS native bindings cover Windows x64 
 
 | Package | Preferred archived version | Status | ManaSpec assessment |
 | --- | --- | --- | --- |
-| `chart.js` | 4.5.1 | Evaluated, not adopted | The spike's compact Price History needs are served by an accessible inline SVG with no runtime dependency. Reconsider only when richer chart interaction is approved. |
-| `tabulator-tables` | 6.5.2 | Evaluate | Strong dense-grid candidate, but it is framework-neutral/imperative. Compare against the current ManaSpec contract and a React-first headless table using real Radar/Positions data. |
+| `chart.js` | 4.5.1 | Evaluate next phase | The compact React Price History currently uses an accessible inline SVG. Compare Chart.js when richer tooltips, scales, multiple series, or longer history make the custom chart cost visible. |
 | `dayjs` | 1.11.21 | Evaluate | Small, dependency-free date helper. Adopt only if hold windows, parsing, stale checks, and sorting remain meaningfully clearer than pure helpers plus `Intl`. |
-| `fuse.js` | 7.4.2 | Deferred | Good dependency-free fuzzy search option when cross-workflow local search is in active scope; not needed for initial shell/persistence parity. |
+| `fuse.js` | 7.4.2 | Evaluate next phase | Good dependency-free fuzzy search candidate now that full-workflow React parity exists. Compare it against exact/subsequence helpers on real cross-workflow card, set, note, and status searches. |
 | `papaparse` | 5.5.4 | Deferred | Appropriate for future CSV/owned-spec backfill. Current backup JSON does not justify it. |
 | `xlsx` | 0.18.5 | Deferred | Large spreadsheet-format capability and seven-package closure. Do not adopt until spreadsheet import is approved and the exact file-format/security/maintenance need is reviewed. CSV should remain the smaller first option. |
 | `file-saver` | 2.0.5 | Deferred | Current Blob/object-URL download behavior may be sufficient. Adopt only if browser compatibility testing proves a gap. |
@@ -112,9 +112,23 @@ Vite's optional preprocessors, minifier, devtools, React compiler extras, macOS 
 
 ## Important Gaps
 
-The archive is not a complete professional-tooling set. It does not currently include the proposed linting, formatting, or test stack such as ESLint, Prettier, Vitest, Testing Library, or browser-test dependencies. It also does not include a React-first accessibility primitive library or state manager.
+The archive is not a complete professional-tooling set. It does not include ESLint, Prettier, Vitest, Testing Library, browser-test dependencies, a React-first accessibility primitive library, or a state manager.
 
-That is acceptable. Do not fill those gaps speculatively. Select the smallest tooling set when the React workspace is created, document it here, and obtain its complete dependency graph through the normal lockfile workflow or a deliberately refreshed offline archive.
+The implemented workspace currently uses lightweight Node tests plus source and formatting checks instead of those larger tool stacks. That is an intentional baseline, not a claim of equivalent coverage. Add tools only when a demonstrated testing, linting, accessibility, or maintenance gap justifies their dependency and workflow cost.
+
+## Current React Library Phase
+
+The first migration stage and the Phase 1 Tabulator foundation are implemented. Tabulator now sits behind a ManaSpec-owned wrapper and Radar is the only migrated pilot. The next stage is selective migration and library evaluation, not a bulk replacement of working code.
+
+Evaluate in this order:
+
+1. Table migration Phase 2: move Positions, Signals, Transactions, and History through the established `TabulatorTable` contract one module at a time after Radar visual/interaction approval.
+2. Fuse.js: adopt only if real local search becomes materially better and simpler.
+3. Chart.js: adopt in React when richer price-history requirements exceed the inline SVG baseline.
+4. Day.js: adopt when date parsing, windows, scheduling, or timezone behavior becomes recurring domain complexity.
+5. Papa Parse: defer until CSV import/export is an approved workflow.
+
+Every comparison must preserve the ManaSpec-facing wrapper and verify normal, Pages-subpath, and portable builds. A library becoming the likely choice is not adoption until it is tracked, used, tested, and recorded here.
 
 ## Adoption Record
 
@@ -137,6 +151,22 @@ Decision or ADR link:
 
 Do not mark a library `Adopted` until it exists in the tracked lockfile, is used by the application, and has been exercised in the relevant normal and portable builds.
 
+### Tabulator 6.5.2
+
+- Library and version: `tabulator-tables` 6.5.2.
+- Status: Adopted for the shared React table foundation; Radar is the Phase 1 pilot.
+- Purpose: Dense sorting, cell editing, keyboard support, column layout, and reusable grid mechanics behind a product-owned React boundary.
+- Used in: `TabulatorTable` and React Radar only. Positions, Signals, Transactions, and History remain intentionally unchanged for Phase 2.
+- Why selected: It reproduces the compact financial-grid contract while removing hand-built sorting/layout mechanics from feature code and provides a scalable path for later table migrations.
+- Alternatives considered: The interim native React table and a React-first headless table. The interim table was useful for parity but encoded table identity through column-label matching and would require continued custom grid behavior; a second headless implementation would retain most of that custom work.
+- Current benefit: Shared column configuration, sorting, display/edit cells, row activation isolation, empty state, tooltip, keyboard, and responsive behavior are centralized without exposing vendor APIs to Radar.
+- Likely future benefit: Remaining table migrations should primarily supply module column/action configuration instead of rebuilding mechanics.
+- Bundle cost: Modular registration adds approximately 219 KB JavaScript and 34 KB CSS uncompressed to the tracked artifacts. The final normal Pages output is 527.90 KB JavaScript (148.43 KB gzip) and 125.13 KB CSS (19.97 KB gzip); the portable IIFE is 823.23 KB JavaScript and 125.14 KB CSS.
+- Maintenance/update cost: Imperative lifecycle integration and per-cell React roots remain wrapper responsibilities. Tabulator upgrades require wrapper, keyboard, responsive, normal, Pages, and portable regression checks.
+- Integration discovery: Wrapper definitions must omit optional properties when ManaSpec has no value. Passing `minWidth: undefined` overrode Tabulator's native column default and converted otherwise valid fixed widths to `NaN`; preserving omitted defaults restores native `fitColumns` ownership without CSS or redraw intervention.
+- Offline/portable impact: JavaScript and CSS bundle locally with no runtime CDN. Normal, Pages-subpath, and portable builds complete; the portable entry remains a deferred classic script with relative assets.
+- Decision or ADR link: [DECISIONS](DECISIONS.md#tabulator-is-the-shared-react-table-engine-behind-a-manaspec-wrapper).
+
 ## Selection Rules
 
 1. Start from this audited archive, but verify the selected version before implementation if network access is available.
@@ -144,6 +174,7 @@ Do not mark a library `Adopted` until it exists in the tracked lockfile, is used
 3. Check project health, license, release cadence, React compatibility, accessibility, bundle form, and maintenance burden.
 4. Compare the simplest native/React solution and at least one credible library when the choice is material.
 5. Avoid overlapping libraries in state, styling, tables, dates, dialogs, notifications, icons, and animation.
+6. Before adding a workaround, inspect the library's initialized configuration and runtime output; wrappers must preserve omitted defaults rather than emitting undefined optional values.
 6. Confirm the package bundles locally with no runtime CDN or remote font requirement.
 7. Exercise both the normal Pages build and portable build.
 8. Record the result here and durable architecture rationale in [DECISIONS](DECISIONS.md).

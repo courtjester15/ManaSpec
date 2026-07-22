@@ -14,11 +14,11 @@ ManaSpec is intentionally workflow-focused rather than automation-focused. It he
 
 ManaSpec is currently `v0.9.0-alpha.1` in Friend Preview / Closed Beta preparation.
 
-A complete React modernization spike is now approved as an isolated experiment. The current vanilla app remains the production/beta source of truth; the spike will evaluate full parity, data compatibility, responsive foundations, libraries, portable local use, and separate Pages deployment before any decision about long-term replacement.
+A complete React modernization spike is now implemented and in active parity/stabilization work. It reproduces the full application shape, compatible local data workflow, portable local use, and a separate Pages artifact. React is the likely forward project path, but the current vanilla app remains the production/beta and behavioral source of truth until a separate promotion decision.
 
 The Data Ownership and Storage Readiness Audit and its three approved foundation batches are complete. The app now has compatibility-safe core persistence boundaries, explicit schema/migration readiness, read-only reconciliation reporting, and protection against Position deletion leaving open transaction history. Planned user-facing feature work can resume; making Transactions authoritative remains a separate future migration.
 
-The app is built with vanilla HTML, CSS, and JavaScript. It uses Scryfall API data for card identity and pricing reference, and it stores user data in browser `localStorage`. A GitHub Pages deployment is planned for closed beta so a few trusted testers can use the app from a URL without downloading a ZIP.
+The authoritative beta app is built with vanilla HTML, CSS, and JavaScript. An implemented React 19 + Vite 8 reconstruction lives under `react-app/` and is delivered through normal, Pages-subpath, and portable builds. Both use Scryfall API data for card identity and pricing reference and compatible browser `localStorage` records.
 
 The current app has a modular terminal shell with Dashboard, Radar, Positions, Signals, Transactions, History, and Admin views. Radar and Positions are the active singles workflow: Scryfall search and exact printing selection feed Radar, Radar captures planning fields and optional notes, Radar can buy planned quantities into Positions through an execution-only quantity/price/note dialog, and Positions supports owned holdings, buy/sell actions, price refresh, target/hold tracking, shared notes, and summary totals.
 
@@ -72,7 +72,7 @@ The active project docs now live in [docs/README.md](docs/README.md). Meaningful
 
 Closed beta deployment instructions live in [docs/BETA_DEPLOYMENT.md](docs/BETA_DEPLOYMENT.md). The beta path keeps the current vanilla app on GitHub Pages and preserves localStorage-backed browser data.
 
-The React experiment is defined by [docs/REACT_MIGRATION_NOTES.md](docs/REACT_MIGRATION_NOTES.md), with its proposed architecture in [docs/REACT_SPIKE_ARCHITECTURE.md](docs/REACT_SPIKE_ARCHITECTURE.md), dependency audit in [docs/LIBRARIES.md](docs/LIBRARIES.md), and dual-delivery model in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). These documents describe an approved spike, not an implemented or live React application.
+The React implementation is governed by [docs/REACT_MIGRATION_NOTES.md](docs/REACT_MIGRATION_NOTES.md), with its implemented architecture in [docs/REACT_SPIKE_ARCHITECTURE.md](docs/REACT_SPIKE_ARCHITECTURE.md), dependency decisions in [docs/LIBRARIES.md](docs/LIBRARIES.md), progress evidence in [docs/REACT_SPIKE_PROGRESS.md](docs/REACT_SPIKE_PROGRESS.md), and dual-delivery model in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). It remains an implementation spike rather than the promoted production frontend.
 
 ## Working Rule
 

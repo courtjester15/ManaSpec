@@ -40,6 +40,12 @@ Audit files in `docs/audits/` are point-in-time review records. Use them for con
 
 When a change alters a workflow model, interaction contract, or data ownership rule, update the owning active docs in the same pass. Examples include manual-to-computed behavior, shared Dashboard/Signals attention queues, canonical plan ownership, native-to-app confirmation flows, and ledger/source-of-truth changes. `CHANGELOG.md` records that the change happened; it is not a substitute for updating README, Architecture, Data Model, Style Guide, Roadmap, or Decisions when those docs own the current truth.
 
+### Documentation Milestone Sweep
+
+After a coherent implementation milestone, deployment artifact, parity pass, or release-level correction, do a broader documentation sweep before the milestone is considered complete. Update the current-state owner, Roadmap, Decisions, Changelog, and any dedicated progress log. Update [HISTORY](../HISTORY.md) when the milestone changes the project's direction, implementation era, or delivery model.
+
+A detailed progress or parity log is evidence, not a substitute for updating the active core docs. The final contradiction check should search for stale language such as `proposed`, `not implemented`, or `pending` where the milestone changed that status.
+
 ## Pasted Notes Workflow
 
 When the user pastes full notes from GPT, chat history, beta testing, or another planning session, treat them as project memory that may need to be saved before the thread moves on.
@@ -199,6 +205,20 @@ When the same issue comes back after one or two fix attempts, pause before makin
 
 This is a rule of thumb, not dogma. The goal is to avoid polishing around a hidden root cause while keeping normal iteration lightweight.
 
+## Library Integration Rule
+
+Adopt libraries to remove application-owned mechanics, not to recreate the previous implementation inside a vendor API. The application should provide domain data, intentional configuration, small adapters, and product theming; the library should retain ownership of the capability it was selected to provide.
+
+Before adding compatibility CSS, manual lifecycle calls, timing workarounds, or replacement mechanics:
+
+1. Confirm the library's native configuration and defaults for the behavior.
+2. Inspect the live library instance and generated output at the boundary where behavior diverges.
+3. Verify wrappers do not pass undefined or empty optional values that suppress library defaults.
+4. Classify the proposed customization as native configuration, product styling/theme, or a compatibility workaround.
+5. Prefer native configuration first. Keep a workaround only when the native path cannot satisfy a documented ManaSpec requirement, and record why.
+
+Temporary diagnostics should be narrowly scoped and removed after the cause is proven. If a library integration repeatedly needs custom code to reproduce mechanics the library already owns, pause and reassess the wrapper contract before adding another patch.
+
 ## Documentation Ownership Rules
 
 Use the docs ownership map in [README](README.md) before adding or moving documentation.
@@ -211,7 +231,7 @@ Use the docs ownership map in [README](README.md) before adding or moving docume
 - Put active priority and sequencing in [ROADMAP](ROADMAP.md).
 - Put process rules in [WORKFLOW](WORKFLOW.md).
 - Put React spike scope and parity gates in [REACT_MIGRATION_NOTES](REACT_MIGRATION_NOTES.md).
-- Put proposed React-only structure and boundaries in [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md), without rewriting current vanilla architecture as though the spike already exists.
+- Put implemented React-only structure, boundaries, and remaining validation in [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md), while keeping [ARCHITECTURE](ARCHITECTURE.md) explicit that vanilla remains the behavioral and production source of truth until promotion.
 - Put dependency inventory, evaluation, and adoption records in [LIBRARIES](LIBRARIES.md).
 - Put dual-deployment, portable-output, rollback, and spike-removal instructions in [DEPLOYMENT](DEPLOYMENT.md).
 - Put durable rationale in [DECISIONS](DECISIONS.md).
@@ -260,9 +280,20 @@ The standard vanilla QA path above still forbids `file://`. The approved React s
 
 Portable-file testing is an additional React release check, not a replacement for development-server, preview-server, or Pages-subpath testing. Record the browser used, asset/routing results, storage limitations, and any unavoidable fallback. Use [DEPLOYMENT](DEPLOYMENT.md) as the owning guide.
 
+### React Milestone Build Routine
+
+For a React implementation milestone:
+
+1. Run `npm test`, the configured source check, and the configured formatting check in `react-app/`.
+2. Generate the normal build, Pages build, and portable build.
+3. Refresh the tracked `react-spike/` Pages artifact from the verified Pages output.
+4. Verify development/local serving, Pages-subpath behavior, and direct opening of `react-app/dist-portable/index.html`.
+5. Update the owning docs, progress/parity evidence, Changelog, and History when applicable.
+6. Stage React source, required tracked artifacts, and docs only. Do not stage `node_modules/`, `/lib/`, `.tmp/`, caches, or incidental local QA data.
+
 ### Card Detail Browser QA
 
-Across ManaSpec modules, clicking the card name currently opens art preview, not Card Detail. Do not assume card-name click equals Detail.
+In the authoritative vanilla app, clicking the card name currently opens art preview, not Card Detail. In React, the verified dense-table contract uses the row body to open Card Detail while interactive controls stop row activation. Do not transfer either click contract to the other implementation accidentally.
 
 For Card Detail QA, use one of these entry points:
 
@@ -293,6 +324,8 @@ Prefer narrow, durable steps:
 - Update docs in the same pass as behavior changes.
 - Avoid large architecture rewrites unless the roadmap explicitly calls for one.
 
+For the React modernization lane, coherent end-to-end slices may span multiple modules when the approved goal is whole-app parity. Pause at meaningful milestones for verification and documentation; do not force artificial micro-stops that leave the app in a misleading half-integrated state.
+
 ## Doc Size
 
 Keep docs flat until the app earns more structure. ManaSpec has earned focused ownership docs for architecture, data model, style, and the approved React experiment; do not add more active docs casually.
@@ -313,6 +346,7 @@ Before calling a task done:
 - Any completely new UI implementation records why no shared component, reasonable extension, or existing project library fit.
 - New UI visually matches Radar, Positions, Signals, Transactions, History, and Card Detail, or the intentional difference is documented.
 - The roadmap status still makes sense.
+- A milestone-level change has completed the documentation sweep and stale-status contradiction check.
 - No old note has silently become the new source of truth.
 
 ## Table Contract Verification

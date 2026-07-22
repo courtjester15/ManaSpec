@@ -29,7 +29,7 @@ Status markers:
 - Notes: user-authored card memory attached to exact tracked printings.
 - History: transaction and outcome review.
 
-## Current Phase: Alpha Friend Preview
+## Current Phase: Alpha Friend Preview + React Implementation/Stabilization
 
 Goal: use `v0.9.0-alpha.1` with one or two trusted testers while moving from solo core-loop validation into friend feedback and additional user-facing features.
 
@@ -238,30 +238,34 @@ Current vanilla rule: one tool at a time. Add a library only when it directly su
 
 ### React Modernization Spike
 
-The React/Vite experiment is approved as a separate evidence-gathering track. It is not a beta gate, production cutover, or reason to stop maintaining the vanilla application.
+The React/Vite experiment is implemented and has moved from foundation work into active parity stabilization and selective library evaluation. It is the likely forward frontend path, but it is not yet a production cutover or a reason to stop maintaining the vanilla source of truth.
 
 Active preparation:
 
 - [x] Establish the spike charter, parity rules, architecture target, library audit structure, and deployment model in active docs.
 - [x] Locate and inventory the GalleyFlow offline package archive, verify its Windows x64 dependency closure, classify direct candidates, and keep `/lib` as an ignored local cache.
-- [ ] Create the dedicated spike branch and isolated `react-app/` workspace.
-- [ ] Prove normal Vite development, `/ManaSpec/react-spike/` build behavior, and direct portable `index.html` opening before feature migration.
-- [ ] Build the storage compatibility adapter and fixture-backed cross-read/write tests before using real data.
+- [x] Create the dedicated spike branch and isolated `react-app/` workspace.
+- [x] Prove normal Vite development, `/ManaSpec/react-spike/` build behavior, and direct portable `index.html` opening.
+- [x] Build the storage compatibility adapter and fixture-backed compatibility tests before using real data.
 
 Implementation sequence:
 
-- [ ] Shell, hash-safe navigation, shared tokens, and error handling.
-- [ ] Persistence, backup/restore, normalization, and migration compatibility.
-- [ ] Shared forms, dialogs, notices, and table foundation.
-- [ ] Radar, Positions, Transactions, and History parity.
-- [ ] Notes, Card Detail, Comparable Printings, Price History, Signals, and Dashboard parity.
-- [ ] Help, Admin, external links, and remaining utilities.
-- [ ] Corrective UI/accessibility polish and desktop/tablet/phone validation.
-- [ ] Bundle review, Pages deployment, full parity evidence, and promotion recommendation.
+- [x] Shell, hash-safe navigation, shared tokens, and error handling.
+- [x] Persistence, backup/restore, normalization, and migration compatibility.
+- [x] Shared forms, dialogs, notices, and interim table foundation.
+- [x] Radar, Positions, Transactions, and History implementation.
+- [x] Notes, Card Detail, Comparable Printings, Price History, Signals, and Dashboard implementation.
+- [x] Help, Admin, external links, and remaining utilities.
+- [ ] Close remaining route-by-route interaction and UI parity gaps; continue corrective accessibility and responsive validation.
+- [x] Establish Tabulator 6.5.2 behind a shared ManaSpec React wrapper and migrate Radar as the Phase 1 pilot.
+- [ ] Complete Radar 1366 x 768 visual/interaction approval, then migrate Positions, Signals, Transactions, and History through the established wrapper in Phase 2.
+- [ ] Evaluate Fuse.js, Chart.js, and Day.js when their adoption gates are met.
+- [ ] Verify and document the actual GitHub Pages publishing source so the latest `react-spike/` artifact, not merely the branch build, is known to be live.
+- [ ] Complete bundle review, cross-implementation write validation, full parity evidence, and a separate promotion recommendation.
 
 Use [React Modernization Spike](REACT_MIGRATION_NOTES.md), [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md), [Libraries](LIBRARIES.md), [Deployment](DEPLOYMENT.md), and the earlier [React Migration And GalleyFlow Pattern Audit](audits/react-migration-galleyflow-audit.md).
 
-The vanilla app remains the working reference and current deployment. React cannot replace it without a separate decision after parity, storage compatibility, portable/local use, Pages isolation, responsive quality, and maintainability have been demonstrated.
+The vanilla app remains the working reference, behavioral oracle, and current production/beta authority. React is likely to become the project frontend moving forward, but it cannot replace vanilla without a separate decision after parity, storage compatibility, portable/local use, Pages isolation, responsive quality, and maintainability are demonstrated.
 
 ### Validated Core Singles Workflow
 

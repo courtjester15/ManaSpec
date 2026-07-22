@@ -1,8 +1,8 @@
 # ManaSpec Deployment
 
-This document defines the intended dual-delivery model for the current vanilla app and the experimental React spike. It supplements [BETA_DEPLOYMENT](BETA_DEPLOYMENT.md), which remains the detailed guide for today's vanilla closed-beta deployment.
+This document defines the implemented dual-delivery model for the current vanilla app and the React implementation spike. It supplements [BETA_DEPLOYMENT](BETA_DEPLOYMENT.md), which remains the detailed guide for the authoritative vanilla closed-beta deployment.
 
-The React deployment described here is a target until its workflow and live URLs are implemented and verified. Do not present planned deployment as already live.
+React source, portable output, and a committed `/react-spike/` Pages artifact now exist. The public URL has existed from an earlier publishing-branch deployment, but the repository's actual Pages publishing source must be verified before claiming that a newly pushed spike-branch artifact is live.
 
 ## Deployment Goals
 
@@ -18,15 +18,15 @@ The React deployment described here is a target until its workflow and live URLs
 | Surface | Intended URL or entry | Source | Status |
 | --- | --- | --- | --- |
 | Vanilla production/beta | Existing GitHub Pages root | Repository root on the current vanilla deployment source | Current path; see [BETA_DEPLOYMENT](BETA_DEPLOYMENT.md) |
-| React spike | Existing root plus `react-spike/` | `react-app/dist/` generated from the dedicated spike branch/workspace | Pages-path build verified; publication not yet configured |
-| React portable | `react-app/dist-portable/index.html` | Committed portable build | Generated and statically verified; direct `file://` test remains pending |
+| React spike | Existing root plus `react-spike/` | `react-app/dist/` generated from the dedicated spike branch/workspace and committed under `react-spike/` for the current branch-based model | Build and local Pages-path smoke verified; live publishing source still requires explicit confirmation |
+| React portable | `react-app/dist-portable/index.html` | Committed portable build | Generated, direct-opened by the user, and kept at a stable path |
 | React development | Local Vite URL on `127.0.0.1` | `react-app/src/` | Developer-only |
 
 ## Isolation Model
 
 React source lives under `react-app/` on a dedicated experimental branch. The vanilla root remains build-free and reviewable throughout the experiment.
 
-The Pages artifact should have this effective shape:
+The committed branch-based Pages artifact currently has this effective shape:
 
 ```text
 pages-artifact/
@@ -38,20 +38,21 @@ pages-artifact/
     `-- assets/                # bundled React JS/CSS/assets
 ```
 
-The deployment workflow should assemble that artifact in a temporary/generated location. It must not copy React output over the working-tree root or commit mixed Pages artifacts as application source.
+The current implementation generates `react-app/dist/` with the Pages base path and refreshes the tracked `react-spike/` subdirectory without replacing the vanilla root. A future GitHub Actions workflow may assemble the same topology, but changing the configured Pages source remains a separately documented deployment decision.
 
 ## Developer Workflow
 
-The exact npm scripts are added and verified with the React workspace. The intended interface is:
+The verified React workspace interface is:
 
 ```text
 npm run dev              # local Vite development server
-npm run build            # optimized Pages-compatible build
+npm run build            # optimized normal build
+npm run build:pages      # /ManaSpec/react-spike/ Pages-path build
 npm run build:portable   # file-openable committed artifact
 npm run preview          # preview normal production build
 npm run lint
 npm run format:check
-npm run test
+npm test
 npm run test:browser     # if browser automation is adopted
 npm run analyze          # if bundle analysis is adopted
 ```
@@ -60,7 +61,7 @@ Run commands from `react-app/`. Dex uses the developer workflow; users opening t
 
 ## Open ManaSpec Locally Without npm
 
-After the portable artifact exists, open:
+Open the stable portable entry:
 
 ```text
 react-app/dist-portable/index.html

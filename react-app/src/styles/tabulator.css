@@ -1,0 +1,343 @@
+.ms-tabulator.tabulator {
+  width: 100%;
+  max-width: 100%;
+  min-height: 29px;
+  min-width: 0;
+  justify-self: stretch;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.ms-tabulator .tabulator-header {
+  height: 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.ms-tabulator .tabulator-header .tabulator-col {
+  height: 28px;
+  border-right: 1px solid rgba(255, 255, 255, .035);
+  background: var(--surface-2);
+}
+
+.ms-tabulator .tabulator-header .tabulator-col:last-child,
+.ms-tabulator .tabulator-row .tabulator-cell:last-child {
+  border-right: 0;
+}
+
+.ms-tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+  padding: 0 6px;
+}
+
+.ms-tabulator .tabulator-header .tabulator-col .tabulator-col-content,
+.ms-tabulator .tabulator-header .tabulator-col .tabulator-col-title-holder,
+.ms-tabulator .tabulator-header .tabulator-col .tabulator-col-title {
+  height: 27px;
+  line-height: 27px;
+}
+
+.ms-tabulator .tabulator-header .tabulator-col .tabulator-col-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-tabulator .tabulator-header .tabulator-col.tabulator-sortable:hover {
+  background: rgba(125, 211, 252, .06);
+}
+
+.ms-tabulator .tabulator-header .tabulator-col .tabulator-arrow {
+  margin-left: 4px;
+  border-bottom-color: var(--accent);
+}
+
+.ms-tabulator .tabulator-header .tabulator-col[aria-sort="descending"] .tabulator-arrow {
+  border-top-color: var(--accent);
+}
+
+.ms-tabulator .tabulator-tableholder {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--panel);
+}
+
+.ms-tabulator .tabulator-tableholder .tabulator-table {
+  min-width: 100%;
+  background: var(--panel);
+  color: var(--text);
+}
+
+.ms-tabulator .tabulator-row,
+.ms-tabulator .tabulator-row.tabulator-row-even {
+  min-height: 27px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.ms-tabulator .tabulator-row:hover,
+.ms-tabulator .tabulator-row.tabulator-row-even:hover {
+  background: rgba(125, 211, 252, .045);
+}
+
+.ms-tabulator .tabulator-row .tabulator-cell {
+  height: 27px;
+  padding: 3px 6px;
+  overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, .035);
+  background: transparent;
+  color: var(--text);
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-tabulator .tabulator-row .tabulator-cell.tabulator-editing {
+  padding: 3px;
+  border: 1px solid var(--accent);
+  background: var(--surface-2);
+}
+
+.ms-tabulator .tabulator-row .tabulator-cell.tabulator-editing input {
+  width: 100%;
+  height: 19px;
+  min-height: 19px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--surface-1);
+  color: var(--text);
+  font: inherit;
+  text-align: right;
+}
+
+.ms-tabulator .tabulator-footer,
+.ms-tabulator .tabulator-col-resize-handle {
+  display: none;
+}
+
+.ms-tabulator .tabulator-placeholder {
+  min-height: 72px;
+  background: var(--panel);
+  color: var(--muted);
+}
+
+.ms-tabulator .tabulator-placeholder span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.ms-tabulator-cell-content {
+  display: flex;
+  width: 100%;
+  height: 20px;
+  min-width: 0;
+  align-items: center;
+  overflow: hidden;
+}
+
+.ms-tabulator .money .ms-tabulator-cell-content {
+  justify-content: flex-end;
+}
+
+.ms-tabulator .center .ms-tabulator-cell-content,
+.ms-tabulator .actions .ms-tabulator-cell-content {
+  justify-content: center;
+}
+
+.ms-tabulator .table-link {
+  display: flex;
+  width: 100%;
+  height: 20px;
+  min-height: 20px;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.ms-tabulator .card-identity,
+.ms-tabulator .card-identity strong {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms-ownership-indicator {
+  flex: 0 0 auto;
+  margin-left: 6px;
+  padding: 1px 4px;
+  border: 1px solid rgba(61, 214, 140, .35);
+  border-radius: 999px;
+  color: var(--positive);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 12px;
+  text-transform: uppercase;
+}
+
+.ms-tabulator-stepper {
+  display: inline-grid;
+  height: 20px;
+  grid-template-columns: 20px 24px 20px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface-1);
+}
+
+.ms-tabulator-stepper button {
+  width: 20px;
+  height: 18px;
+  min-height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.ms-tabulator-stepper button:hover:not(:disabled),
+.ms-tabulator-stepper button:focus-visible {
+  background: rgba(125, 211, 252, .1);
+  color: var(--text);
+}
+
+.ms-tabulator-stepper span {
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.ms-tabulator-indicator {
+  position: relative;
+  width: 24px;
+  height: 20px;
+  min-height: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.ms-tabulator-indicator.active {
+  color: var(--text);
+}
+
+.ms-tabulator-indicator sup {
+  position: absolute;
+  top: -2px;
+  right: 0;
+  color: var(--accent);
+  font-size: 8px;
+  line-height: 1;
+}
+
+.ms-tabulator .table-actions {
+  display: flex;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.ms-tabulator .table-actions button {
+  height: 20px;
+  min-height: 20px;
+  margin: 0;
+  padding: 0 5px;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.ms-tabulator .positive {
+  color: var(--positive);
+}
+
+.ms-tabulator .negative {
+  color: var(--negative);
+}
+
+@media (max-width: 760px) {
+  .ms-tabulator.tabulator {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .ms-tabulator .tabulator-header {
+    display: none;
+  }
+
+  .ms-tabulator .tabulator-tableholder,
+  .ms-tabulator .tabulator-tableholder .tabulator-table {
+    display: block;
+    width: 100% !important;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .ms-tabulator .tabulator-row,
+  .ms-tabulator .tabulator-row.tabulator-row-even {
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0;
+    margin-bottom: 9px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .ms-tabulator .tabulator-row .tabulator-cell {
+    display: grid;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 32px;
+    grid-template-columns: 90px 1fr;
+    align-items: center;
+    padding: 6px;
+    border: 0;
+    text-align: right !important;
+    white-space: normal;
+  }
+
+  .ms-tabulator .tabulator-row .tabulator-cell::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .ms-tabulator .tabulator-row .tabulator-cell > * {
+    justify-self: end;
+  }
+
+  .ms-tabulator .tabulator-row .tabulator-cell.actions {
+    display: block;
+  }
+}

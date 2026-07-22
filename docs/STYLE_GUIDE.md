@@ -175,6 +175,8 @@ Table rules:
 
 Dense tables should be readable at approximately 1366px laptop width.
 
+The verified React parity baseline uses approximately 28px headers, 27px body rows, 20px compact controls, 3px vertical and 6px horizontal cell padding, 12px body text, and 11px header text. Card identity remains separated into `Card`, `Set`, `No.`, `Rarity`, and `Color` columns. Preserve one-line scan rhythm and use horizontal table overflow when necessary rather than wrapping identity or financial cells.
+
 ## Wrapping Rules
 
 Dense scan surfaces should preserve single-line rhythm.
@@ -303,6 +305,8 @@ Rules:
 - Modals should not become hidden navigation systems.
 - Close behavior should return the user to the same workflow context.
 - Modal body copy may wrap normally.
+
+For the React parity baseline, Card Detail is a compact top/right working panel at approximately 760px maximum width and 520px maximum height. It prioritizes Plan, Market, Notes, and Context, keeps history/comparables secondary, and does not reserve a persistent artwork column. This is an implementation-specific expression of the shared command-center contract; vanilla remains the behavioral oracle until React promotion.
 
 ## Copy Style
 
