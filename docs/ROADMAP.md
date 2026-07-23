@@ -256,6 +256,7 @@ Implementation sequence:
 - [x] Radar, Positions, Transactions, and History implementation.
 - [x] Notes, Card Detail, Comparable Printings, Price History, Signals, and Dashboard implementation.
 - [x] Help, Admin, external links, and remaining utilities.
+- [x] Close React Parity Batch 1 data-trust blockers: ledger-safe Position deletion and shared exact-printing related-record resolution.
 - [ ] Close remaining route-by-route interaction and UI parity gaps; continue corrective accessibility and responsive validation.
 - [x] Establish Tabulator 6.5.2 behind a shared ManaSpec React wrapper and migrate Radar as the Phase 1 pilot.
 - [ ] Complete Radar 1366 x 768 visual/interaction approval, then migrate Positions, Signals, Transactions, and History through the established wrapper in Phase 2.

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buyFromRadar, sellPosition } from "../domain/trading.js";
+import { buyFromRadar, deletePosition, sellPosition } from "../domain/trading.js";
 import { parseSetNumberQuery, toTrackedCard } from "../services/scryfall.js";
 
 const watched = {
@@ -43,6 +43,29 @@ test("full sale closes position without removing Radar", () => {
   const result = sellPosition(state({ specs: [current] }), current, 2, 12);
   assert.equal(result.specs.length, 0);
   assert.equal(result.radar.length, 1);
+});
+
+test("safe Position deletion succeeds without creating a transaction", () => {
+  const current = { ...watched, foil: false, qty: 2, buyPrice: 10 };
+  const result = deletePosition(state({ specs: [current] }), current);
+  assert.equal(result.specs.length, 0);
+  assert.equal(result.transactions.length, 0);
+});
+
+test("unsafe Position deletion is blocked when the ledger projects an open holding", () => {
+  const current = { ...watched, foil: false, qty: 2, buyPrice: 10 };
+  const transaction = {
+    id: "buy-1", cardId: current.id, scryfall_id: current.scryfall_id, foil: false,
+    name: current.name, type: "BUY", quantity: 2, price: 10, date: "2026-07-01T00:00:00.000Z",
+  };
+  const currentState = state({ specs: [current], transactions: [transaction] });
+  assert.throws(() => deletePosition(currentState, current), error => {
+    assert.equal(error.code, "would_leave_open_transaction_projection");
+    assert.match(error.message, /still projects an open holding/);
+    return true;
+  });
+  assert.equal(currentState.specs.length, 1);
+  assert.equal(currentState.transactions.length, 1);
 });
 
 test("foil tracked identity uses composite row id and base Scryfall id", () => {

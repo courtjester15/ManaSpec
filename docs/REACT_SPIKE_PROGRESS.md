@@ -159,3 +159,24 @@ Validated:
 - The live page produced no console warnings or errors. The available browser session had an empty Radar dataset, so the correction was verified through header/layout geometry rather than representative row interaction replay.
 - All 13 focused tests, source policy checks, and formatting checks pass.
 - Normal, Pages-subpath, and portable builds complete. The tracked `react-spike/` and `react-app/dist-portable/` artifacts were regenerated, and both generated JavaScript bundles pass `node --check`.
+
+## 2026-07-22: React Parity Batch 1 - Data Trust And Exact Printing Identity
+
+Implemented:
+
+- Routed Position deletion through the vanilla-derived transaction projection guard. Open ledger-backed holdings are blocked before confirmation or persistence; safe deletion retains vanilla's explicit no-transaction warning.
+- Added one compatibility-aware domain resolver for notes, price snapshots, market observations, transactions, History events, Dashboard note routing, Card Detail navigation, and related table indicators.
+- Exact Scryfall printing UUID plus finish now wins everywhere. Foil and nonfoil are independent, and legacy base-ID, set/collector, or name fallback succeeds only when one tracked printing is possible.
+- New market observations persist the exact printing key, Scryfall ID, finish, and printing context for future unambiguous reads.
+
+Validated:
+
+- All 21 focused Node tests pass, including eight Batch 1 cases for foil/nonfoil notes, same-name printings, exact price history, market observations, Transaction/History Card Detail routing, unambiguous legacy fallback, and safe/unsafe Position deletion.
+- Source-policy and formatting checks pass.
+- Normal, `/ManaSpec/react-spike/` Pages, and portable builds complete; the tracked Pages and portable artifacts were regenerated.
+- Source review confirms that prior base-ID/name matching paths in the React view layer now route through the shared resolver.
+- Fixture-backed browser QA confirmed that an open ledger-backed Position remains present and shows the vanilla-aligned warning, while a Position without open transaction projection can be confirmed and deleted. The development page and local `/ManaSpec/react-spike/` artifact reported no console warnings or errors.
+
+Remaining for Batch 2:
+
+- Port and fixture-compare vanilla Signals derivation, thresholds, reasons, priorities, filtering, and source navigation. Batch 1 changed only the identity used when Signals reads market observations; it did not change Signals attention behavior.

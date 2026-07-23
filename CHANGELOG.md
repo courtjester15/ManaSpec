@@ -39,6 +39,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Closed React Parity Batch 1 data-trust gaps: Position deletion now honors the vanilla ledger-safety guard, related notes/history/market/transaction navigation resolves through one exact-printing helper, foil and nonfoil stay isolated, and ambiguous legacy fallbacks no longer cross-link tracked printings.
 - Migrated React Radar to the shared grid contract with compact vanilla-aligned columns, sorting, editable entry targets, quantity steppers, market values, ownership/note/history indicators, isolated row actions, and responsive styling.
 - Corrected the shared Tabulator sizing contract by preserving omitted library defaults, allowing Radar to fill its container, give remaining horizontal space to Card, and keep numeric, indicator, and action columns compact.
 - Moved the React modernization lane from an unbuilt experiment into active implementation and stabilization. React is now the likely forward frontend candidate, while vanilla remains the behavioral and production/beta source of truth until a separate promotion decision.
