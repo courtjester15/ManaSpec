@@ -107,6 +107,8 @@ The preferred flow is explicit and one-directional:
 5. Selectors derive Dashboard, Signals, Positions, History, and summary views.
 6. React re-renders only affected consumers.
 
+Signals derivation is owned by `react-app/src/domain/signals.js`. Signals and Dashboard consume the same ordered rows, bucket membership, reasons, priorities, action state, and queue selector. Market freshness resolves through the exact-printing compatibility boundary. Signals source actions pass a tracked row ID in the route query so Radar or Positions can narrow to that exact printing without changing stored data or creating a second filter system.
+
 Scryfall and external links remain services, not component-owned fetch code. Network failure must not make locally stored user data unavailable.
 
 ## UI And Responsive Foundation
