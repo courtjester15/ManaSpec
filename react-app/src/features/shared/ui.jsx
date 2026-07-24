@@ -4,7 +4,7 @@ import { formatMoney } from "../../domain/portfolio.js";
 const TABLE_CONTRACTS = [
   { match: labels => labels.includes("Scryfall"), className: "react-table--radar", widths: [null, 48, 48, 44, 44, 72, 58, 74, 72, 68, 50, 50, 72, 54, 54, 112] },
   { match: labels => labels.includes("Buy") && labels.includes("Hold"), className: "react-table--positions", widths: [null, 44, 44, 40, 40, 60, 60, 32, 42, 64, 60, 54, 58, 68, 52, 62, 42, 46, 110] },
-  { match: labels => labels.includes("Why"), className: "react-table--signals", widths: [null, 48, 48, 58, 68, 112, null, 58, 68, 86, 76, 96] },
+  { match: labels => labels.includes("Why"), className: "react-table--signals", widths: [null, 48, 48, 58, 68, 112, null, 58, 68, 86, 76, 148] },
   { match: labels => labels.includes("Balance"), className: "react-table--ledger", widths: [null, 48, 48, 44, 44, 64, 38, 74, 82, 76, 68, 58] },
   { match: labels => labels.includes("Detail"), className: "react-table--history", widths: [null, 48, 48, 44, 44, 64, 68, 58, 54, 220], minWidth: 1020 },
 ];
