@@ -1,3 +1,5 @@
+import { dataFoundation } from "./dataFoundation.js";
+
 function id() {
   return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
@@ -59,4 +61,17 @@ export function sellPosition(state, item, quantity, price) {
     ? state.specs.map(row => row.id === item.id ? { ...row, qty: remaining, pl: (Number(row.currentPrice || 0) - Number(row.buyPrice || 0)) * remaining } : row)
     : state.specs.filter(row => row.id !== item.id);
   return { ...state, specs, cash, transactions: [tx, ...state.transactions] };
+}
+
+export function deletePosition(state, item) {
+  const risk = dataFoundation.findPositionDeletionRisk(item, state.transactions);
+  if (risk.blocked) {
+    const error = new Error(risk.reason === "invalid_position_identity"
+      ? `Cannot verify whether deleting ${item.name} is safe. No data was changed.`
+      : `Cannot delete ${item.name}: its transaction history still projects an open holding. Use Sell for a real exit; quantity corrections require reconciliation.`);
+    error.code = risk.reason;
+    error.deletionRisk = risk;
+    throw error;
+  }
+  return { ...state, specs: state.specs.filter(row => row.id !== item.id) };
 }

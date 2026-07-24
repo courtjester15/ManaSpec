@@ -89,6 +89,8 @@ The persistence layer is the highest-risk architectural boundary.
 - A migration is explicit, versioned, fixture-backed, and separate from normal normalization.
 - React must not create an incompatible parallel schema merely for cleaner component state.
 - React-written records must remain readable by vanilla unless an explicitly approved, reversible migration says otherwise.
+- One shared domain resolver owns related-record identity for notes, price snapshots, market observations, transactions, History events, Dashboard notes, and Card Detail routing. Exact Scryfall printing UUID plus finish wins; a legacy base-ID, set/collector, or name fallback resolves only when one tracked printing is possible.
+- Position deletion calls the shared vanilla-derived ledger projection guard before any write and refuses to orphan an open transaction projection.
 
 The deployed vanilla root and React subpath share the same web origin and therefore the same localStorage namespace. That makes compatibility testing mandatory: a write in the spike can affect the root application. Before first live-spike use, export a backup and validate cross-opening in both implementations.
 
