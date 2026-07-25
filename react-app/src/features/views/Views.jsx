@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { calculatePortfolioSummary, formatMoney } from "../../domain/portfolio.js";
+import { calculatePortfolioSummary, formatMoney, selectPositionRows } from "../../domain/portfolio.js";
 import { dataFoundation } from "../../domain/dataFoundation.js";
 import { getRelatedRecordsForPrinting, getRelatedRecordPrintingKey, relatedRecordMatchesPrinting, resolveCardDetailPrinting, resolveTrackedPrinting } from "../../domain/relatedRecords.js";
 import { deriveDashboardSignalState, deriveSignalRows, filterSignalRows, getSignalScryfallUrl, getSignalSourceNavigation, getSignalTileRows, SIGNAL_BUCKETS } from "../../domain/signals.js";
@@ -18,6 +18,23 @@ const rarity = item => item.rarity ? `${item.rarity[0].toUpperCase()}${item.rari
 const printing = item => `${String(item.set_code || item.set || "-").toUpperCase()} #${item.collector_number || "-"}${item.foil ? " F" : ""}`;
 const percent = value => `${number(value) > 0 ? "+" : ""}${number(value).toFixed(1)}%`;
 const ageDays = value => value ? Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 86400000)) : 0;
+
+const POSITION_ISSUE_LABELS = Object.freeze({
+  invalid_printing_identity: "exact printing identity",
+  invalid_quantity: "positive quantity",
+  invalid_buy_price: "positive buy price",
+  invalid_buy_date: "valid buy date",
+  invalid_current_price: "current price",
+});
+
+function positionValidationMessage(row, requiredOnly = false) {
+  const issues = requiredOnly ? row.validation.requiredIssues : row.validation.issues;
+  return `Reconciliation required: ${issues.map(issue => POSITION_ISSUE_LABELS[issue]).join(", ")}.`;
+}
+
+function ReconciliationValue({ row, requiredOnly = true }) {
+  return <span className="status-pill" title={positionValidationMessage(row, requiredOnly)}>Reconcile</span>;
+}
 
 function useNotices() {
   const [notice, setNotice] = useState(null);
@@ -137,28 +154,33 @@ export function RadarView() {
 export function PositionsView() {
   const { state, updateSlice, updateState } = useAppState(); const [params, setParams] = useSearchParams(); const [filter, setFilter] = useState(""); const [trade, setTrade] = useState(null); const [detail, setDetail] = useState(null); const notices = useNotices();
   const focusId = params.get("focus") || "";
-  const summary = calculatePortfolioSummary(state.specs, state.cash); const rows = state.specs.filter(item => (!focusId || item.id === focusId) && [item.name, item.set_code, item.set_name].join(" ").toLowerCase().includes(filter.toLowerCase())); const trackedItems = [...state.specs, ...state.radar];
-  const edit = (item, key, value) => updateSlice("specs", list => list.map(row => row.id === item.id ? { ...row, [key]: number(value) } : row));
+  const trackedItems = [...state.specs, ...state.radar];
+  const positionRows = selectPositionRows(state.specs, {
+    getNotesCount: item => getRelatedRecordsForPrinting(state.cardNotes, item, trackedItems).length,
+    getHistoryCount: item => getRelatedRecordsForPrinting(state.priceSnapshots, item, trackedItems).length,
+  });
+  const summary = calculatePortfolioSummary(positionRows, state.cash); const rows = positionRows.filter(item => (!focusId || item.id === focusId) && [item.name, item.set_code, item.set_name].join(" ").toLowerCase().includes(filter.toLowerCase()));
+  const edit = (item, key, value) => updateSlice("specs", list => list.map(row => row.id === item.sourceRecord.id ? { ...row, [key]: number(value) } : row));
   const columns = [
-    { key: "name", label: "Card", render: item => <button className="table-link" onClick={() => setDetail(item)}><CardIdentity item={item} /></button> },
+    { key: "name", label: "Card", render: item => <button className="table-link" disabled={!item.validation.valid} onClick={() => setDetail(item.sourceRecord)}><CardIdentity item={item} />{!item.validation.valid && <ReconciliationValue row={item} />}</button> },
     { key: "set_code", label: "Set", render: item => String(item.set_code || "-").toUpperCase() }, { key: "collector_number", label: "#" }, { key: "rarity", label: "Rarity", render: rarity }, { key: "color", label: "Color", render: color },
-    { key: "buyPrice", label: "Buy", align: "money", sortValue: item => number(item.buyPrice), render: item => formatMoney(item.buyPrice) },
-    { key: "currentPrice", label: "Now", align: "money", sortValue: item => number(item.currentPrice), render: item => formatMoney(item.currentPrice) }, { key: "qty", label: "Qty", align: "center", sortValue: item => number(item.qty) },
-    { key: "age", label: "Age", align: "center", sortValue: item => ageDays(item.addedAt || item.createdAt), render: item => `${ageDays(item.addedAt || item.createdAt)}d` }, { key: "added", label: "Added", render: item => date(item.addedAt || item.createdAt) },
-    { key: "value", label: "Value", align: "money", sortValue: item => number(item.qty) * number(item.currentPrice), render: item => formatMoney(number(item.qty) * number(item.currentPrice)) },
-    { key: "pl", label: "P/L", align: "money", sortValue: item => (number(item.currentPrice) - number(item.buyPrice)) * number(item.qty), render: item => <span className={number(item.currentPrice) >= number(item.buyPrice) ? "positive" : "negative"}>{signedMoney((number(item.currentPrice) - number(item.buyPrice)) * number(item.qty))}</span> },
-    { key: "plPct", label: "P/L %", align: "money", sortValue: item => number(item.buyPrice) ? ((number(item.currentPrice) - number(item.buyPrice)) / number(item.buyPrice)) * 100 : 0, render: item => percent(number(item.buyPrice) ? ((number(item.currentPrice) - number(item.buyPrice)) / number(item.buyPrice)) * 100 : 0) },
+    { key: "averageBuyPrice", label: "Buy", align: "money", sortValue: item => item.averageBuyPrice ?? -1, render: item => item.averageBuyPrice === null ? <ReconciliationValue row={item} /> : formatMoney(item.averageBuyPrice) },
+    { key: "currentPrice", label: "Now", align: "money", sortValue: item => item.currentPrice ?? -1, render: item => item.currentPrice === null || item.currentPrice < 0 ? "-" : formatMoney(item.currentPrice) }, { key: "quantity", label: "Qty", align: "center", sortValue: item => item.quantity ?? -1, render: item => item.quantity === null ? <ReconciliationValue row={item} /> : item.quantity },
+    { key: "age", label: "Age", align: "center", sortValue: item => item.acquiredAt ? ageDays(item.acquiredAt) : -1, render: item => item.acquiredAt ? `${ageDays(item.acquiredAt)}d` : <ReconciliationValue row={item} /> }, { key: "added", label: "Added", render: item => item.acquiredAt ? date(item.acquiredAt) : <ReconciliationValue row={item} /> },
+    { key: "value", label: "Value", align: "money", sortValue: item => item.validation.calculationEligible ? item.quantity * item.currentPrice : -1, render: item => item.validation.calculationEligible ? formatMoney(item.quantity * item.currentPrice) : "-" },
+    { key: "pl", label: "P/L", align: "money", sortValue: item => item.validation.calculationEligible ? (item.currentPrice - item.averageBuyPrice) * item.quantity : -Infinity, render: item => item.validation.calculationEligible ? <span className={item.currentPrice >= item.averageBuyPrice ? "positive" : "negative"}>{signedMoney((item.currentPrice - item.averageBuyPrice) * item.quantity)}</span> : "-" },
+    { key: "plPct", label: "P/L %", align: "money", sortValue: item => item.validation.calculationEligible ? ((item.currentPrice - item.averageBuyPrice) / item.averageBuyPrice) * 100 : -Infinity, render: item => item.validation.calculationEligible ? percent(((item.currentPrice - item.averageBuyPrice) / item.averageBuyPrice) * 100) : "-" },
     { key: "exitTarget", label: "Target", align: "money", render: item => <input className="table-input" type="number" step="0.01" value={item.exitTarget || ""} placeholder="Set" onChange={event => edit(item, "exitTarget", event.target.value)} /> },
     { key: "distance", label: "Δ", align: "money", sortValue: item => number(item.exitTarget) ? ((number(item.currentPrice) - number(item.exitTarget)) / number(item.exitTarget)) * 100 : 999, render: item => number(item.exitTarget) ? percent(((number(item.currentPrice) - number(item.exitTarget)) / number(item.exitTarget)) * 100) : "-" },
-    { key: "holdTime", label: "Hold", render: item => <input className="table-input hold-input" value={item.holdTime || ""} placeholder="Set" onChange={event => updateSlice("specs", list => list.map(row => row.id === item.id ? { ...row, holdTime: event.target.value } : row))} /> },
-    { key: "notes", label: "Notes", align: "center", sortValue: item => getRelatedRecordsForPrinting(state.cardNotes, item, trackedItems).length, render: item => getRelatedRecordsForPrinting(state.cardNotes, item, trackedItems).length },
-    { key: "history", label: "History", align: "center", sortValue: item => getRelatedRecordsForPrinting(state.priceSnapshots, item, trackedItems).length, render: item => getRelatedRecordsForPrinting(state.priceSnapshots, item, trackedItems).length },
-    { key: "actions", label: "Actions", sort: false, align: "actions", render: item => <div className="table-actions"><button onClick={() => setTrade({ item, mode: "buy" })}>Buy</button><button className="danger" onClick={() => setTrade({ item, mode: "sell" })}>Sell</button><button className="danger ghost" onClick={() => removePosition(item)}>Del</button></div> },
+    { key: "holdTime", label: "Hold", render: item => <input className="table-input hold-input" value={item.holdTime || ""} placeholder="Set" onChange={event => updateSlice("specs", list => list.map(row => row.id === item.sourceRecord.id ? { ...row, holdTime: event.target.value } : row))} /> },
+    { key: "notes", label: "Notes", align: "center", sortValue: item => item.notesCount, render: item => item.notesCount },
+    { key: "history", label: "History", align: "center", sortValue: item => item.historyCount, render: item => item.historyCount },
+    { key: "actions", label: "Actions", sort: false, align: "actions", render: item => item.validation.valid ? <div className="table-actions"><button onClick={() => setTrade({ item: item.sourceRecord, mode: "buy" })}>Buy</button><button className="danger" onClick={() => setTrade({ item: item.sourceRecord, mode: "sell" })}>Sell</button><button className="danger ghost" onClick={() => removePosition(item.sourceRecord)}>Del</button></div> : <ReconciliationValue row={item} /> },
   ];
   function removePosition(item) { const risk = dataFoundation.findPositionDeletionRisk(item, state.transactions); if (risk.blocked) { notices.show(risk.reason === "invalid_position_identity" ? `Cannot verify whether deleting ${item.name} is safe. No data was changed.` : `Cannot delete ${item.name}: its transaction history still projects an open holding. Use Sell for a real exit; quantity corrections require reconciliation.`, "warning"); return; } if (!confirm(`Delete ${item.name} from Positions? This removes the current position without logging a transaction.`)) return; updateState(current => deletePosition(current, item)); notices.show(`${item.name} deleted from Positions. No transaction was logged.`, "warning"); }
   function complete(qty, price) { try { updateState(current => trade.mode === "sell" ? sellPosition(current, trade.item, qty, price) : buyPosition(current, trade.item, qty, price)); notices.show(`${trade.mode === "sell" ? "Sold" : "Bought"} ${qty} ${trade.item.name}.`); setTrade(null); } catch (error) { notices.show(error.message, "warning"); } }
   const positionNotes = state.cardNotes.filter(note => state.specs.some(item => relatedRecordMatchesPrinting(note, item, trackedItems))).length;
-  return <><ViewHeader title="Positions" description="Owned positions only. Radar is for watch ideas before buying." /><MetricBand items={[{ label: "Portfolio Value", value: formatMoney(summary.value), detail: "Current marked value", preview: `${summary.openPositionCount} owned rows` }, { label: "Capital Deployed", value: formatMoney(summary.invested), detail: "Open position cost basis", preview: "Owned portfolio state" }, { label: "Open Positions", value: summary.openPositionCount, detail: "Cards currently owned", preview: state.specs[0]?.name || "No open positions" }, { label: "Notes", value: positionNotes, detail: "Linked decision notes", preview: positionNotes ? "Context attached" : "No notes yet" }]} /><FilterBar value={filter} onChange={value => { if (focusId) setParams({}); setFilter(value); }}>{focusId && <button type="button" className="filter-reset-btn" onClick={() => setParams({})}>Show all Positions</button>}</FilterBar><DataTable columns={columns} rows={rows} onRowClick={setDetail} empty="No owned positions yet. Buy an idea from Radar to begin." /><Modal open={Boolean(trade)} title={trade?.mode === "sell" ? "Confirm sale" : "Add to position"} onClose={() => setTrade(null)}>{trade && <TradeForm item={trade.item} mode={trade.mode} defaultQuantity={1} onCancel={() => setTrade(null)} onSubmit={complete} />}</Modal><CardDetail item={detail} source="positions" onClose={() => setDetail(null)} /><Notice notice={notices.notice} onDismiss={notices.dismiss} /></>;
+  return <><ViewHeader title="Positions" description="Owned positions only. Radar is for watch ideas before buying." /><MetricBand items={[{ label: "Portfolio Value", value: formatMoney(summary.value), detail: "Current marked value", preview: summary.invalidPositionCount ? `${summary.invalidPositionCount} need reconciliation` : `${summary.openPositionCount} owned rows` }, { label: "Capital Deployed", value: formatMoney(summary.invested), detail: "Valid open-position cost basis", preview: summary.invalidPositionCount ? "Invalid rows excluded" : "Owned portfolio state" }, { label: "Open Positions", value: summary.openPositionCount, detail: "Valid owned positions", preview: summary.invalidPositionCount ? `${summary.invalidPositionCount} invalid ${summary.invalidPositionCount === 1 ? "record" : "records"}` : state.specs[0]?.name || "No open positions" }, { label: "Notes", value: positionNotes, detail: "Linked decision notes", preview: positionNotes ? "Context attached" : "No notes yet" }]} /><FilterBar value={filter} onChange={value => { if (focusId) setParams({}); setFilter(value); }}>{focusId && <button type="button" className="filter-reset-btn" onClick={() => setParams({})}>Show all Positions</button>}</FilterBar><DataTable columns={columns} rows={rows} onRowClick={item => { if (item.validation.valid) setDetail(item.sourceRecord); }} empty="No owned positions yet. Buy an idea from Radar to begin." /><Modal open={Boolean(trade)} title={trade?.mode === "sell" ? "Confirm sale" : "Add to position"} onClose={() => setTrade(null)}>{trade && <TradeForm item={trade.item} mode={trade.mode} defaultQuantity={1} onCancel={() => setTrade(null)} onSubmit={complete} />}</Modal><CardDetail item={detail} source="positions" onClose={() => setDetail(null)} /><Notice notice={notices.notice} onDismiss={notices.dismiss} /></>;
 }
 
 function signalQueueTitle(row) {
