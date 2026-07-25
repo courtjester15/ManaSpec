@@ -180,3 +180,25 @@ Validated:
 Remaining for Batch 2:
 
 - Port and fixture-compare vanilla Signals derivation, thresholds, reasons, priorities, filtering, and source navigation. Batch 1 changed only the identity used when Signals reads market observations; it did not change Signals attention behavior.
+
+## 2026-07-23: React Parity Batch 2 - Signals Logic And Triage Workflow
+
+Implemented:
+
+- Moved React Signals derivation into a deterministic domain selector that matches vanilla's 5% target boundary, bucket/status/reason/action state, priority ordering, and market-check freshness behavior.
+- Reused the Batch 1 exact-printing resolver for market observations so same-printing foil/nonfoil checks remain independent.
+- Routed both Signals and Dashboard through the same derived rows and Dashboard queue selector, including target hits, near/watch fallbacks, stale checks, missing plans, and hold-plan ownership.
+- Restored attention-tile bucket filters, exact-printing preview filters, visible Show all reset, and isolated row/action clicks.
+- Restored primary `View` navigation to an exact Radar or Positions row and retained external access under the explicit `Scryfall` label.
+
+Validated:
+
+- All 28 Node tests pass. Six new fixture tests compare every derived row's bucket, status, reason, priority, source, and action state, plus the 5% boundary, fresh/stale checks, exact finish isolation, triage selectors, source navigation, and Dashboard queue membership.
+- Source-policy and formatting checks pass.
+- Normal, `/ManaSpec/react-spike/` Pages, and portable builds complete; tracked Pages and portable artifacts were regenerated.
+- Imported-fixture browser QA confirmed bucket filtering, closest-target Approaching previews, exact foil-row filtering, Show all reset, separate `Scryfall`, and exact one-row Radar and Positions source navigation. The Pages-mode preview loaded the Signals route and generated assets with no console errors.
+- The in-app browser's URL policy blocked direct `file://` navigation; the portable finalization tests and regenerated classic-script build passed. Development-only Radar transitions emitted the pre-existing Tabulator React-root unmount warning, with no observed workflow failure; the production Pages Signals smoke was clean.
+
+Remaining after Batch 2:
+
+- Do not begin another audit batch until its focused issue is created and approved. Existing Card Detail, dense-table, Help, accessibility, and responsive gaps remain governed by their own future batches.

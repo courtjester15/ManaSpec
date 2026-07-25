@@ -8,6 +8,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Restored React Signals parity with vanilla's tested 5% target logic, exact-printing market freshness, priorities/reasons/actions, shared Dashboard queue membership, interactive bucket/exact-row triage, and exact Radar/Positions `View` navigation with a separate `Scryfall` action.
 - Added Tabulator 6.5.2 as the shared React table foundation behind a ManaSpec-owned wrapper, with Radar as the only Phase 1 pilot and later table modules intentionally deferred.
 - Implemented the React 19/Vite 8 ManaSpec reconstruction across Dashboard, Radar, Positions, Signals, Transactions, History, and Admin with hash routing, compatibility-backed local state, shared UI primitives, tests/checks, normal output, a tracked Pages artifact, and a stable directly openable portable build.
 - Added paired vanilla/React parity evidence and a dedicated implementation progress record covering the full UI pass plus table and Card Detail correction.
