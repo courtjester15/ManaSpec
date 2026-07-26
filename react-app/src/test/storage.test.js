@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { calculatePortfolioSummary } from "../domain/portfolio.js";
+import { buildPositionRow, calculatePortfolioSummary } from "../domain/portfolio.js";
 import { createStorageAdapter, normalizeBackup } from "../persistence/storage.js";
 
 function memoryStorage(initial = {}) {
@@ -68,10 +68,45 @@ test("compatible saves preserve unknown fields and avoid derived-field pollution
   assert.equal(Object.hasOwn(saved, "trackedPrintingKey"), false);
 });
 
-test("portfolio summary matches the vanilla invested/value calculation", () => {
+test("canonical Position rows do not pollute compatible storage or backups", () => {
+  const storage = memoryStorage({
+    specs: JSON.stringify([{
+      id: "card-id|nonfoil",
+      scryfall_id: "card-id",
+      finish: "nonfoil",
+      name: "Example",
+      qty: 1,
+      buyPrice: 2,
+      buyDate: "2026-01-15T12:00:00.000Z",
+      currentPrice: 3,
+      futureField: { keep: true },
+    }]),
+  });
+  const adapter = createStorageAdapter(storage);
+  const state = adapter.loadState();
+  const row = buildPositionRow(state.specs[0]);
+
+  adapter.saveSlice("specs", [{ ...row.sourceRecord, exitTarget: 8 }]);
+  const saved = JSON.parse(storage.getItem("specs"))[0];
+  assert.equal(saved.qty, 1);
+  assert.equal(saved.buyPrice, 2);
+  assert.equal(saved.buyDate, "2026-01-15T12:00:00.000Z");
+  assert.deepEqual(saved.futureField, { keep: true });
+  assert.equal(Object.hasOwn(saved, "quantity"), false);
+  assert.equal(Object.hasOwn(saved, "averageBuyPrice"), false);
+  assert.equal(Object.hasOwn(saved, "acquiredAt"), false);
+
+  const backupSpec = adapter.createBackup(adapter.loadState()).data.specs[0];
+  assert.equal(backupSpec.qty, 1);
+  assert.equal(backupSpec.buyPrice, 2);
+  assert.equal(backupSpec.buyDate, "2026-01-15T12:00:00.000Z");
+  assert.deepEqual(backupSpec.futureField, { keep: true });
+});
+
+test("portfolio summary matches the vanilla calculation for trusted Positions", () => {
   const summary = calculatePortfolioSummary([
-    { qty: 2, buyPrice: 3, currentPrice: 5 },
-    { qty: 0, buyPrice: 100, currentPrice: 200 },
+    { id: "one|nonfoil", scryfall_id: "one", trackedPrintingKey: "one|nonfoil", finish: "nonfoil", qty: 2, buyPrice: 3, buyDate: "2026-01-01", currentPrice: 5 },
+    { id: "two|nonfoil", scryfall_id: "two", trackedPrintingKey: "two|nonfoil", finish: "nonfoil", qty: 0, buyPrice: 100, buyDate: "2026-01-01", currentPrice: 200 },
   ], 10);
   assert.deepEqual(summary, {
     cash: 10,
@@ -81,5 +116,7 @@ test("portfolio summary matches the vanilla invested/value calculation", () => {
     profitLoss: 4,
     profitLossPercent: 66.66666666666666,
     openPositionCount: 1,
+    invalidPositionCount: 1,
+    unpricedPositionCount: 0,
   });
 });

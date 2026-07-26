@@ -202,3 +202,27 @@ Validated:
 Remaining after Batch 2:
 
 - Do not begin another audit batch until its focused issue is created and approved. Existing Card Detail, dense-table, Help, accessibility, and responsive gaps remain governed by their own future batches.
+
+## 2026-07-24: Position Data Trust
+
+Implemented:
+
+- Added a pure canonical Position row boundary derived only from vanilla-compatible `qty`, `buyPrice`, and `buyDate`, while retaining the normalized source record for existing compatible commands.
+- Required exact printing identity, positive finite quantity, positive finite buy price, and valid buy date for an open Position. Missing, zero, and invalid required values remain visible as reconciliation-required records and cannot enter normal Buy, Sell, or detail workflows.
+- Corrected Positions Age and Added to use `buyDate` exclusively; Radar `addedDate`, `addedAt`, and `createdAt` are not acquisition-date fallbacks.
+- Excluded invalid Positions from invested capital, marked value, profit/loss, total-equity contribution, and open-position counts without rewriting stored data. Valid records with unavailable current price retain ownership/cost basis but are excluded from marked-value calculations.
+- Kept Positions on the existing interim `DataTable`; no `TabulatorTable`, shared table API, or table architecture changes were made.
+
+Validated:
+
+- All 36 Node tests pass. New coverage includes canonical field mapping, `buyDate` precedence over Radar `addedDate`, every missing/zero/invalid required field, exact identity, unavailable current price, related counts, calculation exclusion, and compatible save/backup serialization without canonical-field pollution.
+- Source-policy and formatting checks pass.
+- Normal and `/ManaSpec/react-spike/` Pages builds pass; the tracked Pages artifact was regenerated and its JavaScript passes `node --check`.
+- The portable Vite bundle built successfully. Its finalizer encountered one transient Windows file lock, then completed; the classic script is deferred, idempotence tests pass, and generated JavaScript passes `node --check`.
+- A fixture-backed 1366 x 768 browser pass confirmed four reconciliation cases (missing quantity, zero buy price, missing buy date, and missing exact printing identity) remain visible with reason-specific `Reconcile` states, disabled detail/transaction actions, and exclusion from portfolio value, deployed capital, and open-position counts.
+- The valid regression row displayed Age `10d` and Added `7/15/2026` from `buyDate` even though its stored Radar `addedDate` was `1/1/2025`. Card Detail, Buy, Sell, and table filtering retained the vanilla-aligned interaction flow.
+- The Positions page, table, and holder each fit the 1366 x 768 viewport without horizontal or document overflow. The React page produced no console warnings or errors during the visual and interaction pass.
+
+Follow-up:
+
+- All remaining table migrations remain deferred until this focused batch is reviewed and merged.
