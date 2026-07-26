@@ -219,8 +219,10 @@ Validated:
 - Source-policy and formatting checks pass.
 - Normal and `/ManaSpec/react-spike/` Pages builds pass; the tracked Pages artifact was regenerated and its JavaScript passes `node --check`.
 - The portable Vite bundle built successfully. Its finalizer encountered one transient Windows file lock, then completed; the classic script is deferred, idempotence tests pass, and generated JavaScript passes `node --check`.
+- A fixture-backed 1366 x 768 browser pass confirmed four reconciliation cases (missing quantity, zero buy price, missing buy date, and missing exact printing identity) remain visible with reason-specific `Reconcile` states, disabled detail/transaction actions, and exclusion from portfolio value, deployed capital, and open-position counts.
+- The valid regression row displayed Age `10d` and Added `7/15/2026` from `buyDate` even though its stored Radar `addedDate` was `1/1/2025`. Card Detail, Buy, Sell, and table filtering retained the vanilla-aligned interaction flow.
+- The Positions page, table, and holder each fit the 1366 x 768 viewport without horizontal or document overflow. The React page produced no console warnings or errors during the visual and interaction pass.
 
-Open validation:
+Follow-up:
 
-- The documented local React server returned HTTP 200, but the in-app browser webview failed to attach on the initial attempt and the one permitted clean retry. The required 1366 x 768 visual/console inspection remains pending as browser-tooling verification; no application workaround or table-architecture change was introduced.
 - All remaining table migrations remain deferred until this focused batch is reviewed and merged.
