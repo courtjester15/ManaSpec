@@ -279,6 +279,15 @@
   color: var(--negative);
 }
 
+.ms-tabulator--positions .tabulator-header .tabulator-col .tabulator-col-content {
+  padding-right: 4px;
+  padding-left: 4px;
+}
+
+.ms-tabulator--positions .tabulator-header .tabulator-col[aria-sort="none"] .tabulator-arrow {
+  display: none;
+}
+
 @media (max-width: 760px) {
   .ms-tabulator.tabulator {
     overflow: visible;

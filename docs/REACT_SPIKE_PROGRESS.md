@@ -226,3 +226,25 @@ Validated:
 Follow-up:
 
 - All remaining table migrations remain deferred until this focused batch is reviewed and merged.
+
+## 2026-07-26: React Positions Tabulator Migration
+
+Implemented:
+
+- Replaced the interim Positions `DataTable` with the existing shared `TabulatorTable` using the approved 19-column configuration: Card, Set, collector number, Rarity, Color, Buy, Now, Qty, Age, Added, Value, P/L, P/L %, Target, delta, Hold, Notes, History, and Actions.
+- Kept Card as the only flexible scan column and fixed the remaining compact columns, including the 32px Qty column, so the desktop grid fills its container without overflow.
+- Kept the Issue #6 canonical Position-row boundary and reconciliation states. Filtering operates on canonical rows without reconstructing, repairing, or polluting persisted records.
+- Preserved name sorting, exact focus and text filtering, inline Target/Hold editing, Card Detail, Buy/Sell, guarded deletion, and disabled normal actions for invalid records.
+- Added only Positions-scoped header-density styling. The shared wrapper API is unchanged; its existing React formatter-root cleanup now defers unmounting to avoid a proven synchronous-render lifecycle race.
+
+Validated:
+
+- All 37 Node tests pass, including canonical-row filtering coverage that retains exact row references, `buyDate` acquisition semantics, reconciliation classifications, and the absence of canonical-field writes onto storage-shaped records.
+- Source-policy, formatting, normal, Pages, and portable checks pass; tracked Pages and portable artifacts were regenerated and generated JavaScript passes `node --check`.
+- Fixture-backed 1366 x 768 React verification confirmed five rendered rows, four clear reconciliation states, one valid open-position count, Age `11d` and Added `7/15/2026` from `buyDate`, and no document or table horizontal overflow.
+- Sorting, text and exact-focus filtering/reset, Target/Hold editing, Card Detail, Buy/Sell, and guarded delete were exercised. A fresh post-fix interaction run produced no React console warnings or errors.
+- Vanilla Positions was compared at the same viewport to confirm the compact 19-column scan pattern and established row workflows. Its only console warnings were expected failed live price-refresh requests in the restricted local QA environment.
+
+Follow-up:
+
+- Signals, Transactions, and History remain on the interim table. No later table migration or unrelated shared-table expansion is included in this batch.

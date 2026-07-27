@@ -84,8 +84,11 @@ export function TabulatorTable({
   onRowClickRef.current = onRowClick;
 
   function cleanupCellRoots() {
-    for (const root of rootsRef.current) root.unmount();
+    const staleRoots = [...rootsRef.current];
     rootsRef.current.clear();
+    queueMicrotask(() => {
+      for (const root of staleRoots) root.unmount();
+    });
   }
 
   function currentColumn(key) {

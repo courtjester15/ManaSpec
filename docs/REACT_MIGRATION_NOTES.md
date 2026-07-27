@@ -10,9 +10,9 @@ Vanilla remains the behavioral and production/beta source of truth until an expl
 
 - The seven primary routes, shared shell, compatibility-backed local state, normal build, tracked Pages artifact, and stable portable build are implemented.
 - The UI has completed broad parity plus focused table and Card Detail corrections; the user's current directional assessment is roughly 80-90% familiar, not a declaration of full parity.
-- The shared Tabulator foundation is implemented with Radar as the Phase 1 pilot. Remaining table modules stay unchanged until a deliberate Phase 2 migration after Radar visual/interaction approval.
+- The shared Tabulator foundation is implemented with Radar as the Phase 1 pilot and Positions as the first focused Phase 2 migration. Signals, Transactions, and History remain on the interim table until separately approved migrations.
 - React Parity Batches 1 and 2 close the audit's C1/C2 data-trust findings and H1/H2 Signals workflow findings with focused regression coverage. Issue #6 also establishes a canonical runtime Position row boundary, authoritative `buyDate` acquisition semantics, and reconciliation-safe exclusion of invalid ownership records from React portfolio calculations. Signals now uses vanilla's shared 5% derivation, exact market-check identity, Dashboard queue membership, triage filters, and exact source navigation; Card Detail workflow and dense-table review controls remain open for later batches.
-- The next phase closes remaining workflow/UI/accessibility/responsive gaps, completes Radar browser evidence, and evaluates the next useful libraries against the working baseline.
+- The next phase closes remaining workflow/UI/accessibility/responsive gaps and evaluates the next useful libraries against the working baseline; later table migrations remain separately bounded.
 - React may make small correctness and consistency improvements, but vanilla defines expected behavior wherever the implementations disagree until promotion.
 
 ## Objectives

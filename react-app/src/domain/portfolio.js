@@ -88,6 +88,19 @@ export function selectPositionRows(specs = [], options = {}) {
   }));
 }
 
+export function filterPositionRows(rows = [], options = {}) {
+  const focusId = String(options.focusId || "");
+  const query = String(options.query || "").trim().toLowerCase();
+  return rows.filter(row => {
+    if (focusId && row.id !== focusId) return false;
+    if (!query) return true;
+    return [row.name, row.set_code, row.set_name, row.collector_number]
+      .join(" ")
+      .toLowerCase()
+      .includes(query);
+  });
+}
+
 export function calculatePortfolioSummary(specs = [], cash = 0) {
   const rows = specs.map(spec => isCanonicalPositionRow(spec) ? spec : buildPositionRow(spec));
   const open = rows.filter(row => row.validation.valid);
