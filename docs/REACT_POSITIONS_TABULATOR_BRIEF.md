@@ -180,8 +180,8 @@ Update `docs/REACT_SPIKE_PROGRESS.md` with actual completion and validation evid
 - [x] Applicable focused regression coverage added
 - [x] Automated/build validation completed
 - [x] 1366 x 768 browser evidence completed
-- [ ] Completion evidence recorded and Issue #8 commented
-- [ ] Focused PR opened into `codex/react-modernization-integration`
+- [x] Completion evidence recorded and Issue #8 commented
+- [x] Focused PR opened into `codex/react-modernization-integration`
 
 ## 17. Suggested Commit
 
