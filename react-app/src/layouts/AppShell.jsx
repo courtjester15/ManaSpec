@@ -69,7 +69,7 @@ export function AppShell() {
         <form className="global-search-bar" role="search" onSubmit={submitSearch}>
           <label className="visually-hidden" htmlFor="universalSearch">Search cards</label>
           <input id="universalSearch" name="query" placeholder="Search cards..." />
-          <button type="submit">Search</button>
+          <button type="submit" id="universalSearchButton">Search</button>
         </form>
       </section>
 

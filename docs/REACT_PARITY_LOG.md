@@ -1,5 +1,13 @@
 # React UI Parity Log
 
+## Shared table and app-shell parity (2026-07-27)
+
+Issue #10 was reviewed against vanilla throughout implementation. The shared `TabulatorTable` is retained as the correct abstraction for grid lifecycle, pagination, accessibility state, row density, indicators, and action presentation; Radar continues to own filtering, column intent, editors, and workflow callbacks.
+
+At 1366 x 768, React Radar now matches the vanilla desktop contract: 28px centered headers, 27px rows, a 34px filter band, one flexible Card column, compact fixed utility columns, a 1219px table with no horizontal overflow, and no footer for a single page. Only the active sorted column exposes an arrow and non-`none` `aria-sort`. The shell uses vanilla navigation padding/icon alignment and its blue global Search action. The duplicate candidate Search button and OWNED badge are absent.
+
+Representative-data browser checks covered filter/reset behavior, quantity controls, indicators, row/action isolation, and sorting. Pages-mode production output was clean in the browser; the known development-only synchronous React-root unmount warning can still occur during Vite reload transitions. Tablet and phone smoke checks found no document-level horizontal overflow.
+
 ## Focused tables and Card Detail correction (2026-07-17)
 
 This correction is verified for the brief's table and Card Detail scope. It is not a declaration that whole-app visual parity is complete.

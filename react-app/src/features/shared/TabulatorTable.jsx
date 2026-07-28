@@ -5,6 +5,7 @@ import {
   FormatModule,
   InteractionModule,
   KeybindingsModule,
+  PageModule,
   ResizeColumnsModule,
   ResizeTableModule,
   SortModule,
@@ -17,6 +18,7 @@ Tabulator.registerModule([
   FormatModule,
   InteractionModule,
   KeybindingsModule,
+  PageModule,
   ResizeColumnsModule,
   ResizeTableModule,
   SortModule,
@@ -70,6 +72,7 @@ export function TabulatorTable({
   tableClass = "",
   ariaLabel = "Data table",
   initialSort,
+  pageSize,
 }) {
   const mountRef = useRef(null);
   const tableRef = useRef(null);
@@ -77,6 +80,7 @@ export function TabulatorTable({
   const onRowClickRef = useRef(onRowClick);
   const rootsRef = useRef(new Set());
   const rowsRef = useRef(rows);
+  const pageSizeRef = useRef(pageSize);
   const signature = useMemo(() => columnSignature(columns), [columns]);
   const signatureRef = useRef(signature);
 
@@ -100,7 +104,7 @@ export function TabulatorTable({
       title: column.label,
       field: column.key,
       headerSort: column.sort !== false,
-      headerHozAlign: column.align === "money" ? "right" : column.align === "actions" ? "center" : column.align || "left",
+      headerHozAlign: "center",
       hozAlign: column.align === "money" ? "right" : column.align === "actions" ? "center" : column.align || "left",
       resizable: false,
       cssClass: [column.align, column.className].filter(Boolean).join(" "),
@@ -177,7 +181,16 @@ export function TabulatorTable({
       columnHeaderVertAlign: "middle",
       movableColumns: false,
       reactiveData: false,
+      ...(pageSize ? { pagination: "local", paginationSize: pageSize, paginationCounter: false } : {}),
     });
+
+    const syncSortAria = sorters => {
+      for (const sorter of sorters) {
+        sorter.column.getElement().setAttribute("aria-sort", sorter.dir === "desc" ? "descending" : "ascending");
+      }
+    };
+    table.on("tableBuilt", () => syncSortAria(table.getSorters()));
+    table.on("dataSorted", syncSortAria);
 
     table.on("rowClick", (event, row) => {
       if (!onRowClickRef.current || event.target.closest(INTERACTIVE_SELECTOR)) return;
@@ -205,6 +218,12 @@ export function TabulatorTable({
     cleanupCellRoots();
     tableRef.current.setColumns(makeColumns());
   }, [signature]);
+
+  useEffect(() => {
+    if (!tableRef.current || !pageSize || pageSizeRef.current === pageSize) return;
+    pageSizeRef.current = pageSize;
+    tableRef.current.setPageSize(pageSize);
+  }, [pageSize]);
 
   return <div className={`ms-tabulator ${tableClass}`} role="region" aria-label={ariaLabel} ref={mountRef} />;
 }

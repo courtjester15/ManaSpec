@@ -125,7 +125,7 @@ Initial breakpoint candidates are `< 640px` for phone, `640px-1023px` for tablet
 
 ## Tables
 
-Tables are a product-critical subsystem, not a generic component exercise. Phase 1 adopted Tabulator 6.5.2 behind the ManaSpec-owned `TabulatorTable` React wrapper and proved the boundary with Radar; Positions is the first focused Phase 2 configuration migration. The wrapper owns product columns, React cell content, sorting values, edit callbacks, row activation isolation, empty state, accessibility naming, and responsive styling; feature code does not call Tabulator directly.
+Tables are a product-critical subsystem, not a generic component exercise. Phase 1 adopted Tabulator 6.5.2 behind the ManaSpec-owned `TabulatorTable` React wrapper and proved the boundary with Radar; Positions is the first focused Phase 2 configuration migration. The wrapper owns grid lifecycle, React cell content, pagination mechanics, sort accessibility state, row activation isolation, empty state, shared compact geometry, indicators, actions, and responsive styling; feature code does not call Tabulator directly. Each route owns its data selectors, filters, column intent, editors, and workflow callbacks.
 
 - density and styling control;
 - sorting, filtering, column sizing, pagination, and row actions;
@@ -134,7 +134,7 @@ Tables are a product-critical subsystem, not a generic component exercise. Phase
 - virtualization and large-list performance;
 - bundle cost and maintenance health.
 
-A single primary table direction will serve Radar, Positions, Signals, Transactions, and History. Radar and Positions use the adopted wrapper now. The interim native `DataTable` remains in Signals, Transactions, and History only until their deliberate Phase 2 migrations, not as a competing long-term system. A second long-term table system requires a documented exception.
+A single primary table direction will serve Radar, Positions, Signals, Transactions, and History. Radar and Positions use the adopted, vanilla-verified wrapper now. The interim native `DataTable` remains in Signals, Transactions, and History only until their deliberate Phase 2 migrations, not as a competing long-term system. A second long-term table system requires a documented exception.
 
 ## Forms, Dialogs, And Accessibility
 

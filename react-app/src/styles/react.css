@@ -14,13 +14,15 @@
 .toolbar-tab {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 0 11px;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 122px;
+  padding: 0 13px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   background: var(--surface-2);
-  color: var(--muted);
+  color: var(--text);
+  font-size: 14px;
   text-decoration: none;
 }
 
@@ -32,8 +34,13 @@
 }
 
 .toolbar-tab-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
   width: 18px;
-  color: var(--accent);
+  height: 18px;
+  color: var(--muted);
   font-size: 17px;
   line-height: 1;
   text-align: center;
@@ -100,6 +107,10 @@ footer {
 .search-results small { color:var(--muted); font-size:10px; text-align:right; }
 .react-filter-bar { display:flex; align-items:end; gap:10px; padding:10px 12px; }
 .react-filter-bar label:first-child { flex:1; }
+.module-context-band .search-panel form,
+.module-context-band .search-panel label { display:block; width:100%; }
+.radar-filter-panel { margin-bottom:10px; }
+.radar-filter-panel .panel-heading { min-height:24px; }
 .react-table-wrap { overflow-x:auto; overflow-y:hidden; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); }
 .react-table { --table-row-h:27px; --table-control-h:20px; --table-cell-pad-x:6px; width:100%; margin:0; border-collapse:collapse; table-layout:fixed; font-size:12px; line-height:1.15; white-space:nowrap; }
 .react-table thead tr,.react-table tbody tr { height:var(--table-row-h); min-height:var(--table-row-h); }
@@ -301,4 +312,21 @@ footer {
   .react-modal.card-detail-dialog { inset:8px; width:auto; max-height:calc(100vh - 16px); }
   .card-detail-dialog .react-modal-body { max-height:calc(100vh - 51px); }
   .compact-detail-grid { grid-template-columns:1fr; }
+}
+
+.toolbar-tab.active .toolbar-tab-icon {
+  color: var(--accent);
+}
+
+#universalSearchButton {
+  border-color: #0284c7;
+  background: #0172ad;
+  color: #fff;
+}
+
+#universalSearchButton:hover,
+#universalSearchButton:focus-visible {
+  border-color: #38bdf8;
+  background: #0284c7;
+  color: #fff;
 }

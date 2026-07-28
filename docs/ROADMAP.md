@@ -261,7 +261,8 @@ Implementation sequence:
 - [x] Establish Position Data Trust: canonical runtime rows derived from `qty`, `buyPrice`, and `buyDate`, with invalid ownership records visible for reconciliation but excluded from portfolio calculations.
 - [ ] Close remaining route-by-route interaction and UI parity gaps; continue corrective accessibility and responsive validation.
 - [x] Establish Tabulator 6.5.2 behind a shared ManaSpec React wrapper and migrate Radar as the Phase 1 pilot.
-- [x] Complete Radar approval and migrate Positions through the established wrapper as the first focused Phase 2 batch.
+- [x] Complete Radar 1366 x 768 shared-table/app-shell visual and interaction parity against vanilla, including responsive smoke checks.
+- [x] Migrate Positions through the approved wrapper without changing Position business logic as the first focused Phase 2 batch.
 - [ ] Migrate Signals, Transactions, and History through the established wrapper only in separately approved Phase 2 batches.
 - [ ] Evaluate Fuse.js, Chart.js, and Day.js when their adoption gates are met.
 - [ ] Verify and document the actual GitHub Pages publishing source so the latest `react-spike/` artifact, not merely the branch build, is known to be live.
