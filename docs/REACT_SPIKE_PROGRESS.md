@@ -226,3 +226,23 @@ Validated:
 Follow-up:
 
 - All remaining table migrations remain deferred until this focused batch is reviewed and merged.
+
+## 2026-07-27: Shared Table And App-Shell Visual Parity
+
+Implemented:
+
+- Confirmed the ManaSpec-owned `TabulatorTable` remains the correct boundary: shared grid lifecycle, pagination, compact geometry, sort accessibility, indicators, and action presentation stay centralized, while Radar retains its filter semantics, column definitions, editors, and workflow callbacks.
+- Matched the React shell to vanilla's navigation spacing and icon/text centering, and restored the blue global Search action.
+- Rebuilt Radar's local filtering around the vanilla contract, removed the duplicate candidate Search button and OWNED badge, retained one flexible Card column, and assigned compact fixed widths to utility, financial, indicator, and action columns.
+- Added vanilla-aligned card-filter selectors and focused regression coverage, local page-size handling, active-only sort-arrow/ARIA synchronization, 27px rows, compact icon indicators, and single-page footer suppression.
+
+Validated:
+
+- Side-by-side vanilla and React review at 1366 x 768 measured a 28px header, 27px rows, a 34px Radar filter band, matching shell navigation/Search geometry, and a 1219px table with no horizontal overflow in the representative fixture state.
+- Fixture-backed interaction checks covered rarity filtering and reset, planned-quantity controls, notes/history indicators, isolated row actions, and switching the visible sort arrow to the active column. Production Pages-mode output initialized with Card sorted ascending and no inactive sort arrows.
+- Tablet (768 x 1024) and phone (390 x 844) smoke checks showed no document-level horizontal overflow; the table remains contained by its responsive behavior.
+- All 38 focused Node tests, source-policy checks, and formatting checks pass. Normal, Pages-subpath, and portable builds complete; tracked Pages and portable artifacts were regenerated.
+
+Follow-up:
+
+- Apply this shared foundation to the paused Positions Tabulator branch and verify Positions inherits it without changing Position business logic.

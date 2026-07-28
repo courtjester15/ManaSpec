@@ -258,6 +258,8 @@ React therefore moved from a merely proposed experiment into active implementati
 
 On 2026-07-18, the table evaluation produced the first adopted feature-library foundation. Tabulator 6.5.2 was placed behind a ManaSpec-owned React wrapper and Radar became the only Phase 1 pilot. The implementation registered only the grid modules ManaSpec uses, preserved React ownership of cell content and state callbacks, restored vanilla-aligned Radar fields and compact interactions, and left Positions, Signals, Transactions, and History intentionally unchanged for a later configuration-led Phase 2 migration.
 
+On 2026-07-27, the Radar pilot was reviewed side-by-side against vanilla and the shared boundary was affirmed. Grid lifecycle, pagination, sort accessibility, compact geometry, indicators, and action presentation belong in the wrapper; route-specific filters, columns, editors, and business workflows remain outside it. The same pass aligned the React shell navigation and global Search treatment, restored Radar's complete local filter contract, and removed React-only decoration that weakened parity. Positions became the next deliberate consumer of the approved foundation.
+
 This milestone did not promote React to production. Vanilla remains the behavioral oracle, current production/beta frontend, rollback path, and compatibility reference until a separate evidence-based promotion decision. The tracked `react-spike/` artifact exists, but the actual GitHub Pages publishing source must be confirmed before treating every new branch artifact as publicly deployed.
 
 ## Current State (2026-07-17)
