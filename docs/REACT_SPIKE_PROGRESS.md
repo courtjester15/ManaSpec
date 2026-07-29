@@ -268,3 +268,14 @@ Validated:
 Follow-up:
 
 - Applied this shared foundation to the paused Positions Tabulator branch. Positions inherits the wrapper and shell improvements without changing Position business logic; Signals, Transactions, and History remain deferred.
+
+## 2026-07-28: Shared Header Sort Spacing Correction
+
+Implemented:
+
+- Removed Tabulator's inactive 25px sort reservation from shared React headers and reserve only the compact active-arrow space.
+- Kept Card as the flexible descriptive column and widened only the compact Radar and Positions columns whose full labels need the active sort arrow.
+
+Validated:
+
+- Checked every sortable Radar and Positions header with its arrow active; labels remain complete without table or document-level horizontal overflow at the desktop parity viewport.
