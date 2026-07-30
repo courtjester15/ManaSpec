@@ -225,17 +225,23 @@ function SignalActionBand({ rows, bucketId, printingId, onBucket, onPrinting, on
 export function SignalsView() {
   const { state } = useAppState(); const navigate = useNavigate(); const [filter, setFilter] = useState(""); const [bucketId, setBucketId] = useState(""); const [printingId, setPrintingId] = useState(""); const [detail, setDetail] = useState(null); const allRows = useMemo(() => deriveSignalRows(state), [state]); const rows = filterSignalRows(allRows, { bucketId, printingId, query: filter });
   const columns = [
-    { key: "name", label: "Card", render: item => <button className="table-link" onClick={() => setDetail(item)}><CardIdentity item={item} /></button> }, { key: "set_code", label: "Set", render: item => String(item.set_code || "-").toUpperCase() }, { key: "collector_number", label: "#" }, { key: "foil", label: "Fin", render: item => item.foil ? "F" : "N" },
-    { key: "sourceLabel", label: "Source" }, { key: "actionLabel", label: "Action" }, { key: "reasonLabel", label: "Why", title: item => item.reasonDetail, render: item => <span className={`status-pill ${item.buckets.includes("targetsHit") ? "action" : ""}`}>{item.reasonLabel}</span> },
-    { key: "currentPrice", label: "Now", align: "money", render: item => formatMoney(item.currentPrice) }, { key: "targetValue", label: "Target", align: "money", render: item => item.targetValue ? formatMoney(item.targetValue) : "-" },
-    { key: "change", label: "Δ Target", align: "money", sortValue: item => item.change, render: item => item.targetValue ? percent(item.change) : "-" },
-    { key: "marketFreshness", label: "Market", align: "center", sortValue: item => item.marketAgeSort, title: item => item.marketDetail },
-    { key: "actions", label: "Actions", sort: false, align: "actions", render: item => <div className="table-actions"><button onClick={() => setDetail(item)}>Detail</button><button onClick={() => navigate(getSignalSourceNavigation(item))}>View</button><a className="button secondary" href={getSignalScryfallUrl(item)} target="_blank" rel="noreferrer">Scryfall</a></div> },
+    { key: "name", label: "Card", minWidth: 170, widthGrow: 1, widthShrink: 1, render: item => <button className="table-link" onClick={() => setDetail(item)}><CardIdentity item={item} /></button> },
+    { key: "set_code", label: "Set", align: "center", width: 48, widthShrink: 0, format: item => String(item.set_code || "-").toUpperCase() },
+    { key: "collector_number", label: "#", align: "center", width: 48, widthShrink: 0, format: item => item.collector_number || "-" },
+    { key: "foil", label: "Fin", align: "center", width: 44, widthShrink: 0, format: item => item.foil ? "F" : "N" },
+    { key: "sourceLabel", label: "Source", align: "center", width: 68, widthShrink: 0 },
+    { key: "actionLabel", label: "Action", align: "center", width: 112, widthShrink: 0 },
+    { key: "reasonLabel", label: "Why", align: "center", width: 112, widthShrink: 0, title: item => item.reasonDetail, render: item => <span className={`status-pill ${item.buckets.includes("targetsHit") ? "action" : ""}`}>{item.reasonLabel}</span> },
+    { key: "currentPrice", label: "Now", align: "money", width: 58, widthShrink: 0, sortValue: item => number(item.currentPrice), format: item => formatMoney(item.currentPrice) },
+    { key: "targetValue", label: "Target", align: "money", width: 68, widthShrink: 0, sortValue: item => number(item.targetValue), format: item => item.targetValue ? formatMoney(item.targetValue) : "-" },
+    { key: "change", label: "Δ Target", align: "money", width: 86, widthShrink: 0, sortValue: item => item.change, format: item => item.targetValue ? percent(item.change) : "-" },
+    { key: "marketFreshness", label: "Market", align: "center", width: 76, widthShrink: 0, sortValue: item => item.marketAgeSort, title: item => item.marketDetail },
+    { key: "actions", label: "Actions", sort: false, align: "actions", width: 148, widthShrink: 0, render: item => <div className="table-actions"><button onClick={() => setDetail(item)}>Detail</button><button onClick={() => navigate(getSignalSourceNavigation(item))}>View</button><a className="button secondary" href={getSignalScryfallUrl(item)} target="_blank" rel="noreferrer">Scryfall</a></div> },
   ];
   function showBucket(nextBucket) { setBucketId(nextBucket); setPrintingId(""); }
   function showPrinting(nextBucket, nextPrinting) { setBucketId(nextBucket); setPrintingId(nextPrinting); }
   function showAll() { setBucketId(""); setPrintingId(""); setFilter(""); }
-  return <><ViewHeader title="Signals" description="What needs attention today across Radar and Positions." /><SignalActionBand rows={allRows} bucketId={bucketId} printingId={printingId} onBucket={showBucket} onPrinting={showPrinting} onReset={showAll} /><FilterBar value={filter} onChange={setFilter} /><DataTable columns={columns} rows={rows} onRowClick={setDetail} empty="No Signals rows match this attention filter." /><CardDetail item={detail} source={detail?.source === "radar" ? "radar" : "positions"} onClose={() => setDetail(null)} /></>;
+  return <><ViewHeader title="Signals" description="What needs attention today across Radar and Positions." /><SignalActionBand rows={allRows} bucketId={bucketId} printingId={printingId} onBucket={showBucket} onPrinting={showPrinting} onReset={showAll} /><FilterBar value={filter} onChange={setFilter} /><TabulatorTable columns={columns} rows={rows} onRowClick={setDetail} tableClass="ms-tabulator--signals" ariaLabel="Signals attention" empty="No Signals rows match this attention filter." initialSort={[{ column: "name", dir: "asc" }]} /><CardDetail item={detail} source={detail?.source === "radar" ? "radar" : "positions"} onClose={() => setDetail(null)} /></>;
 }
 
 export function TransactionsView() {
