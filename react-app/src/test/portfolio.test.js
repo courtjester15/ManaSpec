@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildPositionRow, calculatePortfolioSummary, selectPositionRows } from "../domain/portfolio.js";
+import { buildPositionRow, calculatePortfolioSummary, filterPositionRows, selectPositionRows } from "../domain/portfolio.js";
 import { positionFixtures } from "./fixtures/positions.js";
 
 test("canonical Position rows use only vanilla-compatible ownership fields", () => {
@@ -58,6 +58,26 @@ test("Position selectors attach related counts without mutating source records",
   assert.equal(rows[0].historyCount, 5);
   assert.equal(Object.isFrozen(positionFixtures.valid), false);
   assert.equal(Object.hasOwn(positionFixtures.valid, "validation"), false);
+});
+
+test("Positions filtering preserves canonical rows and exact focus identity", () => {
+  const rows = selectPositionRows([
+    { ...positionFixtures.valid, name: "Alpha Position" },
+    { ...positionFixtures.zeroBuyPrice, name: "Beta Position" },
+    { ...positionFixtures.missingBuyDate, name: "Gamma Position" },
+  ]);
+  const focused = filterPositionRows(rows, { focusId: positionFixtures.zeroBuyPrice.id });
+  const searched = filterPositionRows(rows, { query: "alpha position" });
+
+  assert.equal(focused.length, 1);
+  assert.strictEqual(focused[0], rows[1]);
+  assert.deepEqual(focused[0].validation.requiredIssues, ["invalid_buy_price"]);
+  assert.equal(searched.length, 1);
+  assert.strictEqual(searched[0], rows[0]);
+  assert.equal(searched[0].acquiredAt, positionFixtures.valid.buyDate);
+  assert.equal(Object.hasOwn(searched[0], "qty"), false);
+  assert.equal(Object.hasOwn(searched[0], "buyPrice"), false);
+  assert.equal(Object.hasOwn(searched[0], "buyDate"), false);
 });
 
 test("portfolio summary excludes invalid Positions instead of converting them to zero", () => {

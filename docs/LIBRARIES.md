@@ -50,7 +50,7 @@ The archive supplied the reviewed Windows x64 foundation set now used by the Rea
 | `vite` | 8.1.3 | Adopted | Development and build pipeline. Requires Node `^20.19.0 || >=22.12.0`. |
 | `@vitejs/plugin-react` | 6.0.3 | Adopted | React integration for Vite 8. Optional compiler/Babel peers are intentionally absent and not required for the baseline. |
 | `react-router-dom` | 7.18.1 | Adopted | Hash-safe routing for portable and Pages-subpath navigation. Requires Node `>=20` for tooling and React/React DOM `>18`. |
-| `tabulator-tables` | 6.5.2 | Adopted | Shared dense-grid engine behind the ManaSpec-owned `TabulatorTable` wrapper. Radar is the Phase 1 pilot; remaining table modules intentionally retain the interim React table until Phase 2. |
+| `tabulator-tables` | 6.5.2 | Adopted | Shared dense-grid engine behind the ManaSpec-owned `TabulatorTable` wrapper. Radar is the Phase 1 pilot and Positions is the first focused Phase 2 migration; Signals, Transactions, and History retain the interim table. |
 
 Use a Node version that satisfies the strictest engine range. The tracked manifest and lockfile, not the ignored archive, are authoritative for the implemented workspace.
 
@@ -122,7 +122,7 @@ The first migration stage and the Phase 1 Tabulator foundation are implemented. 
 
 Evaluate in this order:
 
-1. Table migration Phase 2: move Positions, Signals, Transactions, and History through the established `TabulatorTable` contract one module at a time after Radar visual/interaction approval.
+1. Table migration Phase 2: after the focused Positions migration, move Signals, Transactions, and History through the established `TabulatorTable` contract only in separately approved batches.
 2. Fuse.js: adopt only if real local search becomes materially better and simpler.
 3. Chart.js: adopt in React when richer price-history requirements exceed the inline SVG baseline.
 4. Day.js: adopt when date parsing, windows, scheduling, or timezone behavior becomes recurring domain complexity.
@@ -156,7 +156,7 @@ Do not mark a library `Adopted` until it exists in the tracked lockfile, is used
 - Library and version: `tabulator-tables` 6.5.2.
 - Status: Adopted for the shared React table foundation; Radar is the Phase 1 pilot.
 - Purpose: Dense sorting, cell editing, keyboard support, column layout, and reusable grid mechanics behind a product-owned React boundary.
-- Used in: `TabulatorTable` and React Radar only. Positions, Signals, Transactions, and History remain intentionally unchanged for Phase 2.
+- Used in: `TabulatorTable`, React Radar, and React Positions. Signals, Transactions, and History remain intentionally unchanged pending separately approved Phase 2 batches.
 - Why selected: It reproduces the compact financial-grid contract while removing hand-built sorting/layout mechanics from feature code and provides a scalable path for later table migrations.
 - Alternatives considered: The interim native React table and a React-first headless table. The interim table was useful for parity but encoded table identity through column-label matching and would require continued custom grid behavior; a second headless implementation would retain most of that custom work.
 - Current benefit: Shared column configuration, sorting, display/edit cells, row activation isolation, empty state, tooltip, keyboard, and responsive behavior are centralized without exposing vendor APIs to Radar.

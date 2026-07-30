@@ -40,6 +40,9 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Corrected shared React Tabulator header sizing so inactive sort space is reclaimed and the compact active arrow never truncates a column label.
+- Migrated React Positions from the interim table to the shared Tabulator foundation with the approved 19-column dense layout, canonical Position-row validation, reconciliation-safe cells, sorting/filtering, inline Target/Hold editing, and existing detail/Buy/Sell/delete workflows preserved.
+- Aligned the shared React Tabulator and app-shell presentation with vanilla ManaSpec: compact centered headers with active-only sort arrows, one flexible descriptive column, shared 27px rows and compact indicators/actions, vanilla nav spacing, a blue global Search action, and the full Radar filter contract without duplicate Search or OWNED decoration.
 - Established the React Position Data Trust boundary: Position rows now derive acquisition age/date from vanilla's `buyDate`, preserve compatible `qty`/`buyPrice`/`buyDate` storage, identify invalid ownership records for reconciliation, and exclude them from portfolio calculations and open-position counts without automatic repair.
 - Closed React Parity Batch 1 data-trust gaps: Position deletion now honors the vanilla ledger-safety guard, related notes/history/market/transaction navigation resolves through one exact-printing helper, foil and nonfoil stay isolated, and ambiguous legacy fallbacks no longer cross-link tracked printings.
 - Migrated React Radar to the shared grid contract with compact vanilla-aligned columns, sorting, editable entry targets, quantity steppers, market values, ownership/note/history indicators, isolated row actions, and responsive styling.

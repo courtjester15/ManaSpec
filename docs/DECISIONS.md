@@ -197,11 +197,11 @@ The first focused comparison is the shared table system. Fuse.js, Chart.js, and 
 
 ManaSpec adopts Tabulator 6.5.2 for the long-term React table foundation, beginning with Radar as the Phase 1 pilot. Product modules configure a ManaSpec-owned `TabulatorTable`; they do not instantiate Tabulator or depend on vendor components directly.
 
-The wrapper owns imperative lifecycle cleanup, modular feature registration, cloned row data, React cell roots, sort-value adapters, edit callbacks, row/action isolation, empty states, accessibility naming, and shared responsive styling. Only the modules needed by ManaSpec are registered so unused spreadsheet, range, export, grouping, and other full-build features do not enter the bundle.
+The wrapper owns imperative lifecycle cleanup, modular feature registration, cloned row data, React cell roots, pagination mechanics, sort-value and accessibility adapters, row/action isolation, empty states, compact geometry, shared indicators/actions, accessibility naming, and responsive styling. Route modules own their filters, column intent, editors, and business callbacks. Only the modules needed by ManaSpec are registered so unused spreadsheet, range, export, grouping, and other full-build features do not enter the bundle.
 
 The wrapper is an adapter, not a replacement table engine. It passes only intentionally defined options so Tabulator defaults remain intact, and delegates sizing, sorting, editing, row rendering, responsive behavior, and redraw mechanics to Tabulator. ManaSpec-specific code is limited to data, column intent, formatters, indicators, actions, and minimal theming unless a documented compatibility exception is required.
 
-Positions, Signals, Transactions, and History intentionally retain the interim native `DataTable` during Phase 1. Their later migration is configuration work through the established wrapper and must not introduce module-specific grid systems. Vanilla remains the behavior and visual oracle throughout that sequence.
+The 2026-07-27 Radar/vanilla side-by-side review affirmed this boundary. Positions, Signals, Transactions, and History intentionally retain the interim native `DataTable` until their focused migrations. Their migration is configuration work through the established wrapper and must not introduce module-specific grid systems or move route business logic into the grid adapter. Vanilla remains the behavior and visual oracle throughout that sequence.
 
 ### Production dependencies are bundled locally
 
