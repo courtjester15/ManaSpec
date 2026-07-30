@@ -260,6 +260,8 @@ On 2026-07-18, the table evaluation produced the first adopted feature-library f
 
 On 2026-07-27, the Radar pilot was reviewed side-by-side against vanilla and the shared boundary was affirmed. Grid lifecycle, pagination, sort accessibility, compact geometry, indicators, and action presentation belong in the wrapper; route-specific filters, columns, editors, and business workflows remain outside it. The same pass aligned the React shell navigation and global Search treatment, restored Radar's complete local filter contract, and removed React-only decoration that weakened parity. Positions became the next deliberate consumer of the approved foundation.
 
+On 2026-07-29, PR #9 merged the canonical Positions migration and shared table/app-shell parity work into the React integration branch. Positions became the first completed Phase 2 consumer without reopening its business logic, and Radar and Positions now share the vanilla-verified compact grid foundation. A final accessibility check confirmed that moving sort focus between columns leaves `aria-sort` active on exactly one header, so the wrapper required no compensating state cleanup. Issues #8 and #10 closed with this milestone; Signals, Transactions, and History remain separately bounded future migrations.
+
 This milestone did not promote React to production. Vanilla remains the behavioral oracle, current production/beta frontend, rollback path, and compatibility reference until a separate evidence-based promotion decision. The tracked `react-spike/` artifact exists, but the actual GitHub Pages publishing source must be confirmed before treating every new branch artifact as publicly deployed.
 
 ## Current State (2026-07-17)

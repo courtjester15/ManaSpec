@@ -279,3 +279,20 @@ Implemented:
 Validated:
 
 - Checked every sortable Radar and Positions header with its arrow active; labels remain complete without table or document-level horizontal overflow at the desktop parity viewport.
+
+## 2026-07-29: Positions And Shared Table Integration Merge
+
+Completed:
+
+- Merged PR #9 into `codex/react-modernization-integration` with merge commit `1bfdc44003c6c3b22c37a755b1ee0969c22af8a6`.
+- Closed Issue #8 and Issue #10 as completed. GitHub did not auto-close Issue #8 because the PR targeted the non-default integration branch, so its completed state was applied explicitly after the merge.
+- Confirmed Radar and Positions are now the two integrated consumers of the ManaSpec-owned `TabulatorTable`; Signals, Transactions, and History remain intentionally deferred.
+
+Validated:
+
+- The final focused sort-accessibility check moved the active sort from Card to Set and then Buy. At each step exactly one header exposed `aria-sort="ascending"` or `aria-sort="descending"`; the previous header returned to `aria-sort="none"`.
+- The production Pages-mode browser console remained clean during the sort check. Tabulator already clears the previous header state, so no additional wrapper change was required.
+
+Follow-up:
+
+- Review the roadmap and approve the next bounded React implementation slice before beginning another table migration or unrelated parity batch.

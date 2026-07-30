@@ -201,7 +201,7 @@ The wrapper owns imperative lifecycle cleanup, modular feature registration, clo
 
 The wrapper is an adapter, not a replacement table engine. It passes only intentionally defined options so Tabulator defaults remain intact, and delegates sizing, sorting, editing, row rendering, responsive behavior, and redraw mechanics to Tabulator. ManaSpec-specific code is limited to data, column intent, formatters, indicators, actions, and minimal theming unless a documented compatibility exception is required.
 
-The 2026-07-27 Radar/vanilla side-by-side review affirmed this boundary. Positions, Signals, Transactions, and History intentionally retain the interim native `DataTable` until their focused migrations. Their migration is configuration work through the established wrapper and must not introduce module-specific grid systems or move route business logic into the grid adapter. Vanilla remains the behavior and visual oracle throughout that sequence.
+The 2026-07-27 Radar/vanilla side-by-side review affirmed this boundary, and the completed Positions migration confirmed it with a second route. Radar and Positions now use the adopted wrapper; Signals, Transactions, and History intentionally retain the interim native `DataTable` until their focused migrations. Those migrations are configuration work through the established wrapper and must not introduce module-specific grid systems or move route business logic into the grid adapter. Vanilla remains the behavior and visual oracle throughout that sequence.
 
 ### Production dependencies are bundled locally
 

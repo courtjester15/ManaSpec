@@ -118,11 +118,11 @@ The implemented workspace currently uses lightweight Node tests plus source and 
 
 ## Current React Library Phase
 
-The first migration stage and the Phase 1 Tabulator foundation are implemented. Tabulator now sits behind a ManaSpec-owned wrapper and Radar is the only migrated pilot. The next stage is selective migration and library evaluation, not a bulk replacement of working code.
+The first migration stage, the Phase 1 Radar pilot, and the first focused Phase 2 migration are implemented. Tabulator sits behind a ManaSpec-owned wrapper used by Radar and Positions. The next stage is selective migration and library evaluation, not a bulk replacement of working code.
 
 Evaluate in this order:
 
-1. Table migration Phase 2: after the focused Positions migration, move Signals, Transactions, and History through the established `TabulatorTable` contract only in separately approved batches.
+1. Table migration Phase 2: after the completed Positions migration, move Signals, Transactions, and History through the established `TabulatorTable` contract only in separately approved batches.
 2. Fuse.js: adopt only if real local search becomes materially better and simpler.
 3. Chart.js: adopt in React when richer price-history requirements exceed the inline SVG baseline.
 4. Day.js: adopt when date parsing, windows, scheduling, or timezone behavior becomes recurring domain complexity.
@@ -154,12 +154,12 @@ Do not mark a library `Adopted` until it exists in the tracked lockfile, is used
 ### Tabulator 6.5.2
 
 - Library and version: `tabulator-tables` 6.5.2.
-- Status: Adopted for the shared React table foundation; Radar is the Phase 1 pilot.
+- Status: Adopted for the shared React table foundation; Radar is the Phase 1 pilot and Positions is the first completed Phase 2 consumer.
 - Purpose: Dense sorting, cell editing, keyboard support, column layout, and reusable grid mechanics behind a product-owned React boundary.
 - Used in: `TabulatorTable`, React Radar, and React Positions. Signals, Transactions, and History remain intentionally unchanged pending separately approved Phase 2 batches.
 - Why selected: It reproduces the compact financial-grid contract while removing hand-built sorting/layout mechanics from feature code and provides a scalable path for later table migrations.
 - Alternatives considered: The interim native React table and a React-first headless table. The interim table was useful for parity but encoded table identity through column-label matching and would require continued custom grid behavior; a second headless implementation would retain most of that custom work.
-- Current benefit: Shared column configuration, sorting, display/edit cells, row activation isolation, empty state, tooltip, keyboard, and responsive behavior are centralized without exposing vendor APIs to Radar.
+- Current benefit: Shared column configuration, sorting and active-header accessibility state, display/edit cells, row activation isolation, empty state, tooltip, keyboard, and responsive behavior are centralized without exposing vendor APIs to Radar or Positions.
 - Likely future benefit: Remaining table migrations should primarily supply module column/action configuration instead of rebuilding mechanics.
 - Bundle cost: Modular registration adds approximately 219 KB JavaScript and 34 KB CSS uncompressed to the tracked artifacts. The final normal Pages output is 527.90 KB JavaScript (148.43 KB gzip) and 125.13 KB CSS (19.97 KB gzip); the portable IIFE is 823.23 KB JavaScript and 125.14 KB CSS.
 - Maintenance/update cost: Imperative lifecycle integration and per-cell React roots remain wrapper responsibilities. Tabulator upgrades require wrapper, keyboard, responsive, normal, Pages, and portable regression checks.
