@@ -264,7 +264,7 @@ Implementation sequence:
 - [x] Complete Radar 1366 x 768 shared-table/app-shell visual and interaction parity against vanilla, including responsive smoke checks.
 - [x] Migrate Positions through the approved wrapper without changing Position business logic as the first focused Phase 2 batch.
 - [x] Merge the completed Positions migration and shared Tabulator/app-shell parity work into the React integration branch through PR #9; close Issues #8 and #10.
-- [ ] Migrate Signals, Transactions, and History through the established wrapper only in separately approved Phase 2 batches.
+- [x] Migrate Signals, Transactions, and History through the established wrapper as one approved Phase 2 batch with separate route commits and a final acceptance-correction cleanup.
 - [ ] Evaluate Fuse.js, Chart.js, and Day.js when their adoption gates are met.
 - [ ] Verify and document the actual GitHub Pages publishing source so the latest `react-spike/` artifact, not merely the branch build, is known to be live.
 - [ ] Complete bundle review, cross-implementation write validation, full parity evidence, and a separate promotion recommendation.

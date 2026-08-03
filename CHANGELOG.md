@@ -40,6 +40,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Migrated React Signals, Transactions, and History to the shared Tabulator foundation; restored compact route-owned controls and page size, aligned all five table routes on one desktop context rhythm, contained three Signals previews without reducing the limit, and removed the unused interim table.
 - Corrected shared React Tabulator header sizing so inactive sort space is reclaimed and the compact active arrow never truncates a column label.
 - Migrated React Positions from the interim table to the shared Tabulator foundation with the approved 19-column dense layout, canonical Position-row validation, reconciliation-safe cells, sorting/filtering, inline Target/Hold editing, and existing detail/Buy/Sell/delete workflows preserved.
 - Aligned the shared React Tabulator and app-shell presentation with vanilla ManaSpec: compact centered headers with active-only sort arrows, one flexible descriptive column, shared 27px rows and compact indicators/actions, vanilla nav spacing, a blue global Search action, and the full Radar filter contract without duplicate Search or OWNED decoration.
