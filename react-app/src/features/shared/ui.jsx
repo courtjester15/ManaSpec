@@ -1,13 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatMoney } from "../../domain/portfolio.js";
-
-const TABLE_CONTRACTS = [
-  { match: labels => labels.includes("Scryfall"), className: "react-table--radar", widths: [null, 48, 48, 44, 44, 72, 58, 74, 72, 68, 50, 50, 72, 54, 54, 112] },
-  { match: labels => labels.includes("Buy") && labels.includes("Hold"), className: "react-table--positions", widths: [null, 44, 44, 40, 40, 60, 60, 32, 42, 64, 60, 54, 58, 68, 52, 62, 42, 46, 110] },
-  { match: labels => labels.includes("Why"), className: "react-table--signals", widths: [null, 48, 48, 58, 68, 112, null, 58, 68, 86, 76, 148] },
-  { match: labels => labels.includes("Balance"), className: "react-table--ledger", widths: [null, 48, 48, 44, 44, 64, 38, 74, 82, 76, 68, 58] },
-  { match: labels => labels.includes("Detail"), className: "react-table--history", widths: [null, 48, 48, 44, 44, 64, 68, 58, 54, 220], minWidth: 1020 },
-];
 
 export function ViewHeader({ title, description, actions }) {
   return <div className="view-heading"><h3>{title}</h3><p>{description}</p>{actions && <div className="view-actions">{actions}</div>}</div>;
@@ -21,22 +13,8 @@ export function FilterBar({ value, onChange, placeholder = "Filter cards, sets, 
   return <section className="react-filter-bar"><label><span>Search</span><input value={value} onChange={event => onChange(event.target.value)} placeholder={placeholder} /></label>{children}</section>;
 }
 
-export function DataTable({ columns, rows, empty = "No rows yet.", onRowClick, tableClass = "", columnWidths = [], minWidth = "100%" }) {
-  const [sort, setSort] = useState({ key: columns.find(column => column.sort)?.key || columns[0]?.key, direction: "asc" });
-  const labels = columns.map(column => column.label);
-  const contract = TABLE_CONTRACTS.find(item => item.match(labels));
-  const resolvedClass = tableClass || contract?.className || "";
-  const resolvedWidths = columnWidths.length ? columnWidths : contract?.widths || [];
-  const resolvedMinWidth = minWidth === "100%" && contract?.minWidth ? contract.minWidth : minWidth;
-  const sorted = useMemo(() => [...rows].sort((a, b) => {
-    const column = columns.find(item => item.key === sort.key);
-    const left = column?.sortValue ? column.sortValue(a) : a[sort.key];
-    const right = column?.sortValue ? column.sortValue(b) : b[sort.key];
-    const result = typeof left === "number" && typeof right === "number" ? left - right : String(left ?? "").localeCompare(String(right ?? ""), undefined, { numeric: true });
-    return sort.direction === "asc" ? result : -result;
-  }), [columns, rows, sort]);
-  if (!rows.length) return <div className="react-empty">{empty}</div>;
-  return <div className="react-table-wrap"><table className={`react-table ${resolvedClass}`} style={{ minWidth: resolvedMinWidth }}><colgroup>{columns.map((column, index) => <col key={column.key} style={resolvedWidths[index] ? { width: resolvedWidths[index] } : undefined} />)}</colgroup><thead><tr>{columns.map(column => <th key={column.key} className={column.align || ""}>{column.sort !== false ? <button type="button" onClick={() => setSort(current => ({ key: column.key, direction: current.key === column.key && current.direction === "asc" ? "desc" : "asc" }))}>{column.label}{sort.key === column.key ? (sort.direction === "asc" ? " ↑" : " ↓") : ""}</button> : column.label}</th>)}</tr></thead><tbody>{sorted.map((row, index) => <tr key={row.id || index} onClick={onRowClick ? event => { if (!event.target.closest("button,input,select,a,textarea,label")) onRowClick(row); } : undefined} className={onRowClick ? "clickable" : ""}>{columns.map(column => <td key={column.key} className={column.align || ""} data-label={column.label} title={column.title ? column.title(row) : undefined}>{column.render ? column.render(row) : row[column.key]}</td>)}</tr>)}</tbody></table></div>;
+export function TableFilterPanel({ title, countText, value, onChange, placeholder, pageSize, onPageSizeChange, onReset, children }) {
+  return <section className="card-filter-panel table-route-filter-panel"><div className="panel-heading compact-heading"><h4>{title}</h4><span className="filter-meta">{countText}</span></div><div className="ledger-filter-bar compact-filter-controls"><label className="filter-control"><span>Search</span><input aria-label={title} value={value} onChange={event => onChange(event.target.value)} placeholder={placeholder} /></label>{children}<label className="table-page-size-control"><span>Rows</span><select aria-label="Rows per page" value={pageSize} onChange={event => onPageSizeChange(Number(event.target.value))}><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label><button type="button" className="filter-reset-btn" onClick={onReset}>Reset</button></div></section>;
 }
 
 export function Modal({ title, open, onClose, children, wide = false, compactDetail = false }) {

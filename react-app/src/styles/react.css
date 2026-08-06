@@ -105,39 +105,31 @@ footer {
 .search-results img { width:40px; height:56px; border-radius:3px; object-fit:cover; }
 .search-results strong,.search-results small { overflow:hidden; text-overflow:ellipsis; }
 .search-results small { color:var(--muted); font-size:10px; text-align:right; }
-.react-filter-bar { display:flex; align-items:end; gap:10px; padding:10px 12px; }
+.react-filter-bar { display:flex; min-height:82px; align-items:end; gap:10px; padding:10px 12px; }
 .react-filter-bar label:first-child { flex:1; }
 .module-context-band .search-panel form,
 .module-context-band .search-panel label { display:block; width:100%; }
 .radar-filter-panel { margin-bottom:10px; }
 .radar-filter-panel .panel-heading { min-height:24px; }
-.react-table-wrap { overflow-x:auto; overflow-y:hidden; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); }
-.react-table { --table-row-h:27px; --table-control-h:20px; --table-cell-pad-x:6px; width:100%; margin:0; border-collapse:collapse; table-layout:fixed; font-size:12px; line-height:1.15; white-space:nowrap; }
-.react-table thead tr,.react-table tbody tr { height:var(--table-row-h); min-height:var(--table-row-h); }
-.react-table th { position:sticky; z-index:1; top:0; height:var(--table-row-h); padding:0 var(--table-cell-pad-x); overflow:hidden; border-right:1px solid rgba(255,255,255,.035); border-bottom:1px solid var(--border); background:var(--surface-2); color:var(--muted); font-size:11px; line-height:1; text-align:center; text-overflow:ellipsis; vertical-align:middle; white-space:nowrap; }
-.react-table th button { all:unset; display:inline-flex; width:100%; height:var(--table-row-h); align-items:center; justify-content:center; overflow:hidden; cursor:pointer; text-overflow:ellipsis; white-space:nowrap; }
-.react-table td { height:var(--table-row-h); max-height:var(--table-row-h); padding:3px var(--table-cell-pad-x); overflow:hidden; border-right:1px solid rgba(255,255,255,.035); border-bottom:1px solid var(--border); color:var(--text); box-sizing:border-box; line-height:1.15; text-overflow:ellipsis; vertical-align:middle; white-space:nowrap; }
-.react-table th:last-child,.react-table td:last-child { border-right:0; }
-.react-table tbody tr:last-child td { border-bottom:0; }
-.react-table tbody tr:hover { background:rgba(125,211,252,.045); }
-.react-table tbody tr.clickable { cursor:pointer; }
-.react-table .money { text-align:right; font-variant-numeric:tabular-nums; }
-.react-table .center { text-align:center; }
-.react-table .actions { text-align:right; }
-.react-table .table-link { display:flex; width:100%; height:var(--table-control-h); min-height:0; align-items:center; justify-content:flex-start; padding:0; overflow:hidden; border:0; background:transparent; color:inherit; text-align:left; }
+.table-route-filter-panel { margin-bottom:10px; }
+.table-route-filter-panel .panel-heading { min-height:24px; }
+.signals-action-band { height:168px; margin-bottom:10px; }
+.signals-action-tiles { height:168px; min-height:168px; grid-template-columns:repeat(4,minmax(0,1fr)) minmax(156px,.7fr); }
+.signals-action-tile,.signals-action-utility { height:168px; min-height:168px; max-height:168px; }
+.signals-action-preview { gap:1px; margin-top:1px; overflow:hidden; }
+.signals-action-preview-row.scan-row.dashboard-queue-row { height:34px; min-height:34px; max-height:34px; gap:0; padding:2px 5px; overflow:hidden; }
+.signals-action-preview-row.scan-row.dashboard-queue-row strong { font-size:10px; line-height:1.05; }
+.signals-action-preview-row.scan-row.dashboard-queue-row span,
+.signals-action-preview-row.scan-row.dashboard-queue-row small { font-size:9px; line-height:1.05; }
+.signals-action-search { display:block; min-width:0; }
+.signals-action-search>span { display:none; }
+.signals-action-search input { width:100%; height:24px; min-height:24px; margin:0; padding:0 6px; font-size:11px; }
 .table-link:hover strong { color:var(--accent); }
 .card-identity { display:block; min-width:0; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .card-identity strong { display:block; overflow:hidden; color:var(--text-strong); text-overflow:ellipsis; white-space:nowrap; }
 .card-identity small { color:var(--muted); font-size:10px; text-transform:uppercase; }
-.react-table input,.table-input,.qty-input { height:var(--table-control-h) !important; min-height:var(--table-control-h) !important; margin:0; padding:0 4px; box-sizing:border-box; font-size:11px; line-height:18px; }
-.table-input { width:100%; text-align:right; }
-.qty-input { width:100%; text-align:center; }
 .table-actions { gap:3px; flex-wrap:nowrap; justify-content:flex-end; }
-.react-table .table-actions { height:var(--table-control-h); align-items:center; justify-content:center; }
-.react-table .table-actions button,.react-table .table-actions .button { height:var(--table-control-h); min-height:var(--table-control-h); margin:0; padding:0 5px; font-size:10px; line-height:1; text-decoration:none; }
 .ghost { border-color:transparent; background:transparent; }
-.react-empty { padding:42px 18px; border:1px dashed var(--border); border-radius:var(--radius); color:var(--muted); text-align:center; }
-.react-empty.compact { padding:24px 12px; }
 .status-pill,.tx-pill { display:inline-block; padding:3px 7px; border:1px solid var(--border); border-radius:999px; background:var(--surface-2); color:var(--muted); font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
 .status-pill.action,.tx-pill.buy { border-color:rgba(52,211,153,.35); background:rgba(52,211,153,.1); color:var(--good); }
 .tx-pill.sell { border-color:rgba(125,211,252,.35); background:var(--accent-soft); color:var(--accent); }
@@ -293,15 +285,11 @@ footer {
 
   .react-metric-band { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .search-results,.dashboard-grid,.admin-grid { grid-template-columns:1fr; }
-  .react-filter-bar { align-items:stretch; flex-direction:column; }
-  .react-table-wrap { border:0; overflow:visible; background:transparent; }
-  .react-table thead { display:none; }
-  .react-table,.react-table tbody,.react-table tr,.react-table td { display:block; width:100%; }
-  .react-table tr { height:auto; min-height:0; margin-bottom:9px; padding:8px; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); }
-  .react-table td { display:grid; height:auto; max-height:none; grid-template-columns:90px 1fr; align-items:center; padding:6px; border:0; text-align:right !important; white-space:normal; }
-  .react-table td::before { content:attr(data-label); color:var(--muted); font-size:10px; font-weight:700; text-align:left; text-transform:uppercase; }
-  .react-table td .card-identity,.react-table td .table-link { justify-self:end; text-align:right; }
-  .react-table td.actions { display:block; }
+  .react-filter-bar { min-height:0; align-items:stretch; flex-direction:column; }
+  .signals-action-band,.signals-action-tiles { height:auto; min-height:0; }
+  .signals-action-tiles { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .signals-action-tile,.signals-action-utility { height:auto; min-height:168px; max-height:none; }
+  .signals-action-utility { grid-column:1 / -1; min-height:0; }
   .table-actions { justify-content:flex-end; }
   .detail-layout { grid-template-columns:1fr; }
   .detail-layout aside { max-width:230px; margin:auto; }

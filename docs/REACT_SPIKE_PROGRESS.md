@@ -296,3 +296,25 @@ Validated:
 Follow-up:
 
 - Review the roadmap and approve the next bounded React implementation slice before beginning another table migration or unrelated parity batch.
+
+## 2026-08-02: Remaining Shared Table Routes And Acceptance Correction
+
+Completed:
+
+- Migrated Signals, Transactions, and History from the interim `DataTable` to the established `TabulatorTable` in three independently reviewable commits, leaving selectors, filters, navigation, formatters, and business workflows route-owned.
+- Restored compact route controls: Signals now keeps search, active-count reset, bucket/exact-row filters, and page size inside its action band; Transactions and History use vanilla-shaped compact search/type/page-size/reset panels with live result counts.
+- Corrected the measured pre-table chain. Radar, Positions, Signals, Transactions, and History now use the same 168px desktop context footprint and begin their shared table at the same position instead of allowing three Signals previews to expand the route.
+- Preserved the three-row Signals preview maximum by tightening preview typography, spacing, truncation, and containment inside a fixed 168px desktop action band. Removed the unused interim `DataTable`, its width contracts, and dead native-table styling after the final consumer migrated.
+
+Validated:
+
+- All 39 Node tests, source-policy checks, formatting checks, normal build, Pages build, portable build, and generated Pages/portable JavaScript syntax checks pass. Tracked Pages and portable artifacts were regenerated once after the final route.
+- At 1366 x 768 with the representative fixture, all five table headers aligned at the same measured position, retained 28px headers and 27px rows, and produced no table or document horizontal overflow. A 700px-wide smoke pass also produced no document overflow on any table route.
+- Signals exercised three-preview tiles plus dedicated one-row and zero-row imports. Every state retained the 168px action band and aligned table start. Search, bucket, and reset produced 1, 3, and 7 rows respectively.
+- Transactions search/type/reset produced 2, 1, and 4 rows; History produced 3, 1, and 10 rows. A sort interaction exposed exactly one non-`none` `aria-sort` header.
+- The final normal production preview loaded all five table routes with identical table-header positions, no horizontal overflow, and no browser console warnings or errors.
+- A fresh vanilla browser fixture capture could not be produced because the active browser safety policy blocked the documented `127.0.0.1:8000` origin. The correction was instead checked against the vanilla route source/CSS contract and the previously recorded 1366 x 768 vanilla table evidence; no alternate browser or server workaround was used.
+
+Follow-up:
+
+- Review the remaining React promotion gates as a separate decision. Issue #11 does not change the current vanilla production/beta authority by itself.

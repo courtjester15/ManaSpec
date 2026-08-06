@@ -262,9 +262,11 @@ On 2026-07-27, the Radar pilot was reviewed side-by-side against vanilla and the
 
 On 2026-07-29, PR #9 merged the canonical Positions migration and shared table/app-shell parity work into the React integration branch. Positions became the first completed Phase 2 consumer without reopening its business logic, and Radar and Positions now share the vanilla-verified compact grid foundation. A final accessibility check confirmed that moving sort focus between columns leaves `aria-sort` active on exactly one header, so the wrapper required no compensating state cleanup. Issues #8 and #10 closed with this milestone; Signals, Transactions, and History remain separately bounded future migrations.
 
+On 2026-08-02, Issue #11 completed that table adoption arc. Signals, Transactions, and History moved to the same shared wrapper in separate route commits, then a final acceptance correction restored their compact route-owned controls and aligned all five table routes on one desktop context rhythm. Signals retained its three-preview attention tiles inside a controlled band, and the interim React table implementation was removed after losing its final consumer. React now has one real table system across the application rather than a pilot living beside temporary production-route tables.
+
 This milestone did not promote React to production. Vanilla remains the behavioral oracle, current production/beta frontend, rollback path, and compatibility reference until a separate evidence-based promotion decision. The tracked `react-spike/` artifact exists, but the actual GitHub Pages publishing source must be confirmed before treating every new branch artifact as publicly deployed.
 
-## Current State (2026-07-17)
+## Current State (2026-08-02)
 
 As of 2026-07-02, with the latest pre-history repository activity found on 2026-07-01, ManaSpec is a local-first MTG speculation workflow and positions terminal built with vanilla HTML, CSS, JavaScript, Scryfall data, and localStorage.
 

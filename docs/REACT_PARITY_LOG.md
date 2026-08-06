@@ -1,5 +1,15 @@
 # React UI Parity Log
 
+## Remaining shared table routes (2026-08-02)
+
+Signals, Transactions, and History now use the same ManaSpec-owned `TabulatorTable` as Radar and Positions. Route business filtering remains outside the wrapper. The interim `DataTable` and its dead table-contract styling are removed.
+
+The acceptance-correction audit measured the pre-change desktop chain at 1366 x 768. Radar, Positions, Transactions, and History started their table headers at 361-363px, while Signals started at 494px because its three-row previews expanded the action band to 219px and a second 80px generic filter panel followed it. After correction, each route uses a 168px context footprint and all five headers align at 363px in the representative development fixture; the normal production preview also aligned all five routes exactly within its origin/profile.
+
+Signals preserves up to three preview rows per tile inside a controlled 168px band. Fixture checks covered three-row, one-row, and zero-row states without vertical or horizontal document overflow. Signals search/bucket/reset, Transactions search/type/reset, History search/type/reset, page-size controls, active-only sort ARIA, and narrow-width containment were exercised. The final production preview console was clean.
+
+The current browser safety policy blocked a fresh direct vanilla session at the documented `127.0.0.1:8000` origin. No workaround was used; the parity comparison used the vanilla route source/CSS contract and the existing 1366 x 768 vanilla evidence already recorded in this log.
+
 ## Shared table and app-shell parity (2026-07-27)
 
 Issue #10 was reviewed against vanilla throughout implementation. The shared `TabulatorTable` is retained as the correct abstraction for grid lifecycle, pagination, accessibility state, row density, indicators, and action presentation; Radar continues to own filtering, column intent, editors, and workflow callbacks.
