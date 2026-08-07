@@ -108,15 +108,14 @@ test("portfolio summary matches the vanilla calculation for trusted Positions", 
     { id: "one|nonfoil", scryfall_id: "one", trackedPrintingKey: "one|nonfoil", finish: "nonfoil", qty: 2, buyPrice: 3, buyDate: "2026-01-01", currentPrice: 5 },
     { id: "two|nonfoil", scryfall_id: "two", trackedPrintingKey: "two|nonfoil", finish: "nonfoil", qty: 0, buyPrice: 100, buyDate: "2026-01-01", currentPrice: 200 },
   ], 10);
-  assert.deepEqual(summary, {
-    cash: 10,
-    invested: 6,
-    value: 10,
-    totalEquity: 20,
-    profitLoss: 4,
-    profitLossPercent: 66.66666666666666,
-    openPositionCount: 1,
-    invalidPositionCount: 1,
-    unpricedPositionCount: 0,
-  });
+  assert.equal(summary.cash, 10);
+  assert.equal(summary.invested, 6);
+  assert.equal(summary.pricedInvested, 6);
+  assert.equal(summary.value, 10);
+  assert.equal(summary.totalEquity, 20);
+  assert.equal(summary.unrealizedProfitLoss, 4);
+  assert.equal(summary.profitLossPercent, 66.66666666666666);
+  assert.equal(summary.openPositionCount, 1);
+  assert.equal(summary.invalidPositionCount, 1);
+  assert.equal(summary.unpricedPositionCount, 0);
 });

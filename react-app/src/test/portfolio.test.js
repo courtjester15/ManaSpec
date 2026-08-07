@@ -90,17 +90,16 @@ test("portfolio summary excludes invalid Positions instead of converting them to
   ];
   const summary = calculatePortfolioSummary(rows, 100);
 
-  assert.deepEqual(summary, {
-    cash: 100,
-    invested: 10,
-    value: 16,
-    totalEquity: 116,
-    profitLoss: 6,
-    profitLossPercent: 60,
-    openPositionCount: 1,
-    invalidPositionCount: 4,
-    unpricedPositionCount: 0,
-  });
+  assert.equal(summary.cash, 100);
+  assert.equal(summary.invested, 10);
+  assert.equal(summary.pricedInvested, 10);
+  assert.equal(summary.value, 16);
+  assert.equal(summary.totalEquity, 116);
+  assert.equal(summary.unrealizedProfitLoss, 6);
+  assert.equal(summary.profitLossPercent, 60);
+  assert.equal(summary.openPositionCount, 1);
+  assert.equal(summary.invalidPositionCount, 4);
+  assert.equal(summary.unpricedPositionCount, 0);
 });
 
 test("unpriced valid Positions retain cost basis but do not fabricate marked value", () => {
@@ -111,4 +110,48 @@ test("unpriced valid Positions retain cost basis but do not fabricate marked val
   assert.equal(summary.invested, 20);
   assert.equal(summary.value, 16);
   assert.equal(summary.profitLoss, 6);
+});
+
+test("portfolio summary separates recorded realized P/L and reports missing SELL coverage", () => {
+  const summary = calculatePortfolioSummary([positionFixtures.valid], 100, {
+    transactions: [
+      { type: "SELL", realizedPL: 7.5 },
+      { type: "SELL", realizedPL: -2 },
+      { type: "SELL" },
+      { type: "BUY", realizedPL: 999 },
+    ],
+  });
+
+  assert.equal(summary.unrealizedProfitLoss, 6);
+  assert.equal(summary.realizedProfitLoss, 5.5);
+  assert.equal(summary.realizedSellCount, 2);
+  assert.equal(summary.sellTransactionCount, 3);
+  assert.equal(summary.missingRealizedSellCount, 1);
+});
+
+test("portfolio summary computes only complete Radar plans and exact marked concentration", () => {
+  const second = {
+    ...positionFixtures.valid,
+    id: "second-printing|nonfoil",
+    scryfall_id: "second-printing",
+    trackedPrintingKey: "second-printing|nonfoil",
+    name: "Second Position",
+    qty: 1,
+    currentPrice: 4,
+  };
+  const summary = calculatePortfolioSummary([positionFixtures.valid, second], 100, {
+    radar: [
+      { plannedQty: 3, entryTarget: 4 },
+      { targetQty: 2, entryTarget: 5 },
+      { plannedQty: 4, entryTarget: 0 },
+    ],
+  });
+
+  assert.equal(summary.plannedRadarCapital, 22);
+  assert.equal(summary.computableRadarPlanCount, 2);
+  assert.equal(summary.incompleteRadarPlanCount, 1);
+  assert.equal(summary.profitablePositionCount, 1);
+  assert.equal(summary.losingPositionCount, 1);
+  assert.equal(summary.positionConcentration[0].trackedPrintingKey, positionFixtures.valid.trackedPrintingKey);
+  assert.equal(summary.positionConcentration[0].sharePercent, 80);
 });

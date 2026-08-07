@@ -318,3 +318,20 @@ Validated:
 Follow-up:
 
 - Review the remaining React promotion gates as a separate decision. Issue #11 does not change the current vanilla production/beta authority by itself.
+
+## 2026-08-06: Issue #15 Checkpoint 1 — Portfolio Summary
+
+Implemented:
+
+- Expanded the React portfolio selector without changing stored records or ownership. Current-state summary math now distinguishes all valid Position cost basis from marked cost basis, marked value, unrealized P/L, transaction-recorded realized P/L, current equity, and computable Radar plan capital.
+- Kept realized P/L limited to finite `realizedPL` values already present on SELL records and exposed SELL coverage instead of reconstructing missing outcomes.
+- Kept Radar plan capital limited to rows with a positive planned quantity and positive entry target. Incomplete rows remain counted and visible rather than treated as zero-cost plans.
+- Added marked Position outcome counts and value concentration, and rebuilt the Dashboard decision row around eight compact, traceable metrics.
+- Established the issue's new desktop hierarchy in code: the 1920×1080 view uses a 1760px work surface and one eight-tile summary row; 1366×768 retains a two-row, four-column compression without changing the workflow.
+
+Validated:
+
+- All 41 Node tests pass, including focused realized-coverage, incomplete-Radar-plan, marked-concentration, unpriced Position, invalid Position, and compatible-storage cases.
+- Source-policy and formatting checks pass. Normal, Pages-subpath, and portable builds complete; tracked Pages and portable artifacts were regenerated. The portable build retains the previously recorded large-chunk and `import.meta` warnings.
+- In-app browser review at 1920×1080 measured a 1760px container, eight 212.25px summary columns, and document width equal to the viewport. At 1366×768, the 1320px container compressed to four 320.5px columns across two rows with document width below the viewport.
+- Both desktop passes showed honest empty-state copy, no app-level horizontal overflow, and no browser console warnings or errors.

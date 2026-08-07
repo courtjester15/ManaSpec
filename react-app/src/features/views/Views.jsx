@@ -290,9 +290,31 @@ export function HistoryView() {
 }
 
 export function DashboardView() {
-  const { state } = useAppState(); const navigate = useNavigate(); const [detail, setDetail] = useState(null); const summary = calculatePortfolioSummary(state.specs, state.cash); const allSignals = useMemo(() => deriveSignalRows(state), [state]); const signalState = useMemo(() => deriveDashboardSignalState(allSignals), [allSignals]);
+  const { state } = useAppState();
+  const navigate = useNavigate();
+  const [detail, setDetail] = useState(null);
+  const summary = calculatePortfolioSummary(state.specs, state.cash, {
+    transactions: state.transactions,
+    radar: state.radar,
+  });
+  const allSignals = useMemo(() => deriveSignalRows(state), [state]);
+  const signalState = useMemo(() => deriveDashboardSignalState(allSignals), [allSignals]);
   const queueRow = (item, reason) => ({ ...item, title: `${item.name} - ${printing(item)}`, detail: `${reason} - ${formatMoney(item.currentPrice)}${item.targetValue ? ` -> ${item.source === "radar" ? "Entry" : "Target"} ${formatMoney(item.targetValue)}` : ""}` });
-  const trackedItems = [...state.specs, ...state.radar]; const noteKeys = new Set(); const notes = [...state.cardNotes].sort((a, b) => new Date(b.createdAt || b.updatedAt) - new Date(a.createdAt || a.updatedAt)).filter(note => { const key = getRelatedRecordPrintingKey(note) || note.cardId || `${note.cardName}|${note.set_code}|${note.collector_number}`; if (noteKeys.has(key)) return false; noteKeys.add(key); return true; }).slice(0, 5).map(note => { const item = resolveTrackedPrinting(note, trackedItems); return { ...(item || note), title: `${note.cardName || item?.name || "General note"}${item ? ` - ${printing(item)}` : ""}`, detail: `${String(note.text || "").slice(0, 72)} / ${date(note.createdAt || note.updatedAt)}`, static: !item }; });
+  const trackedItems = [...state.specs, ...state.radar];
+  const noteKeys = new Set();
+  const notes = [...state.cardNotes]
+    .sort((a, b) => new Date(b.createdAt || b.updatedAt) - new Date(a.createdAt || a.updatedAt))
+    .filter(note => {
+      const key = getRelatedRecordPrintingKey(note) || note.cardId || `${note.cardName}|${note.set_code}|${note.collector_number}`;
+      if (noteKeys.has(key)) return false;
+      noteKeys.add(key);
+      return true;
+    })
+    .slice(0, 5)
+    .map(note => {
+      const item = resolveTrackedPrinting(note, trackedItems);
+      return { ...(item || note), title: `${note.cardName || item?.name || "General note"}${item ? ` - ${printing(item)}` : ""}`, detail: `${String(note.text || "").slice(0, 72)} / ${date(note.createdAt || note.updatedAt)}`, static: !item };
+    });
   const queues = [
     ["Exit Hits", signalState.queues.exitHits.map(item => queueRow(item, "Exit Hit")), "No exit hits."],
     ["Entry Hits", signalState.queues.entryHits.map(item => queueRow(item, "Entry Hit")), "No entry hits."],
@@ -303,9 +325,40 @@ export function DashboardView() {
     ["Missing Plans", signalState.queues.missingPlans.map(item => queueRow(item, item.reasonLabel)), "Plans look filled in."],
     ["Recent Notes", notes, "No recent notes."],
   ];
-  return <section className="dashboard-view"><ViewHeader title="Dashboard" description="What to inspect first today." /><div className="metric-grid dashboard-state-grid"><div className="metric-card"><span>Cash</span><strong>{formatMoney(summary.cash)}</strong><small>Available</small></div><div className={`metric-card metric-card--${summary.profitLoss > 0 ? "positive" : summary.profitLoss < 0 ? "negative" : "neutral"}`}><span>Equity / Open P&amp;L</span><strong>{formatMoney(summary.totalEquity)} / {summary.profitLoss ? signedMoney(summary.profitLoss) : formatMoney(0)}</strong><small>{percent(summary.profitLossPercent)}</small></div><div className="metric-card"><span>Tracked Printings</span><strong>{state.specs.length + state.radar.length}</strong><small>{state.specs.length} Positions, {state.radar.length} Radar</small></div><button type="button" className="metric-card metric-card--action" onClick={() => navigate("/signals")}><span>Signals</span><strong>{signalState.activeCount} active</strong><small>Open Signals</small></button></div><div className="scan-grid dashboard-work-grid">{queues.map(([title, rows, empty]) => <section className="scan-panel" key={title}><h4>{title}</h4>{rows.length ? rows.map((item, index) => item.static ? <div className="scan-row dashboard-queue-row" key={`${title}-${index}`}><strong>{item.title}</strong><span>{item.detail}</span></div> : <button type="button" className="scan-row dashboard-queue-row attention-queue-row" key={`${title}-${item.id}-${index}`} onClick={() => setDetail(item)}><strong>{item.title}</strong><span>{item.detail}</span></button>) : <div className="empty-state compact">{empty}</div>}</section>)}</div><CardDetail item={detail} source={detail?.source || "portfolio"} onClose={() => setDetail(null)} /></section>;
+  const largestPosition = summary.positionConcentration[0];
+  const realizedCoverage = summary.sellTransactionCount
+    ? `${summary.realizedSellCount}/${summary.sellTransactionCount} sells report realized P/L`
+    : "No recorded sells yet";
+  const markedCoverage = summary.unpricedPositionCount
+    ? `${summary.pricedPositionCount}/${summary.openPositionCount} Positions marked`
+    : `${summary.pricedPositionCount} ${summary.pricedPositionCount === 1 ? "Position" : "Positions"} marked`;
+  const radarCoverage = summary.incompleteRadarPlanCount
+    ? `${summary.computableRadarPlanCount} computable · ${summary.incompleteRadarPlanCount} incomplete`
+    : `${summary.computableRadarPlanCount} computable plan${summary.computableRadarPlanCount === 1 ? "" : "s"}`;
+  return <section className="dashboard-view">
+    <ViewHeader title="Dashboard" description="Current capital, portfolio state, and what to inspect first today." />
+    <div className="metric-grid dashboard-state-grid dashboard-portfolio-grid">
+      <div className="metric-card"><span>Cash Available</span><strong>{formatMoney(summary.cash)}</strong><small>Current paper-trading balance</small></div>
+      <div className="metric-card"><span>Capital Deployed</span><strong>{formatMoney(summary.invested)}</strong><small>{summary.invalidPositionCount ? `${summary.invalidPositionCount} unreconciled excluded` : "Valid Position cost basis"}</small></div>
+      <div className="metric-card"><span>Positions Value</span><strong>{formatMoney(summary.value)}</strong><small>{largestPosition ? `Largest: ${largestPosition.name} ${largestPosition.sharePercent.toFixed(1)}%` : markedCoverage}</small></div>
+      <div className={`metric-card metric-card--${summary.unrealizedProfitLoss > 0 ? "positive" : summary.unrealizedProfitLoss < 0 ? "negative" : "neutral"}`}><span>Unrealized P&amp;L</span><strong>{summary.unrealizedProfitLoss ? signedMoney(summary.unrealizedProfitLoss) : formatMoney(0)}</strong><small>{percent(summary.profitLossPercent)} · {summary.profitablePositionCount} up / {summary.losingPositionCount} down / {summary.flatPositionCount} flat</small></div>
+      <div className={`metric-card metric-card--${summary.realizedProfitLoss > 0 ? "positive" : summary.realizedProfitLoss < 0 ? "negative" : "neutral"}`}><span>Recorded Realized P&amp;L</span><strong>{summary.realizedProfitLoss ? signedMoney(summary.realizedProfitLoss) : formatMoney(0)}</strong><small>{realizedCoverage}</small></div>
+      <div className="metric-card"><span>Current Equity</span><strong>{formatMoney(summary.totalEquity)}</strong><small>Cash + marked Positions</small></div>
+      <div className="metric-card"><span>Radar Plan Capital</span><strong>{formatMoney(summary.plannedRadarCapital)}</strong><small>{radarCoverage}</small></div>
+      <button type="button" className="metric-card metric-card--action" onClick={() => navigate("/signals")}><span>Signals</span><strong>{signalState.activeCount} active</strong><small>{markedCoverage} · Open Signals</small></button>
+    </div>
+    <div className="scan-grid dashboard-work-grid">
+      {queues.map(([title, rows, empty]) => <section className="scan-panel" key={title}>
+        <h4>{title}</h4>
+        {rows.length ? rows.map((item, index) => item.static
+          ? <div className="scan-row dashboard-queue-row" key={`${title}-${index}`}><strong>{item.title}</strong><span>{item.detail}</span></div>
+          : <button type="button" className="scan-row dashboard-queue-row attention-queue-row" key={`${title}-${item.id}-${index}`} onClick={() => setDetail(item)}><strong>{item.title}</strong><span>{item.detail}</span></button>)
+          : <div className="empty-state compact">{empty}</div>}
+      </section>)}
+    </div>
+    <CardDetail item={detail} source={detail?.source || "portfolio"} onClose={() => setDetail(null)} />
+  </section>;
 }
-
 export function AdminView() {
   const { state, updateState, createBackup, parseBackupText, restoreBackup } = useAppState(); const [preview, setPreview] = useState(null); const notices = useNotices();
   const reconciliation = useMemo(() => dataFoundation.buildReconciliationReport({ specs: state.specs, transactions: state.transactions }), [state.specs, state.transactions]);

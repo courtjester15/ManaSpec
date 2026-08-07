@@ -101,7 +101,7 @@ export function filterPositionRows(rows = [], options = {}) {
   });
 }
 
-export function calculatePortfolioSummary(specs = [], cash = 0) {
+export function calculatePortfolioSummary(specs = [], cash = 0, options = {}) {
   const rows = specs.map(spec => isCanonicalPositionRow(spec) ? spec : buildPositionRow(spec));
   const open = rows.filter(row => row.validation.valid);
   const priced = open.filter(row => row.validation.calculationEligible);
@@ -109,19 +109,56 @@ export function calculatePortfolioSummary(specs = [], cash = 0) {
   const pricedInvested = priced.reduce((total, row) => total + row.averageBuyPrice * row.quantity, 0);
   const value = priced.reduce((total, row) => total + row.currentPrice * row.quantity, 0);
   const profitLoss = value - pricedInvested;
+  const positionOutcomes = priced.map(row => ({
+    row,
+    value: row.currentPrice * row.quantity,
+    profitLoss: (row.currentPrice - row.averageBuyPrice) * row.quantity,
+  }));
+  const concentration = positionOutcomes
+    .filter(outcome => outcome.value > 0)
+    .sort((left, right) => right.value - left.value)
+    .map(outcome => ({
+      id: outcome.row.id,
+      name: outcome.row.name,
+      trackedPrintingKey: outcome.row.trackedPrintingKey,
+      value: outcome.value,
+      sharePercent: value > 0 ? (outcome.value / value) * 100 : 0,
+    }));
+  const sellTransactions = (options.transactions || []).filter(transaction => String(transaction?.type || "").toUpperCase() === "SELL");
+  const realizedTransactions = sellTransactions.filter(transaction => finiteOrNull(transaction.realizedPL) !== null);
+  const realizedProfitLoss = realizedTransactions.reduce((total, transaction) => total + finite(transaction.realizedPL), 0);
+  const radarPlans = (options.radar || []).map(item => ({
+    quantity: positiveOrNull(item?.plannedQty ?? item?.targetQty),
+    entryTarget: positiveOrNull(item?.entryTarget),
+  }));
+  const computableRadarPlans = radarPlans.filter(plan => plan.quantity !== null && plan.entryTarget !== null);
+  const plannedRadarCapital = computableRadarPlans.reduce((total, plan) => total + plan.quantity * plan.entryTarget, 0);
   return {
     cash: finite(cash),
     invested,
+    pricedInvested,
     value,
     totalEquity: finite(cash) + value,
     profitLoss,
+    unrealizedProfitLoss: profitLoss,
     profitLossPercent: pricedInvested > 0 ? (profitLoss / pricedInvested) * 100 : 0,
+    realizedProfitLoss,
+    realizedSellCount: realizedTransactions.length,
+    sellTransactionCount: sellTransactions.length,
+    missingRealizedSellCount: sellTransactions.length - realizedTransactions.length,
+    plannedRadarCapital,
+    computableRadarPlanCount: computableRadarPlans.length,
+    incompleteRadarPlanCount: radarPlans.length - computableRadarPlans.length,
+    profitablePositionCount: positionOutcomes.filter(outcome => outcome.profitLoss > 0).length,
+    losingPositionCount: positionOutcomes.filter(outcome => outcome.profitLoss < 0).length,
+    flatPositionCount: positionOutcomes.filter(outcome => outcome.profitLoss === 0).length,
+    positionConcentration: concentration,
     openPositionCount: open.length,
+    pricedPositionCount: priced.length,
     invalidPositionCount: rows.length - open.length,
     unpricedPositionCount: open.length - priced.length,
   };
 }
-
 export function formatMoney(value) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
