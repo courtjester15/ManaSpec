@@ -1,5 +1,14 @@
 # React UI Parity Log
 
+## Issue #15 UX and parity polish (2026-08-07)
+
+The user-approved desktop baseline now treats 1920 x 1080 as primary and 1366 x 768 as secondary compatibility. The React work surface uses 1760px at the primary target; both targets retain the compact 38px workbar and contained table geometry.
+
+The fixed 168px Signals rule recorded in the 2026-08-02 correction below is historical and is now superseded. Signals again owns content-driven geometry: its grid keeps a 150px minimum, but three preview rows determine the actual band height without a fixed height, max-height, or hidden overflow. With the representative rich fixture, the four tiles contained 1, 3, 3, and 3 previews at an honest 172.6px height with no clipped tile. Its table began at 366.2px while the other table routes began at 361.2-361.6px; this close alignment is a result of content, not a universal table-start rule.
+
+The sweep also corrected two accessibility regressions. Help is now a visible native modal drawer on the right, focuses Close on opening, closes on Escape, returns focus to Help, and explains the distinction between local saved-data search and Radar Scryfall discovery. Transactions and History expose exact-printing Card Detail through named native buttons in addition to pointer row activation; Radar, Positions, and Signals card buttons now carry exact-printing-aware accessible labels. Shared notice dismissal is named.
+
+Production browser validation used `test-fixtures/manaspec-backup-2026-06-29-2223.json`. At 1920 x 1080 every table filled its 1738px region without internal horizontal overflow; at 1366 x 768 every table filled its 1298px region, the workbar stayed one row, and document width stayed below the viewport. Signals bucket/reset behavior, Help focus/Escape behavior, Transaction and History detail opening, and all five table routes were exercised. The normal production preview console was clean. The known Tabulator message can still appear only during Vite hot-module replacement and did not appear in the fresh production build.
 ## Remaining shared table routes (2026-08-02)
 
 Signals, Transactions, and History now use the same ManaSpec-owned `TabulatorTable` as Radar and Positions. Route business filtering remains outside the wrapper. The interim `DataTable` and its dead table-contract styling are removed.

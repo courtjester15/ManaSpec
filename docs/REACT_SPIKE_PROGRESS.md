@@ -368,3 +368,21 @@ Validated:
 - Normal, Pages-subpath, and portable builds pass. Pages emits 577.85 KB initial JavaScript (160.96 KB gzip), a lazy 174.53 KB Price History chunk (61.04 KB gzip), and 127.52 KB CSS (20.40 KB gzip). Portable emits a 1,048.60 KB classic script (445.07 KB gzip). Existing large-chunk, `inlineDynamicImports`, and `import.meta` warnings remain recorded.
 - Fixture-backed production browser QA at 1920×1080 rendered Positions, Radar, Transactions, History, and Notes groups with exact printing context. Selecting the TST #15 foil Radar result navigated to and opened that exact printing.
 - At 1920×1080, the 560px dropdown stayed inside the 1760px work surface with document width equal to the viewport. At 1366×768, the workbar remained one 38px row, the 520px dropdown stayed inside the viewport, and document width equaled the viewport. The production console had no warnings or errors.
+
+## 2026-08-07: Issue #15 Checkpoint 4 — React UX and Parity Polish
+
+Implemented:
+
+- Removed the synthetic fixed/max Signals height and hidden preview overflow. Signals now uses a 150px minimum while its real preview content determines the action-band height; unlike routes are no longer forced to share one artificial table start.
+- Kept the established shared table density and module-owned filters. The rich 56-row Signals fixture retained three preview rows per populated tile, bucket/exact-row filtering, live reset state, and page-size control without clipping.
+- Turned Help into a visible native modal drawer with right-side geometry, initial Close focus, Escape dismissal, deterministic focus return, and copy that distinguishes saved-data search from Radar Scryfall discovery.
+- Added exact-printing-aware accessible names to card-detail buttons. Transactions and History now expose Card Detail through native buttons when their event resolves unambiguously, while retaining row activation and plain identity for unresolved legacy events.
+- Added an accessible name to shared notice dismissal. No storage, business logic, table engine, route hierarchy, or app-shell workflow changed.
+
+Validated:
+
+- All 50 Node tests, source-policy checks, and formatting checks pass. Normal, Pages-subpath, and portable builds pass; generated delivery artifacts were refreshed.
+- Pages emits 579.15 KB initial JavaScript (161.30 KB gzip), the unchanged lazy 174.53 KB Price History chunk (61.04 KB gzip), and 127.57 KB CSS (20.39 KB gzip). Portable emits a 1,049.91 KB classic script (445.39 KB gzip) and 127.58 KB CSS (20.41 KB gzip). Existing portable large-chunk, `inlineDynamicImports`, and `import.meta` warnings remain recorded.
+- With the representative rich fixture at 1920×1080, Signals rendered 1/3/3/3 previews at a content-driven 172.6px band with no tile clipping. Every table filled its 1738px region without horizontal overflow inside the 1760px work surface.
+- At 1366×768, Radar, Positions, Signals, Transactions, and History each filled a 1298px table region without internal or document-level horizontal overflow, and the workbar remained one 38px row.
+- Production browser checks confirmed Help opens on the right, focuses Close, closes on Escape, returns focus to Help, and shows the new search guidance. Transaction Card Detail opened from its named card button, History exposed named detail buttons, and the full five-route production console remained clean.

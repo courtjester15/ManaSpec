@@ -36,7 +36,7 @@ export function TradeForm({ item, mode, onSubmit, onCancel, defaultQuantity = 1 
 
 export function Notice({ notice, onDismiss }) {
   useEffect(() => { if (!notice) return undefined; const timer = setTimeout(onDismiss, 4500); return () => clearTimeout(timer); }, [notice, onDismiss]);
-  return notice ? <div className={`react-notice ${notice.tone || ""}`} role="status"><span>{notice.message}</span><button type="button" onClick={onDismiss}>×</button></div> : null;
+  return notice ? <div className={`react-notice ${notice.tone || ""}`} role="status"><span>{notice.message}</span><button type="button" aria-label="Dismiss notification" onClick={onDismiss}>×</button></div> : null;
 }
 
 export function CardIdentity({ item, showMeta = false }) {
