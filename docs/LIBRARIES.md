@@ -50,7 +50,8 @@ The archive supplied the reviewed Windows x64 foundation set now used by the Rea
 | `vite` | 8.1.3 | Adopted | Development and build pipeline. Requires Node `^20.19.0 || >=22.12.0`. |
 | `@vitejs/plugin-react` | 6.0.3 | Adopted | React integration for Vite 8. Optional compiler/Babel peers are intentionally absent and not required for the baseline. |
 | `react-router-dom` | 7.18.1 | Adopted | Hash-safe routing for portable and Pages-subpath navigation. Requires Node `>=20` for tooling and React/React DOM `>18`. |
-| `tabulator-tables` | 6.5.2 | Adopted | Shared dense-grid engine behind the ManaSpec-owned `TabulatorTable` wrapper. Radar is the Phase 1 pilot and Positions is the first focused Phase 2 migration; Signals, Transactions, and History retain the interim table. |
+| `tabulator-tables` | 6.5.2 | Adopted | Shared dense-grid engine behind the ManaSpec-owned `TabulatorTable` wrapper across Radar, Positions, Signals, Transactions, and History. |
+| `chart.js` | 4.5.1 | Adopted | Exact-printing Price History charts, loaded only when Card Detail opens Price History. ManaSpec registers only the line-chart modules it uses and owns the React lifecycle directly. |
 
 Use a Node version that satisfies the strictest engine range. The tracked manifest and lockfile, not the ignored archive, are authoritative for the implemented workspace.
 
@@ -60,7 +61,7 @@ The archive's Vite/Rolldown and Lightning CSS native bindings cover Windows x64 
 
 | Package | Preferred archived version | Status | ManaSpec assessment |
 | --- | --- | --- | --- |
-| `chart.js` | 4.5.1 | Evaluate next phase | The compact React Price History currently uses an accessible inline SVG. Compare Chart.js when richer tooltips, scales, multiple series, or longer history make the custom chart cost visible. |
+| `chart.js` | 4.5.1 | Adopted | Rich range selection, observation tooltips, reference lines, and sparse-history scaling justify the dependency. It is used directly without a React wrapper and is lazy-loaded from Card Detail. |
 | `dayjs` | 1.11.21 | Evaluate | Small, dependency-free date helper. Adopt only if hold windows, parsing, stale checks, and sorting remain meaningfully clearer than pure helpers plus `Intl`. |
 | `fuse.js` | 7.4.2 | Evaluate next phase | Good dependency-free fuzzy search candidate now that full-workflow React parity exists. Compare it against exact/subsequence helpers on real cross-workflow card, set, note, and status searches. |
 | `papaparse` | 5.5.4 | Deferred | Appropriate for future CSV/owned-spec backfill. Current backup JSON does not justify it. |
@@ -118,15 +119,13 @@ The implemented workspace currently uses lightweight Node tests plus source and 
 
 ## Current React Library Phase
 
-The first migration stage, the Phase 1 Radar pilot, and the first focused Phase 2 migration are implemented. Tabulator sits behind a ManaSpec-owned wrapper used by Radar and Positions. The next stage is selective migration and library evaluation, not a bulk replacement of working code.
+The shared Tabulator migration is complete across Radar, Positions, Signals, Transactions, and History. Chart.js is adopted for the expanded exact-printing Price History workflow. Further library work remains feature-triggered rather than a bulk replacement of working code.
 
 Evaluate in this order:
 
-1. Table migration Phase 2: after the completed Positions migration, move Signals, Transactions, and History through the established `TabulatorTable` contract only in separately approved batches.
-2. Fuse.js: adopt only if real local search becomes materially better and simpler.
-3. Chart.js: adopt in React when richer price-history requirements exceed the inline SVG baseline.
-4. Day.js: adopt when date parsing, windows, scheduling, or timezone behavior becomes recurring domain complexity.
-5. Papa Parse: defer until CSV import/export is an approved workflow.
+1. Fuse.js: adopt only if real local search is materially better and simpler than a small native index on representative ManaSpec data.
+2. Day.js: adopt when date parsing, windows, scheduling, or timezone behavior becomes recurring domain complexity.
+3. Papa Parse: defer until CSV import/export is an approved workflow.
 
 Every comparison must preserve the ManaSpec-facing wrapper and verify normal, Pages-subpath, and portable builds. A library becoming the likely choice is not adoption until it is tracked, used, tested, and recorded here.
 
@@ -166,6 +165,21 @@ Do not mark a library `Adopted` until it exists in the tracked lockfile, is used
 - Integration discovery: Wrapper definitions must omit optional properties when ManaSpec has no value. Passing `minWidth: undefined` overrode Tabulator's native column default and converted otherwise valid fixed widths to `NaN`; preserving omitted defaults restores native `fitColumns` ownership without CSS or redraw intervention.
 - Offline/portable impact: JavaScript and CSS bundle locally with no runtime CDN. Normal, Pages-subpath, and portable builds complete; the portable entry remains a deferred classic script with relative assets.
 - Decision or ADR link: [DECISIONS](DECISIONS.md#tabulator-is-the-shared-react-table-engine-behind-a-manaspec-wrapper).
+
+### Chart.js 4.5.1
+
+- Library and version: `chart.js` 4.5.1 with transitive `@kurkle/color` 0.3.4.
+- Status: Adopted for React Card Detail Price History.
+- Purpose: Render exact-printing recorded price observations with honest sparse-date spacing, selectable ranges, tooltips, and entry/cost/exit reference lines.
+- Used in: The lazy-loaded `PriceHistory` component. Feature code registers only `LineController`, `LineElement`, `PointElement`, `LinearScale`, `Filler`, `Legend`, and `Tooltip` and owns the chart create/destroy lifecycle directly.
+- Why selected: Issue #15 requires richer history inspection than the parity-stage inline SVG could provide cleanly. Chart.js supplies mature scaling, hit testing, tooltips, legends, and responsive canvas behavior while preserving a small ManaSpec-owned integration boundary.
+- Alternatives considered: Extend the custom inline SVG or add a React Chart.js wrapper. Extending the SVG would retain custom scale, pointer, tooltip, and reference-line work; a wrapper would add another dependency without reducing this isolated lifecycle meaningfully.
+- Current benefit: Users can compare the latest value with the prior recorded observation, inspect sparse dates without fabricated interpolation, switch among 1W/1M/3M/1Y/All when enough data exists, and compare price with owned and watched targets.
+- Likely future benefit: The isolated adapter can add approved series or annotations without changing Card Detail ownership or exact-printing resolution.
+- Bundle cost: The Pages build emits Chart.js and Price History as a lazy 174.53 KB JavaScript chunk (61.04 KB gzip). The initial Pages chunk remains 570.48 KB (158.67 KB gzip). Portable delivery combines the app into a 1,041.24 KB classic script (442.69 KB gzip) because that target intentionally disables code splitting.
+- Maintenance/update cost: The component must preserve modular registration, destroy chart instances on cleanup, verify canvas accessibility, and re-run sparse-history, responsive, normal, Pages, and portable checks on upgrades.
+- Offline/portable impact: The package is pinned in the tracked manifest and lockfile and bundled locally. No runtime CDN, font, or remote chart service is used; clean `npm ci`, normal, Pages-subpath, and portable builds pass.
+- Decision or ADR link: [DECISIONS](DECISIONS.md#chartjs-powers-react-price-history-without-a-wrapper).
 
 ## Selection Rules
 

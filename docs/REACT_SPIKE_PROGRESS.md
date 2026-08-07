@@ -335,3 +335,19 @@ Validated:
 - Source-policy and formatting checks pass. Normal, Pages-subpath, and portable builds complete; tracked Pages and portable artifacts were regenerated. The portable build retains the previously recorded large-chunk and `import.meta` warnings.
 - In-app browser review at 1920×1080 measured a 1760px container, eight 212.25px summary columns, and document width equal to the viewport. At 1366×768, the 1320px container compressed to four 320.5px columns across two rows with document width below the viewport.
 - Both desktop passes showed honest empty-state copy, no app-level horizontal overflow, and no browser console warnings or errors.
+
+## 2026-08-07: Issue #15 Checkpoint 2 — Price History V2
+
+Implemented:
+
+- Replaced the parity-stage inline SVG with a lazy, modular Chart.js 4.5.1 integration inside Card Detail. The shared view registers only the line controller, line/point elements, linear scales, fill, legend, and tooltip modules and destroys each chart instance during React cleanup.
+- Added honest 1W, 1M, 3M, 1Y, and All ranges anchored to the newest recorded observation. A range is disabled when it contains fewer than two real observations; missing dates are spaced by timestamp and never interpolated.
+- Added latest and prior observed values, observed change, range high/low, exact printing/finish identity, recorded coverage, Scryfall source language, and entry target, average cost, and exit target reference lines when exact related records provide them.
+- Added a pure price-history boundary for strict date/value normalization, same-day refresh replacement, range selection, and prior-observation metrics. No storage or backup schema changed.
+- Pinned Chart.js and its dependency closure in a freshly generated lockfile that passes a clean `npm ci`; no React chart wrapper or runtime CDN was added.
+
+Validated:
+
+- All 45 Node tests pass, including invalid-observation removal, sparse-date preservation, same-day replacement, range eligibility/default selection, and prior-recorded change semantics. Source-policy and formatting checks pass.
+- Normal, Pages-subpath, and portable builds pass. Pages emits Price History as a lazy 174.53 KB chunk (61.04 KB gzip) while the initial app chunk is 570.48 KB (158.67 KB gzip); portable emits a 1,041.24 KB classic script (442.69 KB gzip). Existing portable large-chunk, `inlineDynamicImports`, and `import.meta` warnings remain recorded.
+- Fixture-backed production browser QA at 1920×1080 and 1366×768 confirmed exact foil identity, all five range controls, sparse 1W behavior, current/latest/prior/change/high/low metrics, three reference lines, contained modal geometry, no document overflow, and no console warnings or errors.

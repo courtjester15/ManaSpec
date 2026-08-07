@@ -185,13 +185,13 @@ Hash-based routing is adopted because it supports the Pages subpath, refresh-saf
 
 React 19, React DOM, Vite 8, React Router hash routing, local context/state, and an explicit persistence compatibility layer are the implemented foundation. A larger state framework is not justified while the current domain and persistence model remain understandable through this baseline.
 
-The shared React table wrapper, native/shared dialogs, and inline SVG chart are deliberate parity-stage implementations. They establish one controllable baseline; they do not prevent focused replacement when a mature library proves a material benefit.
+The shared React table wrapper and native/shared dialogs established a controllable parity baseline. Price History has since replaced its inline SVG with a focused direct Chart.js integration after richer range, tooltip, scale, and reference-line needs demonstrated the benefit.
 
 ### Parity baseline precedes selective library adoption
 
 The migration is intentionally staged. First, establish a recognizable end-to-end React implementation without changing several infrastructure variables at once. Second, compare the most useful candidate libraries against real ManaSpec workflows and adopt them only where they reduce custom code or improve capability without weakening the product contract.
 
-The first focused comparison is the shared table system. Fuse.js, Chart.js, and Day.js follow when their real workflow triggers justify them. The decision order and evidence belong in [LIBRARIES](LIBRARIES.md).
+The shared table system and Chart.js Price History comparison are complete. Fuse.js and Day.js remain feature-triggered evaluations; their decision order and evidence belong in [LIBRARIES](LIBRARIES.md).
 
 ### Tabulator is the shared React table engine behind a ManaSpec wrapper
 
@@ -201,7 +201,15 @@ The wrapper owns imperative lifecycle cleanup, modular feature registration, clo
 
 The wrapper is an adapter, not a replacement table engine. It passes only intentionally defined options so Tabulator defaults remain intact, and delegates sizing, sorting, editing, row rendering, responsive behavior, and redraw mechanics to Tabulator. ManaSpec-specific code is limited to data, column intent, formatters, indicators, actions, and minimal theming unless a documented compatibility exception is required.
 
-The 2026-07-27 Radar/vanilla side-by-side review affirmed this boundary, and the completed Positions migration confirmed it with a second route. Radar and Positions now use the adopted wrapper; Signals, Transactions, and History intentionally retain the interim native `DataTable` until their focused migrations. Those migrations are configuration work through the established wrapper and must not introduce module-specific grid systems or move route business logic into the grid adapter. Vanilla remains the behavior and visual oracle throughout that sequence.
+The 2026-07-27 Radar/vanilla side-by-side review affirmed this boundary, and the completed Positions migration confirmed it with a second route. Radar, Positions, Signals, Transactions, and History now use the adopted wrapper. Product routes remain configuration consumers and must not introduce module-specific grid systems or move route business logic into the grid adapter. Vanilla remains the behavior and visual oracle.
+
+### Chart.js powers React Price History without a wrapper
+
+ManaSpec adopts Chart.js 4.5.1 directly for React Card Detail Price History. The feature registers only the line-chart modules it uses, lazy-loads the secondary workflow, and owns canvas creation and destruction inside one isolated React component; a React-specific chart wrapper is not justified for this boundary.
+
+Stored price history remains the authority. The chart plots only valid observations for the exact Scryfall printing and finish, places points at their recorded dates, never interpolates missing dates, and compares change only with the prior recorded observation. Entry target, average cost, and exit target appear as reference lines only when their exact owned or watched context supplies valid values. Range controls are unavailable when fewer than two recorded points exist in that window, so the display does not imply unsupported history.
+
+Normal and Pages builds split the chart into a lazy secondary chunk. Portable delivery continues to bundle every dependency locally into its classic script and uses no runtime CDN. Dependency rationale and measured bundle cost are recorded in [LIBRARIES](LIBRARIES.md#chartjs-451).
 
 ### Production dependencies are bundled locally
 
@@ -215,7 +223,7 @@ The React foundation packages are adopted and the parity-stage UI primitives are
 
 ### Desktop parity leads responsive work
 
-The 1366 x 768 desktop experience is the parity baseline. Tablet and phone support must be intentional through responsive navigation, layouts, dialogs, column priorities, expandable details, and touch-friendly controls, but it cannot derail desktop parity.
+The 1920×1080 desktop experience is the primary product target. It should use the additional width for clearer decision density and workflow hierarchy rather than stretching the 1366 layout. The 1366×768 desktop experience remains the secondary compatibility target and must compress cleanly without horizontal overflow or losing core actions. Tablet and phone support remains intentional through responsive navigation, layouts, dialogs, column priorities, expandable details, and touch-friendly controls.
 
 ## Docs
 

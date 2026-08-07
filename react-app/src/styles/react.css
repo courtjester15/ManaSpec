@@ -161,10 +161,22 @@ footer {
 .note-entry small { color:var(--muted); }
 .detail-links { margin-top:14px; }
 .detail-links a { padding:7px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--accent); text-decoration:none; }
-.price-history svg { width:100%; height:90px; overflow:visible; border-bottom:1px solid var(--border); }
-.price-history path { fill:none; stroke:var(--accent); stroke-width:1.5; vector-effect:non-scaling-stroke; }
-.price-history>div { display:flex; justify-content:space-between; gap:8px; margin-top:6px; color:var(--muted); font-size:10px; }
-.price-history strong { color:var(--text-strong); }
+.react-price-history { margin:-16px; }
+.react-price-history-identity { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:10px 14px; border-bottom:1px solid var(--border); }
+.react-price-history-identity div { display:grid; gap:2px; min-width:0; }
+.react-price-history-identity strong { overflow:hidden; color:var(--text-strong); font-size:13px; text-overflow:ellipsis; white-space:nowrap; }
+.react-price-history-identity span { color:var(--muted); font-size:10px; }
+.react-price-history .price-history-chart-wrap canvas { width:100% !important; height:100% !important; }
+.react-price-history-metrics { grid-template-columns:repeat(6,minmax(0,1fr)); }
+.react-price-history-metrics > div { min-width:0; }
+.react-price-history-metrics strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.react-price-history-metrics small { display:block; overflow:hidden; margin-top:1px; color:var(--muted); font-size:9px; text-overflow:ellipsis; white-space:nowrap; }
+.react-price-history .price-history-footer { display:block; margin:0; }
+
+@media (max-width: 700px) {
+  .react-price-history-identity { align-items:flex-start; flex-direction:column; gap:4px; }
+  .react-price-history-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
 .comparables { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; max-height:250px; overflow:auto; }
 .comparables a { display:grid; grid-template-columns:1fr auto; gap:2px 8px; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); text-decoration:none; }
 .comparables a:hover { border-color:var(--accent); background:var(--accent-soft); }
