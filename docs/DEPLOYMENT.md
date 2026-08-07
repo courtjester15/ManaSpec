@@ -2,7 +2,7 @@
 
 This document defines the intended dual-delivery model for the current vanilla app and the experimental React spike. It supplements [BETA_DEPLOYMENT](BETA_DEPLOYMENT.md), which remains the detailed guide for today's vanilla closed-beta deployment.
 
-The React deployment described here is a target until its workflow and live URLs are implemented and verified. Do not present planned deployment as already live.
+GitHub Pages currently publishes the repository root from `main`. The vanilla application is served at `/ManaSpec/`, and the committed React review artifact is served at `/ManaSpec/react-spike/`.
 
 ## Deployment Goals
 
@@ -18,7 +18,7 @@ The React deployment described here is a target until its workflow and live URLs
 | Surface | Intended URL or entry | Source | Status |
 | --- | --- | --- | --- |
 | Vanilla production/beta | Existing GitHub Pages root | Repository root on the current vanilla deployment source | Current path; see [BETA_DEPLOYMENT](BETA_DEPLOYMENT.md) |
-| React spike | Existing root plus `react-spike/` | `react-app/dist/` generated from the dedicated spike branch/workspace | Pages-path build verified; publication not yet configured |
+| React spike | `https://courtjester15.github.io/ManaSpec/react-spike/` | Committed `react-spike/` artifact on `main`, generated from the dedicated integration branch/workspace | Branch-published review path |
 | React portable | `react-app/dist-portable/index.html` | Committed portable build | Generated and statically verified; direct `file://` test remains pending |
 | React development | Local Vite URL on `127.0.0.1` | `react-app/src/` | Developer-only |
 
@@ -101,7 +101,20 @@ Before enabling it:
 6. Deploy from the dedicated spike path/workflow.
 7. Smoke-test both URLs and record results.
 
-Do not change Pages settings from branch deployment to Actions, or vice versa, without documenting the current state and rollback first.
+Do not change Pages settings from the confirmed `main`/repository-root branch deployment to Actions, or vice versa, without documenting the current state and rollback first.
+
+### Committed Artifact Integrity
+
+Artifact-only deployment pull requests to `main` must include an updated `react-spike/artifact-manifest.json` produced from the verified build:
+
+```text
+node tools/check-react-spike-artifact.mjs --write
+node tools/check-react-spike-artifact.mjs
+```
+
+The `React spike artifact` GitHub check validates the complete committed file set, canonical hashes, entry-point references, and JavaScript syntax. This protects branch-published Pages from truncated or partially uploaded bundles without rebuilding against the intentionally older React source currently present on `main`.
+
+After merge, also open the public React URL and confirm visible application-shell content and route navigation. Successful HTTP responses alone do not prove that the JavaScript application started.
 
 ## Storage Safety Across URLs
 
@@ -133,12 +146,14 @@ For every React deployment milestone, verify:
 
 - vanilla root loads and completes its core smoke test;
 - React subpath loads with correct JS, CSS, images, and hash navigation;
+- committed artifact integrity check passes and deployed asset sizes/hashes match the manifest;
 - refresh and back/forward navigation do not produce missing-file errors;
 - no runtime CDN requests are required;
 - storage compatibility and backup/restore checks pass;
 - direct portable `index.html` opening passes in the documented browser(s);
 - desktop 1366 x 768, tablet, and phone layouts are usable;
-- console and network panels show no unexplained deployment errors.
+- console and network panels show no unexplained deployment errors;
+- the visible React application shell renders (a `200` response or static page title alone is not a passing smoke test).
 
 Record the actual URLs, commit, date, browser, and results in the spike progress log once deployment exists.
 
