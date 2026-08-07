@@ -1,0 +1,30 @@
+name: React spike artifact
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "react-spike/**"
+      - "tools/check-react-spike-artifact.mjs"
+      - ".github/workflows/react-spike-artifact.yml"
+  push:
+    branches: [main]
+    paths:
+      - "react-spike/**"
+      - "tools/check-react-spike-artifact.mjs"
+      - ".github/workflows/react-spike-artifact.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify committed Pages artifact
+        run: node tools/check-react-spike-artifact.mjs

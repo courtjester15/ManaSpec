@@ -34,6 +34,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Repaired the public React spike review artifact after an incomplete upload and added a manifest-backed GitHub check that rejects missing, altered, or syntactically invalid Pages bundles.
 - Refined Price History with a continuous calendar-time axis, real-snapshot-only points and hover targets, a shorter non-scrolling laptop modal, and a cleaner compact trend icon.
 - Prevented Position deletion when Transactions still project an open holding, closing the silent orphan path identified through the Simulacrum Synthesizer audit; real exits continue to use Sell.
 - Centralized normal persistence for Positions, Radar, Transactions, and cash; connected read-only runtime normalization with compatibility-safe serialization; preserved unknown fields and stored shapes; and retained the read-only ledger discrepancy warning without automatic reconciliation.
