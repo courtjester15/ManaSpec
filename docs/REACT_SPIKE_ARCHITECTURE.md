@@ -117,7 +117,8 @@ The spike preserves ManaSpec's tokens, typography, density, terminology, and tab
 
 Responsive strategy:
 
-- Desktop baseline: 1366 x 768. Core workflows must remain usable without avoidable page-width overflow or nested vertical scrolling.
+- Primary desktop: 1920 x 1080. Use the larger canvas for information hierarchy, complete labels, traceable metrics, and a broad work surface rather than merely enlarging the former laptop layout.
+- Compatibility desktop: 1366 x 768. Core workflows must compress without avoidable page-width overflow, clipped actions, or nested vertical scrolling.
 - Tablet: condense navigation, allow panels to stack, prioritize primary table columns, and expose secondary row detail deliberately.
 - Phone: use touch-sized controls, stacked forms, responsive dialogs, and list/card alternatives where dense tables stop being usable.
 
@@ -179,7 +180,7 @@ Promotion evidence is not complete until it covers:
 - portable `index.html` works without npm or a server;
 - Pages works at `/ManaSpec/react-spike/` while the vanilla root remains unchanged.
 
-Current evidence already covers compatible fixture loading, backup safety, core trading calculations, all workflow routes, hash navigation, normal/Pages/portable builds, portable bootstrap regression coverage, and paired desktop table/Card Detail comparisons. Cross-implementation writes, the actual public Pages publishing source, remaining UI parity gaps, and the second responsive/accessibility pass remain open.
+Current evidence covers compatible fixture loading, backup safety, core trading calculations, all workflow routes, hash navigation, normal/Pages/portable builds, portable bootstrap regression coverage, Issue #15 product-expansion workflows, the full shared-table system, and 1920x1080 plus 1366x768 desktop containment. The remaining promotion gates are representative React-written record reads in vanilla, confirmation of the actual public Pages publishing source, an approved cutover/rollback runbook, and the explicit canonical-promotion decision. Broader assistive-technology and real-user small-screen review remain follow-up quality work.
 
 ## Decision Discipline
 

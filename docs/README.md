@@ -76,10 +76,10 @@ ManaSpec is not a collection tracker, inventory nostalgia tool, prediction engin
 ManaSpec currently has two maintained frontend implementations over the same product and storage contracts:
 
 - The vanilla HTML/CSS/JavaScript application at the repository root remains the production/beta and behavioral source of truth.
-- The React 19 + Vite 8 application under `react-app/` is implemented and in active parity, stabilization, and library-evaluation work.
+- The React 19 + Vite 8 application under `react-app/` has completed Issue #15 expansion and parity checkpoints and is an alpha-readiness candidate, not yet the canonical frontend.
 - React Router provides hash-safe workflow routes for development, the portable build, and the `/ManaSpec/react-spike/` Pages artifact.
 - Both implementations use Scryfall for card identity, printings, and pricing snapshots and use compatible localStorage records with no backend.
-- Vanilla uses ManaSpec-native table rendering through `js/ui/table.js`; React currently uses a small shared ManaSpec table wrapper while the next table-library decision is evaluated.
+- Vanilla uses ManaSpec-native table rendering through `js/ui/table.js`; React uses Tabulator 6.5.2 behind one ManaSpec-owned wrapper across all five dense routes and Chart.js 4.5.1 only for Price History.
 
 React is now the likely forward implementation path because it has demonstrated the full application shape and improves maintainability. That direction is not a production cutover: vanilla remains the parity oracle and authoritative deployed behavior until a separate promotion decision is recorded.
 
@@ -396,9 +396,9 @@ Search must be context-specific. Different search boxes should not secretly perf
 Search domains:
 
 - Card Search: Scryfall card discovery and printing selection.
-- Local Search: local Radar ideas and owned Positions only.
-- Transaction Search: future ledger/history filtering.
-- Global Search: future app-level routing to the right workflow.
+- Local Search: React app-shell search across saved Positions, Radar, Transactions, History events, card notes, and thesis notes.
+- Transaction Search: route-local ledger filtering inside Transactions.
+- Global Search: the React saved-data router; it never substitutes for Scryfall discovery.
 
 Rules:
 

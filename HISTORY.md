@@ -266,11 +266,19 @@ On 2026-08-02, Issue #11 completed that table adoption arc. Signals, Transaction
 
 This milestone did not promote React to production. Vanilla remains the behavioral oracle, current production/beta frontend, rollback path, and compatibility reference until a separate evidence-based promotion decision. The tracked `react-spike/` artifact exists, but the actual GitHub Pages publishing source must be confirmed before treating every new branch artifact as publicly deployed.
 
-## Current State (2026-08-02)
+## 2026-08-07: Issue #15 expanded React into an alpha candidate
+
+Issue #15 deliberately combined product work, dependency decisions, responsive hierarchy, parity correction, and release evidence. The React Dashboard gained an honest eight-metric Portfolio Summary; Price History moved to a focused Chart.js integration with sparse-date semantics and plan references; and the app shell gained categorized saved-data search without adopting Fuse.js. A final UI pass removed artificial Signals clipping, corrected Help focus behavior, and made exact-printing actions accessible across event routes.
+
+The desktop hierarchy also changed deliberately. The 1920 x 1080 canvas became the primary product target and uses a 1760px work surface for complete metrics and dense workflows. The 1366 x 768 layout remains a required compatibility target that compresses rather than merely scaling the larger layout down.
+
+This work changed the React description from speculative spike to controlled-alpha candidate, not to canonical frontend. Public Pages publishing ownership, representative React-written record reads in vanilla, and an approved cutover/rollback decision remain explicit promotion gates.
+
+## Current State (2026-08-07)
 
 As of 2026-07-02, with the latest pre-history repository activity found on 2026-07-01, ManaSpec is a local-first MTG speculation workflow and positions terminal built with vanilla HTML, CSS, JavaScript, Scryfall data, and localStorage.
 
-ManaSpec now has two intentionally distinguished implementations. The vanilla root is the authoritative production/beta app with Dashboard, Radar, Positions, Signals, Transactions, History, Admin, Card Detail, shared Notes, contextual Help, and JSON backup/restore. The React workspace reproduces that full application shape and is in active implementation/stabilization as the likely forward frontend.
+ManaSpec now has two intentionally distinguished implementations. The vanilla root is the authoritative production/beta app with Dashboard, Radar, Positions, Signals, Transactions, History, Admin, Card Detail, shared Notes, contextual Help, and JSON backup/restore. The React workspace reproduces that full application shape, includes the Issue #15 product-expansion work, and is ready for controlled alpha use as the likely forward frontend.
 
 The product center of gravity remains unchanged: ManaSpec organizes speculation workflow and attention while the user owns strategy and decisions. React must preserve that product contract and the vanilla data model while earning promotion through parity, compatibility, delivery, and maintainability evidence.
 

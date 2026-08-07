@@ -8,6 +8,9 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Expanded the React Dashboard into an eight-metric Portfolio Summary with honest realized-coverage, data-quality, plan-completeness, and marked-value concentration signals designed for the 1920 x 1080 primary desktop.
+- Rebuilt React Price History with Chart.js 4.5.1, exact-printing sparse-date ranges, tooltips, summary context, and plan reference lines while preserving the existing snapshot schema.
+- Added categorized React saved-data search across Positions, Radar, Transactions, History, card notes, and thesis notes; the native deterministic index met the workflow contract, so Fuse.js was not adopted.
 - Restored React Signals parity with vanilla's tested 5% target logic, exact-printing market freshness, priorities/reasons/actions, shared Dashboard queue membership, interactive bucket/exact-row triage, and exact Radar/Positions `View` navigation with a separate `Scryfall` action.
 - Added Tabulator 6.5.2 as the shared React table foundation behind a ManaSpec-owned wrapper, with Radar as the only Phase 1 pilot and later table modules intentionally deferred.
 - Implemented the React 19/Vite 8 ManaSpec reconstruction across Dashboard, Radar, Positions, Signals, Transactions, History, and Admin with hash routing, compatibility-backed local state, shared UI primitives, tests/checks, normal output, a tracked Pages artifact, and a stable directly openable portable build.
@@ -40,6 +43,8 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed
 
+- Completed the Issue #15 React parity-polish and alpha-readiness pass: content-driven Signals layout, accessible Help focus/escape behavior, exact-printing action names, full route/build validation, and an evidence-based recommendation that keeps vanilla canonical until release-control blockers are closed.
+- Made 1920 x 1080 the primary desktop design target and 1366 x 768 the secondary compatibility target across active React planning, architecture, deployment, dependency, and validation docs.
 - Migrated React Signals, Transactions, and History to the shared Tabulator foundation; restored compact route-owned controls and page size, aligned all five table routes on one desktop context rhythm, contained three Signals previews without reducing the limit, and removed the unused interim table.
 - Corrected shared React Tabulator header sizing so inactive sort space is reclaimed and the compact active arrow never truncates a column label.
 - Migrated React Positions from the interim table to the shared Tabulator foundation with the approved 19-column dense layout, canonical Position-row validation, reconciliation-safe cells, sorting/filtering, inline Target/Hold editing, and existing detail/Buy/Sell/delete workflows preserved.

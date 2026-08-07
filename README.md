@@ -14,7 +14,7 @@ ManaSpec is intentionally workflow-focused rather than automation-focused. It he
 
 ManaSpec is currently `v0.9.0-alpha.1` in Friend Preview / Closed Beta preparation.
 
-A complete React modernization spike is now implemented and in active parity/stabilization work. It reproduces the full application shape, compatible local data workflow, portable local use, and a separate Pages artifact. React is the likely forward project path, but the current vanilla app remains the production/beta and behavioral source of truth until a separate promotion decision.
+The React modernization implementation has completed Issue #15 expansion and parity checkpoints and is ready for controlled alpha use. It reproduces the full application shape, compatible local data workflow, portable local use, and a separate Pages artifact. React is the likely forward project path, but the current vanilla app remains the canonical production/beta and behavioral source of truth until release controls and a separate promotion decision are complete.
 
 The Data Ownership and Storage Readiness Audit and its three approved foundation batches are complete. The app now has compatibility-safe core persistence boundaries, explicit schema/migration readiness, read-only reconciliation reporting, and protection against Position deletion leaving open transaction history. Planned user-facing feature work can resume; making Transactions authoritative remains a separate future migration.
 
@@ -72,7 +72,7 @@ The active project docs now live in [docs/README.md](docs/README.md). Meaningful
 
 Closed beta deployment instructions live in [docs/BETA_DEPLOYMENT.md](docs/BETA_DEPLOYMENT.md). The beta path keeps the current vanilla app on GitHub Pages and preserves localStorage-backed browser data.
 
-The React implementation is governed by [docs/REACT_MIGRATION_NOTES.md](docs/REACT_MIGRATION_NOTES.md), with its implemented architecture in [docs/REACT_SPIKE_ARCHITECTURE.md](docs/REACT_SPIKE_ARCHITECTURE.md), dependency decisions in [docs/LIBRARIES.md](docs/LIBRARIES.md), progress evidence in [docs/REACT_SPIKE_PROGRESS.md](docs/REACT_SPIKE_PROGRESS.md), and dual-delivery model in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). It remains an implementation spike rather than the promoted production frontend.
+The React implementation is governed by [docs/REACT_MIGRATION_NOTES.md](docs/REACT_MIGRATION_NOTES.md), with its implemented architecture in [docs/REACT_SPIKE_ARCHITECTURE.md](docs/REACT_SPIKE_ARCHITECTURE.md), dependency decisions in [docs/LIBRARIES.md](docs/LIBRARIES.md), progress evidence in [docs/REACT_SPIKE_PROGRESS.md](docs/REACT_SPIKE_PROGRESS.md), and dual-delivery model in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). It is an alpha-readiness candidate rather than the promoted canonical frontend.
 
 ## Working Rule
 

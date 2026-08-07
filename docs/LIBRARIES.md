@@ -152,14 +152,14 @@ Do not mark a library `Adopted` until it exists in the tracked lockfile, is used
 ### Tabulator 6.5.2
 
 - Library and version: `tabulator-tables` 6.5.2.
-- Status: Adopted for the shared React table foundation; Radar is the Phase 1 pilot and Positions is the first completed Phase 2 consumer.
+- Status: Adopted as the single shared React table foundation across all five dense routes.
 - Purpose: Dense sorting, cell editing, keyboard support, column layout, and reusable grid mechanics behind a product-owned React boundary.
-- Used in: `TabulatorTable`, React Radar, and React Positions. Signals, Transactions, and History remain intentionally unchanged pending separately approved Phase 2 batches.
+- Used in: `TabulatorTable`, Radar, Positions, Signals, Transactions, and History.
 - Why selected: It reproduces the compact financial-grid contract while removing hand-built sorting/layout mechanics from feature code and provides a scalable path for later table migrations.
 - Alternatives considered: The interim native React table and a React-first headless table. The interim table was useful for parity but encoded table identity through column-label matching and would require continued custom grid behavior; a second headless implementation would retain most of that custom work.
-- Current benefit: Shared column configuration, sorting and active-header accessibility state, display/edit cells, row activation isolation, empty state, tooltip, keyboard, and responsive behavior are centralized without exposing vendor APIs to Radar or Positions.
-- Likely future benefit: Remaining table migrations should primarily supply module column/action configuration instead of rebuilding mechanics.
-- Bundle cost: Modular registration adds approximately 219 KB JavaScript and 34 KB CSS uncompressed to the tracked artifacts. The final normal Pages output is 527.90 KB JavaScript (148.43 KB gzip) and 125.13 KB CSS (19.97 KB gzip); the portable IIFE is 823.23 KB JavaScript and 125.14 KB CSS.
+- Current benefit: Shared column configuration, sorting and active-header accessibility state, display/edit cells, row activation isolation, pagination, empty state, tooltips, keyboard behavior, compact geometry, and responsive behavior are centralized without exposing vendor APIs to feature routes.
+- Likely future benefit: Future dense routes can supply product-owned columns and actions without creating a second grid system.
+- Bundle cost: Modular registration adds approximately 219 KB JavaScript and 34 KB CSS uncompressed. After Issue #15 checkpoint 4, the Pages initial chunk is 579.15 KB (161.30 KB gzip), shared CSS is 127.57 KB (20.39 KB gzip), and the portable classic script is 1,049.91 KB (445.39 KB gzip); those totals also include later product work and Chart.js.
 - Maintenance/update cost: Imperative lifecycle integration and per-cell React roots remain wrapper responsibilities. Tabulator upgrades require wrapper, keyboard, responsive, normal, Pages, and portable regression checks.
 - Integration discovery: Wrapper definitions must omit optional properties when ManaSpec has no value. Passing `minWidth: undefined` overrode Tabulator's native column default and converted otherwise valid fixed widths to `NaN`; preserving omitted defaults restores native `fitColumns` ownership without CSS or redraw intervention.
 - Offline/portable impact: JavaScript and CSS bundle locally with no runtime CDN. Normal, Pages-subpath, and portable builds complete; the portable entry remains a deferred classic script with relative assets.
@@ -175,7 +175,7 @@ Do not mark a library `Adopted` until it exists in the tracked lockfile, is used
 - Alternatives considered: Extend the custom inline SVG or add a React Chart.js wrapper. Extending the SVG would retain custom scale, pointer, tooltip, and reference-line work; a wrapper would add another dependency without reducing this isolated lifecycle meaningfully.
 - Current benefit: Users can compare the latest value with the prior recorded observation, inspect sparse dates without fabricated interpolation, switch among 1W/1M/3M/1Y/All when enough data exists, and compare price with owned and watched targets.
 - Likely future benefit: The isolated adapter can add approved series or annotations without changing Card Detail ownership or exact-printing resolution.
-- Bundle cost: The Pages build emits Chart.js and Price History as a lazy 174.53 KB JavaScript chunk (61.04 KB gzip). The initial Pages chunk remains 570.48 KB (158.67 KB gzip). Portable delivery combines the app into a 1,041.24 KB classic script (442.69 KB gzip) because that target intentionally disables code splitting.
+- Bundle cost: The Pages build emits Price History as a lazy 174.53 KB JavaScript chunk (61.04 KB gzip). After Issue #15 checkpoint 4, the initial Pages chunk is 579.15 KB (161.30 KB gzip). Portable delivery combines the app into a 1,049.91 KB classic script (445.39 KB gzip) because that target intentionally disables code splitting.
 - Maintenance/update cost: The component must preserve modular registration, destroy chart instances on cleanup, verify canvas accessibility, and re-run sparse-history, responsive, normal, Pages, and portable checks on upgrades.
 - Offline/portable impact: The package is pinned in the tracked manifest and lockfile and bundled locally. No runtime CDN, font, or remote chart service is used; clean `npm ci`, normal, Pages-subpath, and portable builds pass.
 - Decision or ADR link: [DECISIONS](DECISIONS.md#chartjs-powers-react-price-history-without-a-wrapper).
@@ -212,7 +212,7 @@ The table choice deserves a focused spike because tables carry ManaSpec's core w
 Score or document:
 
 - sorting and filtering parity;
-- column sizing and non-wrapping density at 1366 x 768;
+- column sizing and non-wrapping density at the 1920 x 1080 primary desktop and 1366 x 768 compatibility desktop;
 - editable cells and validation;
 - row actions and keyboard access;
 - priority columns and expandable details at tablet/phone widths;

@@ -114,10 +114,10 @@ Thesis is no longer an active navigation module. Existing Thesis code and `thesi
 
 Search should be context-specific:
 
-- Card Search: Scryfall discovery and printing selection.
-- Local Search: local Radar ideas and owned Positions only.
-- Transaction Search: future ledger/history filtering.
-- Global Search: future routing to the right workflow.
+- Card Search: Scryfall discovery and printing selection inside Radar.
+- Local Search: React app-shell search across saved Positions, Radar, Transactions, History, card notes, and thesis notes.
+- Transaction Search: route-local ledger filtering inside Transactions.
+- Global Search: React routing from categorized saved-data results to an exact workflow context.
 
 Card Search currently belongs inside Radar because adding a spec starts as a watched idea before purchase.
 
@@ -227,11 +227,17 @@ React may use npm and normal build tooling during development, but delivered dep
 
 The local library collection must be inventoried before equivalent packages are downloaded. Availability does not require adoption. Each selected dependency must solve a current problem, avoid category overlap, work in normal and portable builds, and have its purpose, alternatives, current/future value, bundle cost, and maintenance cost recorded in [LIBRARIES](LIBRARIES.md).
 
-The React foundation packages are adopted and the parity-stage UI primitives are implemented. Replacing the table, search, chart, date, dialog, form, styling, or state layers remains an evidence-based decision rather than an assumed modernization step.
+The React foundation, shared Tabulator table boundary, and focused Chart.js Price History integration are adopted. The native saved-data index won the Fuse.js comparison. Future date, dialog, form, styling, or state dependencies remain evidence-based decisions rather than assumed modernization steps.
 
 ### Desktop parity leads responsive work
 
 The 1920×1080 desktop experience is the primary product target. It should use the additional width for clearer decision density and workflow hierarchy rather than stretching the 1366 layout. The 1366×768 desktop experience remains the secondary compatibility target and must compress cleanly without horizontal overflow or losing core actions. Tablet and phone support remains intentional through responsive navigation, layouts, dialogs, column priorities, expandable details, and touch-friendly controls.
+
+### React is alpha-ready but canonical promotion remains explicit
+
+Issue #15 establishes that React is ready for controlled alpha use and continued forward feature work: the full route surface, compatible storage adapter, shared dense-table system, Portfolio Summary, Price History V2, unified local search, corrective UI/accessibility work, focused tests, and three build modes are implemented. The 1920x1080 primary desktop and 1366x768 compatibility desktop are both deliberate targets.
+
+This evidence does not promote React. Canonical status remains blocked until the actual public Pages publishing source and rollback path are verified, representative React-written records are read successfully by vanilla, a cutover/rollback runbook is approved, and the promotion decision is recorded separately.
 
 ## Docs
 

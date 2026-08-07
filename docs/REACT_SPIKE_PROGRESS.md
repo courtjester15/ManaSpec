@@ -2,7 +2,7 @@
 
 This document records implementation milestones and evidence for the React reconstruction and likely forward frontend candidate. It does not redefine current vanilla behavior or authorize production cutover.
 
-The point-in-time [Vanilla vs React Workflow and CSS Audit](audits/vanilla-react-workflow-css-audit-2026-07-21.md) identifies the current critical and high-priority parity blockers. Earlier milestone evidence below records what was implemented and validated at that time; it is not a later declaration that workflow, data-semantic, or release parity is complete.
+The point-in-time [Vanilla vs React Workflow and CSS Audit](audits/vanilla-react-workflow-css-audit-2026-07-21.md) records the blockers visible on that date. Later milestone entries supersede its implementation status. The final Issue #15 entry below owns the current alpha-readiness evidence and recommendation; earlier entries remain historical rather than current release guidance.
 
 ## 2026-07-16: Workspace And Build Foundation
 
@@ -386,3 +386,26 @@ Validated:
 - With the representative rich fixture at 1920×1080, Signals rendered 1/3/3/3 previews at a content-driven 172.6px band with no tile clipping. Every table filled its 1738px region without horizontal overflow inside the 1760px work surface.
 - At 1366×768, Radar, Positions, Signals, Transactions, and History each filled a 1298px table region without internal or document-level horizontal overflow, and the workbar remained one 38px row.
 - Production browser checks confirmed Help opens on the right, focuses Close, closes on Escape, returns focus to Help, and shows the new search guidance. Transaction Card Detail opened from its named card button, History exposed named detail buttons, and the full five-route production console remained clean.
+
+## 2026-08-07: Issue #15 Checkpoint 5 — Alpha-readiness review
+
+Completed:
+
+- Audited and reconciled the root README, active docs index, Roadmap, React migration charter, target architecture, Libraries, Architecture, Decisions, Deployment, Changelog, History, and this progress log. Historical milestone language remains dated; active guidance now distinguishes controlled-alpha readiness from canonical promotion.
+- Recorded the evidence-based recommendation that React is ready for controlled alpha use and continued forward feature development, but is not yet canonical. Remaining promotion blockers are the actual public Pages publishing source and rollback path, representative React-written record reads in vanilla, an approved cutover/rollback runbook, and the explicit promotion decision.
+- Made 1920 x 1080 the primary desktop product target across active guidance, with 1366 x 768 retained as required secondary compatibility rather than the layout to stretch.
+
+Validated:
+
+- All 50 Node tests, source-policy checks, and formatting checks pass. Normal, Pages-subpath, and portable builds pass; generated Pages and portable artifacts were refreshed, and their JavaScript passes syntax checks.
+- Final Pages output is 579.15 KB initial JavaScript (161.30 KB gzip), 174.53 KB lazy Price History JavaScript (61.04 KB gzip), and 127.57 KB CSS (20.39 KB gzip). Portable output is a 1,049.91 KB classic script (445.39 KB gzip) and 127.58 KB CSS (20.41 KB gzip). The previously documented large-chunk, `inlineDynamicImports`, and portable `import.meta` warnings remain unchanged.
+- A representative production route sweep rendered Dashboard, Radar, Positions, Signals, Transactions, History, and Admin at 1920 x 1080, 1366 x 768, 768 x 1024, and 390 x 844. Every route reported document width at or below its viewport; all five dense routes kept their Tabulator surface at every size.
+- Dashboard exposed all eight Portfolio Summary metrics. Radar and Positions text filters narrowed to one exact row and Radar reset to all 16 ideas. Signals search narrowed to one row and Show all restored the page. Transaction SELL filtering produced 15 rows with exact-detail buttons; History Notes filtering produced eight rows with exact-detail buttons; both resets restored the 25-row page.
+- Position Card Detail opened the exact Badlands printing and exposed Plan/Evaluation, Market Check, Notes, Card Context, and Price History. The Admin restore preview and confirmation restored 40 Positions, 16 Radar ideas, 65 Transactions, eight card notes, 1,485 snapshots, and 33 market observations, then surfaced a successful restore notice.
+- The unchanged vanilla root responded from the documented Python server and loaded its normal Dashboard. Under the exact project-subpath topology, vanilla restored the representative backup and the generated `/ManaSpec/react-spike/` artifact loaded all CSS/JavaScript/image assets successfully and read the same shared-origin 40 Positions, 16 Radar ideas, and 1,485 snapshots without document overflow.
+
+Open before canonical promotion:
+
+- Confirm the actual public GitHub Pages publishing source and exercise the live rollback path.
+- Extend the controlled interoperability proof from vanilla-written backup/state reads in React to representative React-written Position, Radar, note, transaction, snapshot, and market-observation reads in vanilla.
+- Approve the cutover/rollback runbook and record the explicit canonical-promotion decision. Broader assistive-technology review and real-user tablet/phone feedback remain follow-up quality work.

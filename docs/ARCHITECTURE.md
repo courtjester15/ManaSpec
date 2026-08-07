@@ -311,7 +311,7 @@ Do not implement a full ledger-source-of-truth migration without a written migra
 
 ## React Implementation Boundary
 
-ManaSpec has implemented a complete React modernization spike as an isolated evidence-gathering and forward-implementation track. The spike now contains the full workflow surface, compatible persistence, tests, normal/Pages/portable builds, and corrective parity work. This progress does not make React the production source of truth by implication.
+ManaSpec has implemented a complete React modernization candidate as an isolated forward-implementation track. It contains the full workflow surface, compatible persistence, shared table system, Issue #15 product-expansion features, focused tests, normal/Pages/portable builds, and corrective parity work. It is ready for controlled alpha use, but this progress does not make React the canonical or production source of truth by implication.
 
 Boundary rules:
 
@@ -321,7 +321,7 @@ Boundary rules:
 - Treat vanilla behavior as the parity oracle.
 - Require controlled cross-read/write storage tests because the deployed root and `/react-spike/` share an origin.
 - Maintain the committed portable React build at `react-app/dist-portable/index.html` and regenerate it after meaningful React changes.
-- Do not promote React until parity, data safety, deployment, maintainability, and responsive evidence support a separate decision.
+- Do not promote React until representative React-written records are read successfully by vanilla, the public Pages publishing source and rollback path are verified, and a separate canonical-promotion decision is recorded.
 
 The implemented module layout, state boundaries, routing, responsive foundation, build outputs, and remaining validation gates live in [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md). Dependency decisions live in [LIBRARIES](LIBRARIES.md), and delivery topology lives in [DEPLOYMENT](DEPLOYMENT.md).
 

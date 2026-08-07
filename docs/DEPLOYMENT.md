@@ -138,7 +138,7 @@ For every React deployment milestone, verify:
 - no runtime CDN requests are required;
 - storage compatibility and backup/restore checks pass;
 - direct portable `index.html` opening passes in the documented browser(s);
-- desktop 1366 x 768, tablet, and phone layouts are usable;
+- primary desktop 1920 x 1080, compatibility desktop 1366 x 768, tablet, and phone layouts are usable;
 - console and network panels show no unexplained deployment errors.
 
 Record the actual URLs, commit, date, browser, and results in the spike progress log once deployment exists.
