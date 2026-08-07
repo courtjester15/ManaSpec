@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import logo from "../assets/manaspec-mark.png";
 import { calculatePortfolioSummary, formatMoney, formatPriceRefreshStatus } from "../domain/portfolio.js";
+import { LocalSearch } from "../features/shared/LocalSearch.jsx";
 import { useAppState } from "../state/AppState.jsx";
 
 const navigation = [
@@ -21,11 +22,6 @@ export function AppShell() {
   const summary = useMemo(() => calculatePortfolioSummary(state.specs, state.cash), [state.cash, state.specs]);
   const profitLoss = `${summary.profitLoss >= 0 ? "+" : ""}${formatMoney(summary.profitLoss)} (${summary.profitLossPercent.toFixed(1)}%)`;
 
-  function submitSearch(event) {
-    event.preventDefault();
-    const query = new FormData(event.currentTarget).get("query")?.trim();
-    navigate(query ? `/radar?query=${encodeURIComponent(query)}` : "/radar");
-  }
 
   return (
     <main className="container">
@@ -66,11 +62,7 @@ export function AppShell() {
           ))}
         </nav>
 
-        <form className="global-search-bar" role="search" onSubmit={submitSearch}>
-          <label className="visually-hidden" htmlFor="universalSearch">Search cards</label>
-          <input id="universalSearch" name="query" placeholder="Search cards..." />
-          <button type="submit" id="universalSearchButton">Search</button>
-        </form>
+        <LocalSearch state={state} onNavigate={navigate} />
       </section>
 
       <div className="toast-stack" role="status" aria-live="polite" />

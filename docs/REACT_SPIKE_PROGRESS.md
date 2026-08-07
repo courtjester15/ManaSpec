@@ -351,3 +351,20 @@ Validated:
 - All 45 Node tests pass, including invalid-observation removal, sparse-date preservation, same-day replacement, range eligibility/default selection, and prior-recorded change semantics. Source-policy and formatting checks pass.
 - Normal, Pages-subpath, and portable builds pass. Pages emits Price History as a lazy 174.53 KB chunk (61.04 KB gzip) while the initial app chunk is 570.48 KB (158.67 KB gzip); portable emits a 1,041.24 KB classic script (442.69 KB gzip). Existing portable large-chunk, `inlineDynamicImports`, and `import.meta` warnings remain recorded.
 - Fixture-backed production browser QA at 1920×1080 and 1366×768 confirmed exact foil identity, all five range controls, sparse 1W behavior, current/latest/prior/change/high/low metrics, three reference lines, contained modal geometry, no document overflow, and no console warnings or errors.
+
+## 2026-08-07: Issue #15 Checkpoint 3 — Unified Local Search
+
+Implemented:
+
+- Replaced the app-shell redirect into Radar's Scryfall search with a local saved-data index covering Positions, Radar, Transactions, History events, card notes, and thesis notes. Radar keeps its separate Scryfall discovery workflow for new cards.
+- Added categorized results, source badges, exact set/collector/finish context, stable per-category limits, honest empty-state guidance, and keyboard navigation with explicit Enter selection, Escape dismissal, and active-option scrolling.
+- Added exact focus contracts for all five destinations. Position and Radar results can open their exact printing detail, note results can open the exact printing's Notes panel, and Transaction/History results filter to the exact event with an explicit Show all action.
+- Centralized History event construction so the route and search index share the same event IDs and summaries. No storage, backup schema, or network contract changed.
+- Evaluated Fuse.js 7.4.2 against representative same-name, finish, partial-term, transaction-note, and thesis searches. The native deterministic matcher met the current contract, so Fuse.js was not adopted and the package manifest/lockfile remain unchanged.
+
+Validated:
+
+- All 50 Node tests pass, including normalization, all five categories, foil/nonfoil separation, exact same-name printing navigation, focused Transaction/History/Note destinations, shared History event IDs, and short-query behavior. Source-policy and formatting checks pass.
+- Normal, Pages-subpath, and portable builds pass. Pages emits 577.85 KB initial JavaScript (160.96 KB gzip), a lazy 174.53 KB Price History chunk (61.04 KB gzip), and 127.52 KB CSS (20.40 KB gzip). Portable emits a 1,048.60 KB classic script (445.07 KB gzip). Existing large-chunk, `inlineDynamicImports`, and `import.meta` warnings remain recorded.
+- Fixture-backed production browser QA at 1920×1080 rendered Positions, Radar, Transactions, History, and Notes groups with exact printing context. Selecting the TST #15 foil Radar result navigated to and opened that exact printing.
+- At 1920×1080, the 560px dropdown stayed inside the 1760px work surface with document width equal to the viewport. At 1366×768, the workbar remained one 38px row, the 520px dropdown stayed inside the viewport, and document width equaled the viewport. The production console had no warnings or errors.

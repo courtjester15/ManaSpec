@@ -63,7 +63,7 @@ The archive's Vite/Rolldown and Lightning CSS native bindings cover Windows x64 
 | --- | --- | --- | --- |
 | `chart.js` | 4.5.1 | Adopted | Rich range selection, observation tooltips, reference lines, and sparse-history scaling justify the dependency. It is used directly without a React wrapper and is lazy-loaded from Card Detail. |
 | `dayjs` | 1.11.21 | Evaluate | Small, dependency-free date helper. Adopt only if hold windows, parsing, stale checks, and sorting remain meaningfully clearer than pure helpers plus `Intl`. |
-| `fuse.js` | 7.4.2 | Evaluate next phase | Good dependency-free fuzzy search candidate now that full-workflow React parity exists. Compare it against exact/subsequence helpers on real cross-workflow card, set, note, and status searches. |
+| `fuse.js` | 7.4.2 | Do not adopt for current search | Representative cross-workflow search is clearer and deterministic with the native normalized local index. Reconsider only if measured misspelling or ranking failures emerge at larger local volumes. |
 | `papaparse` | 5.5.4 | Deferred | Appropriate for future CSV/owned-spec backfill. Current backup JSON does not justify it. |
 | `xlsx` | 0.18.5 | Deferred | Large spreadsheet-format capability and seven-package closure. Do not adopt until spreadsheet import is approved and the exact file-format/security/maintenance need is reviewed. CSV should remain the smaller first option. |
 | `file-saver` | 2.0.5 | Deferred | Current Blob/object-URL download behavior may be sufficient. Adopt only if browser compatibility testing proves a gap. |
@@ -119,13 +119,12 @@ The implemented workspace currently uses lightweight Node tests plus source and 
 
 ## Current React Library Phase
 
-The shared Tabulator migration is complete across Radar, Positions, Signals, Transactions, and History. Chart.js is adopted for the expanded exact-printing Price History workflow. Further library work remains feature-triggered rather than a bulk replacement of working code.
+The shared Tabulator migration is complete across Radar, Positions, Signals, Transactions, and History. Chart.js is adopted for the expanded exact-printing Price History workflow. The unified saved-data search comparison is also complete: the native index met the current acceptance contract, so Fuse.js is not adopted. Further library work remains feature-triggered rather than a bulk replacement of working code.
 
 Evaluate in this order:
 
-1. Fuse.js: adopt only if real local search is materially better and simpler than a small native index on representative ManaSpec data.
-2. Day.js: adopt when date parsing, windows, scheduling, or timezone behavior becomes recurring domain complexity.
-3. Papa Parse: defer until CSV import/export is an approved workflow.
+1. Day.js: adopt when date parsing, windows, scheduling, or timezone behavior becomes recurring domain complexity.
+2. Papa Parse: defer until CSV import/export is an approved workflow.
 
 Every comparison must preserve the ManaSpec-facing wrapper and verify normal, Pages-subpath, and portable builds. A library becoming the likely choice is not adoption until it is tracked, used, tested, and recorded here.
 
@@ -180,6 +179,19 @@ Do not mark a library `Adopted` until it exists in the tracked lockfile, is used
 - Maintenance/update cost: The component must preserve modular registration, destroy chart instances on cleanup, verify canvas accessibility, and re-run sparse-history, responsive, normal, Pages, and portable checks on upgrades.
 - Offline/portable impact: The package is pinned in the tracked manifest and lockfile and bundled locally. No runtime CDN, font, or remote chart service is used; clean `npm ci`, normal, Pages-subpath, and portable builds pass.
 - Decision or ADR link: [DECISIONS](DECISIONS.md#chartjs-powers-react-price-history-without-a-wrapper).
+
+### Fuse.js 7.4.2
+
+- Library and version: `fuse.js` 7.4.2.
+- Status: Do not adopt for the current unified local-search workflow.
+- Candidate purpose: Fuzzy ranking across saved Positions, Radar, Transactions, History, card notes, and thesis notes.
+- Representative comparison: Same-name exact printings, foil/nonfoil separation, partial card/set/context terms, transaction audit notes, and thesis text across all five result categories.
+- Why not selected: A small native index provides deterministic accent/punctuation normalization, all-term matching, exact finish-token handling, category limits, and exact route focus without adding dependency or fuzzy-ranking behavior that the acceptance cases did not need.
+- Current benefit of the native path: The app shell now searches all saved ManaSpec domains while Radar retains the separate Scryfall search for discovering new cards. Results expose category, source context, printing identity, and exact navigation.
+- Bundle comparison: Checkpoint 2's Pages output was 570.48 KB JavaScript (158.67 KB gzip) plus 126.02 KB CSS (20.17 KB gzip). The completed native-search checkpoint is 577.85 KB JavaScript (160.96 KB gzip) plus 127.52 KB CSS (20.40 KB gzip), with no manifest or lockfile change.
+- Maintenance/update cost: The native matcher is covered by focused pure tests and has no package update surface. Reconsider Fuse.js only if measured user data shows meaningful misspelling, ranking, or scale failures that the deterministic matcher cannot address clearly.
+- Offline/portable impact: No runtime network, CDN, or new dependency. Normal, Pages-subpath, and portable builds remain self-contained.
+- Decision or ADR link: [DECISIONS](DECISIONS.md#unified-local-search-uses-native-deterministic-matching).
 
 ## Selection Rules
 

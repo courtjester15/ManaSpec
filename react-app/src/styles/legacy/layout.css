@@ -86,8 +86,8 @@ App shell, header, workbar, summary, and view headings.
 }
 
 .toolbar-tab,
-.global-search-bar input,
-.global-search-bar button {
+.global-search-bar > input,
+.global-search-bar > #universalSearchButton {
   height: 38px;
   margin: 0;
 }
@@ -95,7 +95,7 @@ App shell, header, workbar, summary, and view headings.
 .global-search-bar {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(180px, 300px) max-content;
+  grid-template-columns: minmax(240px, 280px) max-content;
   align-items: center;
   gap: 8px;
   width: fit-content;
@@ -107,10 +107,11 @@ App shell, header, workbar, summary, and view headings.
   display: none;
   position: absolute;
   top: calc(100% + 4px);
-  left: 0;
+  right: 0;
+  left: auto;
   z-index: 40;
-  width: min(300px, calc(100vw - 24px));
-  max-height: 220px;
+  width: min(520px, calc(100vw - 24px));
+  max-height: min(480px, calc(100vh - 170px));
   overflow-y: auto;
   padding: 4px;
   border: 1px solid var(--border);
@@ -119,12 +120,13 @@ App shell, header, workbar, summary, and view headings.
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
-.universal-search-results.show {
+.universal-search-results.show,
+.universal-search-group {
   display: grid;
   gap: 3px;
 }
 
-.universal-search-results button {
+.universal-search-group > button {
   width: 100%;
   height: auto;
   min-height: 26px;
@@ -137,17 +139,106 @@ App shell, header, workbar, summary, and view headings.
   text-align: left;
 }
 
-.universal-search-results button:hover {
+.universal-search-group > button:hover,
+.universal-search-group > button:focus-visible,
+.universal-search-group > button.active {
   background: var(--row-hover);
   color: var(--text-strong);
 }
 
-.global-search-bar button {
+.universal-search-group + .universal-search-group {
+  margin-top: 3px;
+  padding-top: 5px;
+  border-top: 1px solid var(--border);
+}
+
+.universal-search-group > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 7px;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.universal-search-group > header span {
+  font-family: var(--font-mono);
+}
+
+.universal-search-group > button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 2px 8px;
+  min-height: 42px;
+}
+
+.universal-search-result-main {
+  display: grid;
+  min-width: 0;
+}
+
+.universal-search-result-main strong,
+.universal-search-result-main small,
+.universal-search-context {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.universal-search-result-main strong {
+  color: var(--text-strong);
+  font-size: 12px;
+}
+
+.universal-search-result-main small,
+.universal-search-context {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.universal-search-source {
+  align-self: start;
+  padding: 2px 5px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 9px;
+}
+
+.universal-search-context {
+  grid-column: 1 / -1;
+}
+
+.universal-search-empty {
+  display: grid;
+  gap: 3px;
+  padding: 12px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.universal-search-empty strong {
+  color: var(--text-strong);
+}
+
+.global-search-bar > #universalSearchButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
   padding: 0 12px;
+}
+
+@media (min-width: 1600px) {
+  .global-search-bar {
+    grid-template-columns: minmax(300px, 420px) max-content;
+  }
+
+  .universal-search-results {
+    width: 560px;
+  }
 }
 
 #summaryBar {

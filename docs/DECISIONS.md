@@ -191,7 +191,15 @@ The shared React table wrapper and native/shared dialogs established a controlla
 
 The migration is intentionally staged. First, establish a recognizable end-to-end React implementation without changing several infrastructure variables at once. Second, compare the most useful candidate libraries against real ManaSpec workflows and adopt them only where they reduce custom code or improve capability without weakening the product contract.
 
-The shared table system and Chart.js Price History comparison are complete. Fuse.js and Day.js remain feature-triggered evaluations; their decision order and evidence belong in [LIBRARIES](LIBRARIES.md).
+The shared table system, Chart.js Price History, and unified local-search comparisons are complete. Fuse.js was not adopted because the native deterministic index met the current workflow contract; Day.js remains a feature-triggered evaluation. Evidence belongs in [LIBRARIES](LIBRARIES.md).
+
+### Unified local search uses native deterministic matching
+
+The React app shell searches saved ManaSpec Positions, Radar, Transactions, History events, card notes, and thesis notes through one local index. Results remain categorized and source-labeled, expose exact printing and finish context, and navigate to a focused record or detail panel. Radar's Scryfall search remains a separate network-backed workflow for finding new cards; the global search does not silently change domains.
+
+The current matcher normalizes case, accents, and punctuation, supports partial and all-term queries, treats `foil`, `nonfoil`, and `etched` as exact finish tokens, caps each category, and applies stable category/result ordering. Exact printing identity and route focus matter more than opaque fuzzy rank for the representative same-name, note, transaction, and history cases.
+
+Fuse.js 7.4.2 was compared and not adopted for this scope because it added dependency and ranking behavior without improving the acceptance cases. Reconsider it only if measured local collections show meaningful misspelling, relevance, or scale failures that cannot be resolved without growing a custom search engine. The comparison and bundle evidence are recorded in [LIBRARIES](LIBRARIES.md#fusejs-742).
 
 ### Tabulator is the shared React table engine behind a ManaSpec wrapper
 
