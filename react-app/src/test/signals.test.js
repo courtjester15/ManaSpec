@@ -77,3 +77,33 @@ test("Dashboard totals and queues use the same derived signal membership", () =>
   assert.deepEqual(dashboard.queues.holdDue.map(row => row.id), ["position-no-plan"]);
   assert.deepEqual(dashboard.queues.missingPlans.map(row => row.id), ["radar-no-plan", "position-no-plan"]);
 });
+
+test("sealed assets reuse target and stale-check signals without invented price", () => {
+  const sealed = {
+    id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    assetType: "sealed",
+    assetKey: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    mtgjson_uuid: "d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    name: "Bloomburrow Play Booster Box",
+    set_code: "BLB",
+    category: "booster_box",
+    qty: 1,
+    buyPrice: 100,
+    buyDate: "2026-01-01T00:00:00.000Z",
+    currentPrice: 150,
+    exitTarget: 140,
+    holdTime: "12",
+  };
+  const sealedRows = deriveSignalRows({ ...signalFixtureState, sealedSpecs: [sealed], sealedRadar: [], sealedTransactions: [] }, { now: SIGNAL_NOW });
+  const row = sealedRows.find(item => item.id === sealed.id);
+  assert.equal(row.status, "Exit hit");
+  assert.ok(row.buckets.includes("targetsHit"));
+  assert.ok(row.buckets.includes("staleChecks"));
+  assert.deepEqual(getSignalSourceNavigation(row), { pathname: "/positions", search: `?focus=${encodeURIComponent(sealed.id)}` });
+
+  const unpricedRows = deriveSignalRows({ ...signalFixtureState, sealedRadar: [{ ...sealed, qty: undefined, buyDate: undefined, currentPrice: null, entryTarget: 100 }], sealedSpecs: [] }, { now: SIGNAL_NOW });
+  const unpriced = unpricedRows.find(item => item.id === sealed.id);
+  assert.equal(unpriced.targetState, "none");
+  assert.equal(unpriced.currentPrice, 0);
+  assert.equal(unpriced.status, "Market check");
+});

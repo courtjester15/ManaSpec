@@ -50,6 +50,8 @@ export function buildPositionRow(spec, options = {}) {
 
   return {
     id: sourceRecord.id || trackedPrintingKey,
+    assetType: "single",
+    assetKey: getAssetKey(sourceRecord),
     trackedPrintingKey: trackedPrintingKey || null,
     name: sourceRecord.name,
     setCode: sourceRecord.set_code,
@@ -81,8 +83,69 @@ export function buildPositionRow(spec, options = {}) {
   };
 }
 
+export function buildSealedPositionRow(spec, options = {}) {
+  const sourceRecord = spec && typeof spec === "object" ? spec : {};
+  const quantity = positiveOrNull(sourceRecord.qty);
+  const averageBuyPrice = positiveOrNull(sourceRecord.buyPrice);
+  const acquiredAt = validDateOrNull(sourceRecord.buyDate);
+  const currentPrice = finiteOrNull(sourceRecord.currentPrice);
+  const assetKey = getAssetKey(sourceRecord);
+  const exactAssetIdentity = Boolean(assetKey && assetKey === sourceRecord.assetKey && assetKey.startsWith("sealed:"));
+  const issues = [];
+  if (!exactAssetIdentity) issues.push("invalid_asset_identity");
+  if (quantity === null) issues.push("invalid_quantity");
+  if (averageBuyPrice === null) issues.push("invalid_buy_price");
+  if (acquiredAt === null) issues.push("invalid_buy_date");
+  const currentPriceValid = currentPrice !== null && currentPrice > 0;
+  if (!currentPriceValid) issues.push("invalid_current_price");
+  const requiredIssues = issues.filter(issue => issue !== "invalid_current_price");
+
+  return {
+    id: sourceRecord.id || assetKey,
+    assetType: "sealed",
+    assetKey,
+    trackedPrintingKey: null,
+    name: sourceRecord.name,
+    setCode: sourceRecord.set_code,
+    set_code: sourceRecord.set_code,
+    set_name: sourceRecord.set_name,
+    collectorNumber: null,
+    collector_number: null,
+    finish: null,
+    foil: null,
+    category: sourceRecord.category,
+    subtype: sourceRecord.subtype,
+    productType: sourceRecord.productType || sourceRecord.category,
+    quantity,
+    averageBuyPrice,
+    acquiredAt,
+    currentPrice,
+    priceUpdatedAt: sourceRecord.priceUpdatedAt,
+    valuationSource: sourceRecord.valuationSource,
+    exitTarget: sourceRecord.exitTarget,
+    holdTime: sourceRecord.holdTime,
+    notesCount: Number(options.notesCount || 0),
+    historyCount: Number(options.historyCount || 0),
+    validation: {
+      type: "position",
+      valid: requiredIssues.length === 0,
+      calculationEligible: requiredIssues.length === 0 && currentPriceValid,
+      issues,
+      requiredIssues,
+    },
+    sourceRecord,
+  };
+}
+
 export function selectPositionRows(specs = [], options = {}) {
   return specs.map(spec => buildPositionRow(spec, {
+    notesCount: options.getNotesCount?.(spec) || 0,
+    historyCount: options.getHistoryCount?.(spec) || 0,
+  }));
+}
+
+export function selectSealedPositionRows(specs = [], options = {}) {
+  return specs.map(spec => buildSealedPositionRow(spec, {
     notesCount: options.getNotesCount?.(spec) || 0,
     historyCount: options.getHistoryCount?.(spec) || 0,
   }));
@@ -94,7 +157,7 @@ export function filterPositionRows(rows = [], options = {}) {
   return rows.filter(row => {
     if (focusId && row.id !== focusId) return false;
     if (!query) return true;
-    return [row.name, row.set_code, row.set_name, row.collector_number]
+    return [row.name, row.set_code, row.set_name, row.collector_number, row.productType, row.assetType]
       .join(" ")
       .toLowerCase()
       .includes(query);
@@ -102,7 +165,10 @@ export function filterPositionRows(rows = [], options = {}) {
 }
 
 export function calculatePortfolioSummary(specs = [], cash = 0, options = {}) {
-  const rows = specs.map(spec => isCanonicalPositionRow(spec) ? spec : buildPositionRow(spec));
+  const rows = [
+    ...specs.map(spec => isCanonicalPositionRow(spec) ? spec : buildPositionRow(spec)),
+    ...(options.sealedSpecs || []).map(spec => isCanonicalPositionRow(spec) ? spec : buildSealedPositionRow(spec)),
+  ];
   const open = rows.filter(row => row.validation.valid);
   const priced = open.filter(row => row.validation.calculationEligible);
   const invested = open.reduce((total, row) => total + row.averageBuyPrice * row.quantity, 0);
@@ -121,13 +187,16 @@ export function calculatePortfolioSummary(specs = [], cash = 0, options = {}) {
       id: outcome.row.id,
       name: outcome.row.name,
       trackedPrintingKey: outcome.row.trackedPrintingKey,
+      assetKey: outcome.row.assetKey,
+      assetType: outcome.row.assetType,
       value: outcome.value,
       sharePercent: value > 0 ? (outcome.value / value) * 100 : 0,
     }));
-  const sellTransactions = (options.transactions || []).filter(transaction => String(transaction?.type || "").toUpperCase() === "SELL");
+  const sellTransactions = [...(options.transactions || []), ...(options.sealedTransactions || [])]
+    .filter(transaction => String(transaction?.type || "").toUpperCase() === "SELL");
   const realizedTransactions = sellTransactions.filter(transaction => finiteOrNull(transaction.realizedPL) !== null);
   const realizedProfitLoss = realizedTransactions.reduce((total, transaction) => total + finite(transaction.realizedPL), 0);
-  const radarPlans = (options.radar || []).map(item => ({
+  const radarPlans = [...(options.radar || []), ...(options.sealedRadar || [])].map(item => ({
     quantity: positiveOrNull(item?.plannedQty ?? item?.targetQty),
     entryTarget: positiveOrNull(item?.entryTarget),
   }));
@@ -174,3 +243,4 @@ export function formatPriceRefreshStatus(status) {
   if (Number.isNaN(date.getTime())) return "Prices: last check time unavailable";
   return `Prices checked ${date.toLocaleString()} (${finite(status.updatedCount)} cards)`;
 }
+import { getAssetKey } from "./assetIdentity.js";

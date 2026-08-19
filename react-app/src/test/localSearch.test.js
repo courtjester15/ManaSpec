@@ -118,3 +118,35 @@ test("short and missing queries do not expose the local index", () => {
   assert.deepEqual(searchLocalState(state, "t"), []);
   assert.deepEqual(searchLocalState(state, ""), []);
 });
+
+test("sealed assets join saved-data search and History with exact destinations", () => {
+  const sealed = {
+    id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    assetType: "sealed",
+    assetKey: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    mtgjson_uuid: "d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    name: "Bloomburrow Play Booster Box",
+    set_code: "BLB",
+    set_name: "Bloomburrow",
+    category: "booster_box",
+    productType: "booster_box",
+    qty: 1,
+    currentPrice: 135,
+    addedDate: "2026-08-18T00:00:00.000Z",
+  };
+  const sealedTransaction = { ...sealed, id: "sealed-buy", type: "BUY", quantity: 1, price: 110, date: "2026-08-18T01:00:00.000Z" };
+  const sealedState = {
+    ...state,
+    sealedSpecs: [sealed],
+    sealedRadar: [sealed],
+    sealedTransactions: [sealedTransaction],
+    cardNotes: [...state.cardNotes, { id: "sealed-note", assetType: "sealed", assetKey: sealed.assetKey, cardName: sealed.name, text: "Keep sealed", createdAt: "2026-08-18T02:00:00.000Z" }],
+  };
+  const results = searchLocalState(sealedState, "bloomburrow booster", { perCategory: 10 });
+  assert.ok(results.some(result => result.category === "Positions" && result.exactAssetKey === sealed.assetKey));
+  assert.ok(results.some(result => result.category === "Radar" && result.exactAssetKey === sealed.assetKey));
+  assert.ok(results.some(result => result.category === "Transactions" && result.exactAssetKey === sealed.assetKey));
+  assert.ok(results.some(result => result.category === "History" && result.exactAssetKey === sealed.assetKey));
+  assert.ok(results.some(result => result.category === "Notes" && result.exactAssetKey === sealed.assetKey));
+  assert.deepEqual(results.find(result => result.category === "Positions").destination, { pathname: "/positions", search: `?focus=${encodeURIComponent(sealed.id)}&detail=1` });
+});

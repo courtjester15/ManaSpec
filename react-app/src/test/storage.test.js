@@ -22,14 +22,50 @@ test("legacy version-one backup remains accepted", async () => {
   const backup = await fixture("legacy-unversioned-v1.json");
   const result = normalizeBackup(backup);
   assert.equal(result.ok, true);
-  assert.equal(result.backup.dataSchemaVersion, 1);
+  assert.equal(result.backup.dataSchemaVersion, 2);
+  assert.deepEqual(result.backup.data.sealedSpecs, []);
+  assert.deepEqual(result.backup.data.sealedRadar, []);
+  assert.deepEqual(result.backup.data.sealedTransactions, []);
 });
 
 test("future data schema is rejected before restore", async () => {
-  const backup = await fixture("future-v2-rejected.json");
+  const backup = await fixture("future-v3-rejected.json");
   const result = normalizeBackup(backup);
   assert.equal(result.ok, false);
   assert.match(result.message, /unsupported ManaSpec data schema version/);
+});
+
+test("sealed state loads, saves, and round-trips through schema version two backups", () => {
+  const sealed = {
+    id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    assetType: "sealed",
+    assetKey: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    mtgjson_uuid: "d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    name: "Bloomburrow Play Booster Box",
+    set_code: "BLB",
+    qty: 1,
+    buyPrice: 120,
+    currentPrice: 135,
+  };
+  const sealedTransaction = { ...sealed, id: "sealed-buy-1", type: "BUY", quantity: 1, price: 120, date: "2026-08-18T00:00:00.000Z" };
+  const storage = memoryStorage({ sealedSpecs: JSON.stringify([sealed]), sealedTransactions: JSON.stringify([sealedTransaction]) });
+  const adapter = createStorageAdapter(storage);
+  const state = adapter.loadState();
+  assert.equal(state.sealedSpecs[0].assetKey, sealed.assetKey);
+  assert.equal(state.sealedSpecs[0].scryfall_id, undefined);
+  assert.equal(state.sealedTransactions[0].id, "sealed-buy-1");
+
+  const backup = adapter.createBackup(state);
+  assert.equal(backup.dataSchemaVersion, 2);
+  assert.equal(backup.counts.sealedPositions, 1);
+  assert.deepEqual(backup.data.sealedSpecs[0], state.sealedSpecs[0]);
+
+  const restoredStorage = memoryStorage();
+  const restoredAdapter = createStorageAdapter(restoredStorage);
+  const restored = restoredAdapter.restoreBackup(backup);
+  assert.equal(restored.sealedSpecs[0].assetKey, sealed.assetKey);
+  assert.equal(restored.sealedTransactions[0].id, "sealed-buy-1");
+  assert.equal(JSON.parse(restoredStorage.getItem("sealedSpecs"))[0].name, sealed.name);
 });
 
 test("adapter loads current backup records with normalized printing identity", async () => {

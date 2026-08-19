@@ -1,0 +1,21 @@
+{
+  "app": "ManaSpec",
+  "schema": "manaspec-localstorage-backup",
+  "schemaVersion": 1,
+  "dataSchemaVersion": 3,
+  "data": {
+    "specs": [],
+    "radar": [],
+    "transactions": [],
+    "cardNotes": [],
+    "thesisNotes": [],
+    "signals": [],
+    "priceSnapshots": [],
+    "marketObservations": [],
+    "sealedSpecs": [],
+    "sealedRadar": [],
+    "sealedTransactions": [],
+    "cash": 10000,
+    "priceRefreshStatus": {}
+  }
+}

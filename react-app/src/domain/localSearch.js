@@ -1,5 +1,6 @@
 import { formatMoney } from "./portfolio.js";
-import { getRelatedRecordPrintingKey, resolveTrackedPrinting } from "./relatedRecords.js";
+import { assetContextLabel, assetTypeLabel, getAssetKey } from "./assetIdentity.js";
+import { getRelatedRecordPrintingKey, resolveTrackedAsset } from "./relatedRecords.js";
 
 export const LOCAL_SEARCH_CATEGORIES = Object.freeze([
   "Positions",
@@ -36,6 +37,7 @@ function finishLabel(record = {}) {
 }
 
 function printingLabel(record = {}) {
+  if (record.assetType === "sealed" || String(record.assetKey || "").startsWith("sealed:")) return assetContextLabel(record);
   const setCode = clean(record.set_code ?? record.set).toUpperCase() || "Set unknown";
   const collectorNumber = clean(record.collector_number);
   return `${setCode}${collectorNumber ? ` #${collectorNumber}` : ""} · ${finishLabel(record)}`;
@@ -55,7 +57,7 @@ function navigation(pathname, params = {}) {
   return { pathname, search: search ? `?${search}` : "" };
 }
 
-function result({ category, id, primary, secondary, context, record, fields, destination, exactPrintingKey = null }) {
+function result({ category, id, primary, secondary, context, record, fields, destination, exactPrintingKey = null, exactAssetKey = null }) {
   return {
     category,
     id: `${category.toLowerCase()}:${id}`,
@@ -65,19 +67,20 @@ function result({ category, id, primary, secondary, context, record, fields, des
     record,
     destination,
     exactPrintingKey,
+    exactAssetKey,
     searchText: normalizeLocalSearchText([primary, secondary, context, ...fields].join(" ")),
   };
 }
 
 export function buildHistoryEvents(state = {}) {
   return [
-    ...array(state.transactions).map(transaction => ({
+    ...[...array(state.transactions), ...array(state.sealedTransactions)].map(transaction => ({
       ...transaction,
       kind: "transaction",
       eventType: clean(transaction.type).toUpperCase() || "TRADE",
       summary: `${clean(transaction.type).toUpperCase() === "BUY" ? "Bought" : "Sold"} ${transaction.quantity ?? "?"} at ${formatMoney(transaction.price)}${Number.isFinite(Number(transaction.balanceAfter)) ? ` / Balance ${formatMoney(transaction.balanceAfter)}` : ""}`,
     })),
-    ...array(state.radar)
+    ...[...array(state.radar), ...array(state.sealedRadar)]
       .filter(item => item.addedDate || item.createdAt)
       .map(item => ({
         ...item,
@@ -96,6 +99,16 @@ export function buildHistoryEvents(state = {}) {
       date: note.updatedAt || note.createdAt,
       eventType: "NOTE",
       summary: note.text,
+    })),
+    ...array(state.marketObservations).map(observation => ({
+      ...observation,
+      id: `market-${observation.id}`,
+      kind: "market",
+      name: observation.name || observation.cardName,
+      date: observation.checkedAt,
+      price: observation.marketPrice,
+      eventType: "VALUE",
+      summary: `Manual market check at ${formatMoney(observation.marketPrice)}${observation.currentSellers ? ` / ${observation.currentSellers} sellers` : ""}`,
     })),
     ...array(state.thesisNotes).map(note => ({
       ...note,
@@ -120,9 +133,10 @@ function trackedResults(category, rows) {
       ? `${item.qty ?? "?"} owned · ${item.currentPrice ? formatMoney(item.currentPrice) : "Price unavailable"}`
       : `${item.plannedQty || 1} planned · ${item.currentPrice ? formatMoney(item.currentPrice) : "Price unavailable"}`,
     record: item,
-    fields: [item.set_name, item.type_line, item.oracle_text, item.artist, item.notes, item.holdTime],
+    fields: [assetTypeLabel(item), item.set_name, item.type_line, item.oracle_text, item.artist, item.productType, item.category, item.subtype, item.notes, item.holdTime],
     destination: navigation(pathname, { focus: item.id, detail: "1" }),
     exactPrintingKey: getRelatedRecordPrintingKey(item),
+    exactAssetKey: getAssetKey(item),
   }));
 }
 
@@ -134,9 +148,10 @@ function transactionResults(transactions) {
     secondary: `${clean(transaction.type).toUpperCase() || "Transaction"} · ${printingLabel(transaction)}`,
     context: `${displayDate(transaction.date)} · ${transaction.quantity ?? "?"} at ${formatMoney(transaction.price)}`,
     record: transaction,
-    fields: [transaction.set_name, transaction.notes, transaction.realizedPL, transaction.balanceAfter],
+    fields: [assetTypeLabel(transaction), transaction.set_name, transaction.productType, transaction.category, transaction.notes, transaction.realizedPL, transaction.balanceAfter],
     destination: navigation("/transactions", { focus: transaction.id }),
     exactPrintingKey: getRelatedRecordPrintingKey(transaction),
+    exactAssetKey: getAssetKey(transaction),
   }));
 }
 
@@ -148,25 +163,26 @@ function historyResults(state) {
     secondary: `${event.eventType} · ${printingLabel(event)}`,
     context: `${displayDate(event.date)} · ${event.summary}`,
     record: event,
-    fields: [event.set_name, event.notes, event.kind],
+    fields: [assetTypeLabel(event), event.set_name, event.productType, event.category, event.notes, event.kind],
     destination: navigation("/history", { focus: event.id }),
     exactPrintingKey: getRelatedRecordPrintingKey(event),
+    exactAssetKey: getAssetKey(event),
   }));
 }
 
 function noteResults(state) {
-  const specs = array(state.specs);
-  const radar = array(state.radar);
+  const specs = [...array(state.specs), ...array(state.sealedSpecs)];
+  const radar = [...array(state.radar), ...array(state.sealedRadar)];
   const tracked = [...specs, ...radar];
   const notes = [
     ...array(state.cardNotes).map(note => ({ note, eventId: `note-${note.id}`, kindLabel: "Card note" })),
     ...array(state.thesisNotes).map(note => ({ note, eventId: `thesis-${note.id}`, kindLabel: "Thesis" })),
   ];
   return notes.map(({ note, eventId, kindLabel }, index) => {
-    const trackedItem = resolveTrackedPrinting(note, tracked);
-    const trackedKey = getRelatedRecordPrintingKey(trackedItem);
-    const position = trackedKey && specs.find(item => getRelatedRecordPrintingKey(item) === trackedKey);
-    const watched = trackedKey && radar.find(item => getRelatedRecordPrintingKey(item) === trackedKey);
+    const trackedItem = resolveTrackedAsset(note, tracked);
+    const trackedKey = getAssetKey(trackedItem);
+    const position = trackedKey && specs.find(item => getAssetKey(item) === trackedKey);
+    const watched = trackedKey && radar.find(item => getAssetKey(item) === trackedKey);
     const destination = position
       ? navigation("/positions", { focus: position.id, detail: "notes" })
       : watched
@@ -182,16 +198,17 @@ function noteResults(state) {
       record: note,
       fields: [note.set_code, note.collector_number, note.tags, note.status],
       destination,
-      exactPrintingKey: trackedKey || getRelatedRecordPrintingKey(note),
+      exactPrintingKey: getRelatedRecordPrintingKey(note),
+      exactAssetKey: trackedKey || getAssetKey(note),
     });
   });
 }
 
 export function buildLocalSearchIndex(state = {}) {
   return [
-    ...trackedResults("Positions", state.specs),
-    ...trackedResults("Radar", state.radar),
-    ...transactionResults(state.transactions),
+    ...trackedResults("Positions", [...array(state.specs), ...array(state.sealedSpecs)]),
+    ...trackedResults("Radar", [...array(state.radar), ...array(state.sealedRadar)]),
+    ...transactionResults([...array(state.transactions), ...array(state.sealedTransactions)]),
     ...historyResults(state),
     ...noteResults(state),
   ];

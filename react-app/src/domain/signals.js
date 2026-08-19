@@ -1,4 +1,5 @@
-import { getRelatedRecordsForPrinting } from "./relatedRecords.js";
+import { assetTypeLabel, getExternalMarketUrl } from "./assetIdentity.js";
+import { getRelatedRecordsForAsset } from "./relatedRecords.js";
 
 const DAY_MS = 86_400_000;
 const SIGNAL_TILE_ROW_LIMIT = 3;
@@ -87,8 +88,8 @@ function getPriceAgeDays(item, now) {
 }
 
 function getMarketState(item, observations, trackedItems, now) {
-  const observation = getRelatedRecordsForPrinting(observations, item, trackedItems)
-    .filter(row => !row.source || row.source === "tcgplayer")
+  const observation = getRelatedRecordsForAsset(observations, item, trackedItems)
+    .filter(row => !row.source || String(row.source).startsWith("tcgplayer"))
     .sort((a, b) => new Date(b.checkedAt || 0) - new Date(a.checkedAt || 0))[0];
   const checkedAt = observation?.checkedAt ? new Date(observation.checkedAt) : null;
   const ageDays = checkedAt && !Number.isNaN(checkedAt.getTime())
@@ -256,8 +257,8 @@ function buildSignalRow(item, observations, trackedItems, now) {
 
 export function deriveSignalRows(state, options = {}) {
   const now = options.now === undefined ? Date.now() : new Date(options.now).getTime();
-  const specs = Array.isArray(state.specs) ? state.specs : [];
-  const radar = Array.isArray(state.radar) ? state.radar : [];
+  const specs = [...(Array.isArray(state.specs) ? state.specs : []), ...(Array.isArray(state.sealedSpecs) ? state.sealedSpecs : [])];
+  const radar = [...(Array.isArray(state.radar) ? state.radar : []), ...(Array.isArray(state.sealedRadar) ? state.sealedRadar : [])];
   const observations = Array.isArray(state.marketObservations) ? state.marketObservations : [];
   const trackedItems = [...specs, ...radar];
   const items = [
@@ -304,7 +305,7 @@ export function filterSignalRows(rows, filters = {}) {
   return sourceRows.filter(row => {
     if (filters.printingId && row.id !== filters.printingId) return false;
     if (!query) return true;
-    return [row.name, row.set_code, row.collector_number, row.status, row.actionLabel, row.reasonLabel, row.sourceLabel]
+    return [row.name, row.set_code, row.collector_number, row.productType, assetTypeLabel(row), row.status, row.actionLabel, row.reasonLabel, row.sourceLabel]
       .join(" ")
       .toLowerCase()
       .includes(query);
@@ -319,6 +320,7 @@ export function getSignalSourceNavigation(row) {
 }
 
 export function getSignalScryfallUrl(row) {
+  if (row.assetType === "sealed") return getExternalMarketUrl(row);
   const id = String(row.scryfall_id || row.id || "").replace(/\|.*$/, "");
   return `https://scryfall.com/card/${encodeURIComponent(id)}`;
 }
