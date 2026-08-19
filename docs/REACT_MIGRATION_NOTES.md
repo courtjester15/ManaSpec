@@ -8,12 +8,13 @@ Vanilla remains the behavioral and production/beta source of truth until an expl
 
 ## Current Implementation Status
 
-- The seven primary routes, shared shell, compatibility-backed local state, normal build, tracked Pages artifact, and stable portable build are implemented.
+- The seven primary routes, shared shell, compatibility-backed local state, normal build, tracked Pages artifact, and stable portable build are implemented. Issue #16 adds a real sealed-product workflow across the existing route surface without promoting React to canonical status.
 - The UI has completed broad parity plus focused table and Card Detail corrections; the user's current directional assessment is roughly 80-90% familiar, not a declaration of full parity.
 - The shared Tabulator foundation is implemented across Radar, Positions, Signals, Transactions, and History. It centralizes lifecycle, compact geometry, pagination, sort accessibility, indicators, actions, and responsive table behavior while routes retain their filters, columns, editors, navigation, and workflows. The interim `DataTable` has been removed after its final consumers migrated.
 - React Parity Batches 1 and 2 close the audit's C1/C2 data-trust and H1/H2 Signals findings. Issue #6 establishes canonical runtime Position rows and reconciliation-safe portfolio math. Issue #15 adds an eight-metric Portfolio Summary, Chart.js Price History V2, native unified saved-data search, and a route-by-route UI/accessibility polish sweep.
 - All five dense routes use the shared Tabulator boundary. Chart.js is adopted only for Price History; the native local index won its Fuse.js comparison. Remaining work is release evidence and promotion control, not another broad migration phase.
 - React may make small correctness and consistency improvements, but vanilla defines expected behavior wherever the implementations disagree until promotion.
+- The user explicitly authorized sealed as a forward React feature despite the earlier parity-era deferral. Vanilla remains the singles compatibility oracle; sealed behavior is owned by the Issue #16 brief, current active docs, and React tests.
 
 ### Alpha-readiness recommendation
 
@@ -133,11 +134,13 @@ The React app initially recognizes the current ManaSpec keys and records, includ
 - `priceRefreshStatus`;
 - `marketObservations`;
 - current UI preference keys included by the active storage/backup documentation.
+- additive `sealedSpecs`, `sealedRadar`, and `sealedTransactions` arrays introduced by data schema v2.
 
 Rules:
 
 - Read existing data without requiring manual conversion.
 - Preserve exact printing and finish identity.
+- Preserve exact MTGJSON product UUID identity for sealed records and never synthesize Scryfall identity.
 - Preserve unknown fields through normal compatible edits where current adapters do so.
 - Do not perform destructive startup migrations.
 - Keep data schema and backup-envelope schema versions distinct.

@@ -47,6 +47,7 @@ react-app/src/
 |-- services/        # Scryfall, storage, backup, external-link boundaries
 |-- persistence/     # keys, adapters, normalization, migrations
 |-- domain/          # pure calculations, identity, projections, validation
+|-- data/            # generated, trimmed MTGJSON sealed catalog
 |-- styles/          # tokens, layout, forms, components, tables, responsive rules
 |-- assets/          # bundled images and fonts owned by the React app
 |-- test/            # focused compatibility, trading, and portable-build tests
@@ -91,6 +92,8 @@ The persistence layer is the highest-risk architectural boundary.
 - React-written records must remain readable by vanilla unless an explicitly approved, reversible migration says otherwise.
 - One shared domain resolver owns related-record identity for notes, price snapshots, market observations, transactions, History events, Dashboard notes, and Card Detail routing. Exact Scryfall printing UUID plus finish wins; a legacy base-ID, set/collector, or name fallback resolves only when one tracked printing is possible.
 - Position deletion calls the shared vanilla-derived ledger projection guard before any write and refuses to orphan an open transaction projection.
+- Data schema v2 adds `sealedSpecs`, `sealedRadar`, and `sealedTransactions` without renaming or rewriting the singles keys. Version-one backups migrate to empty sealed arrays; future versions fail closed.
+- Shared asset identity is `single:<scryfall uuid>|<finish>` or `sealed:<mtgjson uuid>`. Sealed records never receive synthetic Scryfall fields, and related notes/observations resolve only through the exact asset key.
 
 The deployed vanilla root and React subpath share the same web origin and therefore the same localStorage namespace. That makes compatibility testing mandatory: a write in the spike can affect the root application. Before first live-spike use, export a backup and validate cross-opening in both implementations.
 
@@ -110,6 +113,8 @@ The preferred flow is explicit and one-directional:
 Signals derivation is owned by `react-app/src/domain/signals.js`. Signals and Dashboard consume the same ordered rows, bucket membership, reasons, priorities, action state, and queue selector. Market freshness resolves through the exact-printing compatibility boundary. Signals source actions pass a tracked row ID in the route query so Radar or Positions can narrow to that exact printing without changing stored data or creating a second filter system.
 
 Scryfall and external links remain services, not component-owned fetch code. Network failure must not make locally stored user data unavailable.
+
+Sealed discovery uses a deterministic catalog generated from MTGJSON `SetList.json`. Normal and Pages output lazy-load the catalog; portable output inlines it. MTGJSON product UUID and TCGplayer product ID/link provide identity and external lookup. The verified card-price artifact does not cover sealed UUIDs, so product state begins unpriced and only a timestamped manual market check may establish current sealed value. Buying an unpriced product does not copy cost basis into current value.
 
 ## UI And Responsive Foundation
 
@@ -161,6 +166,7 @@ Normal `dist/` output is reproducible and ignored. The portable output is delibe
 - Virtualize only lists large enough to benefit.
 - Avoid broad shared-state subscriptions.
 - Analyze normal and portable bundle sizes before parity sign-off.
+- Keep the large sealed catalog outside the normal initial chunk and record its generated source version/date.
 - Prefer measurable improvements over speculative infrastructure.
 
 ## Error Handling

@@ -57,6 +57,8 @@ npm run test:browser     # if browser automation is adopted
 npm run analyze          # if bundle analysis is adopted
 ```
 
+`build:pages` now refreshes the tracked `react-spike/` directory from the successful Pages-mode `dist/` output through `tools/sync-pages.mjs`; the sync script validates the exact target before replacement so stale hashed assets do not accumulate.
+
 Run commands from `react-app/`. Dex uses the developer workflow; users opening the committed artifact do not.
 
 ## Open ManaSpec Locally Without npm
@@ -72,6 +74,7 @@ The portable directory must already contain its JavaScript, CSS, and other requi
 Known constraints to document and test:
 
 - Scryfall search and price refresh still require internet access.
+- Sealed catalog search is bundled into normal/Pages output as a lazy product-catalog chunk and into the portable script. Exact TCGplayer product links still require internet access.
 - Browser `file://` localStorage behavior is implementation-dependent and does not share the GitHub Pages origin.
 - A local portable copy will not automatically see data stored at the live Pages URL. Use Admin backup/export and restore/import to move data between origins.
 - Some browsers apply stricter local-file restrictions than others. The build should remove avoidable module/CORS issues, and the validated browser list should be recorded after testing.

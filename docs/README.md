@@ -76,14 +76,14 @@ ManaSpec is not a collection tracker, inventory nostalgia tool, prediction engin
 ManaSpec currently has two maintained frontend implementations over the same product and storage contracts:
 
 - The vanilla HTML/CSS/JavaScript application at the repository root remains the production/beta and behavioral source of truth.
-- The React 19 + Vite 8 application under `react-app/` has completed Issue #15 expansion and parity checkpoints and is an alpha-readiness candidate, not yet the canonical frontend.
+- The React 19 + Vite 8 application under `react-app/` has completed Issue #15 expansion/parity checkpoints and Issue #16's sealed-product vertical slice. It is an alpha-readiness candidate, not yet the canonical frontend.
 - React Router provides hash-safe workflow routes for development, the portable build, and the `/ManaSpec/react-spike/` Pages artifact.
-- Both implementations use Scryfall for card identity, printings, and pricing snapshots and use compatible localStorage records with no backend.
+- Both implementations use Scryfall for single-card identity, printings, and pricing snapshots and use compatible localStorage records with no backend. React additionally bundles a generated MTGJSON sealed-product catalog; sealed values are timestamped manual market checks because the verified official MTGJSON price feed is card-only.
 - Vanilla uses ManaSpec-native table rendering through `js/ui/table.js`; React uses Tabulator 6.5.2 behind one ManaSpec-owned wrapper across all five dense routes and Chart.js 4.5.1 only for Price History.
 
 React is now the likely forward implementation path because it has demonstrated the full application shape and improves maintainability. That direction is not a production cutover: vanilla remains the parity oracle and authoritative deployed behavior until a separate promotion decision is recorded.
 
-ManaSpec is local-first for user state, but it is not offline-only. Scryfall-backed search, printing data, and price refresh require network access.
+ManaSpec is local-first for user state, but it is not offline-only. Scryfall-backed single search and price refresh require network access. React sealed discovery uses the bundled catalog, while exact TCGplayer product links require network access.
 
 ## CSS Structure
 
@@ -117,16 +117,16 @@ For internal build structure, boot flow, module ownership, rendering flow, stora
 
 Terminology:
 
-- Use cards or printings for MTG objects.
+- Use assets when a shared surface contains both singles and sealed products; use cards or printings for singles-specific objects and products for sealed-specific objects.
 - Use tiles for Dashboard, metric, info, and module context UI summary blocks.
 
 Primary zones:
 
 - Dashboard: daily triage and what to inspect first.
-- Positions: owned holdings only. Radar handles card discovery and watch ideas before purchase.
-- Radar: ideas without ownership, exact printing discovery, entry planning, and planned buy quantity.
+- Positions: owned holdings only. React supports exact singles and sealed products; vanilla remains singles-only.
+- Radar: ideas without ownership, exact asset discovery, entry planning, and planned buy quantity.
 - Signals: targets, price movement, and action triggers.
-- Notes: user-authored card memory attached to exact tracked printings.
+- Notes: user-authored asset memory attached to exact printing or product identity.
 - Transactions: buy/sell ledger events and audit data.
 - History: buys, sells, outcomes, and learning.
 
@@ -134,13 +134,14 @@ Current workflow direction:
 
 - Dashboard answers "what should I inspect first today?" with a compact state row and action tiles for Exit Hits, Entry Hits, Exit Near, Entry Near, Market Checks Due, Hold Reviews Due, Missing Plans, and Recent Notes.
 - Dashboard queue rows should open Card Detail or route to the exact Radar or Position source when practical.
-- Radar is for discovery, watched ideas, entry planning, and planned quantity before money is committed.
-- Positions is for owned holdings, exit planning, and active position management.
+- Radar is for discovery, watched ideas, entry planning, and planned quantity before money is committed. React search explicitly separates Singles, Sealed, and All.
+- Positions is for owned holdings, exit planning, and active position management. Unpriced sealed holdings keep cost basis but are excluded from marked value and P/L.
 - Signals is a read-only computed attention layer for target hits, approaching/watch states, missing plans, stale market checks, and navigation/filtering back to source workflows.
 - Card Detail is the unified editor for a specific printing and edits canonical plan data.
 - Transactions and History are for what happened and what can be audited later.
 - Notes are for why the user cared and what changed over time.
 - Admin includes Data Safety controls for JSON backup export/import of local user data.
+- React schema-v2 backups include `sealedRadar`, `sealedSpecs`, and `sealedTransactions`; schema-v1 backups migrate by adding empty sealed arrays. Existing singles keys remain unchanged.
 - Radar, Positions, Transactions, and History use a shared module context band above filters and tables so workflow tables keep a consistent visual rhythm. Dashboard and Signals use shared attention queue language for compact "click to work/inspect" rows.
 
 Near-term product focus:
@@ -164,7 +165,7 @@ Current implementation:
 - `#viewContainer` receives the active workflow view.
 - `js/ui/help.js` provides a contextual help drawer.
 - Dashboard, Radar, Positions, Signals, Transactions, History, and Admin have active navigation entries.
-- Radar and Positions are the primary singles workflows.
+- In the vanilla app, Radar and Positions remain the primary singles workflows. React extends the same route pair to sealed products through sibling stores.
 
 Rules:
 
@@ -671,25 +672,27 @@ Future fields:
 
 ## Pricing Philosophy
 
-- Current price is a snapshot from Scryfall.
+- Current single price is a snapshot from Scryfall. Current sealed value is an explicit timestamped manual observation.
 - Printing matters.
 - USD is the current pricing currency.
 - Price is a signal, not a recommendation.
 - Listing count and liquidity context are useful later but not required for current alpha.
 - Scryfall EDHREC rank is useful as a compact popularity signal, but raw EDHREC deck counts are deferred until there is a reliable external-signal fetch path.
-- Comparable printing prices are a future spread signal. Start with same-Oracle Scryfall printings before attempting separate TCGplayer lookup IDs.
+- Comparable single printing prices are available through same-Oracle Scryfall printings; sealed product comparison remains exact-link/manual research.
 
-## Deferred Sealed Product Lane
+## React Sealed Product Vertical Slice
 
-Sealed product is valuable for speculation, but singles remain the priority until the core workflow is stable.
+Issue #16 deliberately activated sealed in the React candidate while leaving the vanilla singles app unchanged.
 
-Likely sealed approach:
+Implemented approach:
 
 - Use MTGJSON sealed product data for canonical product identity.
 - Preserve MTGJSON product identifiers and TCGplayer purchase URLs when available.
 - Store sealed products separately from single-card printings.
 - Reuse the market-check pattern: open exact market links, paste visible price/seller/quantity signals, and save timestamped observations.
-- Avoid merging sealed into the card model. Sealed should become a sibling asset type later.
+- Avoid merging sealed into the card model. Sealed is a sibling asset type keyed by MTGJSON UUID.
+- Keep products unpriced until the user saves a timestamped manual valuation; the verified MTGJSON card-price feed does not cover sealed UUIDs.
+- Carry exact sealed identity through Radar, Positions, weighted buys, partial/full sells, Transactions, History, Signals, Notes, local search, and schema-v2 backups.
 
 ## Success Criteria For v1
 

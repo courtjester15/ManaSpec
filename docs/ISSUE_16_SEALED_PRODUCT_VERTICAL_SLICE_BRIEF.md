@@ -2,7 +2,7 @@
 
 ## Metadata
 
-- **Status:** In Progress
+- **Status:** Completed
 - **Date:** 2026-08-18
 - **Brief Size:** High-Risk
 - **Related Documents / Issues:** [GitHub Issue #16](https://github.com/courtjester15/ManaSpec/issues/16), [Product Principles](PRODUCT_PRINCIPLES.md), [Data Model](DATA_MODEL.md), [React Spike Architecture](REACT_SPIKE_ARCHITECTURE.md), [Deployment](DEPLOYMENT.md)
@@ -155,20 +155,20 @@ Sealed state will use additive top-level arrays (`sealedSpecs`, `sealedRadar`, `
 
 ## 13. Acceptance Criteria
 
-- [ ] Search switches among Singles, Sealed, and All and selects exact real products.
-- [ ] Representative booster box, pack, bundle, precon/specialty, and Secret Lair products are covered and limitations recorded.
-- [ ] Exact TCGplayer routing works when MTGJSON supplies identity.
-- [ ] Pricing source/fallback is explicit; manual timestamped valuation is durable and drives value only after save.
-- [ ] Sealed Radar planning and Radar-to-Position buying work while the product remains watched.
-- [ ] Sealed Positions support buy more, weighted cost, partial sell, and full sell.
-- [ ] All/Singles/Sealed filters work in Radar and Positions without regressing singles.
-- [ ] Mixed Transactions and History clearly retain asset type and exact identity.
-- [ ] Notes/observations resolve to the correct sealed asset and survive sell/re-buy.
-- [ ] Reload and backup/export/import retain sealed state; old backups still import.
-- [ ] Unpriced sealed holdings do not add invented equity or unrealized P/L.
-- [ ] Existing singles fixtures and core trading tests remain green.
-- [ ] Browser console and required desktop layouts are clean.
-- [ ] Test, lint, format, normal build, Pages build, portable build, and artifact checks pass.
+- [x] Search switches among Singles, Sealed, and All and selects exact real products.
+- [x] Representative booster box, pack, bundle, precon/specialty, and Secret Lair products are covered and limitations recorded.
+- [x] Exact TCGplayer routing works when MTGJSON supplies identity.
+- [x] Pricing source/fallback is explicit; manual timestamped valuation is durable and drives value only after save.
+- [x] Sealed Radar planning and Radar-to-Position buying work while the product remains watched.
+- [x] Sealed Positions support buy more, weighted cost, partial sell, and full sell.
+- [x] All/Singles/Sealed filters work in Radar and Positions without regressing singles.
+- [x] Mixed Transactions and History clearly retain asset type and exact identity.
+- [x] Notes/observations resolve to the correct sealed asset and survive sell/re-buy.
+- [x] Reload and backup/export/import retain sealed state; old backups still import.
+- [x] Unpriced sealed holdings do not add invented equity or unrealized P/L.
+- [x] Existing singles fixtures and core trading tests remain green.
+- [x] Browser console and required desktop layouts are clean.
+- [x] Test, lint, format, normal build, Pages build, portable build, and artifact checks pass.
 
 ## 14. Validation Plan
 
@@ -204,13 +204,13 @@ Update `docs/README.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/DATA_M
 
 ## 16. Deliverables
 
-- [ ] Real sealed asset identity and generated catalog foundation.
-- [ ] Complete sealed Search → Radar → Positions → Sell → Transactions/History workflow.
-- [ ] Honest manual valuation and exact external routing.
-- [ ] Compatible persistence, migration fixtures, and backup/restore.
-- [ ] Focused automated coverage and complete build/browser evidence.
-- [ ] Updated active docs and generated delivery artifacts.
-- [ ] Coherent checkpoint commits, pushed branch, and draft PR.
+- [x] Real sealed asset identity and generated catalog foundation.
+- [x] Complete sealed Search → Radar → Positions → Sell → Transactions/History workflow.
+- [x] Honest manual valuation and exact external routing.
+- [x] Compatible persistence, migration fixtures, and backup/restore.
+- [x] Focused automated coverage and complete build/browser evidence.
+- [x] Updated active docs and generated delivery artifacts.
+- [x] Coherent checkpoint commits, pushed branch, and draft PR.
 
 ## 17. Suggested Commit
 

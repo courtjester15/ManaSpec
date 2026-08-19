@@ -107,3 +107,16 @@ node --check assets/manaspec.js passed
 ```
 
 The in-app browser security policy blocks `file://` navigation, so this run could not repeat the direct local-file browser launch. The portable blank-page regression remains covered by the finalizer test and the generated entry was statically verified to load `./assets/manaspec.js` with `defer`. The prior manual direct-file smoke test remains the runtime evidence for this delivery shape.
+
+## Sealed vertical-slice production evidence (2026-08-18)
+
+Issue #16 intentionally extends the React product beyond vanilla's singles-only scope; this is forward product work, not a claim of vanilla feature parity. It retains the established shell, modal, table-density, local-first, and exact-identity interaction contracts.
+
+| Surface | React Pages evidence at 1366 × 768 |
+| --- | --- |
+| Exact sealed detail and timestamped value | [Sealed detail](screenshots/sealed-vertical-slice/sealed-detail-pages-1366x768.png) |
+| Mixed buy/sell ledger | [Sealed Transactions](screenshots/sealed-vertical-slice/sealed-transactions-pages-1366x768.png) |
+| Unified activity trail | [Sealed History](screenshots/sealed-vertical-slice/sealed-history-pages-1366x768.png) |
+| Radar retained after full Position close | [Sealed Radar](screenshots/sealed-vertical-slice/sealed-radar-after-close-pages-1366x768.png) |
+
+The production flow used one exact Bloomburrow Play Booster Box through Radar, an honest unpriced Position, a manual value, partial and full sales, Transactions, and History. At 1366 × 768 the route remained usable without app-level overflow; at 1920 × 1080 Radar, Positions, Transactions, and History each reported document width equal to the viewport. A fresh production reload produced no console event or page error. Development-only Tabulator messages observed while hot modules were being replaced did not reproduce in the generated Pages artifact.

@@ -6,6 +6,8 @@ It is not a code walkthrough. It is the architectural map future contributors sh
 
 The React reconstruction has a separate implemented architecture in [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md). React is in active implementation/stabilization mode and is the likely forward frontend path. Until a separate production-promotion decision, this document and the vanilla application remain the behavioral and production/beta source of truth.
 
+Issue #16 adds one deliberate React-only product expansion without changing the vanilla runtime: a generated MTGJSON sealed catalog, shared asset-identity helpers, and additive `sealedRadar`, `sealedSpecs`, and `sealedTransactions` storage. Existing vanilla keys and record shapes remain the singles compatibility boundary. See the React architecture and Issue #16 brief for the implemented flow.
+
 ## Design Philosophy
 
 ManaSpec is a local-first MTG speculation terminal built around workflow clarity.
@@ -165,6 +167,7 @@ Storage ownership rules:
 - Unknown backup fields should not break import.
 - Import is replace-only unless a future migration explicitly changes that rule.
 - Ledger migration must be planned before storage behavior changes.
+- React sealed state must remain additive. It may share `cardNotes` and `marketObservations` only through an explicit `sealed:<mtgjson_uuid>` asset key and must never fabricate Scryfall fields.
 
 `js/core/storage.js` owns normal load/save boundaries for `specs`, `radar`, `transactions`, and `cash`, plus backup safety. Workflow modules route those core records through `loadSpecs()`, `loadRadar()`, `loadTransactions()`, `loadCash()`, `saveSpecsState()`, `saveRadarState()`, `saveTransactionsState()`, and `saveCashState()`.
 
