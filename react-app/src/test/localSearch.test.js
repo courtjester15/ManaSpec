@@ -141,6 +141,7 @@ test("sealed assets join saved-data search and History with exact destinations",
     sealedRadar: [sealed],
     sealedTransactions: [sealedTransaction],
     cardNotes: [...state.cardNotes, { id: "sealed-note", assetType: "sealed", assetKey: sealed.assetKey, cardName: sealed.name, text: "Keep sealed", createdAt: "2026-08-18T02:00:00.000Z" }],
+    marketObservations: [{ id: "sealed-value", assetType: "sealed", assetKey: sealed.assetKey, mtgjson_uuid: sealed.mtgjson_uuid, name: sealed.name, marketPrice: 135, currentSellers: 12, checkedAt: "2026-08-18T03:00:00.000Z" }],
   };
   const results = searchLocalState(sealedState, "bloomburrow booster", { perCategory: 10 });
   assert.ok(results.some(result => result.category === "Positions" && result.exactAssetKey === sealed.assetKey));
@@ -149,4 +150,7 @@ test("sealed assets join saved-data search and History with exact destinations",
   assert.ok(results.some(result => result.category === "History" && result.exactAssetKey === sealed.assetKey));
   assert.ok(results.some(result => result.category === "Notes" && result.exactAssetKey === sealed.assetKey));
   assert.deepEqual(results.find(result => result.category === "Positions").destination, { pathname: "/positions", search: `?focus=${encodeURIComponent(sealed.id)}&detail=1` });
+  const history = buildHistoryEvents(sealedState);
+  assert.equal(history.find(event => event.eventType === "VALUE").summary, "Manual market check at $135.00 / 12 sellers");
+  assert.equal(history.find(event => event.eventType === "RADAR").price, null);
 });

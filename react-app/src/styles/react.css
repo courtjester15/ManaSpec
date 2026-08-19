@@ -107,8 +107,10 @@ footer {
 .search-results small { color:var(--muted); font-size:10px; text-align:right; }
 .react-filter-bar { display:flex; min-height:82px; align-items:end; gap:10px; padding:10px 12px; }
 .react-filter-bar label:first-child { flex:1; }
-.module-context-band .search-panel form,
+.module-context-band .search-panel form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 6px; width:100%; }
+.module-context-band .search-panel form>.asset-mode-control { grid-column:1 / -1; width:max-content; }
 .module-context-band .search-panel label { display:block; width:100%; }
+.module-context-band .search-panel .search-submit { align-self:end; width:auto; height:32px; min-height:32px; padding:0 10px; }
 .radar-context,.radar-context .module-context-card,.radar-context .search-panel { min-height:108px; height:108px; }
 .asset-mode-control { display:inline-flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--border); border-radius:999px; background:var(--surface-2); }
 .asset-mode-control button { width:auto; min-height:24px; padding:2px 9px; border:0; border-radius:999px; background:transparent; color:var(--muted); font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }

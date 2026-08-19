@@ -1,3 +1,5 @@
+import { getAssetKey } from "./assetIdentity.js";
+
 function finite(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
@@ -243,4 +245,3 @@ export function formatPriceRefreshStatus(status) {
   if (Number.isNaN(date.getTime())) return "Prices: last check time unavailable";
   return `Prices checked ${date.toLocaleString()} (${finite(status.updatedCount)} cards)`;
 }
-import { getAssetKey } from "./assetIdentity.js";

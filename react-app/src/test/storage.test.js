@@ -35,6 +35,14 @@ test("future data schema is rejected before restore", async () => {
   assert.match(result.message, /unsupported ManaSpec data schema version/);
 });
 
+test("current version-two fixture preserves exact sealed identity and an honest null valuation", async () => {
+  const backup = await fixture("current-v2-sealed.json");
+  const result = normalizeBackup(backup);
+  assert.equal(result.ok, true);
+  assert.equal(result.backup.data.sealedRadar[0].assetKey, "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3");
+  assert.equal(result.backup.data.sealedRadar[0].currentPrice, null);
+});
+
 test("sealed state loads, saves, and round-trips through schema version two backups", () => {
   const sealed = {
     id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",

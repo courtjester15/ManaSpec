@@ -17,8 +17,16 @@ function compactContents(contents = {}) {
       labels.push(`${rows.length} variable configuration${rows.length === 1 ? "" : "s"}`);
       continue;
     }
+    const namedRows = rows.filter(row => String(row?.name || "").trim());
+    if (namedRows.length) {
+      const namedLabels = namedRows.slice(0, 4).map(row => `${Number(row.count) || 1} × ${row.name}`);
+      if (namedRows.length > namedLabels.length) namedLabels.push(`+${namedRows.length - namedLabels.length} more`);
+      labels.push(namedLabels.join(", "));
+      continue;
+    }
     const count = rows.reduce((total, row) => total + (Number(row?.count) || 1), 0);
-    labels.push(`${count} ${key}${count === 1 ? "" : "s"}`);
+    const label = key === "sealed" ? "sealed item" : key === "other" ? "extra" : key;
+    labels.push(`${count} ${label}${count === 1 ? "" : "s"}`);
   }
   return labels.join(", ");
 }

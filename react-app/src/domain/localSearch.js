@@ -87,7 +87,7 @@ export function buildHistoryEvents(state = {}) {
         id: `radar-${item.id}`,
         kind: "radar",
         date: item.addedDate || item.createdAt,
-        price: item.currentPrice,
+        price: item.assetType === "sealed" ? null : item.currentPrice,
         eventType: "RADAR",
         summary: "Added to Radar",
       })),
