@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "build:pages": "vite build --mode pages && node tools/sync-pages.mjs",
+    "build:pages": "vite build --mode pages && node tools/sync-pages.mjs && node ../tools/check-react-spike-artifact.mjs --write && node ../tools/check-react-spike-artifact.mjs",
     "build:portable": "vite build --config vite.portable.config.js && node tools/finalize-portable.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --test --test-isolation=none",
