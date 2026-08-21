@@ -8,6 +8,10 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Added Issue #16's React sealed-product speculation vertical slice: bundled MTGJSON product discovery, exact TCGplayer identity/links, mixed Radar and Positions, weighted buys, partial/full sells, shared Transactions/History/signals/search, notes, and timestamped manual valuation.
+- Added schema-v2 sealed persistence and backup migration with separate `sealedRadar`, `sealedSpecs`, and `sealedTransactions` keys while preserving all existing singles keys and schema-v1 imports.
+- Added deterministic sealed-catalog generation, representative booster/bundle/deck/Secret Lair identity tests, and automatic tracked Pages-artifact synchronization after a successful Pages build.
+
 - Expanded the React Dashboard into an eight-metric Portfolio Summary with honest realized-coverage, data-quality, plan-completeness, and marked-value concentration signals designed for the 1920 x 1080 primary desktop.
 - Rebuilt React Price History with Chart.js 4.5.1, exact-printing sparse-date ranges, tooltips, summary context, and plan reference lines while preserving the existing snapshot schema.
 - Added categorized React saved-data search across Positions, Radar, Transactions, History, card notes, and thesis notes; the native deterministic index met the workflow contract, so Fuse.js was not adopted.
@@ -42,6 +46,8 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added a Roadmap React spike lane for workspace isolation, portable and Pages-path proofs, storage compatibility, full feature parity, responsive validation, and a separate promotion decision.
 
 ### Changed
+
+- Replaced the earlier React sealed deferral with an explicitly authorized additive feature. Sealed products begin unpriced and remain outside marked value, target delta, and P/L until the user saves a manual market check; buy price is never substituted for market value.
 
 - Completed the Issue #15 React parity-polish and alpha-readiness pass: content-driven Signals layout, accessible Help focus/escape behavior, exact-printing action names, full route/build validation, and an evidence-based recommendation that keeps vanilla canonical until release-control blockers are closed.
 - Made 1920 x 1080 the primary desktop design target and 1366 x 768 the secondary compatibility target across active React planning, architecture, deployment, dependency, and validation docs.

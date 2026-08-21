@@ -30,11 +30,13 @@ ManaSpec can surface Scryfall `edhrec_rank` as a compact EDH presence signal bec
 
 Raw EDHREC deck counts are deferred until the app has a reliable external-signal fetch path and a reason to store dated snapshots.
 
-### Sealed product is deferred
+### Sealed product ships as an additive React vertical slice
 
-Sealed product should not be forced into the single-card printing model.
+Issue #16 intentionally overrides the earlier roadmap deferral. Sealed product is active in the React candidate, while the authoritative vanilla runtime remains singles-only.
 
-When it becomes active, MTGJSON sealed product data is the likely identity source, with stored TCGplayer links and manual/paste market observations. Singles remain the current priority.
+Sealed is not forced into the single-card printing model. MTGJSON product UUID is the exact identity, `sealed:<uuid>` is the cross-workflow key, and generated catalog records retain set/category/release/contents context plus exact TCGplayer product links. Sealed Radar, Positions, and Transactions use additive keys so existing `specs`, `radar`, and `transactions` records remain unchanged.
+
+The verified official MTGJSON card-price feed did not contain representative sealed UUIDs. ManaSpec therefore starts sealed products unpriced and uses explicit timestamped manual TCGplayer market checks. It does not scrape, substitute a card price, or treat buy price as market value. Unpriced holdings retain cost basis but are excluded from value, target-delta, and P/L calculations.
 
 ### Historical backfill is owned-spec backfill
 
@@ -58,6 +60,8 @@ Admin backup files use `manaspec-localstorage-backup` schema v1.
 
 The v1 backup covers local user-owned ManaSpec state in `specs`, `radar`, `transactions`, `cardNotes`, archived `thesisNotes`, `signals`, `cash`, `priceSnapshots`, `priceRefreshStatus`, and `marketObservations`.
 
+The backup envelope remains schema v1. React Issue #16 advances the contained `dataSchemaVersion` to 2 and adds `sealedSpecs`, `sealedRadar`, and `sealedTransactions`. Version-one data imports add empty sealed arrays; unsupported future data versions fail closed. React schema-v2 exports require a schema-v2-aware React build to retain sealed state, while the unchanged singles keys remain readable by vanilla.
+
 Import is replace-only with preview and explicit confirmation. It does not merge data, rename storage keys, migrate the ledger model, or introduce cloud sync.
 
 ## App Shell
@@ -78,7 +82,7 @@ They should remain visible outside the portfolio workflow.
 
 ### Radar and Positions are the active workflow
 
-For alpha, Radar and Positions are the active singles workflow. Radar owns discovery and pre-purchase planning; Positions owns cards after money is committed.
+For alpha, Radar and Positions own the active speculation lifecycle. Vanilla remains singles-only. React supports both exact single printings and exact sealed products while preserving the same discovery/planning versus ownership boundary.
 
 ### Positions are not the long-term source of truth
 

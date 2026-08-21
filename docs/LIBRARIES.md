@@ -121,6 +121,8 @@ The implemented workspace currently uses lightweight Node tests plus source and 
 
 The shared Tabulator migration is complete across Radar, Positions, Signals, Transactions, and History. Chart.js is adopted for the expanded exact-printing Price History workflow. The unified saved-data search comparison is also complete: the native index met the current acceptance contract, so Fuse.js is not adopted. Further library work remains feature-triggered rather than a bulk replacement of working code.
 
+Issue #16 adds no runtime library. MTGJSON is a generated data input, not a client dependency: a deterministic build script trims `SetList.json` into the tracked catalog, normal/Pages builds lazy-load it, and the portable build inlines it. No sealed pricing or scraping package was adopted because the verified official price artifact did not cover sealed UUIDs.
+
 Evaluate in this order:
 
 1. Day.js: adopt when date parsing, windows, scheduling, or timezone behavior becomes recurring domain complexity.

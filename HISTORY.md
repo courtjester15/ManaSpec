@@ -274,18 +274,24 @@ The desktop hierarchy also changed deliberately. The 1920 x 1080 canvas became t
 
 This work changed the React description from speculative spike to controlled-alpha candidate, not to canonical frontend. Public Pages publishing ownership, representative React-written record reads in vanilla, and an approved cutover/rollback decision remain explicit promotion gates.
 
-## Current State (2026-08-07)
+## 2026-08-18: Issue #16 made sealed a real React workflow
 
-As of 2026-07-02, with the latest pre-history repository activity found on 2026-07-01, ManaSpec is a local-first MTG speculation workflow and positions terminal built with vanilla HTML, CSS, JavaScript, Scryfall data, and localStorage.
+Jason deliberately overrode the roadmap's sealed deferral to mix forward product work into the React foundation phase and support a prospective sealed-focused tester. The implementation resisted the tempting fake-card shortcut: MTGJSON UUID became the exact product identity, sealed state received additive Radar/Positions/Transaction stores, and the existing route chain now carries booster boxes, packs, bundles, decks, and Secret Lair products through research, ownership, partial/full exits, and review.
 
-ManaSpec now has two intentionally distinguished implementations. The vanilla root is the authoritative production/beta app with Dashboard, Radar, Positions, Signals, Transactions, History, Admin, Card Detail, shared Notes, contextual Help, and JSON backup/restore. The React workspace reproduces that full application shape, includes the Issue #15 product-expansion work, and is ready for controlled alpha use as the likely forward frontend.
+The pricing investigation shaped the product. MTGJSON's official daily price artifact covered card UUIDs but not the representative sealed UUIDs checked for the issue, while its TCGplayer identifiers and links resolved exact products. ManaSpec therefore ships honest manual sealed valuation: a product begins unpriced, cost basis is never presented as market value, and marked value/P&L appear only after a timestamped user check. Existing singles storage and vanilla behavior remain unchanged.
+
+## Current State (2026-08-18)
+
+ManaSpec is a local-first MTG speculation workflow and positions terminal with an authoritative vanilla frontend and a forward React candidate. Scryfall remains the singles identity/price source; React additionally bundles MTGJSON sealed product identity and uses localStorage for additive user-owned state.
+
+ManaSpec now has two intentionally distinguished implementations. The vanilla root is the authoritative production/beta app with Dashboard, Radar, Positions, Signals, Transactions, History, Admin, Card Detail, shared Notes, contextual Help, and JSON backup/restore. The React workspace reproduces that full application shape, includes the Issue #15 product-expansion work and Issue #16 sealed vertical slice, and is ready for controlled alpha use as the likely forward frontend.
 
 The product center of gravity remains unchanged: ManaSpec organizes speculation workflow and attention while the user owns strategy and decisions. React must preserve that product contract and the vanilla data model while earning promotion through parity, compatibility, delivery, and maintainability evidence.
 
 The main remaining priorities before broader beta are:
 
 - Capture friend-preview and real-user feedback as focused bugs, polish, or feature candidates.
-- Build additional user-facing features that strengthen the validated singles workflow.
+- Exercise the new sealed workflow with the interested tester and capture product/data feedback without weakening singles compatibility.
 - Write the ledger migration plan before making Transactions the ownership source of truth.
 - Continue tightening labels, empty states, table scan behavior, confirmations, and Help.
 - Keep data safety and backup/restore stable through every model change.

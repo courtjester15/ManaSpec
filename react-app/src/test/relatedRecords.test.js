@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   getRelatedRecordsForPrinting,
+  getRelatedRecordsForAsset,
   relatedRecordMatchesPrinting,
+  resolveAssetDetail,
   resolveCardDetailPrinting,
   resolveTrackedPrinting,
 } from "../domain/relatedRecords.js";
@@ -34,6 +36,25 @@ test("foil and nonfoil notes remain isolated", () => {
   ];
   assert.deepEqual(getRelatedRecordsForPrinting(notes, nonfoil, tracked).map(note => note.id), ["n1"]);
   assert.deepEqual(getRelatedRecordsForPrinting(notes, foil, tracked).map(note => note.id), ["n2"]);
+});
+
+test("sealed notes and observations resolve only through exact asset identity", () => {
+  const sealed = {
+    id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    assetType: "sealed",
+    assetKey: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    mtgjson_uuid: "d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    name: "Bloomburrow Play Booster Box",
+  };
+  const other = { ...sealed, id: "sealed:8980dc25-6a0d-5288-b960-9335972e8669", assetKey: "sealed:8980dc25-6a0d-5288-b960-9335972e8669", mtgjson_uuid: "8980dc25-6a0d-5288-b960-9335972e8669" };
+  const notes = [
+    { id: "sealed-note", assetType: "sealed", assetKey: sealed.assetKey, text: "Hold sealed" },
+    { id: "other-note", assetType: "sealed", assetKey: other.assetKey, text: "Other" },
+    { id: "name-only", cardName: sealed.name, text: "Must not guess" },
+  ];
+  assert.deepEqual(getRelatedRecordsForAsset(notes, sealed, [sealed, other]).map(row => row.id), ["sealed-note"]);
+  assert.equal(resolveAssetDetail(notes[0], [sealed, other]), sealed);
+  assert.equal(resolveAssetDetail(notes[2], [sealed, other]), null);
 });
 
 test("same-name tracked printings never cross-reference", () => {

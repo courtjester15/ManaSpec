@@ -34,11 +34,13 @@ Use these terms consistently in UI copy, docs, and future implementation names w
 
 - **Card**: a general MTG card identity.
 - **Printing**: a specific version of a card, including set, collector number, finish, and Scryfall identity.
+- **Sealed Product**: a specific MTGJSON product identity such as a booster box, bundle, deck, or Secret Lair product.
+- **Asset**: shared-table language only when a surface contains both Singles and Sealed.
 - **Position**: an owned holding after money has been committed.
 - **Radar Item**: a watched idea before purchase, or a card still being monitored for scaling.
 - **Signal**: an attention item derived from local plan, price, target, hold, or market-check data.
 - **Market Check**: a user-saved review of current market data, usually pasted from TCGplayer Price Points.
-- **Card Detail**: the command center for one exact tracked printing.
+- **Card Detail / Product Detail**: the command center for one exact tracked single or sealed product; use the asset-specific name in explanatory copy.
 - **Module Context Band**: the compact summary/action band above workflow filters and tables.
 - **Transaction**: a buy, sell, correction, backfill, or future acquisition/disposition event.
 - **History**: a review trail, not a separate source of truth.
@@ -51,6 +53,9 @@ Avoid:
 - Using "card modal", "detail modal", and "card drawer" interchangeably in docs. Use Card Detail unless referring to implementation.
 - Using "alert" when the item is really a Signal.
 - Using "recommendation" for app output. ManaSpec surfaces data; the user decides.
+- Showing a sealed buy price as current market value or computing target delta/P&L from an absent manual valuation.
+
+Mixed-asset surfaces use compact `Single` and `Sealed` pills plus an All/Singles/Sealed control. Singles retain set/collector/finish context. Sealed rows use set/product-type context and label user-entered prices as manual values or market checks; they must not label those values Scryfall.
 
 ## Naming Rules
 

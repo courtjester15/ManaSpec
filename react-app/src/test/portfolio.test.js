@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildPositionRow, calculatePortfolioSummary, filterPositionRows, selectPositionRows } from "../domain/portfolio.js";
+import { buildPositionRow, buildSealedPositionRow, calculatePortfolioSummary, filterPositionRows, selectPositionRows } from "../domain/portfolio.js";
 import { positionFixtures } from "./fixtures/positions.js";
 
 test("canonical Position rows use only vanilla-compatible ownership fields", () => {
@@ -154,4 +154,62 @@ test("portfolio summary computes only complete Radar plans and exact marked conc
   assert.equal(summary.losingPositionCount, 1);
   assert.equal(summary.positionConcentration[0].trackedPrintingKey, positionFixtures.valid.trackedPrintingKey);
   assert.equal(summary.positionConcentration[0].sharePercent, 80);
+});
+
+test("sealed Positions require exact asset identity and explicit current valuation", () => {
+  const base = {
+    id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    assetType: "sealed",
+    assetKey: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    mtgjson_uuid: "d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    name: "Bloomburrow Play Booster Box",
+    set_code: "BLB",
+    category: "booster_box",
+    qty: 2,
+    buyPrice: 100,
+    buyDate: "2026-08-18T00:00:00.000Z",
+    currentPrice: null,
+  };
+  const unpriced = buildSealedPositionRow(base);
+  assert.equal(unpriced.validation.valid, true);
+  assert.equal(unpriced.validation.calculationEligible, false);
+  assert.ok(unpriced.validation.issues.includes("invalid_current_price"));
+
+  const priced = buildSealedPositionRow({ ...base, currentPrice: 140, valuationSource: "manual", priceUpdatedAt: "2026-08-18T12:00:00.000Z" });
+  assert.equal(priced.validation.calculationEligible, true);
+  assert.equal(priced.assetKey, base.assetKey);
+
+  const invalid = buildSealedPositionRow({ ...base, assetKey: null, mtgjson_uuid: null });
+  assert.equal(invalid.validation.valid, false);
+  assert.ok(invalid.validation.requiredIssues.includes("invalid_asset_identity"));
+});
+
+test("portfolio summary includes only honestly priced sealed value and mixed realized coverage", () => {
+  const sealedBase = {
+    id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    assetType: "sealed",
+    assetKey: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    mtgjson_uuid: "d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    name: "Bloomburrow Play Booster Box",
+    set_code: "BLB",
+    qty: 2,
+    buyPrice: 100,
+    buyDate: "2026-08-18T00:00:00.000Z",
+  };
+  const summary = calculatePortfolioSummary([], 500, {
+    sealedSpecs: [
+      { ...sealedBase, currentPrice: 140 },
+      { ...sealedBase, id: "sealed:8980dc25-6a0d-5288-b960-9335972e8669", assetKey: "sealed:8980dc25-6a0d-5288-b960-9335972e8669", mtgjson_uuid: "8980dc25-6a0d-5288-b960-9335972e8669", currentPrice: null },
+    ],
+    sealedTransactions: [{ type: "SELL", realizedPL: 25 }],
+    sealedRadar: [{ plannedQty: 2, entryTarget: 90 }],
+  });
+  assert.equal(summary.invested, 400);
+  assert.equal(summary.value, 280);
+  assert.equal(summary.totalEquity, 780);
+  assert.equal(summary.unrealizedProfitLoss, 80);
+  assert.equal(summary.unpricedPositionCount, 1);
+  assert.equal(summary.realizedProfitLoss, 25);
+  assert.equal(summary.plannedRadarCapital, 180);
+  assert.equal(summary.positionConcentration[0].assetType, "sealed");
 });

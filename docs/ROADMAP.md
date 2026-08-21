@@ -29,13 +29,19 @@ Status markers:
 - Notes: user-authored card memory attached to exact tracked printings.
 - History: transaction and outcome review.
 
-## Current Phase: Alpha Friend Preview + React Alpha Readiness
+## Current Phase: Alpha Friend Preview + React Sealed Vertical Slice
 
 Goal: use `v0.9.0-alpha.1` with one or two trusted testers while moving from solo core-loop validation into friend feedback and additional user-facing features.
 
 Current discipline: the repeated solo core singles workflow pass is complete. Do not reopen the whole core-loop testing phase for future findings; capture remaining issues from feature work or real-user use as individual bugs or polish.
 
 ### Done
+
+- [x] Issue #16 intentionally overrides the earlier sealed deferral for the React candidate.
+- [x] Bundled MTGJSON product discovery with exact product UUID, family/category, set, release date, contents summary, and exact TCGplayer product link.
+- [x] End-to-end sealed Search → Radar → Positions → partial/full sell → Transactions/History workflow with weighted cost, cash, realized P/L, notes, and signals.
+- [x] Honest sealed valuation: products begin unpriced; timestamped manual checks drive marked value and P/L; no card-price substitution or scraping.
+- [x] Additive schema-v2 backup/persistence keys preserve existing singles records and schema-v1 imports.
 
 - [x] Vanilla app shell with module navigation buttons.
 - [x] Global summary bar for cash, invested value, portfolio value, equity, and P/L.
@@ -214,7 +220,7 @@ Goal: turn the current alpha preview into a usable beta product, not a wider pro
 
 Keep these areas deferred until friend feedback, user-facing feature priorities, and data-safety work justify them:
 
-- Sealed product tracking.
+- Additional sealed automation beyond the shipped React vertical slice, especially unverified price feeds, scraping, bulk sealed import, and backend sync.
 - Large bulk import workflow.
 - Owned-spec backfill workflow beyond a small admin/manual path.
 - Backend or database work.
@@ -467,7 +473,6 @@ Priority: low. Do not work on this before beta workflow, Signals, Dashboard, Car
 
 ## Deferred
 
-- Sealed product tracking. Likely source: MTGJSON sealed product data for product identity and TCGplayer links, paired with manual/paste market observations. Keep this behind current friend-feedback and user-facing feature priorities.
 - Large collection-style bulk import from spreadsheet or binder rows. A smaller owned-spec backfill path is a future Admin candidate, but it should stay out of core Radar and should create transactions before positions.
 - Raw EDHREC deck-count tracking. Current alpha only uses Scryfall `edhrec_rank`; raw deck counts need a reliable external-signal fetch/storage path.
 - Advanced prediction.

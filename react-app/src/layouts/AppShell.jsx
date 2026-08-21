@@ -51,11 +51,12 @@ function HelpDrawer({ open, onClose, returnFocusRef }) {
       <aside className="help-drawer">
         <header><h3 id="helpDrawerTitle">ManaSpec workflow</h3><button type="button" autoFocus onClick={onClose} aria-label="Close help">×</button></header>
         <section>
-          <h4>1. Research on Radar</h4><p>Search Scryfall, select the exact printing and finish, set an entry target and planned quantity, then record decision notes.</p>
+          <h4>1. Research on Radar</h4><p>Search Scryfall singles or the local MTGJSON sealed catalog, select the exact asset, set an entry target and planned quantity, then record decision notes.</p>
           <h4>2. Buy into Positions</h4><p>A Radar buy creates or adds to a Position, updates weighted cost basis and cash, and logs a BUY. The candidate stays on Radar.</p>
           <h4>3. Review signals</h4><p>Entry and exit targets drive the attention queue. Signals are computed from your saved plan and current prices.</p>
-          <h4>4. Search saved work</h4><p>The toolbar searches saved ManaSpec data. Use Radar's Scryfall search when you need to discover and add a new card.</p>
-          <h4>5. Exit and preserve history</h4><p>Selling reduces or closes a Position, increases cash, logs realized P/L, and remains visible in Transactions and History.</p>
+          <h4>4. Value honestly</h4><p>Singles use Scryfall pricing. Sealed products start unpriced because the verified MTGJSON feed has no sealed prices; save a timestamped manual TCGplayer check from product detail.</p>
+          <h4>5. Search saved work</h4><p>The toolbar searches saved ManaSpec data across both asset classes. Use Radar search to discover and add a new single or sealed product.</p>
+          <h4>6. Exit and preserve history</h4><p>Selling reduces or closes a Position, increases cash, logs realized P/L, and remains visible in Transactions and History.</p>
           <h4>Protect your work</h4><p>ManaSpec stores data in this browser. Export a JSON backup from Admin before browser cleanup or moving devices.</p>
         </section>
       </aside>
@@ -67,7 +68,7 @@ export function AppShell() {
   const [helpOpen, setHelpOpen] = useState(false);
   const helpButtonRef = useRef(null);
   const { state, storagePersistent } = useAppState();
-  const summary = useMemo(() => calculatePortfolioSummary(state.specs, state.cash), [state.cash, state.specs]);
+  const summary = useMemo(() => calculatePortfolioSummary(state.specs, state.cash, { sealedSpecs: state.sealedSpecs, transactions: state.transactions, sealedTransactions: state.sealedTransactions, radar: state.radar, sealedRadar: state.sealedRadar }), [state.cash, state.radar, state.sealedRadar, state.sealedSpecs, state.sealedTransactions, state.specs, state.transactions]);
   const profitLoss = `${summary.profitLoss >= 0 ? "+" : ""}${formatMoney(summary.profitLoss)} (${summary.profitLossPercent.toFixed(1)}%)`;
 
 

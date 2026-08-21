@@ -1,4 +1,5 @@
 import { dataFoundation } from "./dataFoundation.js";
+import { getAssetKey, getAssetType, getTrackedPrintingKey } from "./assetIdentity.js";
 
 const FINISH_SUFFIX = /\|(nonfoil|foil|etched)$/i;
 
@@ -16,11 +17,16 @@ function normalizedKey(value) {
 
 export function getRelatedRecordPrintingKey(record = {}) {
   if (!record || typeof record !== "object") return null;
+  if (getAssetType(record) === "sealed") return null;
   for (const value of [record.trackedPrintingKey, record.cardKey, record.printingKey]) {
     const key = normalizedKey(value);
     if (key) return key;
   }
-  return dataFoundation.getTrackedPrintingKey(record);
+  return getTrackedPrintingKey(record) || dataFoundation.getTrackedPrintingKey(record);
+}
+
+export function getRelatedRecordAssetKey(record = {}) {
+  return getAssetKey(record);
 }
 
 function getBasePrintingId(record = {}) {
@@ -76,6 +82,14 @@ export function resolveTrackedPrinting(record, candidates = []) {
   return null;
 }
 
+export function resolveTrackedAsset(record, candidates = []) {
+  if (!record) return null;
+  const key = getRelatedRecordAssetKey(record);
+  if (key) return candidates.find(candidate => getRelatedRecordAssetKey(candidate) === key) || null;
+  if (getAssetType(record) === "sealed") return null;
+  return resolveTrackedPrinting(record, candidates);
+}
+
 export function relatedRecordMatchesPrinting(record, item, candidates = []) {
   const itemKey = getRelatedRecordPrintingKey(item);
   if (!itemKey) return false;
@@ -88,7 +102,25 @@ export function getRelatedRecordsForPrinting(records = [], item, candidates = []
   return records.filter(record => relatedRecordMatchesPrinting(record, item, candidates));
 }
 
+export function relatedRecordMatchesAsset(record, item, candidates = []) {
+  const itemKey = getRelatedRecordAssetKey(item);
+  if (!itemKey) return false;
+  const recordKey = getRelatedRecordAssetKey(record);
+  if (recordKey) return recordKey === itemKey;
+  if (getAssetType(item) === "sealed") return false;
+  return relatedRecordMatchesPrinting(record, item, candidates);
+}
+
+export function getRelatedRecordsForAsset(records = [], item, candidates = []) {
+  return records.filter(record => relatedRecordMatchesAsset(record, item, candidates));
+}
+
 export function resolveCardDetailPrinting(record, candidates = []) {
   return resolveTrackedPrinting(record, candidates)
     || (getRelatedRecordPrintingKey(record) ? record : null);
+}
+
+export function resolveAssetDetail(record, candidates = []) {
+  return resolveTrackedAsset(record, candidates)
+    || (getRelatedRecordAssetKey(record) ? record : null);
 }

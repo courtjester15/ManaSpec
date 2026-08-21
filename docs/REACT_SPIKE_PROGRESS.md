@@ -409,3 +409,26 @@ Open before canonical promotion:
 - Confirm the actual public GitHub Pages publishing source and exercise the live rollback path.
 - Extend the controlled interoperability proof from vanilla-written backup/state reads in React to representative React-written Position, Radar, note, transaction, snapshot, and market-observation reads in vanilla.
 - Approve the cutover/rollback runbook and record the explicit canonical-promotion decision. Broader assistive-technology review and real-user tablet/phone feedback remain follow-up quality work.
+
+## 2026-08-18: Issue #16 — Sealed product speculation vertical slice
+
+Implemented:
+
+- Added first-class sealed identity keyed by MTGJSON product UUID, with additive `sealedRadar`, `sealedSpecs`, and `sealedTransactions` stores that leave the established singles arrays and legacy inference intact.
+- Generated a 3,955-product local catalog from MTGJSON `SetList.json` version `5.3.0+20260818`. The source contained 4,679 sealed products across 868 sets; 3,405 included both a TCGplayer product ID and exact purchase link. Representative booster boxes, packs, bundles, Commander/specialty products, and Secret Lair products are covered.
+- Proved that five representative sealed UUIDs are absent from MTGJSON's card-oriented `AllPricesToday.json`. Sealed assets therefore begin unpriced, expose exact MTGJSON/TCGplayer identity, and acquire value only through an explicit timestamped manual market check; cost basis is never substituted for market value.
+- Delivered the complete Search → Radar → Positions → sell → Transactions/History workflow, including Singles/Sealed/All discovery and view filters, plan fields, buy more, weighted average cost, partial/full sales, exact detail, notes, market observations, shared cash, saved-data search, Signals, summaries, backup/restore, and migration fixtures.
+- Added a checked Pages artifact synchronizer so a successful `build:pages` replaces only the exact tracked `react-spike` target, then regenerated both Pages and portable delivery artifacts.
+
+Validated:
+
+- All 63 Node tests pass, including exact asset identity, representative catalog families, mixed trading, weighted cost, partial/full close, honest unpriced valuation, related-record isolation, saved-data search/History, signals, legacy-v1 migration, current-v2 sealed restore, future-schema rejection, and compatible singles storage. Source-policy and formatting checks pass.
+- Normal, Pages-subpath, and portable builds pass, and every generated JavaScript file passes `node --check`. Pages emits 603.19 KB initial JavaScript (166.16 KB gzip), a lazy 174.53 KB Price History chunk (61.04 KB gzip), a lazy 1,735.78 KB sealed catalog chunk (252.36 KB gzip), and 129.11 KB CSS (20.64 KB gzip). Portable emits a 2,809.80 KB classic script (704.37 KB gzip) and 129.12 KB CSS (20.65 KB gzip). The previously documented large-chunk, `inlineDynamicImports`, and portable `import.meta` warnings remain expected.
+- Fresh production Pages QA at 1366 × 768 exercised an exact Bloomburrow Play Booster Box through planning three units at $120, buying two at $100, verifying the unpriced Position, saving a $140 manual value with 18 sellers/42 listed units, partially selling one at $150, and fully closing the last at $160. Transactions retained both sells and the buy, History retained RADAR/BUY/VALUE/SELL events, cash ended at $10,110, and Radar retained the watched product, value, plan, and market context after Position closure.
+- The exact detail showed MTGJSON UUID `d575bd23-ebd6-586e-af7b-04924db4f1c3`, TCGplayer product ID `541235`, exact external routing, release date, and `36 × Bloomburrow Play Booster Pack` contents without any fake card fields. Fresh production reload checks observed no console event or page error.
+- At 1920 × 1080, Radar, Positions, Transactions, and History each kept document width equal to the 1920px viewport; the retained sealed Radar row and complete three-trade/five-event records rendered without overflow or page errors.
+- Evidence is stored in `docs/screenshots/sealed-vertical-slice/`. The in-app browser security policy blocked a new `file://` portable launch; no workaround or alternate browser surface was used. Portable coverage remains the successful self-contained build, finalizer regression test, deferred classic entry check, and generated JavaScript syntax validation.
+
+Follow-up:
+
+- Gather sealed-focused tester feedback. Treat any automated sealed valuation source as a separate, explicitly approved data-integration decision; do not scrape TCGplayer or infer market value from acquisition cost.

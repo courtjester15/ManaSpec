@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { formatMoney } from "../../domain/portfolio.js";
+import { assetContextLabel, assetTypeLabel, getAssetType } from "../../domain/assetIdentity.js";
 
 export function ViewHeader({ title, description, actions }) {
   return <div className="view-heading"><h3>{title}</h3><p>{description}</p>{actions && <div className="view-actions">{actions}</div>}</div>;
@@ -31,7 +32,7 @@ export function TradeForm({ item, mode, onSubmit, onCancel, defaultQuantity = 1 
   const [quantity, setQuantity] = useState(defaultQuantity);
   const [price, setPrice] = useState(Number(item.currentPrice || item.buyPrice || 0));
   const max = mode === "sell" ? Number(item.qty || 1) : undefined;
-  return <form className="react-form" onSubmit={event => { event.preventDefault(); onSubmit(Number(quantity), Number(price)); }}><div className="trade-card-line"><strong>{item.name}</strong><span>{item.set_code} #{item.collector_number}{item.foil ? " · Foil" : ""}</span></div><div className="form-grid"><label><span>Quantity</span><input type="number" min="1" max={max} step="1" value={quantity} onChange={event => setQuantity(event.target.value)} /></label><label><span>Price per copy</span><input type="number" min="0.01" step="0.01" value={price} onChange={event => setPrice(event.target.value)} /></label></div><p className="trade-total">Estimated total <strong>{formatMoney(Number(quantity || 0) * Number(price || 0))}</strong></p><div className="modal-actions"><button type="button" className="secondary" onClick={onCancel}>Cancel</button><button type="submit">{mode === "sell" ? "Confirm sale" : "Confirm buy"}</button></div></form>;
+  return <form className="react-form" onSubmit={event => { event.preventDefault(); onSubmit(Number(quantity), Number(price)); }}><div className="trade-card-line"><strong>{item.name}</strong><span>{assetTypeLabel(item)} · {assetContextLabel(item)}</span></div><div className="form-grid"><label><span>Quantity</span><input type="number" min="1" max={max} step="1" value={quantity} onChange={event => setQuantity(event.target.value)} /></label><label><span>Price per unit</span><input type="number" min="0.01" step="0.01" value={price} onChange={event => setPrice(event.target.value)} /></label></div><p className="trade-total">Estimated total <strong>{formatMoney(Number(quantity || 0) * Number(price || 0))}</strong></p><div className="modal-actions"><button type="button" className="secondary" onClick={onCancel}>Cancel</button><button type="submit">{mode === "sell" ? "Confirm sale" : "Confirm buy"}</button></div></form>;
 }
 
 export function Notice({ notice, onDismiss }) {
@@ -40,5 +41,6 @@ export function Notice({ notice, onDismiss }) {
 }
 
 export function CardIdentity({ item, showMeta = false }) {
-  return <span className="card-identity" title={`${item.name} · ${item.set_code || "-"} #${item.collector_number || "-"}${item.foil ? " · Foil" : ""}`}><strong>{item.name}</strong>{showMeta && <small>{item.set_code || "-"} #{item.collector_number || "-"}{item.foil ? " · Foil" : ""}</small>}</span>;
+  const context = assetContextLabel(item);
+  return <span className="card-identity" title={`${item.name} · ${context}`}><strong>{item.name}</strong>{showMeta && <small><span className={`asset-type-pill ${getAssetType(item)}`}>{assetTypeLabel(item)}</span> {context}</small>}</span>;
 }
