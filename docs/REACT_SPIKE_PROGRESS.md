@@ -432,3 +432,23 @@ Validated:
 Follow-up:
 
 - Gather sealed-focused tester feedback. Treat any automated sealed valuation source as a separate, explicitly approved data-integration decision; do not scrape TCGplayer or infer market value from acquisition cost.
+
+## 2026-08-21: React integration promotion preparation
+
+Implemented:
+
+- Merged PR #17 into `codex/react-modernization-integration`, then merged current `main` into integration without rewriting either history. Integration now contains main's `8cf49d4` review-deployment refresh and `74d7a27` artifact-integrity repair.
+- Resolved the three expected overlaps in Changelog, Deployment, and the generated Pages entry. Documentation retains both the accumulated React/sealed truth and the confirmed GitHub Pages topology: repository root from `main`, vanilla at `/ManaSpec/`, and the React review artifact at `/ManaSpec/react-spike/`.
+- Preserved `.github/workflows/react-spike-artifact.yml`, `tools/check-react-spike-artifact.mjs`, and the manifest contract from #14. Extended `npm run build:pages` so artifact synchronization is immediately followed by manifest generation and integrity verification; regenerating `react-spike/` can no longer silently discard or stale the guard metadata.
+- Regenerated the tracked Pages and portable artifacts from the reconciled integration source. User-owned untracked `static-server.mjs` and `test-fixtures/browser/issue-15-local-search.json` remained untouched.
+
+Validated:
+
+- All 63 Node tests, source-policy checks, and formatting checks pass.
+- Normal, Pages-subpath, and portable builds pass. Pages emits 603.19 KB initial JavaScript (166.16 KB gzip), a 174.53 KB lazy Price History chunk (61.04 KB gzip), a 1,735.78 KB lazy sealed catalog chunk (252.36 KB gzip), and 129.11 KB CSS (20.64 KB gzip). Portable emits a 2,809.80 KB classic script (704.37 KB gzip) and 129.12 KB CSS (20.65 KB gzip); the previously documented portable warnings remain expected.
+- The preserved manifest guard reports all 17 Pages files complete and valid. Every generated Pages JavaScript file and the portable classic script pass `node --check`, every entry-point reference resolves to an included file, and current `main` is an ancestor of the reconciled integration HEAD.
+- Fresh production-artifact browser QA used the exact `/ManaSpec/react-spike/#/radar` project-subpath topology. At 1366 × 768, the Singles/Sealed/All toggle was visible, sealed search returned the exact Bloomburrow Play Booster Box and related real products, document width equaled the viewport, and the console contained no warnings or errors. A fresh 1920 × 1080 reload also retained the sealed toggle, exact viewport containment, and a clean console.
+
+Promotion boundary:
+
+- This preparation does not merge integration into `main`. The integration-to-main promotion pull request is the review surface; deployment remains unchanged until the owner separately approves and merges it.

@@ -110,11 +110,11 @@ React source lives in `react-app/`; the tracked Pages review artifact lives in `
 
 ## 13. Acceptance Criteria
 
-- [ ] PR #17 is merged into `codex/react-modernization-integration`.
-- [ ] Integration contains both main-only deployment/integrity commits through a non-destructive merge.
-- [ ] Main's artifact-integrity guard is present and passes against regenerated artifacts.
-- [ ] Full tests, source policy, formatting, normal build, Pages build, portable build, and generated JavaScript checks pass.
-- [ ] Required browser topology loads the reconciled Pages artifact without regression.
+- [x] PR #17 is merged into `codex/react-modernization-integration`.
+- [x] Integration contains both main-only deployment/integrity commits through a non-destructive merge.
+- [x] Main's artifact-integrity guard is present and passes against regenerated artifacts.
+- [x] Full tests, source policy, formatting, normal build, Pages build, portable build, and generated JavaScript checks pass.
+- [x] Required browser topology loads the reconciled Pages artifact without regression.
 - [ ] The integration branch is pushed without user-owned untracked files.
 - [ ] An integration-to-main promotion PR is open with validation evidence and remains unmerged.
 
@@ -145,9 +145,9 @@ React source lives in `react-app/`; the tracked Pages review artifact lives in `
 
 ## 16. Deliverables
 
-- [ ] Main reconciled into React integration without losing deployment protections.
-- [ ] Generated artifacts refreshed from final source.
-- [ ] Full validation and integrity checks recorded.
+- [x] Main reconciled into React integration without losing deployment protections.
+- [x] Generated artifacts refreshed from final source.
+- [x] Full validation and integrity checks recorded.
 - [ ] Reviewed integration-to-main promotion PR opened and left unmerged.
 
 ## 17. Suggested Commit

@@ -109,10 +109,9 @@ Do not change Pages settings from the confirmed `main`/repository-root branch de
 
 ### Committed Artifact Integrity
 
-Artifact-only deployment pull requests to `main` must include an updated `react-spike/artifact-manifest.json` produced from the verified build:
+`npm run build:pages` regenerates `react-spike/`, writes `react-spike/artifact-manifest.json`, and verifies it before returning success. Artifact-only deployment pull requests to `main` must include that updated manifest. The guard can also be run directly when auditing an existing artifact:
 
 ```text
-node tools/check-react-spike-artifact.mjs --write
 node tools/check-react-spike-artifact.mjs
 ```
 
