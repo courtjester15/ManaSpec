@@ -451,4 +451,5 @@ Validated:
 
 Promotion boundary:
 
-- This preparation does not merge integration into `main`. The integration-to-main promotion pull request is the review surface; deployment remains unchanged until the owner separately approves and merges it.
+- [Promotion PR #18](https://github.com/courtjester15/ManaSpec/pull/18) is open from `codex/react-modernization-integration` to `main`, ready for review, mergeable, and intentionally unmerged. Its GitHub `React spike artifact / verify` check passed in 5 seconds.
+- This preparation does not merge integration into `main`. PR #18 is the review surface; deployment remains unchanged until the owner separately approves and merges it.

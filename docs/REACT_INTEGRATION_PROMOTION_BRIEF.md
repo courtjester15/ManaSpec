@@ -2,7 +2,7 @@
 
 ## Metadata
 
-- **Status:** In Progress
+- **Status:** Completed
 - **Date:** 2026-08-21
 - **Brief Size:** High-Risk
 - **Related Documents / Issues:** [PR #17](https://github.com/courtjester15/ManaSpec/pull/17), [Deployment](DEPLOYMENT.md), [React Migration Notes](REACT_MIGRATION_NOTES.md), [React Spike Progress](REACT_SPIKE_PROGRESS.md)
@@ -115,8 +115,8 @@ React source lives in `react-app/`; the tracked Pages review artifact lives in `
 - [x] Main's artifact-integrity guard is present and passes against regenerated artifacts.
 - [x] Full tests, source policy, formatting, normal build, Pages build, portable build, and generated JavaScript checks pass.
 - [x] Required browser topology loads the reconciled Pages artifact without regression.
-- [ ] The integration branch is pushed without user-owned untracked files.
-- [ ] An integration-to-main promotion PR is open with validation evidence and remains unmerged.
+- [x] The integration branch is pushed without user-owned untracked files.
+- [x] An integration-to-main promotion PR is open with validation evidence and remains unmerged.
 
 ## 14. Validation Plan
 
@@ -148,7 +148,7 @@ React source lives in `react-app/`; the tracked Pages review artifact lives in `
 - [x] Main reconciled into React integration without losing deployment protections.
 - [x] Generated artifacts refreshed from final source.
 - [x] Full validation and integrity checks recorded.
-- [ ] Reviewed integration-to-main promotion PR opened and left unmerged.
+- [x] Reviewed integration-to-main promotion PR opened and left unmerged.
 
 ## 17. Suggested Commit
 
