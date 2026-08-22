@@ -8,6 +8,18 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Added Issue #16's React sealed-product speculation vertical slice: bundled MTGJSON product discovery, exact TCGplayer identity/links, mixed Radar and Positions, weighted buys, partial/full sells, shared Transactions/History/signals/search, notes, and timestamped manual valuation.
+- Added schema-v2 sealed persistence and backup migration with separate `sealedRadar`, `sealedSpecs`, and `sealedTransactions` keys while preserving all existing singles keys and schema-v1 imports.
+- Added deterministic sealed-catalog generation, representative booster/bundle/deck/Secret Lair identity tests, and automatic tracked Pages-artifact synchronization after a successful Pages build.
+
+- Expanded the React Dashboard into an eight-metric Portfolio Summary with honest realized-coverage, data-quality, plan-completeness, and marked-value concentration signals designed for the 1920 x 1080 primary desktop.
+- Rebuilt React Price History with Chart.js 4.5.1, exact-printing sparse-date ranges, tooltips, summary context, and plan reference lines while preserving the existing snapshot schema.
+- Added categorized React saved-data search across Positions, Radar, Transactions, History, card notes, and thesis notes; the native deterministic index met the workflow contract, so Fuse.js was not adopted.
+- Restored React Signals parity with vanilla's tested 5% target logic, exact-printing market freshness, priorities/reasons/actions, shared Dashboard queue membership, interactive bucket/exact-row triage, and exact Radar/Positions `View` navigation with a separate `Scryfall` action.
+- Added Tabulator 6.5.2 as the shared React table foundation behind a ManaSpec-owned wrapper, with Radar as the only Phase 1 pilot and later table modules intentionally deferred.
+- Implemented the React 19/Vite 8 ManaSpec reconstruction across Dashboard, Radar, Positions, Signals, Transactions, History, and Admin with hash routing, compatibility-backed local state, shared UI primitives, tests/checks, normal output, a tracked Pages artifact, and a stable directly openable portable build.
+- Added paired vanilla/React parity evidence and a dedicated implementation progress record covering the full UI pass plus table and Card Detail correction.
+
 - Added exact-printing local Price History for Radar and Positions, including finish-aware daily snapshots, compact coverage indicators, range filtering, summary metrics, plan reference lines, and a reusable offline chart modal.
 - Added Comparable Printings to Card Detail: same-Oracle paper printings expand into finish-aware native rows with sortable release/price columns, exact-printing card-art previews, aligned Scryfall and TCGplayer actions, optional Add to Radar, a pinned comparison baseline, progressive expansion, and local loading/error states.
 - Added Backend Foundation Batch 3: explicit data-schema readiness, migration fixtures, reconciliation/correction semantics, runtime-only legacy-backfill provenance, and a repeatable read-only reconciliation report.
@@ -19,6 +31,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added a docs ownership map and workflow routing rules so future documentation updates land in the right active source of truth.
 - Added post-beta finance workflow ideas to the Parking Lot, centered on review/learning, lightweight analytics, optional metadata, and ledger extensions that preserve ManaSpec's decision-loop focus.
 - Added a Codex friction log and browser QA friction guidance for recurring tooling, harness, and workflow detours.
+- Added a library-integration workflow guardrail requiring native configuration/runtime inspection before compatibility workarounds or replacement mechanics.
 - Added a generated repository snapshot utility for faster GPT/Codex orientation.
 - Enriched the generated repository snapshot with runtime architecture, workflow ownership, localStorage contracts, dependency hints, DOM/CSS summaries, and architecture hotspots.
 - Moved point-in-time audit docs into `docs/audits/` and documented their role as diagnostic context rather than active authority.
@@ -33,6 +46,22 @@ This file is intentionally higher level than Git history. Add user-visible workf
 - Added a Roadmap React spike lane for workspace isolation, portable and Pages-path proofs, storage compatibility, full feature parity, responsive validation, and a separate promotion decision.
 
 ### Changed
+
+- Replaced the earlier React sealed deferral with an explicitly authorized additive feature. Sealed products begin unpriced and remain outside marked value, target delta, and P/L until the user saves a manual market check; buy price is never substituted for market value.
+
+- Completed the Issue #15 React parity-polish and alpha-readiness pass: content-driven Signals layout, accessible Help focus/escape behavior, exact-printing action names, full route/build validation, and an evidence-based recommendation that keeps vanilla canonical until release-control blockers are closed.
+- Made 1920 x 1080 the primary desktop design target and 1366 x 768 the secondary compatibility target across active React planning, architecture, deployment, dependency, and validation docs.
+- Migrated React Signals, Transactions, and History to the shared Tabulator foundation; restored compact route-owned controls and page size, aligned all five table routes on one desktop context rhythm, contained three Signals previews without reducing the limit, and removed the unused interim table.
+- Corrected shared React Tabulator header sizing so inactive sort space is reclaimed and the compact active arrow never truncates a column label.
+- Migrated React Positions from the interim table to the shared Tabulator foundation with the approved 19-column dense layout, canonical Position-row validation, reconciliation-safe cells, sorting/filtering, inline Target/Hold editing, and existing detail/Buy/Sell/delete workflows preserved.
+- Aligned the shared React Tabulator and app-shell presentation with vanilla ManaSpec: compact centered headers with active-only sort arrows, one flexible descriptive column, shared 27px rows and compact indicators/actions, vanilla nav spacing, a blue global Search action, and the full Radar filter contract without duplicate Search or OWNED decoration.
+- Established the React Position Data Trust boundary: Position rows now derive acquisition age/date from vanilla's `buyDate`, preserve compatible `qty`/`buyPrice`/`buyDate` storage, identify invalid ownership records for reconciliation, and exclude them from portfolio calculations and open-position counts without automatic repair.
+- Closed React Parity Batch 1 data-trust gaps: Position deletion now honors the vanilla ledger-safety guard, related notes/history/market/transaction navigation resolves through one exact-printing helper, foil and nonfoil stay isolated, and ambiguous legacy fallbacks no longer cross-link tracked printings.
+- Migrated React Radar to the shared grid contract with compact vanilla-aligned columns, sorting, editable entry targets, quantity steppers, market values, ownership/note/history indicators, isolated row actions, and responsive styling.
+- Corrected the shared Tabulator sizing contract by preserving omitted library defaults, allowing Radar to fill its container, give remaining horizontal space to Card, and keep numeric, indicator, and action columns compact.
+- Moved the React modernization lane from an unbuilt experiment into active implementation and stabilization. React is now the likely forward frontend candidate, while vanilla remains the behavioral and production/beta source of truth until a separate promotion decision.
+- Corrected React dense tables to the established compact scan contract and restored row-body Card Detail opening with action isolation; corrected React Card Detail toward the compact vanilla command-center model.
+- Refreshed the core architecture, roadmap, workflow, dependency, deployment, style, decision, migration, progress, and history documentation to match the implemented React milestone and next library-evaluation phase.
 
 - Repaired the public React spike review artifact after an incomplete upload and added a manifest-backed GitHub check that rejects missing, altered, or syntactically invalid Pages bundles.
 - Refined Price History with a continuous calendar-time axis, real-snapshot-only points and hover targets, a shorter non-scrolling laptop modal, and a cleaner compact trend icon.

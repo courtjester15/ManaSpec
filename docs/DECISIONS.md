@@ -30,11 +30,13 @@ ManaSpec can surface Scryfall `edhrec_rank` as a compact EDH presence signal bec
 
 Raw EDHREC deck counts are deferred until the app has a reliable external-signal fetch path and a reason to store dated snapshots.
 
-### Sealed product is deferred
+### Sealed product ships as an additive React vertical slice
 
-Sealed product should not be forced into the single-card printing model.
+Issue #16 intentionally overrides the earlier roadmap deferral. Sealed product is active in the React candidate, while the authoritative vanilla runtime remains singles-only.
 
-When it becomes active, MTGJSON sealed product data is the likely identity source, with stored TCGplayer links and manual/paste market observations. Singles remain the current priority.
+Sealed is not forced into the single-card printing model. MTGJSON product UUID is the exact identity, `sealed:<uuid>` is the cross-workflow key, and generated catalog records retain set/category/release/contents context plus exact TCGplayer product links. Sealed Radar, Positions, and Transactions use additive keys so existing `specs`, `radar`, and `transactions` records remain unchanged.
+
+The verified official MTGJSON card-price feed did not contain representative sealed UUIDs. ManaSpec therefore starts sealed products unpriced and uses explicit timestamped manual TCGplayer market checks. It does not scrape, substitute a card price, or treat buy price as market value. Unpriced holdings retain cost basis but are excluded from value, target-delta, and P/L calculations.
 
 ### Historical backfill is owned-spec backfill
 
@@ -58,6 +60,8 @@ Admin backup files use `manaspec-localstorage-backup` schema v1.
 
 The v1 backup covers local user-owned ManaSpec state in `specs`, `radar`, `transactions`, `cardNotes`, archived `thesisNotes`, `signals`, `cash`, `priceSnapshots`, `priceRefreshStatus`, and `marketObservations`.
 
+The backup envelope remains schema v1. React Issue #16 advances the contained `dataSchemaVersion` to 2 and adds `sealedSpecs`, `sealedRadar`, and `sealedTransactions`. Version-one data imports add empty sealed arrays; unsupported future data versions fail closed. React schema-v2 exports require a schema-v2-aware React build to retain sealed state, while the unchanged singles keys remain readable by vanilla.
+
 Import is replace-only with preview and explicit confirmation. It does not merge data, rename storage keys, migrate the ledger model, or introduce cloud sync.
 
 ## App Shell
@@ -78,7 +82,7 @@ They should remain visible outside the portfolio workflow.
 
 ### Radar and Positions are the active workflow
 
-For alpha, Radar and Positions are the active singles workflow. Radar owns discovery and pre-purchase planning; Positions owns cards after money is committed.
+For alpha, Radar and Positions own the active speculation lifecycle. Vanilla remains singles-only. React supports both exact single printings and exact sealed products while preserving the same discovery/planning versus ownership boundary.
 
 ### Positions are not the long-term source of truth
 
@@ -114,10 +118,10 @@ Thesis is no longer an active navigation module. Existing Thesis code and `thesi
 
 Search should be context-specific:
 
-- Card Search: Scryfall discovery and printing selection.
-- Local Search: local Radar ideas and owned Positions only.
-- Transaction Search: future ledger/history filtering.
-- Global Search: future routing to the right workflow.
+- Card Search: Scryfall discovery and printing selection inside Radar.
+- Local Search: React app-shell search across saved Positions, Radar, Transactions, History, card notes, and thesis notes.
+- Transaction Search: route-local ledger filtering inside Transactions.
+- Global Search: React routing from categorized saved-data results to an exact workflow context.
 
 Card Search currently belongs inside Radar because adding a spec starts as a watched idea before purchase.
 
@@ -151,11 +155,11 @@ Future transaction history should be able to represent methods such as `BUY`, `O
 
 ## React Modernization Spike
 
-### React is an isolated experiment, not a production cutover
+### React is the active implementation candidate, not a production cutover
 
-ManaSpec will reconstruct the complete current application in React on a dedicated experimental branch and in an isolated `react-app/` workspace. The purpose is to evaluate parity, maintainability, responsive foundations, libraries, tooling, and deployment before deciding whether React should become the long-term frontend.
+ManaSpec has reconstructed the complete application shape in React on a dedicated branch and in an isolated `react-app/` workspace. The React version is now in active implementation and stabilization, and it is the likely long-term frontend if the remaining parity, compatibility, deployment, and promotion evidence is satisfactory.
 
-The vanilla root remains functional, publicly available, and authoritative throughout the spike. Finishing the spike does not authorize replacing it; promotion requires a separate evidence-based decision.
+The vanilla root remains functional, publicly available, and authoritative for current behavior and production/beta delivery. React implementation progress does not authorize replacing it; promotion requires a separate evidence-based decision.
 
 ### Parity comes before redesign and new features
 
@@ -179,7 +183,45 @@ The portable output may use a separate build configuration to emit file-compatib
 
 The vanilla application remains at the existing GitHub Pages root. The React experiment is published separately under `/ManaSpec/react-spike/` using an artifact that preserves the vanilla root and adds the React build beneath `react-spike/`.
 
-Hash-based routing is the preferred starting direction because it supports the Pages subpath, refresh-safe navigation, and portable local opening without server rewrites. It remains subject to implementation validation.
+Hash-based routing is adopted because it supports the Pages subpath, refresh-safe navigation, and portable local opening without server rewrites. It has been validated in development, build, and portable output; the active GitHub Pages publishing source still requires confirmation.
+
+### The React baseline uses local context and compatibility adapters
+
+React 19, React DOM, Vite 8, React Router hash routing, local context/state, and an explicit persistence compatibility layer are the implemented foundation. A larger state framework is not justified while the current domain and persistence model remain understandable through this baseline.
+
+The shared React table wrapper and native/shared dialogs established a controllable parity baseline. Price History has since replaced its inline SVG with a focused direct Chart.js integration after richer range, tooltip, scale, and reference-line needs demonstrated the benefit.
+
+### Parity baseline precedes selective library adoption
+
+The migration is intentionally staged. First, establish a recognizable end-to-end React implementation without changing several infrastructure variables at once. Second, compare the most useful candidate libraries against real ManaSpec workflows and adopt them only where they reduce custom code or improve capability without weakening the product contract.
+
+The shared table system, Chart.js Price History, and unified local-search comparisons are complete. Fuse.js was not adopted because the native deterministic index met the current workflow contract; Day.js remains a feature-triggered evaluation. Evidence belongs in [LIBRARIES](LIBRARIES.md).
+
+### Unified local search uses native deterministic matching
+
+The React app shell searches saved ManaSpec Positions, Radar, Transactions, History events, card notes, and thesis notes through one local index. Results remain categorized and source-labeled, expose exact printing and finish context, and navigate to a focused record or detail panel. Radar's Scryfall search remains a separate network-backed workflow for finding new cards; the global search does not silently change domains.
+
+The current matcher normalizes case, accents, and punctuation, supports partial and all-term queries, treats `foil`, `nonfoil`, and `etched` as exact finish tokens, caps each category, and applies stable category/result ordering. Exact printing identity and route focus matter more than opaque fuzzy rank for the representative same-name, note, transaction, and history cases.
+
+Fuse.js 7.4.2 was compared and not adopted for this scope because it added dependency and ranking behavior without improving the acceptance cases. Reconsider it only if measured local collections show meaningful misspelling, relevance, or scale failures that cannot be resolved without growing a custom search engine. The comparison and bundle evidence are recorded in [LIBRARIES](LIBRARIES.md#fusejs-742).
+
+### Tabulator is the shared React table engine behind a ManaSpec wrapper
+
+ManaSpec adopts Tabulator 6.5.2 for the long-term React table foundation, beginning with Radar as the Phase 1 pilot. Product modules configure a ManaSpec-owned `TabulatorTable`; they do not instantiate Tabulator or depend on vendor components directly.
+
+The wrapper owns imperative lifecycle cleanup, modular feature registration, cloned row data, React cell roots, pagination mechanics, sort-value and accessibility adapters, row/action isolation, empty states, compact geometry, shared indicators/actions, accessibility naming, and responsive styling. Route modules own their filters, column intent, editors, and business callbacks. Only the modules needed by ManaSpec are registered so unused spreadsheet, range, export, grouping, and other full-build features do not enter the bundle.
+
+The wrapper is an adapter, not a replacement table engine. It passes only intentionally defined options so Tabulator defaults remain intact, and delegates sizing, sorting, editing, row rendering, responsive behavior, and redraw mechanics to Tabulator. ManaSpec-specific code is limited to data, column intent, formatters, indicators, actions, and minimal theming unless a documented compatibility exception is required.
+
+The 2026-07-27 Radar/vanilla side-by-side review affirmed this boundary, and the completed Positions migration confirmed it with a second route. Radar, Positions, Signals, Transactions, and History now use the adopted wrapper. Product routes remain configuration consumers and must not introduce module-specific grid systems or move route business logic into the grid adapter. Vanilla remains the behavior and visual oracle.
+
+### Chart.js powers React Price History without a wrapper
+
+ManaSpec adopts Chart.js 4.5.1 directly for React Card Detail Price History. The feature registers only the line-chart modules it uses, lazy-loads the secondary workflow, and owns canvas creation and destruction inside one isolated React component; a React-specific chart wrapper is not justified for this boundary.
+
+Stored price history remains the authority. The chart plots only valid observations for the exact Scryfall printing and finish, places points at their recorded dates, never interpolates missing dates, and compares change only with the prior recorded observation. Entry target, average cost, and exit target appear as reference lines only when their exact owned or watched context supplies valid values. Range controls are unavailable when fewer than two recorded points exist in that window, so the display does not imply unsupported history.
+
+Normal and Pages builds split the chart into a lazy secondary chunk. Portable delivery continues to bundle every dependency locally into its classic script and uses no runtime CDN. Dependency rationale and measured bundle cost are recorded in [LIBRARIES](LIBRARIES.md#chartjs-451).
 
 ### Production dependencies are bundled locally
 
@@ -189,11 +231,17 @@ React may use npm and normal build tooling during development, but delivered dep
 
 The local library collection must be inventoried before equivalent packages are downloaded. Availability does not require adoption. Each selected dependency must solve a current problem, avoid category overlap, work in normal and portable builds, and have its purpose, alternatives, current/future value, bundle cost, and maintenance cost recorded in [LIBRARIES](LIBRARIES.md).
 
-State management, table, styling, form, dialog, and other library choices remain proposed until focused implementation evidence supports them.
+The React foundation, shared Tabulator table boundary, and focused Chart.js Price History integration are adopted. The native saved-data index won the Fuse.js comparison. Future date, dialog, form, styling, or state dependencies remain evidence-based decisions rather than assumed modernization steps.
 
 ### Desktop parity leads responsive work
 
-The 1366 x 768 desktop experience is the parity baseline. Tablet and phone support must be intentional through responsive navigation, layouts, dialogs, column priorities, expandable details, and touch-friendly controls, but it cannot derail desktop parity.
+The 1920×1080 desktop experience is the primary product target. It should use the additional width for clearer decision density and workflow hierarchy rather than stretching the 1366 layout. The 1366×768 desktop experience remains the secondary compatibility target and must compress cleanly without horizontal overflow or losing core actions. Tablet and phone support remains intentional through responsive navigation, layouts, dialogs, column priorities, expandable details, and touch-friendly controls.
+
+### React is alpha-ready but canonical promotion remains explicit
+
+Issue #15 establishes that React is ready for controlled alpha use and continued forward feature work: the full route surface, compatible storage adapter, shared dense-table system, Portfolio Summary, Price History V2, unified local search, corrective UI/accessibility work, focused tests, and three build modes are implemented. The 1920x1080 primary desktop and 1366x768 compatibility desktop are both deliberate targets.
+
+This evidence does not promote React. Canonical status remains blocked until the actual public Pages publishing source and rollback path are verified, representative React-written records are read successfully by vanilla, a cutover/rollback runbook is approved, and the promotion decision is recorded separately.
 
 ## Docs
 
@@ -211,7 +259,7 @@ ManaSpec has earned focused ownership docs because README was carrying too much 
 - [ARCHITECTURE](ARCHITECTURE.md) owns how the app is built.
 - [DATA_MODEL](DATA_MODEL.md) owns entities and relationships.
 - [STYLE_GUIDE](STYLE_GUIDE.md) owns UI language and visual conventions.
-- [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md) owns the proposed architecture for the approved experiment without redefining current vanilla truth.
+- [REACT_SPIKE_ARCHITECTURE](REACT_SPIKE_ARCHITECTURE.md) owns the implemented React architecture and remaining validation without redefining current vanilla truth.
 - [LIBRARIES](LIBRARIES.md) owns dependency inventory, evaluation, and adoption records.
 - [DEPLOYMENT](DEPLOYMENT.md) owns the dual vanilla/React delivery model and portable React usage.
 

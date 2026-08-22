@@ -246,16 +246,52 @@ By the end of June 2026, the project was labeled `v0.9.0-alpha.1` friend preview
 
 Jason later completed enough repeated hands-on testing of the normal singles workflow to close the solo core-loop validation phase. Radar search and exact-printing selection, Radar idea management, buying into Positions, additional buys, partial and full sells, plan/target/quantity/hold editing, Card Detail use, and Dashboard/Signals/Transactions/History behavior all moved from "needs another solo pass" into validated friend-preview territory.
 
-## Current State
+## July 2026: React modernization became an implementation
 
-As of 2026-07-02, with the latest pre-history repository activity found on 2026-07-01, ManaSpec is a local-first MTG speculation workflow and positions terminal built with vanilla HTML, CSS, JavaScript, Scryfall data, and localStorage.
+The React modernization work began as an isolated evidence-gathering spike. The team first audited the copied GalleyFlow package archive, kept `/lib/` as an ignored offline cache, selected React 19, React DOM, Vite 8, and React Router as the foundation, and documented portable and Pages-subpath constraints before treating any package as adopted.
 
-The active app has Dashboard, Radar, Positions, Signals, Transactions, History, Admin, Card Detail, shared Notes, contextual Help, JSON backup/restore, and a growing documentation/process system. The product center of gravity is now clear: ManaSpec organizes speculation workflow and attention while the user owns strategy and decisions.
+The implementation strategy deliberately established a full recognizable React baseline before replacing several subsystems with libraries. That made it possible to distinguish migration defects from table, search, chart, or date-library integration defects. The result reconstructed all seven primary routes, the shared shell, compatible browser state, workflows, normal and Pages outputs, and a directly openable portable build.
+
+The first broad UI pass made the React app recognizably ManaSpec. A subsequent parity correction restored the established dense-table rhythm, separated card identity columns, made row bodies open Card Detail without allowing controls to trigger the row, and returned Card Detail to a compact working-panel shape. Jason's directional review placed the interface at roughly 80-90% of the familiar vanilla experience. That number is a practical review signal, not a formal parity score.
+
+React therefore moved from a merely proposed experiment into active implementation and stabilization, and it is the likely path forward. The next phase closes remaining workflow, UI, responsive, accessibility, data cross-write, and deployment-source gaps, then evaluates the table system, Fuse.js, Chart.js, and Day.js against the working application rather than a toy shell.
+
+On 2026-07-18, the table evaluation produced the first adopted feature-library foundation. Tabulator 6.5.2 was placed behind a ManaSpec-owned React wrapper and Radar became the only Phase 1 pilot. The implementation registered only the grid modules ManaSpec uses, preserved React ownership of cell content and state callbacks, restored vanilla-aligned Radar fields and compact interactions, and left Positions, Signals, Transactions, and History intentionally unchanged for a later configuration-led Phase 2 migration.
+
+On 2026-07-27, the Radar pilot was reviewed side-by-side against vanilla and the shared boundary was affirmed. Grid lifecycle, pagination, sort accessibility, compact geometry, indicators, and action presentation belong in the wrapper; route-specific filters, columns, editors, and business workflows remain outside it. The same pass aligned the React shell navigation and global Search treatment, restored Radar's complete local filter contract, and removed React-only decoration that weakened parity. Positions became the next deliberate consumer of the approved foundation.
+
+On 2026-07-29, PR #9 merged the canonical Positions migration and shared table/app-shell parity work into the React integration branch. Positions became the first completed Phase 2 consumer without reopening its business logic, and Radar and Positions now share the vanilla-verified compact grid foundation. A final accessibility check confirmed that moving sort focus between columns leaves `aria-sort` active on exactly one header, so the wrapper required no compensating state cleanup. Issues #8 and #10 closed with this milestone; Signals, Transactions, and History remain separately bounded future migrations.
+
+On 2026-08-02, Issue #11 completed that table adoption arc. Signals, Transactions, and History moved to the same shared wrapper in separate route commits, then a final acceptance correction restored their compact route-owned controls and aligned all five table routes on one desktop context rhythm. Signals retained its three-preview attention tiles inside a controlled band, and the interim React table implementation was removed after losing its final consumer. React now has one real table system across the application rather than a pilot living beside temporary production-route tables.
+
+This milestone did not promote React to production. Vanilla remains the behavioral oracle, current production/beta frontend, rollback path, and compatibility reference until a separate evidence-based promotion decision. The tracked `react-spike/` artifact exists, but the actual GitHub Pages publishing source must be confirmed before treating every new branch artifact as publicly deployed.
+
+## 2026-08-07: Issue #15 expanded React into an alpha candidate
+
+Issue #15 deliberately combined product work, dependency decisions, responsive hierarchy, parity correction, and release evidence. The React Dashboard gained an honest eight-metric Portfolio Summary; Price History moved to a focused Chart.js integration with sparse-date semantics and plan references; and the app shell gained categorized saved-data search without adopting Fuse.js. A final UI pass removed artificial Signals clipping, corrected Help focus behavior, and made exact-printing actions accessible across event routes.
+
+The desktop hierarchy also changed deliberately. The 1920 x 1080 canvas became the primary product target and uses a 1760px work surface for complete metrics and dense workflows. The 1366 x 768 layout remains a required compatibility target that compresses rather than merely scaling the larger layout down.
+
+This work changed the React description from speculative spike to controlled-alpha candidate, not to canonical frontend. Public Pages publishing ownership, representative React-written record reads in vanilla, and an approved cutover/rollback decision remain explicit promotion gates.
+
+## 2026-08-18: Issue #16 made sealed a real React workflow
+
+Jason deliberately overrode the roadmap's sealed deferral to mix forward product work into the React foundation phase and support a prospective sealed-focused tester. The implementation resisted the tempting fake-card shortcut: MTGJSON UUID became the exact product identity, sealed state received additive Radar/Positions/Transaction stores, and the existing route chain now carries booster boxes, packs, bundles, decks, and Secret Lair products through research, ownership, partial/full exits, and review.
+
+The pricing investigation shaped the product. MTGJSON's official daily price artifact covered card UUIDs but not the representative sealed UUIDs checked for the issue, while its TCGplayer identifiers and links resolved exact products. ManaSpec therefore ships honest manual sealed valuation: a product begins unpriced, cost basis is never presented as market value, and marked value/P&L appear only after a timestamped user check. Existing singles storage and vanilla behavior remain unchanged.
+
+## Current State (2026-08-18)
+
+ManaSpec is a local-first MTG speculation workflow and positions terminal with an authoritative vanilla frontend and a forward React candidate. Scryfall remains the singles identity/price source; React additionally bundles MTGJSON sealed product identity and uses localStorage for additive user-owned state.
+
+ManaSpec now has two intentionally distinguished implementations. The vanilla root is the authoritative production/beta app with Dashboard, Radar, Positions, Signals, Transactions, History, Admin, Card Detail, shared Notes, contextual Help, and JSON backup/restore. The React workspace reproduces that full application shape, includes the Issue #15 product-expansion work and Issue #16 sealed vertical slice, and is ready for controlled alpha use as the likely forward frontend.
+
+The product center of gravity remains unchanged: ManaSpec organizes speculation workflow and attention while the user owns strategy and decisions. React must preserve that product contract and the vanilla data model while earning promotion through parity, compatibility, delivery, and maintainability evidence.
 
 The main remaining priorities before broader beta are:
 
 - Capture friend-preview and real-user feedback as focused bugs, polish, or feature candidates.
-- Build additional user-facing features that strengthen the validated singles workflow.
+- Exercise the new sealed workflow with the interested tester and capture product/data feedback without weakening singles compatibility.
 - Write the ledger migration plan before making Transactions the ownership source of truth.
 - Continue tightening labels, empty states, table scan behavior, confirmations, and Help.
 - Keep data safety and backup/restore stable through every model change.
