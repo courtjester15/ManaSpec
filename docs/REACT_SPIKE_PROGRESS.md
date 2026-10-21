@@ -2,6 +2,10 @@
 
 This document records implementation milestones and evidence for the React reconstruction and likely forward frontend candidate. It does not redefine current vanilla behavior or authorize production cutover.
 
+## 2026-10-20: Issue #20 valuation investigation
+
+Corrected missing-price coercion, exact-finish refresh, quote-only Radar/Position updates, cached-price history fabrication, and missing-price detail/Signals display. Preserved null/zero through trading, reload, and backup. The 70-test React suite, source/format checks, normal/Pages/portable builds, and committed artifact integrity check passed. In-app browser evidence covers both frontends with isolated memory fixtures, desktop/laptop and React phone layouts, Admin audit, Positions, Dashboard, Signals, and detail. Direct portable `file://` opening was blocked by in-app URL policy; hosted portable smoke is separate evidence, not a direct-file pass. See [investigation and QA record](audits/issue-20-position-valuations-2026-10-20.md) for scope, root causes, impact, and exact limits. No merge, deployment, or promotion is authorized by this work.
+
 The point-in-time [Vanilla vs React Workflow and CSS Audit](audits/vanilla-react-workflow-css-audit-2026-07-21.md) records the blockers visible on that date. Later milestone entries supersede its implementation status. The final Issue #15 entry below owns the current alpha-readiness evidence and recommendation; earlier entries remain historical rather than current release guidance.
 
 ## 2026-07-16: Workspace And Build Foundation

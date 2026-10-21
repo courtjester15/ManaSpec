@@ -15,14 +15,19 @@ Handles:
 function updateTotals() {
   let invested = 0;
   let value = 0;
+  let pricedInvested = 0;
+  let unpriced = 0;
 
   specs.forEach(s => {
     invested += toFiniteNumber(s.buyPrice) * toFiniteNumber(s.qty);
-    value += toFiniteNumber(s.currentPrice) * toFiniteNumber(s.qty);
+    const price = getMarketPriceOrNull(s.currentPrice);
+    if (price === null) { unpriced += 1; return; }
+    value += price * toFiniteNumber(s.qty);
+    pricedInvested += toFiniteNumber(s.buyPrice) * toFiniteNumber(s.qty);
   });
 
-  const pl = value - invested;
-  const plPercent = invested > 0 ? (pl / invested) * 100 : 0;
+  const pl = value - pricedInvested;
+  const plPercent = pricedInvested > 0 ? (pl / pricedInvested) * 100 : 0;
 
   const totalEquity = toFiniteNumber(cash) + value;
 
@@ -38,6 +43,8 @@ function updateTotals() {
     eqEl.innerText = formatNumber(totalEquity, summaryNumberOptions);
   }
 
+  document.getElementById("value").title = `${unpriced} unpriced Positions excluded; cost basis retained`;
+
   // P/L
   const plEl = document.getElementById("totalPL");
   if (plEl) {
@@ -48,7 +55,7 @@ function updateTotals() {
 
 function updatePL() {
   specs.forEach(s => {
-    s.pl = ((toFiniteNumber(s.currentPrice) - toFiniteNumber(s.buyPrice)) * toFiniteNumber(s.qty)).toFixed(2);
+    s.pl = getMarketPriceOrNull(s.currentPrice) === null ? null : ((toFiniteNumber(s.currentPrice) - toFiniteNumber(s.buyPrice)) * toFiniteNumber(s.qty)).toFixed(2);
   });
 }
 

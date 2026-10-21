@@ -252,7 +252,7 @@ function getSignalTableColumns() {
     { label: "Source", sortKey: "source", align: "center", value: row => row.sourceLabel },
     { label: "Action", sortKey: "actionLabel", align: "center", type: "badge", badgeClass: row => getSignalActionClass(row), value: row => row.actionLabel },
     { label: "Why", sortKey: "reasonLabel", value: row => row.reasonLabel, title: row => row.reasonDetail },
-    { label: "Now", sortKey: "currentPrice", align: "money", value: row => row.currentPrice ? money(row.currentPrice) : "-" },
+    { label: "Now", sortKey: "currentPrice", align: "money", value: row => row.currentPrice !== null ? money(row.currentPrice) : "-" },
     { label: "Target", sortKey: "targetSort", align: "money", type: "editable", name: "target", inputAttrs: 'inputmode="decimal" pattern="[0-9$,.]*"', placeholder: "Set", value: row => formatSignalTargetInput(row.targetValue), displayValue: row => formatTargetDisplayValue(row.targetValue) },
     { label: "Δ Target", sortKey: "distanceSort", align: "money", className: getSignalDistanceClass, value: formatSignalDistance, title: formatSignalDistanceTitle },
     { label: "Market", sortKey: "marketAgeSort", align: "center", value: row => row.marketFreshness, title: row => row.marketDetail },
@@ -304,7 +304,7 @@ function buildSignalAttentionRow(item) {
     market,
   });
   const source = item.owned ? "portfolio" : "radar";
-  const currentPrice = Number(item.currentPrice || 0);
+  const currentPrice = getMarketPriceOrNull(item.currentPrice);
 
   return {
     id: item.id,

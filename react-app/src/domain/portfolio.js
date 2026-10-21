@@ -231,6 +231,7 @@ export function calculatePortfolioSummary(specs = [], cash = 0, options = {}) {
   };
 }
 export function formatMoney(value) {
+  if (finiteOrNull(value) === null) return "-";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",

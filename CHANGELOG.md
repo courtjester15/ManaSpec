@@ -6,6 +6,11 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ## Unreleased
 
+### Fixed — 2026-10-20
+
+- Issue #20: preserve unavailable single quotes and stale timestamps instead of creating zero valuations; keep genuine zero distinct across Positions, Card Detail, Signals, and portfolio calculations in vanilla and React.
+- React price audits now update only quote fields across shared Radar/Position identities and record history only from successful observations. Buy/sell valuation handling preserves unknown quotes without changing transaction or weighted-cost math. Storage keys, backup schema, sealed identity, and existing stored zeros remain compatible.
+
 ### Added
 
 - Aligned ManaSpec's agent/contributor workflow with issue-led P/E readiness, short MTD handoffs, branch/PR review authority, autonomous browser/data-regression QA, safe-fixture recovery checks, and change-scoped documentation closure; clarified React integration promotion versus deployed vanilla and recorded missing-price-not-zero correctness rules.

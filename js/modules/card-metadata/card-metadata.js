@@ -8,9 +8,7 @@ Shared Scryfall metadata for Radar ideas and owned Positions.
 */
 
 function buildTrackedCard(card, overrides = {}) {
-  const price = card.foil
-    ? parseFloat(card.prices?.usd_foil || card.prices?.usd || overrides.currentPrice || 0)
-    : parseFloat(card.prices?.usd || overrides.currentPrice || 0);
+  const price = getScryfallUsdPrice(card, { ...card, ...overrides });
 
   return {
     id: card.id,
@@ -20,7 +18,7 @@ function buildTrackedCard(card, overrides = {}) {
     set_name: card.set_name || overrides.set_name || "",
     collector_number: card.collector_number || overrides.collector_number || "",
     foil: Boolean(card.foil || overrides.foil),
-    currentPrice: Number.isFinite(price) ? price : Number(overrides.currentPrice || 0),
+    currentPrice: price,
     plannedQty: Math.max(1, Number(overrides.plannedQty || 1)),
     entryTarget: Number(overrides.entryTarget || 0),
     exitTarget: Number(overrides.exitTarget || 0),

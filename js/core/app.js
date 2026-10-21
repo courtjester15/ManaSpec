@@ -46,8 +46,9 @@ function money(n) {
 }
 
 function tableMoney(n) {
+  if (n === null || n === undefined || n === "") return "-";
   const number = Number(n);
-  if (!Number.isFinite(number)) return "$0";
+  if (!Number.isFinite(number)) return "-";
 
   const sign = number < 0 ? "-" : "";
   const absolute = Math.abs(number);

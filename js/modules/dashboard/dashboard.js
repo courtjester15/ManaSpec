@@ -11,8 +11,10 @@ function renderDashboardView() {
   const owned = getOwnedPositions();
   const totalValue = getPortfolioValue();
   const invested = getInvestedValue();
-  const pl = totalValue - invested;
-  const plPct = invested ? (pl / invested) * 100 : 0;
+  const priced = owned.filter(spec => getMarketPriceOrNull(spec.currentPrice) !== null);
+  const pricedBasis = priced.reduce((sum, spec) => sum + getDashboardNumber(spec.buyPrice) * getDashboardNumber(spec.qty), 0);
+  const pl = totalValue - pricedBasis;
+  const plPct = pricedBasis ? (pl / pricedBasis) * 100 : 0;
   const signalRows = getDashboardSignalRows();
   const workQueues = getDashboardWorkQueues(signalRows);
 
@@ -25,7 +27,7 @@ function renderDashboardView() {
 
       <div class="metric-grid dashboard-state-grid">
         ${renderMetricTile("Cash", money(cash), { detail: "Available" })}
-        ${renderMetricTile("Equity / Open P&L", `${money(cash + totalValue)} / ${formatSignedMoney(pl)}`, { tone: getDashboardValueTone(pl), detail: formatSignedPercent(plPct) })}
+        ${renderMetricTile("Equity / Open P&L", `${money(cash + totalValue)} / ${formatSignedMoney(pl)}`, { tone: getDashboardValueTone(pl), detail: `${formatSignedPercent(plPct)}; ${owned.length - priced.length} unpriced excluded` })}
         ${renderMetricTile("Tracked Printings", `${owned.length + radar.length}`, { detail: `${owned.length} Positions, ${radar.length} Radar` })}
         ${renderMetricTile("Signals", `${signalRows.length} active`, { detail: "Open Signals", action: "signals" })}
       </div>
@@ -160,6 +162,7 @@ function getTopPositions(direction) {
 // Preserved for post-beta review if users expect gain/loss queues on Dashboard.
 
 function getPositionGainLoss(spec) {
+  if (getMarketPriceOrNull(spec.currentPrice) === null) return null;
   return (getDashboardNumber(spec.currentPrice) - getDashboardNumber(spec.buyPrice)) * getDashboardNumber(spec.qty);
 }
 

@@ -51,7 +51,7 @@ function getPortfolioContextCards() {
     {
       label: "Portfolio Value",
       value: money(portfolioValue),
-      detail: "Current marked value",
+      detail: `${positions.filter(spec => getMarketPriceOrNull(spec.currentPrice) === null).length} unpriced; marked value only`,
       preview: `${positions.length} owned rows`,
     },
     {
@@ -123,7 +123,7 @@ function getPortfolioTableColumns() {
     { label: "Age", sortKey: "buyDate", align: "center", value: item => formatPositionAge(item.buyDate), title: item => item.buyDate ? `Buy Date ${formatTableDate(item.buyDate)}` : "" },
     { label: "Added", sortKey: "buyDate", align: "center", value: item => formatTableDate(item.buyDate) || "-", title: item => item.buyDate ? `Added to Positions ${new Date(item.buyDate).toLocaleString()}` : "No added date" },
     { label: "Value", sortKey: "positionValue", align: "money", value: item => tableMoney(getPositionValue(item)) },
-    { label: "P/L", sortKey: "pl", align: "money", className: item => getGainLossClass(Number(item.pl || 0)), value: item => tableMoney(Number(item.pl || 0)) },
+    { label: "P/L", sortKey: "pl", align: "money", className: item => getGainLossClass(Number(item.pl || 0)), value: item => getMarketPriceOrNull(item.currentPrice) === null ? "-" : tableMoney(Number(item.pl || 0)) },
     { label: "P/L %", sortKey: "plPct", align: "money", className: item => getGainLossClass(getPositionPlPct(item)), value: item => formatPercent(getPositionPlPct(item)) },
     { label: "Target", sortKey: "exitTarget", align: "money", type: "editable", name: "exitTarget", inputAttrs: 'inputmode="decimal" pattern="[0-9$,.]*"', placeholder: "Set", value: item => formatPlanInputValue(item.exitTarget), displayValue: item => formatTargetDisplayValue(item.exitTarget) },
     { label: "Δ", sortKey: "exitDistance", align: "money", className: getPositionExitDistanceClass, value: formatPositionExitDistance, title: formatPositionExitDistanceTitle },
@@ -205,7 +205,8 @@ function getPortfolioItem(id) {
 }
 
 function getPositionValue(spec) {
-  return Number(spec.currentPrice || 0) * Number(spec.qty || 0);
+  const price = getMarketPriceOrNull(spec.currentPrice);
+  return price === null ? null : price * Number(spec.qty || 0);
 }
 
 function openPositionArtPreview(item) {
@@ -218,6 +219,7 @@ function openPositionArtPreview(item) {
 }
 
 function getPositionPlPct(spec) {
+  if (getMarketPriceOrNull(spec.currentPrice) === null) return null;
   const buy = Number(spec.buyPrice || 0);
   const now = Number(spec.currentPrice || 0);
   if (!buy) return 0;
@@ -256,6 +258,7 @@ function formatPositionAge(value) {
 }
 
 function formatPercent(value) {
+  if (value === null || value === undefined) return "-";
   const number = Number(value || 0);
   return `${number >= 0 ? "+" : ""}${number.toFixed(1)}%`;
 }

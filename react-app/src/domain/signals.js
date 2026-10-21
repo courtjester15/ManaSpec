@@ -224,8 +224,8 @@ function buildSignalRow(item, observations, trackedItems, now) {
   const buckets = getBuckets(target, plan, market);
   const state = { hasPlan: !plan.missing.length, hasTarget: Boolean(targetValue), market, plan };
   const source = item.owned ? "portfolio" : "radar";
-  const currentPrice = number(item.currentPrice);
-  const change = currentPrice && targetValue ? ((currentPrice - targetValue) / targetValue) * 100 : 0;
+  const currentPrice = item.currentPrice === null || item.currentPrice === undefined || item.currentPrice === "" ? null : number(item.currentPrice);
+  const change = currentPrice !== null && targetValue ? ((currentPrice - targetValue) / targetValue) * 100 : null;
   const bucketPriority = getBucketPriority(item, target, plan, market);
 
   return {

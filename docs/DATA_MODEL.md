@@ -18,6 +18,7 @@ Data model rules:
 - Transactions should become the long-term ownership source of truth.
 - Current Positions are transitional until the ledger migration is complete.
 - A missing sealed valuation is valid state. Cost basis remains known, but marked value and P/L are not computed until a timestamped user value exists.
+- A missing/invalid single quote is `null`, distinct from a genuine numeric zero. An unavailable or failed refresh retains the last exact-finish quote and its timestamp; it does not invent a fresh zero or a price-history observation. Unpriced holdings retain cost basis but are excluded from marked P/L and its priced-basis denominator. Historical stored zeros are preserved because their provenance cannot be inferred safely.
 
 ## Entity Map
 

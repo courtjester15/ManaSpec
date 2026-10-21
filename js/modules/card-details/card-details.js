@@ -153,12 +153,12 @@ function renderOverviewSection(item, movement, owned) {
         <span>${owned ? "Owned position" : "Radar idea"}</span>
       </div>
       <div class="detail-grid overview-grid">
-        ${renderDetailMetric("Scryfall", money(item.currentPrice))}
+        ${renderDetailMetric("Scryfall", getMarketPriceOrNull(item.currentPrice) === null ? "-" : money(item.currentPrice))}
         ${renderDetailMetric("Movement", movement.label)}
         ${renderDetailMetric("Qty", owned ? Number(owned.qty || 0) : "0")}
-        ${renderDetailMetric("P/L", owned ? formatDetailMoney(Number(owned.pl || 0)) : "-")}
+        ${renderDetailMetric("P/L", owned && getMarketPriceOrNull(owned.currentPrice) !== null ? formatDetailMoney(Number(owned.pl || 0)) : "-")}
         ${renderDetailMetric("Buy", owned ? money(owned.buyPrice) : "-")}
-        ${renderDetailMetric("Value", owned ? money(Number(owned.currentPrice || 0) * Number(owned.qty || 0)) : "-")}
+        ${renderDetailMetric("Value", owned && getMarketPriceOrNull(owned.currentPrice) !== null ? money(getPositionValue(owned)) : "-")}
       </div>
     </section>
   `;
@@ -604,7 +604,7 @@ function syncTrackedCardPrice(item, card) {
     ? getScryfallUsdPrice(card, item)
     : Number(card.prices?.usd || item.currentPrice || 0);
 
-  if (!nextPrice) return;
+  if (nextPrice === null) return;
 
   item.currentPrice = nextPrice;
   item.priceUpdatedAt = new Date().toISOString();
