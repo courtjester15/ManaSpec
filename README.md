@@ -78,4 +78,4 @@ The React implementation is governed by [docs/REACT_MIGRATION_NOTES.md](docs/REA
 
 ## Working Rule
 
-Before changing code, read the relevant active spec in `docs/`. The `dev notes/` folder is project memory and brainstorming, not the current truth.
+For approved work, start with [AGENTS.md](AGENTS.md), [docs/WORKFLOW.md](docs/WORKFLOW.md), the relevant Issue, and only the owning active docs/source needed. Dex validates affected workflows independently and opens review PRs on approved branches; Jason alone authorizes merges and frontend promotion. The `dev notes/` folder is project memory, not execution authority.
