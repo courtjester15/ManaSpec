@@ -1,11 +1,13 @@
 # ManaSpec Docs
 
-This folder is the active source of truth for ManaSpec.
+This folder holds ManaSpec's canonical product and technical truth. **For work:** start with [AGENTS.md](../AGENTS.md), then [WORKFLOW.md](WORKFLOW.md) and the approved Issue; read only the relevant owning docs. The roadmap is directional, not a blanket assignment.
 
 The `dev notes/` folder contains raw daily notes and historical planning memory. Use `dev notes/inbox/` for current brainstorming and beta observations, and `dev notes/archive/` for older reference notes. Do not treat dev notes as active instructions.
 
 ## Start Here
 
+- [Agent map](../AGENTS.md): short work orders, autonomy, safety and PR authority.
+- [Workflow](WORKFLOW.md): canonical contributor lifecycle, Issue readiness, validation and doc closure.
 - [README](README.md): product shape, current workflow behavior, and module lineup.
 - [Product Principles](PRODUCT_PRINCIPLES.md): stable product philosophy and decision mindset.
 - [Architecture](ARCHITECTURE.md): how the authoritative vanilla application is built and how the implemented React spike is bounded from it.
@@ -13,9 +15,7 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 - [Data Model](DATA_MODEL.md): important entities and how they relate.
 - [Style Guide](STYLE_GUIDE.md): UI language, terminology, table conventions, and design rules.
 - [Roadmap](ROADMAP.md): current phase, next work, and future phases.
-- [Workflow](WORKFLOW.md): lightweight rules for working on the app.
-- [Engineering Execution Brief Standard](standards/APEX_ENGINEERING_EXECUTION_BRIEF_STANDARD.md): shared requirements for implementation-ready briefs used by human and AI contributors.
-- [Implementation Brief Template](templates/IMPLEMENTATION_BRIEF_TEMPLATE.md): copy/paste starting point for Small, Standard, and High-Risk implementation work.
+- [Engineering Execution Brief Standard](standards/APEX_ENGINEERING_EXECUTION_BRIEF_STANDARD.md) / [template](templates/IMPLEMENTATION_BRIEF_TEMPLATE.md): **optional** added detail for Standard/High-Risk work when the executable Issue alone is insufficient.
 - [React Modernization Spike](REACT_MIGRATION_NOTES.md): approved experiment scope, parity order, compatibility rules, and promotion gates.
 - [React Spike Progress](REACT_SPIKE_PROGRESS.md): implementation milestones, validation evidence, and unresolved checks.
 - [Libraries](LIBRARIES.md): local inventory, React dependency evaluation, adoption records, and CDN-versus-local policy.
@@ -27,10 +27,12 @@ The `dev notes/` folder contains raw daily notes and historical planning memory.
 - [Changelog](../CHANGELOG.md): human-readable history of meaningful workflow, product, and process changes.
 - [History](../HISTORY.md): reconstructed narrative of how ManaSpec evolved and why major milestones mattered.
 
-Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), then use the ownership map below when a change touches architecture, data, style, or process.
+Normal execution is: `AGENTS.md` → `WORKFLOW.md` → approved Issue → affected ownership doc → relevant source/tests. Do not load every document or historical audit merely to start a task.
 
 ## Documentation Ownership Map
 
+- `../AGENTS.md`: short agent entry point, authority, MTD and self-review obligations.
+- `WORKFLOW.md`: contributor lifecycle, P/E Issue readiness, QA, branch/PR and owner acceptance rules.
 - `README.md`: what ManaSpec is, current workflow behavior, module lineup, and where to start.
 - `PRODUCT_PRINCIPLES.md`: stable product philosophy and decision mindset.
 - `ARCHITECTURE.md`: how the authoritative vanilla app is built, including boot flow, module ownership, rendering flow, storage ownership, and the React boundary.
@@ -38,9 +40,7 @@ Most day-to-day work should start with this file and [ROADMAP.md](ROADMAP.md), t
 - `DATA_MODEL.md`: conceptual entities, relationships, ownership, lifecycle, and ledger migration context.
 - `STYLE_GUIDE.md`: terminology, UI language, dense table rules, formatting conventions, and product feel.
 - `ROADMAP.md`: active phase, next work, beta gates, and future phases.
-- `WORKFLOW.md`: how humans, Codex, and GPT should work on the project.
-- `standards/APEX_ENGINEERING_EXECUTION_BRIEF_STANDARD.md`: how implementation briefs are written, sized, and approved for human and AI contributors.
-- `templates/IMPLEMENTATION_BRIEF_TEMPLATE.md`: reusable structure for implementation briefs; it is a planning artifact, not a completion log.
+- `standards/APEX_ENGINEERING_EXECUTION_BRIEF_STANDARD.md` and `templates/IMPLEMENTATION_BRIEF_TEMPLATE.md`: optional supplemental planning for complex/risky Issues, not mandatory duplicate plans.
 - `REACT_MIGRATION_NOTES.md`: active React spike charter, parity sequence, compatibility contract, and promotion decision criteria.
 - `REACT_SPIKE_PROGRESS.md`: dated implementation and validation evidence for the experiment.
 - `LIBRARIES.md`: dependency inventory, category audit, selection rules, and adoption records.

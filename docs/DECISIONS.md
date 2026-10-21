@@ -24,6 +24,12 @@ Scryfall provides card identity, printings, and pricing snapshots.
 
 ManaSpec owns user state: watched cards, positions, future transactions, targets, notes, archived thesis data, and history.
 
+### Market-price availability is distinct from zero
+
+A missing, stale, invalid, unresolvable, or failed-to-fetch market quote is **unknown/unavailable**, not a verified `$0.00` valuation. Preserve purchase cost, quantity, and exact asset identity; do not write a synthetic zero or substitute cost basis for current market price. A true zero is a separately established value. Affected Positions, Portfolio Summary, Dashboard, and Signals must use compatible honest-state semantics and avoid fabricating P/L from unavailable quotes.
+
+This is a correctness rule and regression boundary, not permission for a broad storage or transaction-authority migration. Diagnose existing zero displays against safe saved-data fixtures before changing live data or computed summaries.
+
 ### EDH signal starts with Scryfall rank
 
 ManaSpec can surface Scryfall `edhrec_rank` as a compact EDH presence signal because it arrives with normal card metadata.

@@ -8,7 +8,7 @@ It is not a collection tracker, inventory nostalgia tool, or prediction engine.
 
 ## Ownership
 
-This roadmap represents committed future work. If an item is here, the project has decided it belongs in ManaSpec; the remaining questions are timing, order, and implementation shape.
+This is **directional sequencing**, not an executable work-order list. The active queue and approved GitHub Issues own current action; the older phases/checklists below provide context but are not standing instructions to build every unchecked item. Completed milestone detail lives in `REACT_SPIKE_PROGRESS.md`, PRs, and Git history.
 
 Use [PARKING_LOT.md](PARKING_LOT.md) for promising ideas that still need validation, workflow testing, prioritization, or a product decision.
 
@@ -17,6 +17,15 @@ Status markers:
 - `[x]` Done
 - `[-]` Partially done
 - `[ ]` Not done
+
+## Active execution sequence — 20 Oct 2026
+
+1. **Review, do not auto-merge [PR #18](https://github.com/courtjester15/ManaSpec/pull/18).** React integration includes the completed #15 expansion/parity and #16 sealed vertical slice, but `main`/vanilla remains authoritative. Validate deployment artifact, storage compatibility, rollback, and owner acceptance before any merge/canonical promotion.
+2. **Investigate the reported unexpected $0.00 values on two owned positions.** This is an owner-reported regression, **not** a verified root cause or approval for a broad data migration. Reproduce safely; distinguish no market quote, a failed/mismatched exact printing/finish lookup, a true zero, and malformed stored data. Check summary propagation and protect with focused tests before proposing a bounded fix. Preserve live data; no zero-filling or fake prices. Classification: exploration first, implementation after the diagnosis supports a safe scope.
+3. **Strengthen self-directed regression protection along real workflows.** Pricing + value × quantity, Dashboard/Positions consistency, exact singles/sealed identities, transaction/cash math, backup/restore and browser checks are the default QA boundaries for work that touches them, not a reason for an unfocused permanent audit.
+4. **Resume scoped product work after PR #18 and integrity follow-up.** Owned-spec backfill and transaction-authority migration remain separately gated; do not conflate them with routine fixes. Friend-feedback polish is issue-scoped rather than an open-ended UI redesign.
+
+**Status:** #15 and #16 are implemented on the React integration branch, but their incorporation into `main` depends on PR #18 and explicit owner review. Keep those Issue/PR states distinct. This workflow/documentation cleanup is a separate review branch, not a frontend deployment decision.
 
 ## Workflow Lineup
 
@@ -131,9 +140,9 @@ Current discipline: the repeated solo core singles workflow pass is complete. Do
    - [ ] Continue tightening labels, empty states, disabled states, confirmations, dense table scan behavior, and Help from beta notes.
    - [x] Keep Radar search unified and paper-only until Digital/MTGO results can ship with supported pricing.
 
-### Near-Term Feature Candidates: 2026-07-11 Planning Pass
+### Historical feature-candidate planning (11 Jul 2026; not today's work queue)
 
-The core singles workflow is considered complete. The next likely user-facing builds are ordered provisionally as follows; this is planning direction, not a commitment to start implementation before the next product turn is understood.
+These were provisional candidates. Comparable Printings, React Price History V2, React Portfolio Summary and unified search have since been implemented on the integration track. Remaining ideas below are background until separately approved. Use the **Active execution sequence** above for what comes next.
 
 Execution note: the Data Ownership and Storage Readiness Audit and its three approved foundation batches are complete. Compatibility boundaries, centralized persistence, schema/migration readiness, reconciliation reporting, and the unsafe Position-delete guard are in place. User-facing feature work may resume in this provisional order; the separate transaction-authority migration remains unapproved future work.
 
@@ -241,43 +250,15 @@ Keep the production/beta app vanilla-first unless a library clearly removes repe
 
 Current vanilla rule: one tool at a time. Add a library only when it directly supports the beta path or removes a recurring source of bugs.
 
-### React Modernization Spike
+### React modernization — implemented candidate, promotion pending
 
-The React/Vite implementation has completed Issue #15 product-expansion and parity checkpoints and is now an alpha-readiness candidate. It is the likely forward frontend path, but it is not yet the canonical or production frontend and is not a reason to stop maintaining the vanilla source of truth.
+- The React 19/Vite 8 implementation in `react-app/` has delivered the scoped parity/expansion work from #15 and the sealed Search → Radar → Positions → Sell → Transactions/History vertical slice from #16 on the integration branch. It uses compatible local-first user data, the shared Tabulator table wrapper, locally bundled Price History, and separate normal/Pages/portable outputs.
+- The completed spike implementation checkpoints and actual validation evidence are preserved in [React Spike Progress](REACT_SPIKE_PROGRESS.md) and the linked PR history; do **not** treat historical checklists as new work orders.
+- [ ] Review [PR #18](https://github.com/courtjester15/ManaSpec/pull/18) and verify artifact integrity and the publication source against actual GitHub Pages state.
+- [ ] Perform controlled React-write/vanilla-read validation against backed-up fixtures, review rollback and remaining device/browser limitations, and make a **separate, explicit** production/canonical-promotion decision.
+- Vanilla root remains authoritative until that decision. React feature work should target the appropriate approved branch; never silently replace vanilla or rename user data as collateral scope.
 
-Active preparation:
-
-- [x] Establish the spike charter, parity rules, architecture target, library audit structure, and deployment model in active docs.
-- [x] Locate and inventory the GalleyFlow offline package archive, verify its Windows x64 dependency closure, classify direct candidates, and keep `/lib` as an ignored local cache.
-- [x] Create the dedicated spike branch and isolated `react-app/` workspace.
-- [x] Prove normal Vite development, `/ManaSpec/react-spike/` build behavior, and direct portable `index.html` opening.
-- [x] Build the storage compatibility adapter and fixture-backed compatibility tests before using real data.
-
-Implementation sequence:
-
-- [x] Shell, hash-safe navigation, shared tokens, and error handling.
-- [x] Persistence, backup/restore, normalization, and migration compatibility.
-- [x] Shared forms, dialogs, notices, and interim table foundation.
-- [x] Radar, Positions, Transactions, and History implementation.
-- [x] Notes, Card Detail, Comparable Printings, Price History, Signals, and Dashboard implementation.
-- [x] Help, Admin, external links, and remaining utilities.
-- [x] Close React Parity Batch 1 data-trust blockers: ledger-safe Position deletion and shared exact-printing related-record resolution.
-- [x] Close React Parity Batch 2 Signals gaps: vanilla 5% derivation, shared Dashboard queues, triage filtering/reset, and exact Radar/Positions source navigation.
-- [x] Establish Position Data Trust: canonical runtime rows derived from `qty`, `buyPrice`, and `buyDate`, with invalid ownership records visible for reconciliation but excluded from portfolio calculations.
-- [x] Complete the Issue #15 route-by-route interaction/UI polish sweep, including Help focus behavior, exact-printing action names, content-driven Signals geometry, and desktop/table containment.
-- [x] Establish Tabulator 6.5.2 behind a shared ManaSpec React wrapper and migrate Radar as the Phase 1 pilot.
-- [x] Complete Radar shared-table/app-shell visual and interaction parity against vanilla, then validate the 1920 x 1080 primary desktop and 1366 x 768 compatibility desktop.
-- [x] Migrate Positions through the approved wrapper without changing Position business logic as the first focused Phase 2 batch.
-- [x] Merge the completed Positions migration and shared Tabulator/app-shell parity work into the React integration branch through PR #9; close Issues #8 and #10.
-- [x] Migrate Signals, Transactions, and History through the established wrapper as one approved Phase 2 batch with separate route commits and a final acceptance-correction cleanup.
-- [x] Adopt Chart.js for Price History V2 and retain the native deterministic local-search index after its Fuse.js comparison; keep Day.js feature-triggered.
-- [x] Complete the Issue #15 bundle review, full route walkthrough, desktop/table/browser evidence, compatibility review, and alpha-readiness recommendation.
-- [ ] Verify and document the actual public GitHub Pages publishing source so the latest `react-spike/` artifact, not merely the branch build, is known to be live.
-- [ ] Complete representative React-written record reads in vanilla beyond the controlled compatibility checks, then approve a cutover/rollback runbook and explicit canonical-promotion decision.
-
-Use [React Modernization Spike](REACT_MIGRATION_NOTES.md), [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md), [Libraries](LIBRARIES.md), [Deployment](DEPLOYMENT.md), and the earlier [React Migration And GalleyFlow Pattern Audit](audits/react-migration-galleyflow-audit.md).
-
-The vanilla app remains the working reference, behavioral oracle, and current production/beta authority. React is likely to become the project frontend moving forward, but it cannot replace vanilla without a separate decision after parity, storage compatibility, portable/local use, Pages isolation, responsive quality, and maintainability are demonstrated.
+See [React Migration Notes](REACT_MIGRATION_NOTES.md), [Deployment](DEPLOYMENT.md), [React Spike Progress](REACT_SPIKE_PROGRESS.md), and [PR #18](https://github.com/courtjester15/ManaSpec/pull/18) for exact gates and evidence.
 
 ### Validated Core Singles Workflow
 

@@ -8,6 +8,8 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Added
 
+- Aligned ManaSpec's agent/contributor workflow with issue-led P/E readiness, short MTD handoffs, branch/PR review authority, autonomous browser/data-regression QA, safe-fixture recovery checks, and change-scoped documentation closure; clarified React integration promotion versus deployed vanilla and recorded missing-price-not-zero correctness rules.
+
 - Added Issue #16's React sealed-product speculation vertical slice: bundled MTGJSON product discovery, exact TCGplayer identity/links, mixed Radar and Positions, weighted buys, partial/full sells, shared Transactions/History/signals/search, notes, and timestamped manual valuation.
 - Added schema-v2 sealed persistence and backup migration with separate `sealedRadar`, `sealedSpecs`, and `sealedTransactions` keys while preserving all existing singles keys and schema-v1 imports.
 - Added deterministic sealed-catalog generation, representative booster/bundle/deck/Secret Lair identity tests, and automatic tracked Pages-artifact synchronization after a successful Pages build.

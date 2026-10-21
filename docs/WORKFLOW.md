@@ -1,50 +1,62 @@
 # ManaSpec Development Workflow
 
-This doc is intentionally small. ManaSpec is a sandbox app, so the docs should help momentum instead of creating process overhead.
+The canonical contributor process. `../AGENTS.md` is the concise agent entry point; the current approved GitHub Issue/work order is the executable scope. Keep process proportional.
 
-## Core Model
+## Roles and authority
 
-ManaSpec development separates three things:
+- **Jason:** product/workflow owner, material scope and final acceptance, sole merge/deployment/React-promotion authority.
+- **Pete:** architecture and Issue review, prioritization, PR review, workflow/documentation reconciliation.
+- **Dex:** bounded investigation/implementation, independent QA and routine corrections, tests, documentation closure, branches/PRs within the approved work order.
+- Dex resolves reversible engineering/UI decisions independently. Escalate ambiguous domain semantics, data loss, incompatible migrations, unapproved scope, deployment/canonical promotion.
 
-- Thinking: product direction, UX shape, architecture choices.
-- Execution: code changes based on current specs.
-- State: what is true now.
+## Source-of-truth order
 
-The docs in this folder represent current state. `dev notes/inbox/` is for raw daily notes and beta observations; `dev notes/archive/` is memory.
+1. `../AGENTS.md`, then this `WORKFLOW.md`.
+2. The approved Issue/work order (its **status and scope** control permission to implement).
+3. Only directly relevant canonical docs: `README.md` for product behavior, `PRODUCT_PRINCIPLES.md` for product judgment, `ARCHITECTURE.md` / `DATA_MODEL.md` for internals, `STYLE_GUIDE.md` for UI, `DECISIONS.md` for settled rationale, and `DEPLOYMENT.md` for release topology.
+4. Relevant source/tests/fixtures. Old audits, completed plans, historical branches and `dev notes/` are opt-in evidence, never default instruction.
 
-## Source Of Truth Order
+Docs own durable present truth; Issues own work and discovery; PRs/Git own delivered proof/history. Chat and archived notes are not the sole record of decisions.
 
-When working on ManaSpec, use context in this order:
+## Issue classification and execution
 
-1. [README](README.md) for product shape, current workflow behavior, module lineup, and the docs ownership map.
-2. [Product Principles](PRODUCT_PRINCIPLES.md) when product philosophy or decision mindset matters.
-3. [Roadmap](ROADMAP.md) for current phase, next work, and deferred work.
-4. [Architecture](ARCHITECTURE.md), [Data Model](DATA_MODEL.md), or [Style Guide](STYLE_GUIDE.md) when a change touches internals, entities, UI language, or design consistency.
-5. [Decisions](DECISIONS.md) when rationale matters.
-6. [History](../HISTORY.md) when the project origin, major milestones, or older context matters.
-7. `dev notes/inbox/` for current raw observations, or `dev notes/archive/` only if a current doc points there or the user asks for history.
+Use `P0`–`P3` for **implementation-ready** and `E0`–`E3` for **exploration/evidence** where labels exist. `0` immediate, `1` near-term, `2` later, `3` deferred/dependent. Priority and readiness differ: an important `E1` is still not a build order. Agree new/material classifications with Jason rather than auto-labeling.
 
-Audit files in `docs/audits/` are point-in-time review records. Use them for context, but promote durable findings into the active docs above before treating them as current truth.
+- A tracker or `E` Issue does not authorize implementation; a bounded investigation can be approved there. `P` or explicit bounded owner approval authorizes implementation. Tiny maintenance and documentation changes may proceed without an artificial extra Issue.
+- Prefer coherent Issue scope—`Goal`, `In scope`, `Preserve`, `Out of scope`, `Validation` as needed. Large cross-module slices are fine when one meaningful outcome is reviewable; split when outcomes become unrelated or risky.
+- Established decisions stay established unless real implementation evidence creates a material conflict. Investigate only necessary code and closest working sibling; do not automatically review the whole repo/Issue history.
 
-## Work Loop
+## Review and completion loop
 
-1. Pick one module or workflow and use the approved implementation brief. Write briefs according to the [Engineering Execution Brief Standard](standards/APEX_ENGINEERING_EXECUTION_BRIEF_STANDARD.md) using the [Implementation Brief Template](templates/IMPLEMENTATION_BRIEF_TEMPLATE.md), with depth proportional to risk.
-2. Read the relevant section in [README](README.md), the roadmap phase, the implementation brief, and any ownership doc affected by the change.
-3. For UI work, inventory reusable components, styles, helpers, interaction patterns, and installed libraries before writing new markup or CSS.
-4. Reuse an existing solution, add a scoped variation when it covers most of the need, and create new UI only when neither approach reasonably fits.
-5. Make the smallest code change that satisfies the current goal.
-6. Verify the app still works.
-7. Update the owning doc if behavior, architecture, data relationships, or UI language changed.
-8. Update `docs/DECISIONS.md` only when a meaningful choice was made.
-9. Put new raw notes in `dev notes/inbox/`, then promote durable behavior, priorities, or decisions into active docs.
+```text
+Approved Issue / bounded request
+-> Inspect affected code/docs and proven shared behavior
+-> Reproduce baseline where applicable
+-> Implement coherent slice; resolve clearly related defects
+-> Focused tests; realistic browser/data/recovery self-review
+-> Correct obvious issues before asking for Jason's UI time
+-> Change-scoped documentation/status closure
+-> Commit + push approved branch + open/update PR
+-> Pete/Jason review -> Jason-authorized merge/promotion -> cleanup
+```
 
-When a change alters a workflow model, interaction contract, or data ownership rule, update the owning active docs in the same pass. Examples include manual-to-computed behavior, shared Dashboard/Signals attention queues, canonical plan ownership, native-to-app confirmation flows, and ledger/source-of-truth changes. `CHANGELOG.md` records that the change happened; it is not a substitute for updating README, Architecture, Data Model, Style Guide, Roadmap, or Decisions when those docs own the current truth.
+- Vanilla root is the current production/beta and behavioral oracle. React is the advanced integration/PR #18 candidate, with implemented #15/#16 work, **not automatically promoted**. Verify the current Issue, PR and branch status before choosing implementation target.
+- Local-first data, backup compatibility and exact identity are critical; missing or stale market prices are never verified $0 values. Do not accidentally make Transactions the authority during unrelated changes.
+- Reuse existing libraries/shared table components and domain/price/storage helpers; do not build parallel implementations without a demonstrated domain reason.
+- Use focused validation while iterating and applicable full build/test/artifact checks once at the final review/pre-merge gate (or earlier where the changed boundary requires them). Docs-only work gets factual/status/link checks, not browser or bundle rebuilds.
 
-### Documentation Milestone Sweep
+## Independent Dex QA contract
 
-After a coherent implementation milestone, deployment artifact, parity pass, or release-level correction, do a broader documentation sweep before the milestone is considered complete. Update the current-state owner, Roadmap, Decisions, Changelog, and any dedicated progress log. Update [HISTORY](../HISTORY.md) when the milestone changes the project's direction, implementation era, or delivery model.
+Before requesting owner review of changed UI, Dex must exercise, critique and fix the changed **real task** with safe synthetic or explicitly approved fixtures. Verify populated/empty/failure states, browser/console, keyboard/focus/action controls, relevant 1366×768 and 1920×1080 layouts, sibling/shared tables, and navigation/recovery. Passing builds does not prove browser acceptance. Follow the specialist Browser Testing and Table Contract sections below, without a new checklist or full-app tour after each fix.
 
-A detailed progress or parity log is evidence, not a substitute for updating the active core docs. The final contradiction check should search for stale language such as `proposed`, `not implemented`, or `pending` where the milestone changed that status.
+For affected financial/data logic also test exact singles printing + finish and sealed IDs, quantities, cost basis, realized versus unrealized P/L, missing/null/stale/failed price refresh, actual zero versus unknown, and summary agreement across Positions/Dashboard/Signals. Never overwrite local real data while investigating a zero-valuation symptom. For state/destructive changes test reload and backup/export/import, schema compatibility and recovery against safe fixture copies; report unverified checks honestly.
+
+## Documentation and review closure
+
+- PR: concise changed behavior, root cause when relevant, actual validation/results, risks and remaining owner decisions. Material audit findings belong in a reviewable repository Markdown artifact/PR, not chat only.
+- Update only materially changed owning docs in the same PR, and reconcile a finished slice named 'next/open' in the relevant roadmap/tracker. Do not mirror full Issue acceptance/history into README/Roadmap/Decisions.
+- A milestone calls for a **change-scoped** contradiction check and a decision whether HISTORY needs an entry; routine fixes should not churn documentation.
+- Review-ready does not authorize merge. Jason must explicitly authorize merges, public deployment cutovers, and canonical React promotion. Single main agent by default; at most two bounded non-overlapping subagents without explicit approval, never nested.
 
 ## Pasted Notes Workflow
 
@@ -66,79 +78,13 @@ Do not paste long transcripts into active docs. Preserve the useful context, sou
 
 If the pasted notes are important and are not already saved in the project folder, create or update an appropriate note file before finishing the work. This helps future Codex sessions provide better analysis from project memory instead of relying on chat history alone.
 
-## GPT Collaboration Notes
+## MTD and brief handoffs
 
-When using GPT for brainstorming, workflow review, or product critique outside Codex, ask it to produce notes in a format Codex can execute later.
+The Issue is ordinarily the implementation brief. Pete's MTD is a single copy-ready block: first line `Issue # — Actionable title`, then roughly 2–5 lines pointing to the Issue and stating only new clarifications; end `OPEN PR` for implementation intended to land. Do not paste the entire Issue into chat.
 
-Preferred note types:
+The optional `standards/APEX_ENGINEERING_EXECUTION_BRIEF_STANDARD.md` and `templates/IMPLEMENTATION_BRIEF_TEMPLATE.md` exist for Standard/High-Risk changes **when an Issue cannot safely carry the necessary details**. Link one supplemental brief from that Issue; do not require a second plan/template for every small fix or regular Issue.
 
-### Architect Summary
-
-Use for broad review, prioritization, and batching.
-
-Include:
-
-- Status.
-- Overall assessment.
-- Themes.
-- Future direction.
-- Risks or open questions.
-- Suggested batch order.
-- What not to implement yet.
-
-Architect summaries are guidance, not implementation instructions. Use them to shape future batches.
-
-### Implementation Batch
-
-Use for one executable change set.
-
-Include:
-
-- Goal.
-- Problem.
-- User outcome.
-- Scope.
-- Out of scope.
-- Context Routing.
-- Acceptance checks.
-- Regression checks.
-- Docs to update.
-- Git instructions.
-
-Each implementation batch should end with:
-
-- Suggested commit message.
-- Whether to commit after completion.
-- Whether to push after completion.
-- Files, workflows, or data that must not be touched.
-
-GPT notes are project memory, not automatic authority. Codex should still compare them against active docs, current code, and the current Git state before implementing.
-
-Implementation notes should include a Context Routing section so Codex can begin from the right docs and files without rediscovering the whole repo:
-
-```md
-## Context Routing
-
-Read first:
-- docs/README.md
-- docs/ROADMAP.md
-- docs/PRODUCT_PRINCIPLES.md
-
-If UI/table/copy:
-- docs/STYLE_GUIDE.md
-
-If architecture/module/rendering/script-order:
-- docs/ARCHITECTURE.md
-
-If storage/entities/ledger/data ownership:
-- docs/DATA_MODEL.md
-
-Likely files:
-- ...
-
-Avoid touching:
-- ...
-```
+Pasted brainstorm/audit notes may inform a later Issue or decision but are not execution authority.
 
 ## Git Checkpoints
 
@@ -146,7 +92,7 @@ ManaSpec now uses Git for recovery points and version history.
 
 - Commit before risky refactors or data-model changes.
 - Commit after each coherent workflow fix or doc update.
-- Do not push to GitHub or use remote GitHub actions unless the user explicitly asks for that batch.
+- An approved `OPEN PR` or equivalent owner-approved PR-bound work order authorizes pushing its branch and opening/updating its PR without repeated permission. Unapproved local exploration does not authorize push. Neither grants merge, production deployment, or frontend promotion.
 - Use branches for experiments that may need to be abandoned or compared.
 - Use tags for meaningful app versions such as alpha, beta, or release milestones.
 - Do not create new dated release-copy folders for normal checkpoints.
@@ -317,14 +263,9 @@ The `test-fixtures/` folder is for local ManaSpec backup JSON files used during 
 
 ## Change Size
 
-Prefer narrow, durable steps:
+Prefer the smallest **coherent** reviewable outcome. Avoid unrelated refactors, unnecessary documentation churn, or splitting an end-to-end slice solely because it touches multiple modules.
 
-- One module at a time.
-- One workflow at a time.
-- Update docs in the same pass as behavior changes.
-- Avoid large architecture rewrites unless the roadmap explicitly calls for one.
-
-For the React modernization lane, coherent end-to-end slices may span multiple modules when the approved goal is whole-app parity. Pause at meaningful milestones for verification and documentation; do not force artificial micro-stops that leave the app in a misleading half-integrated state.
+Cross-module work may span multiple modules when that is necessary for one approved outcome. Pause at safe review checkpoints, not artificial micro-stops.
 
 ## Doc Size
 
@@ -336,18 +277,16 @@ Keep docs flat until the app earns more structure. ManaSpec has earned focused o
 
 ## Completion Checklist
 
-Before calling a task done:
+Before reporting completion, verify what applies and explicitly identify any exceptions:
 
-- The app behavior matches the relevant README section.
-- For UI-facing changes, verify behavior through the Codex in-app Browser on localhost when browser automation is available.
-- If a change affects table structure, rendering, styling, sorting, pagination, or dense cell content, complete the table contract verification below.
-- Any new rule or workflow is documented.
-- UI work identifies the ManaSpec components, CSS classes, helpers, visual patterns, and libraries it reused or extended.
-- Any completely new UI implementation records why no shared component, reasonable extension, or existing project library fit.
-- New UI visually matches Radar, Positions, Signals, Transactions, History, and Card Detail, or the intentional difference is documented.
-- The roadmap status still makes sense.
-- A milestone-level change has completed the documentation sweep and stale-status contradiction check.
-- No old note has silently become the new source of truth.
+- Approved outcome and acceptance checks met. First-pass realistic self-review performed for changed workflows.
+- Focused tests during iteration; actual final tests/builds/artifact and any privacy checks recorded. Do not pass off planned validation as completed.
+- Relevant asset-identity, price/financial summary, persistence, reload, restore and failure-recovery cases checked for data-sensitive changes.
+- Relevant browser, console, keyboard/table/viewport/sibling checks completed for changed UI—or specific untested surfaces called out.
+- Existing shared implementation reused; no unrelated cleanup or new incompatible data model slipped in.
+- Owning canonical docs/tracker reconciled only where project truth changed; meaningful milestones checked for HISTORY relevance.
+- Approved branch committed/pushed and reviewable PR updated when requested. **No merge or deployment without Jason.**
+- PR/handoff contains actual evidence, limits, outstanding decisions and exact preview instructions only when needed; no material finding exists only in chat.
 
 ## Table Contract Verification
 
