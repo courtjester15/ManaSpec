@@ -1,6 +1,8 @@
 # React Spike Progress And Validation Log
 
-This document records implementation milestones and evidence for the experimental React reconstruction. It does not redefine current vanilla behavior.
+This document records implementation milestones and evidence for the React reconstruction and likely forward frontend candidate. It does not redefine current vanilla behavior or authorize production cutover.
+
+The point-in-time [Vanilla vs React Workflow and CSS Audit](audits/vanilla-react-workflow-css-audit-2026-07-21.md) records the blockers visible on that date. Later milestone entries supersede its implementation status. The final Issue #15 entry below owns the current alpha-readiness evidence and recommendation; earlier entries remain historical rather than current release guidance.
 
 ## 2026-07-16: Workspace And Build Foundation
 
@@ -64,3 +66,390 @@ Open validation:
 - Corrected the portable HTML finalizer to add `defer` when converting Vite's module entry into a classic script. Without it, the head script executed before `<div id="root">` existed and produced a blank page.
 - Added regression coverage for deferred execution and idempotent finalization.
 - Regenerated `dist-portable/` and verified the entry now uses `<script defer src="./assets/manaspec.js"></script>`.
+
+## 2026-07-17: Broad UI Reconstruction And Workflow Pass
+
+Implemented:
+
+- Reconstructed all seven React workflow routes with the recognizable ManaSpec shell, summary, navigation, context bands, filters, tables, dialogs, and route actions.
+- Wired row-level Card Detail opening across applicable workflow tables while isolating inline action controls from accidental row activation.
+- Restored Dashboard scan queues, Radar and Positions workflow actions, computed Signals, ledger/history review, Help, and Admin safety utilities through the shared React state and persistence boundaries.
+- Kept vanilla behavior, terminology, exact-printing identity, storage keys, and backup shape as the parity oracle.
+
+Validated:
+
+- Thirteen focused tests, source-policy checks, format checks, normal build, Pages-mode build, and portable build pass.
+- All routes and core buy/sell/detail interactions were exercised with fixture-backed browser data.
+- Pages and portable artifacts were regenerated and committed with the React source.
+
+## 2026-07-17: Tables And Card Detail Correction
+
+- Corrected the shared React table contract to 27 px body rows, 20 px controls, compact padding, single-line card identity, stable printing columns, horizontal-only overflow, and no nested vertical table scroll.
+- Rebuilt React Card Detail as a compact 760 px right-side command panel with no persistent card-art column and no internal overflow in the measured reference state.
+- Kept Plan / Evaluation, Market Check, latest notes, and card context primary; moved Price History and Comparable Printings into verified secondary dialogs.
+- Captured paired 1366 x 768 vanilla/React Radar, Positions, and Card Detail evidence in `docs/screenshots/react-parity-correction/` and recorded before/after geometry in `REACT_PARITY_LOG.md`.
+- Regenerated the stable `react-app/dist-portable/index.html` deliverable and the committed `react-spike/` Pages artifact.
+
+Current assessment:
+
+- The React implementation is in active implementation/stabilization mode and is the likely forward project path.
+- User review places the familiar UI experience at approximately 80-90%; this is directional feedback, not a claim of complete parity.
+- Vanilla remains the behavioral and production/beta source of truth until an explicit promotion decision.
+- The next engineering phase is to close remaining parity gaps and evaluate proven libraries against the working React app, beginning with the table system.
+
+Open validation:
+
+- Verify the repository branch or workflow that GitHub Pages actually publishes before claiming the latest spike-branch artifact is the live public version.
+- Complete controlled React-write/vanilla-read validation with a backup available.
+- Complete the second representative tablet/phone and accessibility pass.
+
+## 2026-07-18: Shared Tabulator Foundation With Radar Pilot
+
+Implemented:
+
+- Added `tabulator-tables` 6.5.2 to the tracked React manifest and lockfile and bundled all runtime assets locally.
+- Established a shared ManaSpec-owned `TabulatorTable` wrapper with modular Tabulator registration, cloned input rows, React cell rendering and cleanup, sort adapters, edit callbacks, row/action isolation, empty states, accessibility naming, and responsive card behavior.
+- Migrated Radar only. Positions, Signals, Transactions, and History intentionally remain on the interim `DataTable` until Phase 2.
+- Restored Radar's vanilla-aligned Added column, compact printing labels, editable Entry display, target-state color, planned-quantity stepper, latest market values, note/history indicators, ownership marker, and compact actions through shared configuration.
+
+Validated:
+
+- Thirteen focused Node tests, source policy, and formatting checks pass.
+- Normal, `/ManaSpec/react-spike/` Pages, and portable IIFE builds complete; the Pages and portable artifacts were regenerated.
+- Generated JavaScript passes `node --check`; the portable entry remains deferred with relative local assets and no runtime CDN.
+- Modular registration reduced the normal JavaScript output from the initial full-Tabulator pilot build of 761.12 KB to 527.90 KB.
+
+Open validation:
+
+- The localhost vanilla and React artifact URLs both returned HTTP 200, but the Codex in-app browser runtime failed to initialize with `Cannot redefine property: process` after a clean retry. Fresh 1366 x 768 visual captures, console review, and mouse/keyboard interaction evidence remain required before claiming 95%+ visual parity.
+- Direct portable-file browser launch remains subject to the existing manual/supported-browser validation requirement.
+- Corrected the Radar pilot's initial intrinsic-width layout by making Card the sole flexible column and assigning compact fixed widths to financial/action columns. Fresh browser capture remains pending because the in-app browser initialization blocker persisted.
+
+## 2026-07-19: Radar Native Layout Correction
+
+Implemented:
+
+- Preserved Radar Card as the single `fitColumns` flex column using `minWidth` and `widthGrow` without an explicit width; compact utility columns retain intentional fixed widths.
+- Removed the shared wrapper's manual `tableBuilt` and animation-frame redraw calls. Native Tabulator layout, resize handling, and `layoutColumnsOnNewData` now own sizing and redraw mechanics.
+- Left the existing Tabulator/ManaSpec CSS unchanged and kept all remaining modules on the interim shared table.
+
+Validated:
+
+- Source policy, formatting, and all thirteen focused Node tests pass.
+- Normal, Pages, and portable builds complete; tracked Pages and portable artifacts were regenerated and generated JavaScript passes syntax checks.
+- `http://127.0.0.1:5173/` returned HTTP 200 with the project owner's imported QA data origin available.
+
+Open validation:
+
+- A fresh 1366 x 768 visual and interaction check remains pending because the in-app browser bridge again failed during initialization with `Cannot redefine property: process`. No alternate browser mechanism or additional layout workaround was introduced.
+
+## 2026-07-20: Radar Tabulator Default-Preservation Correction
+
+Implemented:
+
+- Corrected the shared wrapper boundary so optional Tabulator properties are emitted only when ManaSpec intentionally defines a value.
+- Proved the root cause with a temporary live-instance diagnostic: Radar widths survived wrapper input and `table.getColumnDefinitions()`, while `minWidth: undefined` suppressed Tabulator's native 40px default and contaminated runtime width calculations with `NaN`.
+- Removed the complete diagnostic hook after proving the cause. No table CSS, redraw calls, manual layout mechanics, or additional module migrations were introduced.
+- Added a durable library-integration workflow rule: inspect native configuration, defaults, initialized instances, and generated output before adding compatibility workarounds or rebuilding library-owned mechanics.
+
+Validated:
+
+- At 1366 x 768, the Radar root measured 1300px and its holder measured 1298px; rendered columns totaled exactly 1298px with no internal blank strip.
+- Card received the remaining 374px. Compact columns rendered at their configured widths, including 48px Set, 72px Scryfall, and 112px Actions, while Tabulator's native 40px minimum was restored.
+- The live page produced no console warnings or errors. The available browser session had an empty Radar dataset, so the correction was verified through header/layout geometry rather than representative row interaction replay.
+- All 13 focused tests, source policy checks, and formatting checks pass.
+- Normal, Pages-subpath, and portable builds complete. The tracked `react-spike/` and `react-app/dist-portable/` artifacts were regenerated, and both generated JavaScript bundles pass `node --check`.
+
+## 2026-07-22: React Parity Batch 1 - Data Trust And Exact Printing Identity
+
+Implemented:
+
+- Routed Position deletion through the vanilla-derived transaction projection guard. Open ledger-backed holdings are blocked before confirmation or persistence; safe deletion retains vanilla's explicit no-transaction warning.
+- Added one compatibility-aware domain resolver for notes, price snapshots, market observations, transactions, History events, Dashboard note routing, Card Detail navigation, and related table indicators.
+- Exact Scryfall printing UUID plus finish now wins everywhere. Foil and nonfoil are independent, and legacy base-ID, set/collector, or name fallback succeeds only when one tracked printing is possible.
+- New market observations persist the exact printing key, Scryfall ID, finish, and printing context for future unambiguous reads.
+
+Validated:
+
+- All 21 focused Node tests pass, including eight Batch 1 cases for foil/nonfoil notes, same-name printings, exact price history, market observations, Transaction/History Card Detail routing, unambiguous legacy fallback, and safe/unsafe Position deletion.
+- Source-policy and formatting checks pass.
+- Normal, `/ManaSpec/react-spike/` Pages, and portable builds complete; the tracked Pages and portable artifacts were regenerated.
+- Source review confirms that prior base-ID/name matching paths in the React view layer now route through the shared resolver.
+- Fixture-backed browser QA confirmed that an open ledger-backed Position remains present and shows the vanilla-aligned warning, while a Position without open transaction projection can be confirmed and deleted. The development page and local `/ManaSpec/react-spike/` artifact reported no console warnings or errors.
+
+Remaining for Batch 2:
+
+- Port and fixture-compare vanilla Signals derivation, thresholds, reasons, priorities, filtering, and source navigation. Batch 1 changed only the identity used when Signals reads market observations; it did not change Signals attention behavior.
+
+## 2026-07-23: React Parity Batch 2 - Signals Logic And Triage Workflow
+
+Implemented:
+
+- Moved React Signals derivation into a deterministic domain selector that matches vanilla's 5% target boundary, bucket/status/reason/action state, priority ordering, and market-check freshness behavior.
+- Reused the Batch 1 exact-printing resolver for market observations so same-printing foil/nonfoil checks remain independent.
+- Routed both Signals and Dashboard through the same derived rows and Dashboard queue selector, including target hits, near/watch fallbacks, stale checks, missing plans, and hold-plan ownership.
+- Restored attention-tile bucket filters, exact-printing preview filters, visible Show all reset, and isolated row/action clicks.
+- Restored primary `View` navigation to an exact Radar or Positions row and retained external access under the explicit `Scryfall` label.
+
+Validated:
+
+- All 28 Node tests pass. Six new fixture tests compare every derived row's bucket, status, reason, priority, source, and action state, plus the 5% boundary, fresh/stale checks, exact finish isolation, triage selectors, source navigation, and Dashboard queue membership.
+- Source-policy and formatting checks pass.
+- Normal, `/ManaSpec/react-spike/` Pages, and portable builds complete; tracked Pages and portable artifacts were regenerated.
+- Imported-fixture browser QA confirmed bucket filtering, closest-target Approaching previews, exact foil-row filtering, Show all reset, separate `Scryfall`, and exact one-row Radar and Positions source navigation. The Pages-mode preview loaded the Signals route and generated assets with no console errors.
+- The in-app browser's URL policy blocked direct `file://` navigation; the portable finalization tests and regenerated classic-script build passed. Development-only Radar transitions emitted the pre-existing Tabulator React-root unmount warning, with no observed workflow failure; the production Pages Signals smoke was clean.
+
+Remaining after Batch 2:
+
+- Do not begin another audit batch until its focused issue is created and approved. Existing Card Detail, dense-table, Help, accessibility, and responsive gaps remain governed by their own future batches.
+
+## 2026-07-24: Position Data Trust
+
+Implemented:
+
+- Added a pure canonical Position row boundary derived only from vanilla-compatible `qty`, `buyPrice`, and `buyDate`, while retaining the normalized source record for existing compatible commands.
+- Required exact printing identity, positive finite quantity, positive finite buy price, and valid buy date for an open Position. Missing, zero, and invalid required values remain visible as reconciliation-required records and cannot enter normal Buy, Sell, or detail workflows.
+- Corrected Positions Age and Added to use `buyDate` exclusively; Radar `addedDate`, `addedAt`, and `createdAt` are not acquisition-date fallbacks.
+- Excluded invalid Positions from invested capital, marked value, profit/loss, total-equity contribution, and open-position counts without rewriting stored data. Valid records with unavailable current price retain ownership/cost basis but are excluded from marked-value calculations.
+- Kept Positions on the existing interim `DataTable`; no `TabulatorTable`, shared table API, or table architecture changes were made.
+
+Validated:
+
+- All 36 Node tests pass. New coverage includes canonical field mapping, `buyDate` precedence over Radar `addedDate`, every missing/zero/invalid required field, exact identity, unavailable current price, related counts, calculation exclusion, and compatible save/backup serialization without canonical-field pollution.
+- Source-policy and formatting checks pass.
+- Normal and `/ManaSpec/react-spike/` Pages builds pass; the tracked Pages artifact was regenerated and its JavaScript passes `node --check`.
+- The portable Vite bundle built successfully. Its finalizer encountered one transient Windows file lock, then completed; the classic script is deferred, idempotence tests pass, and generated JavaScript passes `node --check`.
+- A fixture-backed 1366 x 768 browser pass confirmed four reconciliation cases (missing quantity, zero buy price, missing buy date, and missing exact printing identity) remain visible with reason-specific `Reconcile` states, disabled detail/transaction actions, and exclusion from portfolio value, deployed capital, and open-position counts.
+- The valid regression row displayed Age `10d` and Added `7/15/2026` from `buyDate` even though its stored Radar `addedDate` was `1/1/2025`. Card Detail, Buy, Sell, and table filtering retained the vanilla-aligned interaction flow.
+- The Positions page, table, and holder each fit the 1366 x 768 viewport without horizontal or document overflow. The React page produced no console warnings or errors during the visual and interaction pass.
+
+Follow-up:
+
+- All remaining table migrations remain deferred until this focused batch is reviewed and merged.
+
+## 2026-07-26: React Positions Tabulator Migration
+
+Implemented:
+
+- Replaced the interim Positions `DataTable` with the existing shared `TabulatorTable` using the approved 19-column configuration: Card, Set, collector number, Rarity, Color, Buy, Now, Qty, Age, Added, Value, P/L, P/L %, Target, delta, Hold, Notes, History, and Actions.
+- Kept Card as the only flexible scan column and fixed the remaining compact columns, including the 32px Qty column, so the desktop grid fills its container without overflow.
+- Kept the Issue #6 canonical Position-row boundary and reconciliation states. Filtering operates on canonical rows without reconstructing, repairing, or polluting persisted records.
+- Preserved name sorting, exact focus and text filtering, inline Target/Hold editing, Card Detail, Buy/Sell, guarded deletion, and disabled normal actions for invalid records.
+- Added only Positions-scoped header-density styling. The shared wrapper API is unchanged; its existing React formatter-root cleanup now defers unmounting to avoid a proven synchronous-render lifecycle race.
+
+Validated:
+
+- All 37 Node tests pass, including canonical-row filtering coverage that retains exact row references, `buyDate` acquisition semantics, reconciliation classifications, and the absence of canonical-field writes onto storage-shaped records.
+- Source-policy, formatting, normal, Pages, and portable checks pass; tracked Pages and portable artifacts were regenerated and generated JavaScript passes `node --check`.
+- Fixture-backed 1366 x 768 React verification confirmed five rendered rows, four clear reconciliation states, one valid open-position count, Age `11d` and Added `7/15/2026` from `buyDate`, and no document or table horizontal overflow.
+- Sorting, text and exact-focus filtering/reset, Target/Hold editing, Card Detail, Buy/Sell, and guarded delete were exercised. A fresh post-fix interaction run produced no React console warnings or errors.
+- Vanilla Positions was compared at the same viewport to confirm the compact 19-column scan pattern and established row workflows. Its only console warnings were expected failed live price-refresh requests in the restricted local QA environment.
+
+Follow-up:
+
+- Signals, Transactions, and History remain on the interim table. No later table migration or unrelated shared-table expansion is included in this batch.
+
+## 2026-07-27: Shared Table And App-Shell Visual Parity
+
+Implemented:
+
+- Confirmed the ManaSpec-owned `TabulatorTable` remains the correct boundary: shared grid lifecycle, pagination, compact geometry, sort accessibility, indicators, and action presentation stay centralized, while Radar retains its filter semantics, column definitions, editors, and workflow callbacks.
+- Matched the React shell to vanilla's navigation spacing and icon/text centering, and restored the blue global Search action.
+- Rebuilt Radar's local filtering around the vanilla contract, removed the duplicate candidate Search button and OWNED badge, retained one flexible Card column, and assigned compact fixed widths to utility, financial, indicator, and action columns.
+- Added vanilla-aligned card-filter selectors and focused regression coverage, local page-size handling, active-only sort-arrow/ARIA synchronization, 27px rows, compact icon indicators, and single-page footer suppression.
+
+Validated:
+
+- Side-by-side vanilla and React review at 1366 x 768 measured a 28px header, 27px rows, a 34px Radar filter band, matching shell navigation/Search geometry, and a 1219px table with no horizontal overflow in the representative fixture state.
+- Fixture-backed interaction checks covered rarity filtering and reset, planned-quantity controls, notes/history indicators, isolated row actions, and switching the visible sort arrow to the active column. Production Pages-mode output initialized with Card sorted ascending and no inactive sort arrows.
+- Tablet (768 x 1024) and phone (390 x 844) smoke checks showed no document-level horizontal overflow; the table remains contained by its responsive behavior.
+- All 38 focused Node tests, source-policy checks, and formatting checks pass. Normal, Pages-subpath, and portable builds complete; tracked Pages and portable artifacts were regenerated.
+
+Follow-up:
+
+- Applied this shared foundation to the paused Positions Tabulator branch. Positions inherits the wrapper and shell improvements without changing Position business logic; Signals, Transactions, and History remain deferred.
+
+## 2026-07-28: Shared Header Sort Spacing Correction
+
+Implemented:
+
+- Removed Tabulator's inactive 25px sort reservation from shared React headers and reserve only the compact active-arrow space.
+- Kept Card as the flexible descriptive column and widened only the compact Radar and Positions columns whose full labels need the active sort arrow.
+
+Validated:
+
+- Checked every sortable Radar and Positions header with its arrow active; labels remain complete without table or document-level horizontal overflow at the desktop parity viewport.
+
+## 2026-07-29: Positions And Shared Table Integration Merge
+
+Completed:
+
+- Merged PR #9 into `codex/react-modernization-integration` with merge commit `1bfdc44003c6c3b22c37a755b1ee0969c22af8a6`.
+- Closed Issue #8 and Issue #10 as completed. GitHub did not auto-close Issue #8 because the PR targeted the non-default integration branch, so its completed state was applied explicitly after the merge.
+- Confirmed Radar and Positions are now the two integrated consumers of the ManaSpec-owned `TabulatorTable`; Signals, Transactions, and History remain intentionally deferred.
+
+Validated:
+
+- The final focused sort-accessibility check moved the active sort from Card to Set and then Buy. At each step exactly one header exposed `aria-sort="ascending"` or `aria-sort="descending"`; the previous header returned to `aria-sort="none"`.
+- The production Pages-mode browser console remained clean during the sort check. Tabulator already clears the previous header state, so no additional wrapper change was required.
+
+Follow-up:
+
+- Review the roadmap and approve the next bounded React implementation slice before beginning another table migration or unrelated parity batch.
+
+## 2026-08-02: Remaining Shared Table Routes And Acceptance Correction
+
+Completed:
+
+- Migrated Signals, Transactions, and History from the interim `DataTable` to the established `TabulatorTable` in three independently reviewable commits, leaving selectors, filters, navigation, formatters, and business workflows route-owned.
+- Restored compact route controls: Signals now keeps search, active-count reset, bucket/exact-row filters, and page size inside its action band; Transactions and History use vanilla-shaped compact search/type/page-size/reset panels with live result counts.
+- Corrected the measured pre-table chain. Radar, Positions, Signals, Transactions, and History now use the same 168px desktop context footprint and begin their shared table at the same position instead of allowing three Signals previews to expand the route.
+- Preserved the three-row Signals preview maximum by tightening preview typography, spacing, truncation, and containment inside a fixed 168px desktop action band. Removed the unused interim `DataTable`, its width contracts, and dead native-table styling after the final consumer migrated.
+
+Validated:
+
+- All 39 Node tests, source-policy checks, formatting checks, normal build, Pages build, portable build, and generated Pages/portable JavaScript syntax checks pass. Tracked Pages and portable artifacts were regenerated once after the final route.
+- At 1366 x 768 with the representative fixture, all five table headers aligned at the same measured position, retained 28px headers and 27px rows, and produced no table or document horizontal overflow. A 700px-wide smoke pass also produced no document overflow on any table route.
+- Signals exercised three-preview tiles plus dedicated one-row and zero-row imports. Every state retained the 168px action band and aligned table start. Search, bucket, and reset produced 1, 3, and 7 rows respectively.
+- Transactions search/type/reset produced 2, 1, and 4 rows; History produced 3, 1, and 10 rows. A sort interaction exposed exactly one non-`none` `aria-sort` header.
+- The final normal production preview loaded all five table routes with identical table-header positions, no horizontal overflow, and no browser console warnings or errors.
+- A fresh vanilla browser fixture capture could not be produced because the active browser safety policy blocked the documented `127.0.0.1:8000` origin. The correction was instead checked against the vanilla route source/CSS contract and the previously recorded 1366 x 768 vanilla table evidence; no alternate browser or server workaround was used.
+
+Follow-up:
+
+- Review the remaining React promotion gates as a separate decision. Issue #11 does not change the current vanilla production/beta authority by itself.
+
+## 2026-08-06: Issue #15 Checkpoint 1 — Portfolio Summary
+
+Implemented:
+
+- Expanded the React portfolio selector without changing stored records or ownership. Current-state summary math now distinguishes all valid Position cost basis from marked cost basis, marked value, unrealized P/L, transaction-recorded realized P/L, current equity, and computable Radar plan capital.
+- Kept realized P/L limited to finite `realizedPL` values already present on SELL records and exposed SELL coverage instead of reconstructing missing outcomes.
+- Kept Radar plan capital limited to rows with a positive planned quantity and positive entry target. Incomplete rows remain counted and visible rather than treated as zero-cost plans.
+- Added marked Position outcome counts and value concentration, and rebuilt the Dashboard decision row around eight compact, traceable metrics.
+- Established the issue's new desktop hierarchy in code: the 1920×1080 view uses a 1760px work surface and one eight-tile summary row; 1366×768 retains a two-row, four-column compression without changing the workflow.
+
+Validated:
+
+- All 41 Node tests pass, including focused realized-coverage, incomplete-Radar-plan, marked-concentration, unpriced Position, invalid Position, and compatible-storage cases.
+- Source-policy and formatting checks pass. Normal, Pages-subpath, and portable builds complete; tracked Pages and portable artifacts were regenerated. The portable build retains the previously recorded large-chunk and `import.meta` warnings.
+- In-app browser review at 1920×1080 measured a 1760px container, eight 212.25px summary columns, and document width equal to the viewport. At 1366×768, the 1320px container compressed to four 320.5px columns across two rows with document width below the viewport.
+- Both desktop passes showed honest empty-state copy, no app-level horizontal overflow, and no browser console warnings or errors.
+
+## 2026-08-07: Issue #15 Checkpoint 2 — Price History V2
+
+Implemented:
+
+- Replaced the parity-stage inline SVG with a lazy, modular Chart.js 4.5.1 integration inside Card Detail. The shared view registers only the line controller, line/point elements, linear scales, fill, legend, and tooltip modules and destroys each chart instance during React cleanup.
+- Added honest 1W, 1M, 3M, 1Y, and All ranges anchored to the newest recorded observation. A range is disabled when it contains fewer than two real observations; missing dates are spaced by timestamp and never interpolated.
+- Added latest and prior observed values, observed change, range high/low, exact printing/finish identity, recorded coverage, Scryfall source language, and entry target, average cost, and exit target reference lines when exact related records provide them.
+- Added a pure price-history boundary for strict date/value normalization, same-day refresh replacement, range selection, and prior-observation metrics. No storage or backup schema changed.
+- Pinned Chart.js and its dependency closure in a freshly generated lockfile that passes a clean `npm ci`; no React chart wrapper or runtime CDN was added.
+
+Validated:
+
+- All 45 Node tests pass, including invalid-observation removal, sparse-date preservation, same-day replacement, range eligibility/default selection, and prior-recorded change semantics. Source-policy and formatting checks pass.
+- Normal, Pages-subpath, and portable builds pass. Pages emits Price History as a lazy 174.53 KB chunk (61.04 KB gzip) while the initial app chunk is 570.48 KB (158.67 KB gzip); portable emits a 1,041.24 KB classic script (442.69 KB gzip). Existing portable large-chunk, `inlineDynamicImports`, and `import.meta` warnings remain recorded.
+- Fixture-backed production browser QA at 1920×1080 and 1366×768 confirmed exact foil identity, all five range controls, sparse 1W behavior, current/latest/prior/change/high/low metrics, three reference lines, contained modal geometry, no document overflow, and no console warnings or errors.
+
+## 2026-08-07: Issue #15 Checkpoint 3 — Unified Local Search
+
+Implemented:
+
+- Replaced the app-shell redirect into Radar's Scryfall search with a local saved-data index covering Positions, Radar, Transactions, History events, card notes, and thesis notes. Radar keeps its separate Scryfall discovery workflow for new cards.
+- Added categorized results, source badges, exact set/collector/finish context, stable per-category limits, honest empty-state guidance, and keyboard navigation with explicit Enter selection, Escape dismissal, and active-option scrolling.
+- Added exact focus contracts for all five destinations. Position and Radar results can open their exact printing detail, note results can open the exact printing's Notes panel, and Transaction/History results filter to the exact event with an explicit Show all action.
+- Centralized History event construction so the route and search index share the same event IDs and summaries. No storage, backup schema, or network contract changed.
+- Evaluated Fuse.js 7.4.2 against representative same-name, finish, partial-term, transaction-note, and thesis searches. The native deterministic matcher met the current contract, so Fuse.js was not adopted and the package manifest/lockfile remain unchanged.
+
+Validated:
+
+- All 50 Node tests pass, including normalization, all five categories, foil/nonfoil separation, exact same-name printing navigation, focused Transaction/History/Note destinations, shared History event IDs, and short-query behavior. Source-policy and formatting checks pass.
+- Normal, Pages-subpath, and portable builds pass. Pages emits 577.85 KB initial JavaScript (160.96 KB gzip), a lazy 174.53 KB Price History chunk (61.04 KB gzip), and 127.52 KB CSS (20.40 KB gzip). Portable emits a 1,048.60 KB classic script (445.07 KB gzip). Existing large-chunk, `inlineDynamicImports`, and `import.meta` warnings remain recorded.
+- Fixture-backed production browser QA at 1920×1080 rendered Positions, Radar, Transactions, History, and Notes groups with exact printing context. Selecting the TST #15 foil Radar result navigated to and opened that exact printing.
+- At 1920×1080, the 560px dropdown stayed inside the 1760px work surface with document width equal to the viewport. At 1366×768, the workbar remained one 38px row, the 520px dropdown stayed inside the viewport, and document width equaled the viewport. The production console had no warnings or errors.
+
+## 2026-08-07: Issue #15 Checkpoint 4 — React UX and Parity Polish
+
+Implemented:
+
+- Removed the synthetic fixed/max Signals height and hidden preview overflow. Signals now uses a 150px minimum while its real preview content determines the action-band height; unlike routes are no longer forced to share one artificial table start.
+- Kept the established shared table density and module-owned filters. The rich 56-row Signals fixture retained three preview rows per populated tile, bucket/exact-row filtering, live reset state, and page-size control without clipping.
+- Turned Help into a visible native modal drawer with right-side geometry, initial Close focus, Escape dismissal, deterministic focus return, and copy that distinguishes saved-data search from Radar Scryfall discovery.
+- Added exact-printing-aware accessible names to card-detail buttons. Transactions and History now expose Card Detail through native buttons when their event resolves unambiguously, while retaining row activation and plain identity for unresolved legacy events.
+- Added an accessible name to shared notice dismissal. No storage, business logic, table engine, route hierarchy, or app-shell workflow changed.
+
+Validated:
+
+- All 50 Node tests, source-policy checks, and formatting checks pass. Normal, Pages-subpath, and portable builds pass; generated delivery artifacts were refreshed.
+- Pages emits 579.15 KB initial JavaScript (161.30 KB gzip), the unchanged lazy 174.53 KB Price History chunk (61.04 KB gzip), and 127.57 KB CSS (20.39 KB gzip). Portable emits a 1,049.91 KB classic script (445.39 KB gzip) and 127.58 KB CSS (20.41 KB gzip). Existing portable large-chunk, `inlineDynamicImports`, and `import.meta` warnings remain recorded.
+- With the representative rich fixture at 1920×1080, Signals rendered 1/3/3/3 previews at a content-driven 172.6px band with no tile clipping. Every table filled its 1738px region without horizontal overflow inside the 1760px work surface.
+- At 1366×768, Radar, Positions, Signals, Transactions, and History each filled a 1298px table region without internal or document-level horizontal overflow, and the workbar remained one 38px row.
+- Production browser checks confirmed Help opens on the right, focuses Close, closes on Escape, returns focus to Help, and shows the new search guidance. Transaction Card Detail opened from its named card button, History exposed named detail buttons, and the full five-route production console remained clean.
+
+## 2026-08-07: Issue #15 Checkpoint 5 — Alpha-readiness review
+
+Completed:
+
+- Audited and reconciled the root README, active docs index, Roadmap, React migration charter, target architecture, Libraries, Architecture, Decisions, Deployment, Changelog, History, and this progress log. Historical milestone language remains dated; active guidance now distinguishes controlled-alpha readiness from canonical promotion.
+- Recorded the evidence-based recommendation that React is ready for controlled alpha use and continued forward feature development, but is not yet canonical. Remaining promotion blockers are the actual public Pages publishing source and rollback path, representative React-written record reads in vanilla, an approved cutover/rollback runbook, and the explicit promotion decision.
+- Made 1920 x 1080 the primary desktop product target across active guidance, with 1366 x 768 retained as required secondary compatibility rather than the layout to stretch.
+
+Validated:
+
+- All 50 Node tests, source-policy checks, and formatting checks pass. Normal, Pages-subpath, and portable builds pass; generated Pages and portable artifacts were refreshed, and their JavaScript passes syntax checks.
+- Final Pages output is 579.15 KB initial JavaScript (161.30 KB gzip), 174.53 KB lazy Price History JavaScript (61.04 KB gzip), and 127.57 KB CSS (20.39 KB gzip). Portable output is a 1,049.91 KB classic script (445.39 KB gzip) and 127.58 KB CSS (20.41 KB gzip). The previously documented large-chunk, `inlineDynamicImports`, and portable `import.meta` warnings remain unchanged.
+- A representative production route sweep rendered Dashboard, Radar, Positions, Signals, Transactions, History, and Admin at 1920 x 1080, 1366 x 768, 768 x 1024, and 390 x 844. Every route reported document width at or below its viewport; all five dense routes kept their Tabulator surface at every size.
+- Dashboard exposed all eight Portfolio Summary metrics. Radar and Positions text filters narrowed to one exact row and Radar reset to all 16 ideas. Signals search narrowed to one row and Show all restored the page. Transaction SELL filtering produced 15 rows with exact-detail buttons; History Notes filtering produced eight rows with exact-detail buttons; both resets restored the 25-row page.
+- Position Card Detail opened the exact Badlands printing and exposed Plan/Evaluation, Market Check, Notes, Card Context, and Price History. The Admin restore preview and confirmation restored 40 Positions, 16 Radar ideas, 65 Transactions, eight card notes, 1,485 snapshots, and 33 market observations, then surfaced a successful restore notice.
+- The unchanged vanilla root responded from the documented Python server and loaded its normal Dashboard. Under the exact project-subpath topology, vanilla restored the representative backup and the generated `/ManaSpec/react-spike/` artifact loaded all CSS/JavaScript/image assets successfully and read the same shared-origin 40 Positions, 16 Radar ideas, and 1,485 snapshots without document overflow.
+
+Open before canonical promotion:
+
+- Confirm the actual public GitHub Pages publishing source and exercise the live rollback path.
+- Extend the controlled interoperability proof from vanilla-written backup/state reads in React to representative React-written Position, Radar, note, transaction, snapshot, and market-observation reads in vanilla.
+- Approve the cutover/rollback runbook and record the explicit canonical-promotion decision. Broader assistive-technology review and real-user tablet/phone feedback remain follow-up quality work.
+
+## 2026-08-18: Issue #16 — Sealed product speculation vertical slice
+
+Implemented:
+
+- Added first-class sealed identity keyed by MTGJSON product UUID, with additive `sealedRadar`, `sealedSpecs`, and `sealedTransactions` stores that leave the established singles arrays and legacy inference intact.
+- Generated a 3,955-product local catalog from MTGJSON `SetList.json` version `5.3.0+20260818`. The source contained 4,679 sealed products across 868 sets; 3,405 included both a TCGplayer product ID and exact purchase link. Representative booster boxes, packs, bundles, Commander/specialty products, and Secret Lair products are covered.
+- Proved that five representative sealed UUIDs are absent from MTGJSON's card-oriented `AllPricesToday.json`. Sealed assets therefore begin unpriced, expose exact MTGJSON/TCGplayer identity, and acquire value only through an explicit timestamped manual market check; cost basis is never substituted for market value.
+- Delivered the complete Search → Radar → Positions → sell → Transactions/History workflow, including Singles/Sealed/All discovery and view filters, plan fields, buy more, weighted average cost, partial/full sales, exact detail, notes, market observations, shared cash, saved-data search, Signals, summaries, backup/restore, and migration fixtures.
+- Added a checked Pages artifact synchronizer so a successful `build:pages` replaces only the exact tracked `react-spike` target, then regenerated both Pages and portable delivery artifacts.
+
+Validated:
+
+- All 63 Node tests pass, including exact asset identity, representative catalog families, mixed trading, weighted cost, partial/full close, honest unpriced valuation, related-record isolation, saved-data search/History, signals, legacy-v1 migration, current-v2 sealed restore, future-schema rejection, and compatible singles storage. Source-policy and formatting checks pass.
+- Normal, Pages-subpath, and portable builds pass, and every generated JavaScript file passes `node --check`. Pages emits 603.19 KB initial JavaScript (166.16 KB gzip), a lazy 174.53 KB Price History chunk (61.04 KB gzip), a lazy 1,735.78 KB sealed catalog chunk (252.36 KB gzip), and 129.11 KB CSS (20.64 KB gzip). Portable emits a 2,809.80 KB classic script (704.37 KB gzip) and 129.12 KB CSS (20.65 KB gzip). The previously documented large-chunk, `inlineDynamicImports`, and portable `import.meta` warnings remain expected.
+- Fresh production Pages QA at 1366 × 768 exercised an exact Bloomburrow Play Booster Box through planning three units at $120, buying two at $100, verifying the unpriced Position, saving a $140 manual value with 18 sellers/42 listed units, partially selling one at $150, and fully closing the last at $160. Transactions retained both sells and the buy, History retained RADAR/BUY/VALUE/SELL events, cash ended at $10,110, and Radar retained the watched product, value, plan, and market context after Position closure.
+- The exact detail showed MTGJSON UUID `d575bd23-ebd6-586e-af7b-04924db4f1c3`, TCGplayer product ID `541235`, exact external routing, release date, and `36 × Bloomburrow Play Booster Pack` contents without any fake card fields. Fresh production reload checks observed no console event or page error.
+- At 1920 × 1080, Radar, Positions, Transactions, and History each kept document width equal to the 1920px viewport; the retained sealed Radar row and complete three-trade/five-event records rendered without overflow or page errors.
+- Evidence is stored in `docs/screenshots/sealed-vertical-slice/`. The in-app browser security policy blocked a new `file://` portable launch; no workaround or alternate browser surface was used. Portable coverage remains the successful self-contained build, finalizer regression test, deferred classic entry check, and generated JavaScript syntax validation.
+
+Follow-up:
+
+- Gather sealed-focused tester feedback. Treat any automated sealed valuation source as a separate, explicitly approved data-integration decision; do not scrape TCGplayer or infer market value from acquisition cost.
+
+## 2026-08-21: React integration promotion preparation
+
+Implemented:
+
+- Merged PR #17 into `codex/react-modernization-integration`, then merged current `main` into integration without rewriting either history. Integration now contains main's `8cf49d4` review-deployment refresh and `74d7a27` artifact-integrity repair.
+- Resolved the three expected overlaps in Changelog, Deployment, and the generated Pages entry. Documentation retains both the accumulated React/sealed truth and the confirmed GitHub Pages topology: repository root from `main`, vanilla at `/ManaSpec/`, and the React review artifact at `/ManaSpec/react-spike/`.
+- Preserved `.github/workflows/react-spike-artifact.yml`, `tools/check-react-spike-artifact.mjs`, and the manifest contract from #14. Extended `npm run build:pages` so artifact synchronization is immediately followed by manifest generation and integrity verification; regenerating `react-spike/` can no longer silently discard or stale the guard metadata.
+- Regenerated the tracked Pages and portable artifacts from the reconciled integration source. User-owned untracked `static-server.mjs` and `test-fixtures/browser/issue-15-local-search.json` remained untouched.
+
+Validated:
+
+- All 63 Node tests, source-policy checks, and formatting checks pass.
+- Normal, Pages-subpath, and portable builds pass. Pages emits 603.19 KB initial JavaScript (166.16 KB gzip), a 174.53 KB lazy Price History chunk (61.04 KB gzip), a 1,735.78 KB lazy sealed catalog chunk (252.36 KB gzip), and 129.11 KB CSS (20.64 KB gzip). Portable emits a 2,809.80 KB classic script (704.37 KB gzip) and 129.12 KB CSS (20.65 KB gzip); the previously documented portable warnings remain expected.
+- The preserved manifest guard reports all 17 Pages files complete and valid. Every generated Pages JavaScript file and the portable classic script pass `node --check`, every entry-point reference resolves to an included file, and current `main` is an ancestor of the reconciled integration HEAD.
+- Fresh production-artifact browser QA used the exact `/ManaSpec/react-spike/#/radar` project-subpath topology. At 1366 × 768, the Singles/Sealed/All toggle was visible, sealed search returned the exact Bloomburrow Play Booster Box and related real products, document width equaled the viewport, and the console contained no warnings or errors. A fresh 1920 × 1080 reload also retained the sealed toggle, exact viewport containment, and a clean console.
+
+Promotion boundary:
+
+- [Promotion PR #18](https://github.com/courtjester15/ManaSpec/pull/18) is open from `codex/react-modernization-integration` to `main`, ready for review, mergeable, and intentionally unmerged. Its GitHub `React spike artifact / verify` check passed in 5 seconds.
+- This preparation does not merge integration into `main`. PR #18 is the review surface; deployment remains unchanged until the owner separately approves and merges it.

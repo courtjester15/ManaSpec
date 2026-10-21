@@ -1,8 +1,9 @@
 import { dataFoundation } from "../domain/dataFoundation.js";
+import { normalizeSealedAsset } from "../domain/assetIdentity.js";
 
 export const BACKUP_SCHEMA = "manaspec-localstorage-backup";
 export const BACKUP_SCHEMA_VERSION = 1;
-export const DATA_SCHEMA_VERSION = 1;
+export const DATA_SCHEMA_VERSION = 2;
 export const APP_VERSION = "0.9.0-alpha.1-react-spike";
 export const STARTING_CASH = 10_000;
 
@@ -15,6 +16,9 @@ export const ARRAY_KEYS = Object.freeze([
   "signals",
   "priceSnapshots",
   "marketObservations",
+  "sealedSpecs",
+  "sealedRadar",
+  "sealedTransactions",
 ]);
 
 const PRE_IMPORT_BACKUP_KEY = "manaspec_pre_import_backup";
@@ -74,7 +78,22 @@ export function buildBackupCounts(data) {
     signals: data.signals.length,
     priceSnapshots: data.priceSnapshots.length,
     marketObservations: data.marketObservations.length,
+    sealedPositions: data.sealedSpecs.length,
+    sealedRadar: data.sealedRadar.length,
+    sealedTransactions: data.sealedTransactions.length,
   };
+}
+
+export function migrateBackupData(data, sourceVersion) {
+  if (sourceVersion === 1) {
+    return {
+      ...data,
+      sealedSpecs: [],
+      sealedRadar: [],
+      sealedTransactions: [],
+    };
+  }
+  return data;
 }
 
 export function normalizeBackup(backup, fallbackCash = STARTING_CASH) {
@@ -116,16 +135,17 @@ export function normalizeBackup(backup, fallbackCash = STARTING_CASH) {
   data.priceRefreshStatus = refreshStatus && typeof refreshStatus === "object" && !Array.isArray(refreshStatus)
     ? refreshStatus
     : {};
+  const migratedData = migrateBackupData(data, dataSchemaVersion);
 
   const normalized = {
     app: "ManaSpec",
     schema: BACKUP_SCHEMA,
     schemaVersion,
-    dataSchemaVersion,
+    dataSchemaVersion: DATA_SCHEMA_VERSION,
     appVersion: backup.appVersion || "",
     exportedAt: backup.exportedAt || "",
-    data,
-    counts: buildBackupCounts(data),
+    data: migratedData,
+    counts: buildBackupCounts(migratedData),
   };
   return { ok: true, backup: normalized };
 }
@@ -157,6 +177,9 @@ export function createStorageAdapter(storageInput) {
       priceSnapshots: readArray(storage, "priceSnapshots"),
       priceRefreshStatus: readJson(storage, "priceRefreshStatus", null),
       marketObservations: readArray(storage, "marketObservations"),
+      sealedSpecs: readArray(storage, "sealedSpecs").map(normalizeSealedAsset),
+      sealedRadar: readArray(storage, "sealedRadar").map(normalizeSealedAsset),
+      sealedTransactions: readArray(storage, "sealedTransactions").map(record => ({ ...normalizeSealedAsset(record), id: record.id })),
     };
   }
 
@@ -174,6 +197,9 @@ export function createStorageAdapter(storageInput) {
         ? state.priceRefreshStatus
         : {},
       marketObservations: Array.isArray(state.marketObservations) ? state.marketObservations : [],
+      sealedSpecs: Array.isArray(state.sealedSpecs) ? state.sealedSpecs : [],
+      sealedRadar: Array.isArray(state.sealedRadar) ? state.sealedRadar : [],
+      sealedTransactions: Array.isArray(state.sealedTransactions) ? state.sealedTransactions : [],
     };
   }
 

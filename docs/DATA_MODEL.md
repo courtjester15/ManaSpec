@@ -10,13 +10,14 @@ ManaSpec tracks speculation workflow, not general collection inventory.
 
 Data model rules:
 
-- Printing identity matters.
+- Exact asset identity matters: Scryfall printing plus finish for singles, MTGJSON product UUID for sealed.
 - Radar and Positions are separate lifecycle states.
 - Notes belong to exact tracked printings, not only to one table row.
 - Scryfall is read-only card/printing/price reference data.
 - User-authored plan and notes are ManaSpec-owned data.
 - Transactions should become the long-term ownership source of truth.
 - Current Positions are transitional until the ledger migration is complete.
+- A missing sealed valuation is valid state. Cost basis remains known, but marked value and P/L are not computed until a timestamped user value exists.
 
 ## Entity Map
 
@@ -33,6 +34,7 @@ Current and near-future entities:
 - Market Observation
 - Card Detail
 - Future Ledger
+- Sealed Product
 
 ## Card
 
@@ -89,6 +91,21 @@ Printing
 -> owns shared memory through
 Card Notes
 ```
+
+## Sealed Product
+
+A Sealed Product is an exact MTGJSON product record, not a synthetic card printing.
+
+Identity and reference fields include:
+
+- `assetType: "sealed"`.
+- `assetKey: "sealed:<mtgjson_uuid>"`.
+- MTGJSON UUID, product name, set, category/subtype, release date, and contents summary.
+- TCGplayer product ID and exact MTGJSON affiliate/product link when available.
+
+React stores watched, owned, and ledger state in additive `sealedRadar`, `sealedSpecs`, and `sealedTransactions` arrays. Shared notes and market observations carry the same exact asset key. Sealed records do not receive fake Scryfall IDs, collector numbers, finishes, or card prices.
+
+The verified MTGJSON `AllPricesToday` feed is keyed to card UUIDs and did not contain representative sealed UUIDs. Therefore a sealed product starts with `currentPrice: null`; a manual market observation records price, timestamp, source, seller/quantity context, and updates the current user valuation. Unpriced open holdings retain quantity and average cost but are excluded from marked-value and P/L totals.
 
 ## Radar Item
 

@@ -1,0 +1,59 @@
+{
+  "app": "ManaSpec",
+  "schema": "manaspec-localstorage-backup",
+  "schemaVersion": 1,
+  "dataSchemaVersion": 1,
+  "data": {
+    "specs": [
+      {
+        "id": "issue-15-printing|foil",
+        "scryfall_id": "issue-15-printing",
+        "trackedPrintingKey": "issue-15-printing|foil",
+        "finish": "foil",
+        "foil": true,
+        "name": "Checkpoint Sample",
+        "set_code": "TST",
+        "set_name": "Checkpoint Test Set",
+        "collector_number": "15",
+        "qty": 4,
+        "buyPrice": 10,
+        "buyDate": "2026-01-15T12:00:00.000Z",
+        "currentPrice": 17,
+        "exitTarget": 22,
+        "holdTime": "12"
+      }
+    ],
+    "radar": [
+      {
+        "id": "issue-15-printing|foil",
+        "scryfall_id": "issue-15-printing",
+        "trackedPrintingKey": "issue-15-printing|foil",
+        "finish": "foil",
+        "foil": true,
+        "name": "Checkpoint Sample",
+        "set_code": "TST",
+        "set_name": "Checkpoint Test Set",
+        "collector_number": "15",
+        "currentPrice": 17,
+        "entryTarget": 12,
+        "plannedQty": 3
+      }
+    ],
+    "transactions": [],
+    "cardNotes": [],
+    "thesisNotes": [],
+    "signals": [],
+    "priceSnapshots": [
+      { "date": "2025-09-01", "cardId": "issue-15-printing", "scryfall_id": "issue-15-printing", "printingKey": "issue-15-printing|foil", "finish": "foil", "foil": true, "name": "Checkpoint Sample", "set": "tst", "price": 8, "source": "scryfall", "savedAt": "2025-09-01T12:00:00.000Z" },
+      { "date": "2026-01-15", "cardId": "issue-15-printing", "scryfall_id": "issue-15-printing", "printingKey": "issue-15-printing|foil", "finish": "foil", "foil": true, "name": "Checkpoint Sample", "set": "tst", "price": 9.5, "source": "scryfall", "savedAt": "2026-01-15T12:00:00.000Z" },
+      { "date": "2026-05-15", "cardId": "issue-15-printing", "scryfall_id": "issue-15-printing", "printingKey": "issue-15-printing|foil", "finish": "foil", "foil": true, "name": "Checkpoint Sample", "set": "tst", "price": 11, "source": "scryfall", "savedAt": "2026-05-15T12:00:00.000Z" },
+      { "date": "2026-07-01", "cardId": "issue-15-printing", "scryfall_id": "issue-15-printing", "printingKey": "issue-15-printing|foil", "finish": "foil", "foil": true, "name": "Checkpoint Sample", "set": "tst", "price": 13, "source": "scryfall", "savedAt": "2026-07-01T12:00:00.000Z" },
+      { "date": "2026-07-20", "cardId": "issue-15-printing", "scryfall_id": "issue-15-printing", "printingKey": "issue-15-printing|foil", "finish": "foil", "foil": true, "name": "Checkpoint Sample", "set": "tst", "price": 12.5, "source": "scryfall", "savedAt": "2026-07-20T12:00:00.000Z" },
+      { "date": "2026-07-31", "cardId": "issue-15-printing", "scryfall_id": "issue-15-printing", "printingKey": "issue-15-printing|foil", "finish": "foil", "foil": true, "name": "Checkpoint Sample", "set": "tst", "price": 15, "source": "scryfall", "savedAt": "2026-07-31T12:00:00.000Z" },
+      { "date": "2026-08-05", "cardId": "issue-15-printing", "scryfall_id": "issue-15-printing", "printingKey": "issue-15-printing|foil", "finish": "foil", "foil": true, "name": "Checkpoint Sample", "set": "tst", "price": 16, "source": "scryfall", "savedAt": "2026-08-05T12:00:00.000Z" }
+    ],
+    "marketObservations": [],
+    "cash": 9960,
+    "priceRefreshStatus": {}
+  }
+}

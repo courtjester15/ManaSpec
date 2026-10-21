@@ -1,10 +1,32 @@
 # React Modernization Spike
 
-This document is the active execution charter and parity plan for a complete React reconstruction of ManaSpec.
+This document is the active execution charter and parity plan for the implemented React reconstruction of ManaSpec.
 
-The spike is approved as an experiment. It is not a production rewrite, does not replace the current roadmap automatically, and does not authorize a cutover from the vanilla app. Its purpose is to produce enough working evidence to decide whether React should become ManaSpec's long-term frontend.
+The implementation has completed the Issue #15 product-expansion, dependency, parity-polish, and validation checkpoints and is now an alpha-readiness candidate. It is the likely forward project path, subject to the explicit blockers below. It is not yet the canonical or production frontend and does not authorize a cutover from vanilla.
 
-Use [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md) for the proposed technical structure, [Libraries](LIBRARIES.md) for dependency evaluation, and [Deployment](DEPLOYMENT.md) for local and GitHub Pages delivery.
+Vanilla remains the behavioral and production/beta source of truth until an explicit promotion decision. Use [React Spike Architecture](REACT_SPIKE_ARCHITECTURE.md) for implemented structure, [React Spike Progress](REACT_SPIKE_PROGRESS.md) and [React Parity Log](REACT_PARITY_LOG.md) for evidence, [Libraries](LIBRARIES.md) for the next dependency-evaluation phase, and [Deployment](DEPLOYMENT.md) for local and GitHub Pages delivery.
+
+## Current Implementation Status
+
+- The seven primary routes, shared shell, compatibility-backed local state, normal build, tracked Pages artifact, and stable portable build are implemented. Issue #16 adds a real sealed-product workflow across the existing route surface without promoting React to canonical status.
+- The UI has completed broad parity plus focused table and Card Detail corrections; the user's current directional assessment is roughly 80-90% familiar, not a declaration of full parity.
+- The shared Tabulator foundation is implemented across Radar, Positions, Signals, Transactions, and History. It centralizes lifecycle, compact geometry, pagination, sort accessibility, indicators, actions, and responsive table behavior while routes retain their filters, columns, editors, navigation, and workflows. The interim `DataTable` has been removed after its final consumers migrated.
+- React Parity Batches 1 and 2 close the audit's C1/C2 data-trust and H1/H2 Signals findings. Issue #6 establishes canonical runtime Position rows and reconciliation-safe portfolio math. Issue #15 adds an eight-metric Portfolio Summary, Chart.js Price History V2, native unified saved-data search, and a route-by-route UI/accessibility polish sweep.
+- All five dense routes use the shared Tabulator boundary. Chart.js is adopted only for Price History; the native local index won its Fuse.js comparison. Remaining work is release evidence and promotion control, not another broad migration phase.
+- React may make small correctness and consistency improvements, but vanilla defines expected behavior wherever the implementations disagree until promotion.
+- The user explicitly authorized sealed as a forward React feature despite the earlier parity-era deferral. Vanilla remains the singles compatibility oracle; sealed behavior is owned by the Issue #16 brief, current active docs, and React tests.
+
+### Alpha-readiness recommendation
+
+React is ready for controlled alpha use and continued feature development, but it is not ready to become canonical yet. The implementation, focused tests, three delivery modes, 1920x1080 primary desktop layout, 1366x768 compatibility layout, and representative workflow checks are strong enough to stop calling it a speculative spike.
+
+Canonical promotion remains blocked by release controls rather than a missing product surface:
+
+1. Confirm which workflow or branch actually publishes the public GitHub Pages site, then validate the live `/ManaSpec/react-spike/` artifact and root vanilla rollback path.
+2. Complete representative React-written Position, Radar, note, transaction, snapshot, and market-observation reads in vanilla. Fixture compatibility and controlled same-origin checks reduce risk but do not replace this record-level proof.
+3. Approve a cutover/rollback runbook and make the explicit product decision to promote React. Issue #15 does not make that decision automatically.
+
+A broader assistive-technology audit and real-user phone/tablet feedback remain readiness improvements, but are not presented as hidden feature-parity blockers.
 
 ## Objectives
 
@@ -37,7 +59,7 @@ Reconstruct the complete existing ManaSpec application in React while:
 - Keep the root vanilla app functional and reviewable.
 - Permit side-by-side comparison throughout implementation.
 - Keep the experiment removable without repairing the vanilla app.
-- Record the final branch name, folder layout, and generated-output policy when the workspace is created.
+- Keep the implemented branch, `react-app/` source layout, tracked `react-spike/` Pages artifact, and committed portable-output policy documented as they evolve.
 
 ## Source Of Truth
 
@@ -112,11 +134,13 @@ The React app initially recognizes the current ManaSpec keys and records, includ
 - `priceRefreshStatus`;
 - `marketObservations`;
 - current UI preference keys included by the active storage/backup documentation.
+- additive `sealedSpecs`, `sealedRadar`, and `sealedTransactions` arrays introduced by data schema v2.
 
 Rules:
 
 - Read existing data without requiring manual conversion.
 - Preserve exact printing and finish identity.
+- Preserve exact MTGJSON product UUID identity for sealed records and never synthesize Scryfall identity.
 - Preserve unknown fields through normal compatible edits where current adapters do so.
 - Do not perform destructive startup migrations.
 - Keep data schema and backup-envelope schema versions distinct.
@@ -162,7 +186,7 @@ Preserve:
 - layout hierarchy and information density;
 - navigation and terminology;
 - dense table workflows;
-- compact 1366 x 768 desktop usability;
+- excellent 1920 x 1080 desktop use with clean 1366 x 768 compatibility;
 - current financial formatting and status language.
 
 Small corrections are allowed when they improve correctness: associated labels, consistent control heights, button alignment, dialog padding, table spacing, icon centering, wrapping, focus/hover states, keyboard access, accessible naming, and touch targets.
@@ -173,9 +197,10 @@ When uncertain, reproduce current behavior first and make the smallest correctio
 
 Priority order:
 
-1. Desktop parity at 1366 x 768.
-2. Tablet usability.
-3. Phone usability.
+1. Primary desktop use at 1920 x 1080, using the additional room for information hierarchy rather than scaling everything up.
+2. Compatibility desktop use at 1366 x 768 without avoidable overflow or workflow loss.
+3. Tablet usability.
+4. Phone usability.
 
 Tablet and phone layouts may stack panels, condense navigation, prioritize columns, expose expandable details, or use deliberate list/card alternatives. They should not shrink an unusable desktop table onto a phone. Breakpoint strategy belongs in [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md) and must be validated at representative viewports.
 

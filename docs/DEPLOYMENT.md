@@ -1,6 +1,6 @@
 # ManaSpec Deployment
 
-This document defines the intended dual-delivery model for the current vanilla app and the experimental React spike. It supplements [BETA_DEPLOYMENT](BETA_DEPLOYMENT.md), which remains the detailed guide for today's vanilla closed-beta deployment.
+This document defines the implemented dual-delivery model for the current vanilla app and the React implementation spike. It supplements [BETA_DEPLOYMENT](BETA_DEPLOYMENT.md), which remains the detailed guide for the authoritative vanilla closed-beta deployment.
 
 GitHub Pages currently publishes the repository root from `main`. The vanilla application is served at `/ManaSpec/`, and the committed React review artifact is served at `/ManaSpec/react-spike/`.
 
@@ -19,14 +19,14 @@ GitHub Pages currently publishes the repository root from `main`. The vanilla ap
 | --- | --- | --- | --- |
 | Vanilla production/beta | Existing GitHub Pages root | Repository root on the current vanilla deployment source | Current path; see [BETA_DEPLOYMENT](BETA_DEPLOYMENT.md) |
 | React spike | `https://courtjester15.github.io/ManaSpec/react-spike/` | Committed `react-spike/` artifact on `main`, generated from the dedicated integration branch/workspace | Branch-published review path |
-| React portable | `react-app/dist-portable/index.html` | Committed portable build | Generated and statically verified; direct `file://` test remains pending |
+| React portable | `react-app/dist-portable/index.html` | Committed portable build | Generated and statically verified; prior direct-open evidence remains recorded, while current in-app policy blocks new `file://` navigation |
 | React development | Local Vite URL on `127.0.0.1` | `react-app/src/` | Developer-only |
 
 ## Isolation Model
 
 React source lives under `react-app/` on a dedicated experimental branch. The vanilla root remains build-free and reviewable throughout the experiment.
 
-The Pages artifact should have this effective shape:
+The committed branch-based Pages artifact currently has this effective shape:
 
 ```text
 pages-artifact/
@@ -38,29 +38,32 @@ pages-artifact/
     `-- assets/                # bundled React JS/CSS/assets
 ```
 
-The deployment workflow should assemble that artifact in a temporary/generated location. It must not copy React output over the working-tree root or commit mixed Pages artifacts as application source.
+The current implementation generates `react-app/dist/` with the Pages base path and refreshes the tracked `react-spike/` subdirectory without replacing the vanilla root. A future GitHub Actions workflow may assemble the same topology, but changing the configured Pages source remains a separately documented deployment decision.
 
 ## Developer Workflow
 
-The exact npm scripts are added and verified with the React workspace. The intended interface is:
+The verified React workspace interface is:
 
 ```text
 npm run dev              # local Vite development server
-npm run build            # optimized Pages-compatible build
+npm run build            # optimized normal build
+npm run build:pages      # /ManaSpec/react-spike/ Pages-path build
 npm run build:portable   # file-openable committed artifact
 npm run preview          # preview normal production build
 npm run lint
 npm run format:check
-npm run test
+npm test
 npm run test:browser     # if browser automation is adopted
 npm run analyze          # if bundle analysis is adopted
 ```
+
+`build:pages` now refreshes the tracked `react-spike/` directory from the successful Pages-mode `dist/` output through `tools/sync-pages.mjs`; the sync script validates the exact target before replacement so stale hashed assets do not accumulate.
 
 Run commands from `react-app/`. Dex uses the developer workflow; users opening the committed artifact do not.
 
 ## Open ManaSpec Locally Without npm
 
-After the portable artifact exists, open:
+Open the stable portable entry:
 
 ```text
 react-app/dist-portable/index.html
@@ -71,6 +74,7 @@ The portable directory must already contain its JavaScript, CSS, and other requi
 Known constraints to document and test:
 
 - Scryfall search and price refresh still require internet access.
+- Sealed catalog search is bundled into normal/Pages output as a lazy product-catalog chunk and into the portable script. Exact TCGplayer product links still require internet access.
 - Browser `file://` localStorage behavior is implementation-dependent and does not share the GitHub Pages origin.
 - A local portable copy will not automatically see data stored at the live Pages URL. Use Admin backup/export and restore/import to move data between origins.
 - Some browsers apply stricter local-file restrictions than others. The build should remove avoidable module/CORS issues, and the validated browser list should be recorded after testing.
@@ -105,10 +109,9 @@ Do not change Pages settings from the confirmed `main`/repository-root branch de
 
 ### Committed Artifact Integrity
 
-Artifact-only deployment pull requests to `main` must include an updated `react-spike/artifact-manifest.json` produced from the verified build:
+`npm run build:pages` regenerates `react-spike/`, writes `react-spike/artifact-manifest.json`, and verifies it before returning success. Artifact-only deployment pull requests to `main` must include that updated manifest. The guard can also be run directly when auditing an existing artifact:
 
 ```text
-node tools/check-react-spike-artifact.mjs --write
 node tools/check-react-spike-artifact.mjs
 ```
 
@@ -151,7 +154,7 @@ For every React deployment milestone, verify:
 - no runtime CDN requests are required;
 - storage compatibility and backup/restore checks pass;
 - direct portable `index.html` opening passes in the documented browser(s);
-- desktop 1366 x 768, tablet, and phone layouts are usable;
+- primary desktop 1920 x 1080, compatibility desktop 1366 x 768, tablet, and phone layouts are usable;
 - console and network panels show no unexplained deployment errors;
 - the visible React application shell renders (a `200` response or static page title alone is not a passing smoke test).
 

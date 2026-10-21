@@ -41,7 +41,7 @@ The vendored Chart.js runtime under `assets/vendor/` is application source and r
 
 ## React Foundation Set
 
-The archive contains a complete Windows x64 foundation set for the reviewed React/Vite versions:
+The archive supplied the reviewed Windows x64 foundation set now used by the React implementation:
 
 | Direct package | Archived version | Status | Purpose and notes |
 | --- | --- | --- | --- |
@@ -50,8 +50,10 @@ The archive contains a complete Windows x64 foundation set for the reviewed Reac
 | `vite` | 8.1.3 | Adopted | Development and build pipeline. Requires Node `^20.19.0 || >=22.12.0`. |
 | `@vitejs/plugin-react` | 6.0.3 | Adopted | React integration for Vite 8. Optional compiler/Babel peers are intentionally absent and not required for the baseline. |
 | `react-router-dom` | 7.18.1 | Adopted | Hash-safe routing for portable and Pages-subpath navigation. Requires Node `>=20` for tooling and React/React DOM `>18`. |
+| `tabulator-tables` | 6.5.2 | Adopted | Shared dense-grid engine behind the ManaSpec-owned `TabulatorTable` wrapper across Radar, Positions, Signals, Transactions, and History. |
+| `chart.js` | 4.5.1 | Adopted | Exact-printing Price History charts, loaded only when Card Detail opens Price History. ManaSpec registers only the line-chart modules it uses and owns the React lifecycle directly. |
 
-Use a Node version that satisfies the strictest archived engine range. Record the exact selected Node/npm versions when the workspace is created.
+Use a Node version that satisfies the strictest engine range. The tracked manifest and lockfile, not the ignored archive, are authoritative for the implemented workspace.
 
 The archive's Vite/Rolldown and Lightning CSS native bindings cover Windows x64 only. On macOS, Linux, Windows ARM, or another optional toolchain, use normal package installation to obtain platform-specific dependencies.
 
@@ -59,10 +61,9 @@ The archive's Vite/Rolldown and Lightning CSS native bindings cover Windows x64 
 
 | Package | Preferred archived version | Status | ManaSpec assessment |
 | --- | --- | --- | --- |
-| `chart.js` | 4.5.1 | Evaluated, not adopted | The spike's compact Price History needs are served by an accessible inline SVG with no runtime dependency. Reconsider only when richer chart interaction is approved. |
-| `tabulator-tables` | 6.5.2 | Evaluate | Strong dense-grid candidate, but it is framework-neutral/imperative. Compare against the current ManaSpec contract and a React-first headless table using real Radar/Positions data. |
+| `chart.js` | 4.5.1 | Adopted | Rich range selection, observation tooltips, reference lines, and sparse-history scaling justify the dependency. It is used directly without a React wrapper and is lazy-loaded from Card Detail. |
 | `dayjs` | 1.11.21 | Evaluate | Small, dependency-free date helper. Adopt only if hold windows, parsing, stale checks, and sorting remain meaningfully clearer than pure helpers plus `Intl`. |
-| `fuse.js` | 7.4.2 | Deferred | Good dependency-free fuzzy search option when cross-workflow local search is in active scope; not needed for initial shell/persistence parity. |
+| `fuse.js` | 7.4.2 | Do not adopt for current search | Representative cross-workflow search is clearer and deterministic with the native normalized local index. Reconsider only if measured misspelling or ranking failures emerge at larger local volumes. |
 | `papaparse` | 5.5.4 | Deferred | Appropriate for future CSV/owned-spec backfill. Current backup JSON does not justify it. |
 | `xlsx` | 0.18.5 | Deferred | Large spreadsheet-format capability and seven-package closure. Do not adopt until spreadsheet import is approved and the exact file-format/security/maintenance need is reviewed. CSV should remain the smaller first option. |
 | `file-saver` | 2.0.5 | Deferred | Current Blob/object-URL download behavior may be sufficient. Adopt only if browser compatibility testing proves a gap. |
@@ -112,9 +113,22 @@ Vite's optional preprocessors, minifier, devtools, React compiler extras, macOS 
 
 ## Important Gaps
 
-The archive is not a complete professional-tooling set. It does not currently include the proposed linting, formatting, or test stack such as ESLint, Prettier, Vitest, Testing Library, or browser-test dependencies. It also does not include a React-first accessibility primitive library or state manager.
+The archive is not a complete professional-tooling set. It does not include ESLint, Prettier, Vitest, Testing Library, browser-test dependencies, a React-first accessibility primitive library, or a state manager.
 
-That is acceptable. Do not fill those gaps speculatively. Select the smallest tooling set when the React workspace is created, document it here, and obtain its complete dependency graph through the normal lockfile workflow or a deliberately refreshed offline archive.
+The implemented workspace currently uses lightweight Node tests plus source and formatting checks instead of those larger tool stacks. That is an intentional baseline, not a claim of equivalent coverage. Add tools only when a demonstrated testing, linting, accessibility, or maintenance gap justifies their dependency and workflow cost.
+
+## Current React Library Phase
+
+The shared Tabulator migration is complete across Radar, Positions, Signals, Transactions, and History. Chart.js is adopted for the expanded exact-printing Price History workflow. The unified saved-data search comparison is also complete: the native index met the current acceptance contract, so Fuse.js is not adopted. Further library work remains feature-triggered rather than a bulk replacement of working code.
+
+Issue #16 adds no runtime library. MTGJSON is a generated data input, not a client dependency: a deterministic build script trims `SetList.json` into the tracked catalog, normal/Pages builds lazy-load it, and the portable build inlines it. No sealed pricing or scraping package was adopted because the verified official price artifact did not cover sealed UUIDs.
+
+Evaluate in this order:
+
+1. Day.js: adopt when date parsing, windows, scheduling, or timezone behavior becomes recurring domain complexity.
+2. Papa Parse: defer until CSV import/export is an approved workflow.
+
+Every comparison must preserve the ManaSpec-facing wrapper and verify normal, Pages-subpath, and portable builds. A library becoming the likely choice is not adoption until it is tracked, used, tested, and recorded here.
 
 ## Adoption Record
 
@@ -137,6 +151,50 @@ Decision or ADR link:
 
 Do not mark a library `Adopted` until it exists in the tracked lockfile, is used by the application, and has been exercised in the relevant normal and portable builds.
 
+### Tabulator 6.5.2
+
+- Library and version: `tabulator-tables` 6.5.2.
+- Status: Adopted as the single shared React table foundation across all five dense routes.
+- Purpose: Dense sorting, cell editing, keyboard support, column layout, and reusable grid mechanics behind a product-owned React boundary.
+- Used in: `TabulatorTable`, Radar, Positions, Signals, Transactions, and History.
+- Why selected: It reproduces the compact financial-grid contract while removing hand-built sorting/layout mechanics from feature code and provides a scalable path for later table migrations.
+- Alternatives considered: The interim native React table and a React-first headless table. The interim table was useful for parity but encoded table identity through column-label matching and would require continued custom grid behavior; a second headless implementation would retain most of that custom work.
+- Current benefit: Shared column configuration, sorting and active-header accessibility state, display/edit cells, row activation isolation, pagination, empty state, tooltips, keyboard behavior, compact geometry, and responsive behavior are centralized without exposing vendor APIs to feature routes.
+- Likely future benefit: Future dense routes can supply product-owned columns and actions without creating a second grid system.
+- Bundle cost: Modular registration adds approximately 219 KB JavaScript and 34 KB CSS uncompressed. After Issue #15 checkpoint 4, the Pages initial chunk is 579.15 KB (161.30 KB gzip), shared CSS is 127.57 KB (20.39 KB gzip), and the portable classic script is 1,049.91 KB (445.39 KB gzip); those totals also include later product work and Chart.js.
+- Maintenance/update cost: Imperative lifecycle integration and per-cell React roots remain wrapper responsibilities. Tabulator upgrades require wrapper, keyboard, responsive, normal, Pages, and portable regression checks.
+- Integration discovery: Wrapper definitions must omit optional properties when ManaSpec has no value. Passing `minWidth: undefined` overrode Tabulator's native column default and converted otherwise valid fixed widths to `NaN`; preserving omitted defaults restores native `fitColumns` ownership without CSS or redraw intervention.
+- Offline/portable impact: JavaScript and CSS bundle locally with no runtime CDN. Normal, Pages-subpath, and portable builds complete; the portable entry remains a deferred classic script with relative assets.
+- Decision or ADR link: [DECISIONS](DECISIONS.md#tabulator-is-the-shared-react-table-engine-behind-a-manaspec-wrapper).
+
+### Chart.js 4.5.1
+
+- Library and version: `chart.js` 4.5.1 with transitive `@kurkle/color` 0.3.4.
+- Status: Adopted for React Card Detail Price History.
+- Purpose: Render exact-printing recorded price observations with honest sparse-date spacing, selectable ranges, tooltips, and entry/cost/exit reference lines.
+- Used in: The lazy-loaded `PriceHistory` component. Feature code registers only `LineController`, `LineElement`, `PointElement`, `LinearScale`, `Filler`, `Legend`, and `Tooltip` and owns the chart create/destroy lifecycle directly.
+- Why selected: Issue #15 requires richer history inspection than the parity-stage inline SVG could provide cleanly. Chart.js supplies mature scaling, hit testing, tooltips, legends, and responsive canvas behavior while preserving a small ManaSpec-owned integration boundary.
+- Alternatives considered: Extend the custom inline SVG or add a React Chart.js wrapper. Extending the SVG would retain custom scale, pointer, tooltip, and reference-line work; a wrapper would add another dependency without reducing this isolated lifecycle meaningfully.
+- Current benefit: Users can compare the latest value with the prior recorded observation, inspect sparse dates without fabricated interpolation, switch among 1W/1M/3M/1Y/All when enough data exists, and compare price with owned and watched targets.
+- Likely future benefit: The isolated adapter can add approved series or annotations without changing Card Detail ownership or exact-printing resolution.
+- Bundle cost: The Pages build emits Price History as a lazy 174.53 KB JavaScript chunk (61.04 KB gzip). After Issue #15 checkpoint 4, the initial Pages chunk is 579.15 KB (161.30 KB gzip). Portable delivery combines the app into a 1,049.91 KB classic script (445.39 KB gzip) because that target intentionally disables code splitting.
+- Maintenance/update cost: The component must preserve modular registration, destroy chart instances on cleanup, verify canvas accessibility, and re-run sparse-history, responsive, normal, Pages, and portable checks on upgrades.
+- Offline/portable impact: The package is pinned in the tracked manifest and lockfile and bundled locally. No runtime CDN, font, or remote chart service is used; clean `npm ci`, normal, Pages-subpath, and portable builds pass.
+- Decision or ADR link: [DECISIONS](DECISIONS.md#chartjs-powers-react-price-history-without-a-wrapper).
+
+### Fuse.js 7.4.2
+
+- Library and version: `fuse.js` 7.4.2.
+- Status: Do not adopt for the current unified local-search workflow.
+- Candidate purpose: Fuzzy ranking across saved Positions, Radar, Transactions, History, card notes, and thesis notes.
+- Representative comparison: Same-name exact printings, foil/nonfoil separation, partial card/set/context terms, transaction audit notes, and thesis text across all five result categories.
+- Why not selected: A small native index provides deterministic accent/punctuation normalization, all-term matching, exact finish-token handling, category limits, and exact route focus without adding dependency or fuzzy-ranking behavior that the acceptance cases did not need.
+- Current benefit of the native path: The app shell now searches all saved ManaSpec domains while Radar retains the separate Scryfall search for discovering new cards. Results expose category, source context, printing identity, and exact navigation.
+- Bundle comparison: Checkpoint 2's Pages output was 570.48 KB JavaScript (158.67 KB gzip) plus 126.02 KB CSS (20.17 KB gzip). The completed native-search checkpoint is 577.85 KB JavaScript (160.96 KB gzip) plus 127.52 KB CSS (20.40 KB gzip), with no manifest or lockfile change.
+- Maintenance/update cost: The native matcher is covered by focused pure tests and has no package update surface. Reconsider Fuse.js only if measured user data shows meaningful misspelling, ranking, or scale failures that the deterministic matcher cannot address clearly.
+- Offline/portable impact: No runtime network, CDN, or new dependency. Normal, Pages-subpath, and portable builds remain self-contained.
+- Decision or ADR link: [DECISIONS](DECISIONS.md#unified-local-search-uses-native-deterministic-matching).
+
 ## Selection Rules
 
 1. Start from this audited archive, but verify the selected version before implementation if network access is available.
@@ -144,6 +202,7 @@ Do not mark a library `Adopted` until it exists in the tracked lockfile, is used
 3. Check project health, license, release cadence, React compatibility, accessibility, bundle form, and maintenance burden.
 4. Compare the simplest native/React solution and at least one credible library when the choice is material.
 5. Avoid overlapping libraries in state, styling, tables, dates, dialogs, notifications, icons, and animation.
+6. Before adding a workaround, inspect the library's initialized configuration and runtime output; wrappers must preserve omitted defaults rather than emitting undefined optional values.
 6. Confirm the package bundles locally with no runtime CDN or remote font requirement.
 7. Exercise both the normal Pages build and portable build.
 8. Record the result here and durable architecture rationale in [DECISIONS](DECISIONS.md).
@@ -155,7 +214,7 @@ The table choice deserves a focused spike because tables carry ManaSpec's core w
 Score or document:
 
 - sorting and filtering parity;
-- column sizing and non-wrapping density at 1366 x 768;
+- column sizing and non-wrapping density at the 1920 x 1080 primary desktop and 1366 x 768 compatibility desktop;
 - editable cells and validation;
 - row actions and keyboard access;
 - priority columns and expandable details at tablet/phone widths;

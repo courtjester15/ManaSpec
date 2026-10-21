@@ -12,3 +12,10 @@ For every future `dataSchemaVersion` change:
 - Never update an old source fixture to match new code; add a new fixture instead.
 
 Normal load adapters are not migrations and must not rewrite these fixtures or browser storage.
+
+Current coverage:
+
+- `legacy-unversioned-v1.json` and `current-v1.json` prove pre-sealed backups migrate additively.
+- `current-v2-sealed.json` proves exact sealed identity and null valuation survive the current schema.
+- `future-v3-rejected.json` proves unsupported future data is rejected without mutation.
+- `future-v2-rejected.json` is retained as immutable history from the version-one boundary.

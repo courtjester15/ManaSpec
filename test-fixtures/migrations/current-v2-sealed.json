@@ -1,0 +1,34 @@
+{
+  "app": "ManaSpec",
+  "schema": "manaspec-localstorage-backup",
+  "schemaVersion": 1,
+  "dataSchemaVersion": 2,
+  "data": {
+    "specs": [],
+    "radar": [],
+    "transactions": [],
+    "cardNotes": [],
+    "thesisNotes": [],
+    "signals": [],
+    "priceSnapshots": [],
+    "marketObservations": [],
+    "sealedSpecs": [],
+    "sealedRadar": [
+      {
+        "id": "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+        "assetType": "sealed",
+        "assetKey": "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+        "mtgjson_uuid": "d575bd23-ebd6-586e-af7b-04924db4f1c3",
+        "name": "Bloomburrow Play Booster Box",
+        "set_code": "BLB",
+        "category": "booster_box",
+        "plannedQty": 2,
+        "entryTarget": 120,
+        "currentPrice": null
+      }
+    ],
+    "sealedTransactions": [],
+    "cash": 10000,
+    "priceRefreshStatus": {}
+  }
+}

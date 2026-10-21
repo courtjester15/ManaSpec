@@ -8,7 +8,7 @@ It is not a collection tracker, inventory nostalgia tool, or prediction engine.
 
 ## Ownership
 
-This roadmap represents committed future work. If an item is here, the project has decided it belongs in ManaSpec; the remaining questions are timing, order, and implementation shape.
+This is **directional sequencing**, not an executable work-order list. The active queue and approved GitHub Issues own current action; the older phases/checklists below provide context but are not standing instructions to build every unchecked item. Completed milestone detail lives in `REACT_SPIKE_PROGRESS.md`, PRs, and Git history.
 
 Use [PARKING_LOT.md](PARKING_LOT.md) for promising ideas that still need validation, workflow testing, prioritization, or a product decision.
 
@@ -18,24 +18,39 @@ Status markers:
 - `[-]` Partially done
 - `[ ]` Not done
 
+## Active execution sequence — 20 Oct 2026
+
+1. **Review, do not auto-merge [PR #18](https://github.com/courtjester15/ManaSpec/pull/18).** React integration includes the completed #15 expansion/parity and #16 sealed vertical slice, but `main`/vanilla remains authoritative. Validate deployment artifact, storage compatibility, rollback, and owner acceptance before any merge/canonical promotion.
+2. **Investigate the reported unexpected $0.00 values on two owned positions.** This is an owner-reported regression, **not** a verified root cause or approval for a broad data migration. Reproduce safely; distinguish no market quote, a failed/mismatched exact printing/finish lookup, a true zero, and malformed stored data. Check summary propagation and protect with focused tests before proposing a bounded fix. Preserve live data; no zero-filling or fake prices. Classification: exploration first, implementation after the diagnosis supports a safe scope.
+3. **Strengthen self-directed regression protection along real workflows.** Pricing + value × quantity, Dashboard/Positions consistency, exact singles/sealed identities, transaction/cash math, backup/restore and browser checks are the default QA boundaries for work that touches them, not a reason for an unfocused permanent audit.
+4. **Resume scoped product work after PR #18 and integrity follow-up.** Owned-spec backfill and transaction-authority migration remain separately gated; do not conflate them with routine fixes. Friend-feedback polish is issue-scoped rather than an open-ended UI redesign.
+
+**Status:** #15 and #16 are implemented on the React integration branch, but their incorporation into `main` depends on PR #18 and explicit owner review. Keep those Issue/PR states distinct. This workflow/documentation cleanup is a separate review branch, not a frontend deployment decision.
+
 ## Workflow Lineup
 
 - App Shell: stable frame, navigation, global summary, active view mount.
 - Radar: card discovery, printing selection, watch ideas, and buy candidates.
 - Positions: owned holdings, buy more, sell, delete, filters, and P/L.
-- Search: split by domain so card discovery, local Positions/Radar filtering, transaction filtering, and future global routing stay distinct.
+- Search: split by domain so Radar Scryfall discovery, React saved-data routing, and route-local table filtering remain distinct.
 - Transactions: planned source of truth for buys and sells.
 - Signals: target and price movement awareness.
 - Notes: user-authored card memory attached to exact tracked printings.
 - History: transaction and outcome review.
 
-## Current Phase: Alpha Friend Preview
+## Current Phase: Alpha Friend Preview + React Sealed Vertical Slice
 
 Goal: use `v0.9.0-alpha.1` with one or two trusted testers while moving from solo core-loop validation into friend feedback and additional user-facing features.
 
 Current discipline: the repeated solo core singles workflow pass is complete. Do not reopen the whole core-loop testing phase for future findings; capture remaining issues from feature work or real-user use as individual bugs or polish.
 
 ### Done
+
+- [x] Issue #16 intentionally overrides the earlier sealed deferral for the React candidate.
+- [x] Bundled MTGJSON product discovery with exact product UUID, family/category, set, release date, contents summary, and exact TCGplayer product link.
+- [x] End-to-end sealed Search → Radar → Positions → partial/full sell → Transactions/History workflow with weighted cost, cash, realized P/L, notes, and signals.
+- [x] Honest sealed valuation: products begin unpriced; timestamped manual checks drive marked value and P/L; no card-price substitution or scraping.
+- [x] Additive schema-v2 backup/persistence keys preserve existing singles records and schema-v1 imports.
 
 - [x] Vanilla app shell with module navigation buttons.
 - [x] Global summary bar for cash, invested value, portfolio value, equity, and P/L.
@@ -125,9 +140,9 @@ Current discipline: the repeated solo core singles workflow pass is complete. Do
    - [ ] Continue tightening labels, empty states, disabled states, confirmations, dense table scan behavior, and Help from beta notes.
    - [x] Keep Radar search unified and paper-only until Digital/MTGO results can ship with supported pricing.
 
-### Near-Term Feature Candidates: 2026-07-11 Planning Pass
+### Historical feature-candidate planning (11 Jul 2026; not today's work queue)
 
-The core singles workflow is considered complete. The next likely user-facing builds are ordered provisionally as follows; this is planning direction, not a commitment to start implementation before the next product turn is understood.
+These were provisional candidates. Comparable Printings, React Price History V2, React Portfolio Summary and unified search have since been implemented on the integration track. Remaining ideas below are background until separately approved. Use the **Active execution sequence** above for what comes next.
 
 Execution note: the Data Ownership and Storage Readiness Audit and its three approved foundation batches are complete. Compatibility boundaries, centralized persistence, schema/migration readiness, reconciliation reporting, and the unsafe Position-delete guard are in place. User-facing feature work may resume in this provisional order; the separate transaction-authority migration remains unapproved future work.
 
@@ -135,11 +150,10 @@ Execution note: the Data Ownership and Storage Readiness Audit and its three app
    - [x] Shipped v1 in Card Detail with same-Oracle paper printings, finish-aware Scryfall prices, exact links, optional Add to Radar, current UUID-plus-finish highlighting, deterministic price sorting, and progressive row expansion.
    - [x] Kept the feature runtime-only with no persistence, schema, backup, migration, or ledger changes.
 
-2. Price-History Chart (next likely user-facing candidate)
-   - Use existing `priceSnapshots` for one exact owned printing in Card Detail.
-   - Smallest useful scope: a compact native SVG line chart with current/previous price context, observed date range, and an honest insufficient-history state.
-   - Do not combine manual market observations with the Scryfall series, invent missing dates, or imply continuous history.
-   - Current snapshots are saved only for owned Positions when price refresh runs, so sparse history is expected.
+2. Price-History Chart
+   - [x] Shipped the original exact-printing snapshot view and the React V2 Chart.js workflow with honest sparse dates, five eligible ranges, tooltips, summary metrics, and plan reference lines.
+   - [x] Kept market observations separate from Scryfall snapshots and avoided fabricated dates or continuous-history claims.
+   - Current snapshots are still saved only for owned Positions when price refresh runs, so sparse history remains expected.
 
 3. Owned-Spec Backfill / Import
    - Keep this in Admin and frame it as historical owned-spec backfill, not collection management.
@@ -147,14 +161,14 @@ Execution note: the Data Ownership and Storage Readiness Audit and its three app
    - Resolve transaction provenance, uncertain dates/prices, duplicate-position behavior, cash impact, acquisition methods, atomic rollback, and startup-backfill interaction before frontend implementation.
    - Default planning direction: imported history should not silently change current cash, uncertain history should remain explicitly marked, and name-only identity is never sufficient.
 
-4. Portfolio Performance Dashboard
-   - Start only with metrics supported honestly by current state: deployed cost basis, current value, unrealized P/L, recorded or derivable realized P/L, and cash versus deployed capital.
+4. Portfolio Summary
+   - [x] Shipped the React present-tense summary with eight traceable metrics, explicit realized-coverage language, missing-price and incomplete-plan quality signals, and marked-value concentration.
    - Defer total-return-over-time and equity charts until ManaSpec records enough portfolio, quantity, cash, and transaction history to reconstruct them without invention.
-   - Present-tense metrics may be called Portfolio Summary; do not label them historical performance.
+   - Continue calling this present-tense view Portfolio Summary; it is not historical performance.
 
 Library direction for these candidates:
 
-- Keep a first compact price chart native rather than adding Chart.js for one series.
+- Chart.js 4.5.1 is adopted for React Price History V2 after the richer interaction gate was met; the vanilla chart remains native.
 - Consider Papa Parse only when import scope expands beyond cleaned paste data into robust quoted CSV/file handling.
 - Preserve existing localStorage keys and backup schema compatibility. Any new top-level key must be added deliberately to backup/export/import.
 - Continue treating Scryfall printing UUID plus finish as the mandatory identity boundary.
@@ -215,7 +229,7 @@ Goal: turn the current alpha preview into a usable beta product, not a wider pro
 
 Keep these areas deferred until friend feedback, user-facing feature priorities, and data-safety work justify them:
 
-- Sealed product tracking.
+- Additional sealed automation beyond the shipped React vertical slice, especially unverified price feeds, scraping, bulk sealed import, and backend sync.
 - Large bulk import workflow.
 - Owned-spec backfill workflow beyond a small admin/manual path.
 - Backend or database work.
@@ -230,38 +244,21 @@ Keep the production/beta app vanilla-first unless a library clearly removes repe
 - Data-grid library: possible future candidate if native table helpers stop being enough for Positions, Radar, Transactions, History, and Signals. Review only after beta needs prove it.
 - Dexie.js: likely candidate when moving from localStorage to IndexedDB. Use only after the ledger shape is clear.
 - Day.js: useful candidate for buy dates, added dates, hold windows, stale checks, sorting, and readable timestamps.
-- Fuse.js: possible candidate for local fuzzy search across Radar, Positions, Transactions, Notes, and History.
+- Fuse.js: not adopted for the current React unified search; the deterministic native index met the acceptance contract. Reconsider only after measured misspelling, ranking, or scale failures.
 - Papa Parse: future candidate for CSV/spreadsheet import and owned-spec backfill, but keep import tooling deferred until core singles workflow and data safety are stable.
 - Chart.js 4.5.1: adopted and vendored locally for Price History; continue to review its React integration separately.
 
 Current vanilla rule: one tool at a time. Add a library only when it directly supports the beta path or removes a recurring source of bugs.
 
-### React Modernization Spike
+### React modernization — implemented candidate, promotion pending
 
-The React/Vite experiment is approved as a separate evidence-gathering track. It is not a beta gate, production cutover, or reason to stop maintaining the vanilla application.
+- The React 19/Vite 8 implementation in `react-app/` has delivered the scoped parity/expansion work from #15 and the sealed Search → Radar → Positions → Sell → Transactions/History vertical slice from #16 on the integration branch. It uses compatible local-first user data, the shared Tabulator table wrapper, locally bundled Price History, and separate normal/Pages/portable outputs.
+- The completed spike implementation checkpoints and actual validation evidence are preserved in [React Spike Progress](REACT_SPIKE_PROGRESS.md) and the linked PR history; do **not** treat historical checklists as new work orders.
+- [ ] Review [PR #18](https://github.com/courtjester15/ManaSpec/pull/18) and verify artifact integrity and the publication source against actual GitHub Pages state.
+- [ ] Perform controlled React-write/vanilla-read validation against backed-up fixtures, review rollback and remaining device/browser limitations, and make a **separate, explicit** production/canonical-promotion decision.
+- Vanilla root remains authoritative until that decision. React feature work should target the appropriate approved branch; never silently replace vanilla or rename user data as collateral scope.
 
-Active preparation:
-
-- [x] Establish the spike charter, parity rules, architecture target, library audit structure, and deployment model in active docs.
-- [x] Locate and inventory the GalleyFlow offline package archive, verify its Windows x64 dependency closure, classify direct candidates, and keep `/lib` as an ignored local cache.
-- [ ] Create the dedicated spike branch and isolated `react-app/` workspace.
-- [ ] Prove normal Vite development, `/ManaSpec/react-spike/` build behavior, and direct portable `index.html` opening before feature migration.
-- [ ] Build the storage compatibility adapter and fixture-backed cross-read/write tests before using real data.
-
-Implementation sequence:
-
-- [ ] Shell, hash-safe navigation, shared tokens, and error handling.
-- [ ] Persistence, backup/restore, normalization, and migration compatibility.
-- [ ] Shared forms, dialogs, notices, and table foundation.
-- [ ] Radar, Positions, Transactions, and History parity.
-- [ ] Notes, Card Detail, Comparable Printings, Price History, Signals, and Dashboard parity.
-- [ ] Help, Admin, external links, and remaining utilities.
-- [ ] Corrective UI/accessibility polish and desktop/tablet/phone validation.
-- [ ] Bundle review, Pages deployment, full parity evidence, and promotion recommendation.
-
-Use [React Modernization Spike](REACT_MIGRATION_NOTES.md), [React Spike Target Architecture](REACT_SPIKE_ARCHITECTURE.md), [Libraries](LIBRARIES.md), [Deployment](DEPLOYMENT.md), and the earlier [React Migration And GalleyFlow Pattern Audit](audits/react-migration-galleyflow-audit.md).
-
-The vanilla app remains the working reference and current deployment. React cannot replace it without a separate decision after parity, storage compatibility, portable/local use, Pages isolation, responsive quality, and maintainability have been demonstrated.
+See [React Migration Notes](REACT_MIGRATION_NOTES.md), [Deployment](DEPLOYMENT.md), [React Spike Progress](REACT_SPIKE_PROGRESS.md), and [PR #18](https://github.com/courtjester15/ManaSpec/pull/18) for exact gates and evidence.
 
 ### Validated Core Singles Workflow
 
@@ -457,7 +454,6 @@ Priority: low. Do not work on this before beta workflow, Signals, Dashboard, Car
 
 ## Deferred
 
-- Sealed product tracking. Likely source: MTGJSON sealed product data for product identity and TCGplayer links, paired with manual/paste market observations. Keep this behind current friend-feedback and user-facing feature priorities.
 - Large collection-style bulk import from spreadsheet or binder rows. A smaller owned-spec backfill path is a future Admin candidate, but it should stay out of core Radar and should create transactions before positions.
 - Raw EDHREC deck-count tracking. Current alpha only uses Scryfall `edhrec_rank`; raw deck counts need a reliable external-signal fetch/storage path.
 - Advanced prediction.

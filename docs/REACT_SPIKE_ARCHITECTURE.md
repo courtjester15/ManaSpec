@@ -1,18 +1,19 @@
-# React Spike Target Architecture
+# React Spike Architecture
 
-This document defines the target architecture for the experimental React reconstruction of ManaSpec. It is an implementation contract for the spike, not a description of the current production application and not approval to replace the vanilla app.
+This document defines the implemented architecture and remaining validation contract for the React reconstruction of ManaSpec. It describes the active spike implementation, not the current production application, and does not approve replacing the vanilla app.
 
 For current behavior and ownership, use [README](README.md), [ARCHITECTURE](ARCHITECTURE.md), and [DATA_MODEL](DATA_MODEL.md). For scope and parity gates, use [REACT_MIGRATION_NOTES](REACT_MIGRATION_NOTES.md). For dependency evaluation, use [LIBRARIES](LIBRARIES.md). For local and Pages delivery, use [DEPLOYMENT](DEPLOYMENT.md).
 
 ## Status And Boundaries
 
 - The vanilla app at the repository root remains the production/beta source of truth.
-- React work occurs on a dedicated experimental branch and in an isolated `react-app/` workspace.
+- React is implemented on a dedicated spike branch and in the isolated `react-app/` workspace.
+- The spike is in active implementation/stabilization mode and is the likely forward frontend path, subject to an explicit promotion decision.
 - Opening, building, or deploying the spike must not require restructuring the vanilla app.
 - The spike may be abandoned without removing or repairing the vanilla implementation.
 - No production cutover is implied. Promotion requires a separate decision after parity, data-safety, deployment, and usability evidence is reviewed.
 
-## Proposed Repository Shape
+## Implemented Repository Shape
 
 ```text
 /
@@ -27,30 +28,29 @@ For current behavior and ownership, use [README](README.md), [ARCHITECTURE](ARCH
 |   |-- public/                # copied static assets when appropriate
 |   |-- dist/                  # normal Pages/deployment build; generated
 |   `-- dist-portable/         # committed no-build local version
-`-- .github/workflows/         # deployment workflow after it is implemented
+|-- react-spike/               # committed Pages-subpath artifact for the current branch model
+`-- .github/workflows/         # optional future deployment automation
 ```
 
 The exact generated filenames may change. The ownership boundaries may not: root files belong to vanilla, React source belongs under `react-app/`, and the committed portable artifact must have one documented entry point.
 
 ## Source Structure
 
-The initial React source should use a feature-oriented structure with small shared layers:
+The React source uses a feature-oriented structure with small shared layers:
 
 ```text
 react-app/src/
 |-- app/             # bootstrap, providers, route map, error boundary
 |-- layouts/         # stable terminal shell and responsive layouts
 |-- features/        # Dashboard, Radar, Positions, Signals, etc.
-|-- components/      # genuinely shared presentational and interaction pieces
-|-- hooks/           # reusable React behavior with clear ownership
 |-- state/           # shared runtime state and selectors
 |-- services/        # Scryfall, storage, backup, external-link boundaries
 |-- persistence/     # keys, adapters, normalization, migrations
 |-- domain/          # pure calculations, identity, projections, validation
+|-- data/            # generated, trimmed MTGJSON sealed catalog
 |-- styles/          # tokens, layout, forms, components, tables, responsive rules
 |-- assets/          # bundled images and fonts owned by the React app
-|-- config/          # environment-independent application configuration
-|-- test/            # fixtures and test helpers
+|-- test/            # focused compatibility, trading, and portable-build tests
 `-- main.*           # application entry
 ```
 
@@ -58,18 +58,18 @@ Do not create a layer merely to match this diagram. A directory is earned when i
 
 ## Application Shell And Routing
 
-The React shell preserves the current header, account summary, navigation, search, notices, help access, and active workflow area. Hash-based routing is the default spike direction because it supports:
+The React shell preserves the current header, account summary, navigation, search, notices, help access, and active workflow area. Hash-based routing is adopted and build-validated because it supports:
 
 - direct `file://` opening of the portable artifact;
 - GitHub Pages under `/ManaSpec/react-spike/` without server rewrite rules;
 - refresh-safe navigation;
 - reviewable workflow URLs without changing the vanilla root.
 
-Routes should represent user-recognizable workflow destinations, not internal modal state. Card Detail may use route state or a route only if back/forward behavior remains predictable. The routing decision must be validated in both portable and Pages builds before it is marked final.
+Routes represent user-recognizable workflow destinations rather than modal state. Card Detail remains contextual modal state. Hash navigation has been exercised in normal, Pages-path, and portable outputs.
 
 ## State Ownership
 
-Use the simplest state model that survives full parity:
+The implementation uses the simplest state model that has survived the current parity work:
 
 - Component state owns transient form input, open/closed state, and local display controls.
 - Feature state owns filters, sorts, selection, pagination, and feature-specific draft state.
@@ -77,7 +77,7 @@ Use the simplest state model that survives full parity:
 - Persistence is an explicit boundary; React components do not call `localStorage` directly.
 - Calculations and normalization remain pure where practical so they can be compared with vanilla behavior.
 
-React state plus context is the baseline to test. Zustand or Redux Toolkit may be adopted only if the parity implementation demonstrates cross-feature coordination, debugging, or update complexity that context cannot handle cleanly. The selection and evidence belong in [LIBRARIES](LIBRARIES.md) and [DECISIONS](DECISIONS.md).
+React state plus context is the adopted baseline. Zustand or Redux Toolkit may be evaluated only if measured cross-feature coordination, debugging, or update complexity exceeds the current model. Any change belongs in [LIBRARIES](LIBRARIES.md) and [DECISIONS](DECISIONS.md).
 
 ## Persistence Compatibility
 
@@ -90,6 +90,10 @@ The persistence layer is the highest-risk architectural boundary.
 - A migration is explicit, versioned, fixture-backed, and separate from normal normalization.
 - React must not create an incompatible parallel schema merely for cleaner component state.
 - React-written records must remain readable by vanilla unless an explicitly approved, reversible migration says otherwise.
+- One shared domain resolver owns related-record identity for notes, price snapshots, market observations, transactions, History events, Dashboard notes, and Card Detail routing. Exact Scryfall printing UUID plus finish wins; a legacy base-ID, set/collector, or name fallback resolves only when one tracked printing is possible.
+- Position deletion calls the shared vanilla-derived ledger projection guard before any write and refuses to orphan an open transaction projection.
+- Data schema v2 adds `sealedSpecs`, `sealedRadar`, and `sealedTransactions` without renaming or rewriting the singles keys. Version-one backups migrate to empty sealed arrays; future versions fail closed.
+- Shared asset identity is `single:<scryfall uuid>|<finish>` or `sealed:<mtgjson uuid>`. Sealed records never receive synthetic Scryfall fields, and related notes/observations resolve only through the exact asset key.
 
 The deployed vanilla root and React subpath share the same web origin and therefore the same localStorage namespace. That makes compatibility testing mandatory: a write in the spike can affect the root application. Before first live-spike use, export a backup and validate cross-opening in both implementations.
 
@@ -106,7 +110,11 @@ The preferred flow is explicit and one-directional:
 5. Selectors derive Dashboard, Signals, Positions, History, and summary views.
 6. React re-renders only affected consumers.
 
+Signals derivation is owned by `react-app/src/domain/signals.js`. Signals and Dashboard consume the same ordered rows, bucket membership, reasons, priorities, action state, and queue selector. Market freshness resolves through the exact-printing compatibility boundary. Signals source actions pass a tracked row ID in the route query so Radar or Positions can narrow to that exact printing without changing stored data or creating a second filter system.
+
 Scryfall and external links remain services, not component-owned fetch code. Network failure must not make locally stored user data unavailable.
+
+Sealed discovery uses a deterministic catalog generated from MTGJSON `SetList.json`. Normal and Pages output lazy-load the catalog; portable output inlines it. MTGJSON product UUID and TCGplayer product ID/link provide identity and external lookup. The verified card-price artifact does not cover sealed UUIDs, so product state begins unpriced and only a timestamped manual market check may establish current sealed value. Buying an unpriced product does not copy cost basis into current value.
 
 ## UI And Responsive Foundation
 
@@ -114,7 +122,8 @@ The spike preserves ManaSpec's tokens, typography, density, terminology, and tab
 
 Responsive strategy:
 
-- Desktop baseline: 1366 x 768. Core workflows must remain usable without avoidable page-width overflow or nested vertical scrolling.
+- Primary desktop: 1920 x 1080. Use the larger canvas for information hierarchy, complete labels, traceable metrics, and a broad work surface rather than merely enlarging the former laptop layout.
+- Compatibility desktop: 1366 x 768. Core workflows must compress without avoidable page-width overflow, clipped actions, or nested vertical scrolling.
 - Tablet: condense navigation, allow panels to stack, prioritize primary table columns, and expose secondary row detail deliberately.
 - Phone: use touch-sized controls, stacked forms, responsive dialogs, and list/card alternatives where dense tables stop being usable.
 
@@ -122,7 +131,7 @@ Initial breakpoint candidates are `< 640px` for phone, `640px-1023px` for tablet
 
 ## Tables
 
-Tables are a product-critical subsystem, not a generic component exercise. The spike must compare the current table contract, Tabulator, and React-first options against:
+Tables are a product-critical subsystem, not a generic component exercise. Phase 1 adopted Tabulator 6.5.2 behind the ManaSpec-owned `TabulatorTable` React wrapper and proved the boundary with Radar; the Phase 2 configuration migrations now cover Positions, Signals, Transactions, and History. The wrapper owns grid lifecycle, React cell content, pagination mechanics, sort accessibility state, row activation isolation, empty state, shared compact geometry, indicators, actions, and responsive styling; feature code does not call Tabulator directly. Each route owns its data selectors, filters, column intent, editors, navigation, and workflow callbacks.
 
 - density and styling control;
 - sorting, filtering, column sizing, pagination, and row actions;
@@ -131,13 +140,13 @@ Tables are a product-critical subsystem, not a generic component exercise. The s
 - virtualization and large-list performance;
 - bundle cost and maintenance health.
 
-A single primary table direction should serve Radar, Positions, Signals, Transactions, and History. A second table system requires a documented exception. Feature parity may begin with a small ManaSpec table wrapper if adopting a grid would delay the core workflow.
+A single primary table direction serves Radar, Positions, Signals, Transactions, and History through the adopted shared wrapper. The interim native `DataTable` was removed after the last three deliberate Phase 2 migrations. A second long-term table system requires a documented exception.
 
 ## Forms, Dialogs, And Accessibility
 
 Shared primitives should own labels, validation messages, focus states, dialogs, confirmation, toasts, icon buttons, and loading/empty states. Every dialog must restore focus, trap focus when modal, close predictably, and remain usable at phone width. Labels must be programmatically associated with controls.
 
-A mature accessible primitive library is preferred when it reduces custom focus and keyboard code while allowing ManaSpec styling. The chosen styling and primitive systems must not compete with each other.
+The current implementation uses shared React/native-dialog primitives. A mature accessible primitive library remains eligible when focused browser evidence shows it reduces custom focus and keyboard risk while allowing ManaSpec styling.
 
 ## Builds
 
@@ -146,9 +155,9 @@ Two production-quality outputs serve different constraints:
 - `dist/`: normal optimized deployment output for `/ManaSpec/react-spike/`; may use lazy loading and code splitting.
 - `dist-portable/`: committed, self-contained output intended to open through its local `index.html`; uses relative assets, hash navigation, local dependencies, and no Node/CDN runtime.
 
-The portable build may require a dedicated Vite/Rollup configuration that avoids browser-blocked module loading under `file://`, potentially by emitting a classic single JavaScript bundle plus local CSS. This must be proven by direct browser testing rather than assumed from `base: './'` alone.
+The portable build uses a dedicated Vite configuration that emits a classic bundled script plus local CSS and a finalizer that adds deferred execution. The stable entry is `react-app/dist-portable/index.html`; it has been regenerated, regression-tested, and direct-opened by the user.
 
-Generated deployment output is reproducible and normally ignored. The portable output is deliberately committed because it is a user-facing deliverable. Exact ignore rules and scripts must be recorded when the workspace exists.
+Normal `dist/` output is reproducible and ignored. The portable output is deliberately committed because it is a user-facing deliverable. The current branch-based Pages artifact is also committed under `react-spike/` until a documented deployment workflow replaces that mechanism.
 
 ## Performance
 
@@ -157,6 +166,7 @@ Generated deployment output is reproducible and normally ignored. The portable o
 - Virtualize only lists large enough to benefit.
 - Avoid broad shared-state subscriptions.
 - Analyze normal and portable bundle sizes before parity sign-off.
+- Keep the large sealed catalog outside the normal initial chunk and record its generated source version/date.
 - Prefer measurable improvements over speculative infrastructure.
 
 ## Error Handling
@@ -165,7 +175,7 @@ The application shell should include an error boundary that protects navigation 
 
 ## Validation Gates
 
-The architecture is not complete until evidence covers:
+Promotion evidence is not complete until it covers:
 
 - old localStorage fixtures and backups load without destructive writes;
 - React writes remain readable by vanilla;
@@ -175,6 +185,8 @@ The architecture is not complete until evidence covers:
 - dialogs, focus, routes, and responsive layouts work at target sizes;
 - portable `index.html` works without npm or a server;
 - Pages works at `/ManaSpec/react-spike/` while the vanilla root remains unchanged.
+
+Current evidence covers compatible fixture loading, backup safety, core trading calculations, all workflow routes, hash navigation, normal/Pages/portable builds, portable bootstrap regression coverage, Issue #15 product-expansion workflows, the full shared-table system, and 1920x1080 plus 1366x768 desktop containment. The remaining promotion gates are representative React-written record reads in vanilla, confirmation of the actual public Pages publishing source, an approved cutover/rollback runbook, and the explicit canonical-promotion decision. Broader assistive-technology and real-user small-screen review remain follow-up quality work.
 
 ## Decision Discipline
 
