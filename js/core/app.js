@@ -21,6 +21,18 @@ function save() {
   }
 }
 
+// Repaint derived price surfaces without resetting table filters or identity.
+function refreshValuationViews() {
+  if (document.querySelector(".dashboard-view")) renderDashboardView();
+  if (document.querySelector("#signalsTable")) renderSignalsView();
+  if (document.querySelector("#portfolioTable")) {
+    const band = document.querySelector('[aria-label="Positions context"]');
+    if (band) band.innerHTML = getPortfolioContextCards().map(renderModuleContextTile).join("");
+    refreshPortfolioTable();
+  }
+  if (document.querySelector("#radarList")) renderRadarItems();
+}
+
 function getSpec(positionOrEvent, maybeCell) {
   const cell = maybeCell || (positionOrEvent && typeof positionOrEvent.getRow === "function" ? positionOrEvent : null);
   if (cell) {

@@ -13,6 +13,7 @@ Handles:
 */
 
 function updateTotals() {
+  renderZeroValuationWarnings();
   let invested = 0;
   let value = 0;
   let pricedInvested = 0;
@@ -51,6 +52,14 @@ function updateTotals() {
     plEl.innerText = `${pl >= 0 ? "+" : ""}${formatNumber(pl, summaryNumberOptions)} (${formatNumber(plPercent, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%)`;
     plEl.style.color = pl >= 0 ? "green" : "red";
   }
+}
+
+function renderZeroValuationWarnings() {
+  const banner = document.getElementById("valuationWarning");
+  if (!banner) return;
+  const rows = specs.filter(item => getZeroValuationWarning(item));
+  banner.hidden = rows.length === 0;
+  banner.textContent = rows.length ? `Review ${rows.length} zero-valued Positions. Value, equity and P/L still include these saved zeros. Open Position details for a live exact-price check; unavailable quotes keep the warning. No values or finishes are changed by this warning. ${rows.map(item => `${item.name} ${item.set_code || ""} #${item.collector_number || ""}: ${getZeroValuationWarning(item)}`).join(" ")}` : "";
 }
 
 function updatePL() {

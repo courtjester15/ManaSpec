@@ -6,6 +6,11 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ## Unreleased
 
+### Fixed — 2026-10-21
+
+- Issue #20 follow-up: flag suspicious saved zero valuations across vanilla/React summaries and Position detail without changing values, calculations, or identity. Exact cached genuine-zero quotes remain unflagged. Verified live UNF #534/#533 are foil-only with no nonfoil USD quotes; saved nonfoil records require review rather than price substitution.
+- Vanilla quote recovery now refreshes open Signals rows, Dashboard metrics, and Position context tiles together; successful exact quotes retain their provider-price cache so genuine zero stays distinguishable after reload.
+
 ### Fixed — 2026-10-20
 
 - Issue #20: preserve unavailable single quotes and stale timestamps instead of creating zero valuations; keep genuine zero distinct across Positions, Card Detail, Signals, and portfolio calculations in vanilla and React.

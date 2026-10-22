@@ -308,6 +308,8 @@ function formatPlanInputValue(value) {
 }
 
 function formatPositionScryfallPriceTitle(item) {
+  const warning = getZeroValuationWarning(item);
+  if (warning) return warning;
   const detail = item.priceUpdatedAt
     ? `updated ${new Date(item.priceUpdatedAt).toLocaleString()}`
     : "not refreshed this session";

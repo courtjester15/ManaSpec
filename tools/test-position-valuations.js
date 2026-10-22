@@ -11,7 +11,7 @@ async function main() {
   const nodes = new Map();
   const context = vm.createContext({
     console, Date, Intl, specs: [], radar: [], cash: 100,
-    document: { getElementById: id => { if (!nodes.has(id)) nodes.set(id, { style: {} }); return nodes.get(id); } },
+    document: { querySelector: () => null, getElementById: id => { if (!nodes.has(id)) nodes.set(id, { style: {} }); return nodes.get(id); } },
     syncCardMetadata() {}, save() {}, saveRadarState() {}, savePriceRefreshStatus() {},
     saveDailyPriceSnapshots(observations) { context.observations = observations; return { saved: observations.length }; },
   });
@@ -42,6 +42,7 @@ async function main() {
   assert.equal(context.specs[1].currentPrice, 8);
   assert.equal(context.specs[1].priceUpdatedAt, "2020-01-01");
   assert.equal(context.specs[2].currentPrice, 0);
+  assert.equal(context.getZeroValuationWarning(context.specs[2]), "");
   assert.equal(context.observations.length, 1);
   assert.equal(nodes.get("invested").innerText, "25.00");
   assert.equal(nodes.get("value").innerText, "16.00");
@@ -54,6 +55,40 @@ async function main() {
   await context.runPriceRefresh();
   assert.deepEqual(context.specs.map(row => [row.currentPrice, row.priceUpdatedAt]), before);
   assert.equal(context.observations.length, 0);
+  const live = JSON.parse(fs.readFileSync("test-fixtures/browser/issue-20-live-unf-quotes.json", "utf8"));
+  for (const finish of ["nonfoil", "foil"]) {
+    context.specs = live.cards.map(card => ({
+      id: finish === "foil" ? `${card.id}|foil` : card.id, scryfall_id: card.id,
+      name: card.name, set_code: "UNF", collector_number: card.collector_number,
+      finish, foil: finish === "foil", finishes: card.finishes,
+      qty: 1, buyPrice: 100, currentPrice: 0, priceUpdatedAt: "2020-01-01",
+    }));
+    const identity = context.specs.map(row => [row.id, row.finish, row.qty, row.buyPrice]);
+    context.updateTotals();
+    assert.equal(nodes.get("valuationWarning").hidden, false);
+    context.fetch = async url => ({ ok: true, json: async () => live.cards.find(card => url.endsWith(card.id)) });
+    await context.runPriceRefresh();
+    assert.deepEqual(context.specs.map(row => [row.id, row.finish, row.qty, row.buyPrice]), identity);
+    if (finish === "nonfoil") {
+      assert.ok(context.specs.every(row => row.currentPrice === 0 && row.priceUpdatedAt === "2020-01-01"));
+      assert.equal(nodes.get("valuationWarning").hidden, false);
+      assert.match(nodes.get("valuationWarning").textContent, /not offered/);
+      assert.equal(nodes.get("totalPL").innerText, "-200.00 (-100.0%)");
+    } else {
+      assert.equal(nodes.get("value").innerText, "339.02");
+      assert.equal(nodes.get("totalPL").innerText, "+139.02 (69.5%)");
+      assert.equal(nodes.get("valuationWarning").hidden, true);
+    }
+  }
+  let signalsPainted = 0;
+  context.document.querySelector = selector => selector === "#signalsTable" ? {} : null;
+  context.renderSignalsView = () => { signalsPainted += 1; };
+  await context.runPriceRefresh();
+  assert.equal(signalsPainted, 1, "bulk quote refresh repaints the active Signals source");
+  vm.runInContext(readSource("js/modules/card-details/card-details.js"), context);
+  context.syncTrackedCardPrice(context.specs[0], live.cards[0]);
+  assert.equal(signalsPainted, 2, "detail quote recovery also repaints the active source");
+  context.document.querySelector = () => null;
   console.log("Position valuation regressions passed (vanilla refresh, display, summary, identity and unavailable quotes).");
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

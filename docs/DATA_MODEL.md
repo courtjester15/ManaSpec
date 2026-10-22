@@ -19,6 +19,7 @@ Data model rules:
 - Current Positions are transitional until the ledger migration is complete.
 - A missing sealed valuation is valid state. Cost basis remains known, but marked value and P/L are not computed until a timestamped user value exists.
 - A missing/invalid single quote is `null`, distinct from a genuine numeric zero. An unavailable or failed refresh retains the last exact-finish quote and its timestamp; it does not invent a fresh zero or a price-history observation. Unpriced holdings retain cost basis but are excluded from marked P/L and its priced-basis denominator. Historical stored zeros are preserved because their provenance cannot be inferred safely.
+- Saved single Position zeros without a matching cached exact-finish zero quote receive a read-only review warning; unsupported saved finishes are identified explicitly when cached metadata permits. The warning does not rewrite records, change identity, exclude zeros from totals, or alter transactions. It explains that value/equity/P&L still include those saved zeros. Successful exact quotes clear the warning; unavailable quotes retain it. Genuine cached zero quotes remain zero and are not flagged. Correcting an unsupported saved identity requires deliberate approval rather than switching finish during refresh.
 
 ## Entity Map
 

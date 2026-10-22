@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import logo from "../assets/manaspec-mark.png";
-import { calculatePortfolioSummary, formatMoney, formatPriceRefreshStatus } from "../domain/portfolio.js";
+import { calculatePortfolioSummary, formatMoney, formatPriceRefreshStatus, getZeroValuationWarning } from "../domain/portfolio.js";
 import { LocalSearch } from "../features/shared/LocalSearch.jsx";
 import { useAppState } from "../state/AppState.jsx";
 
@@ -70,6 +70,7 @@ export function AppShell() {
   const { state, storagePersistent } = useAppState();
   const summary = useMemo(() => calculatePortfolioSummary(state.specs, state.cash, { sealedSpecs: state.sealedSpecs, transactions: state.transactions, sealedTransactions: state.sealedTransactions, radar: state.radar, sealedRadar: state.sealedRadar }), [state.cash, state.radar, state.sealedRadar, state.sealedSpecs, state.sealedTransactions, state.specs, state.transactions]);
   const profitLoss = `${summary.profitLoss >= 0 ? "+" : ""}${formatMoney(summary.profitLoss)} (${summary.profitLossPercent.toFixed(1)}%)`;
+  const zeroWarnings = state.specs.filter(item => getZeroValuationWarning(item));
 
 
   return (
@@ -121,6 +122,11 @@ export function AppShell() {
         </div>
       )}
       <section className="view-container">
+        {zeroWarnings.length > 0 && <aside className="storage-warning" role="status" aria-label="Valuation review">
+          <strong>Review {zeroWarnings.length} zero-valued {zeroWarnings.length === 1 ? "Position" : "Positions"}.</strong>{" "}
+          Value, equity and P/L still include these saved zeros. Run Single Price Audit in Admin; unavailable quotes keep the warning. No values or finishes are changed by this warning.
+          <ul>{zeroWarnings.map(item => <li key={item.id}>{item.name} · {String(item.set_code || "").toUpperCase()} #{item.collector_number}: {getZeroValuationWarning(item)}</li>)}</ul>
+        </aside>}
         <Outlet />
       </section>
       <footer>

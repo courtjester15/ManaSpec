@@ -1,4 +1,17 @@
-import { getAssetKey } from "./assetIdentity.js";
+import { getAssetKey, getAssetType, getSingleFinish } from "./assetIdentity.js";
+
+// Read-only review signal: old zero quotes have ambiguous provenance.
+export function getZeroValuationWarning(record = {}) {
+  if (getAssetType(record) !== "single" || !(Number(record.qty) > 0) || finiteOrNull(record.currentPrice) !== 0) return "";
+  const finish = getSingleFinish(record);
+  const raw = record.prices?.[{ nonfoil: "usd", foil: "usd_foil", etched: "usd_etched" }[finish]];
+  const knownZero = ["number", "string"].includes(typeof raw) && String(raw).trim() !== "" && Number(raw) === 0;
+  if (knownZero) return "";
+  if (finish && Array.isArray(record.finishes) && record.finishes.length && !record.finishes.includes(finish)) {
+    return `Saved ${finish} finish is not offered for this printing. Refresh cannot substitute another finish.`;
+  }
+  return "Saved $0 has no matching zero quote in the cached provider data. Refresh the exact printing and finish; the value may be valid or unavailable.";
+}
 
 function finite(value, fallback = 0) {
   const number = Number(value);

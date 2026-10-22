@@ -148,6 +148,7 @@ function renderCardDetail(item, card, source, options = {}, requestToken = activ
 function renderOverviewSection(item, movement, owned) {
   return `
     <section class="detail-command-section detail-overview-section">
+      ${getZeroValuationWarning(owned || item) ? `<p class="valuation-warning">Valuation review: ${escapeHtml(getZeroValuationWarning(owned || item))} Value and P/L include the saved zero until an exact quote is available.</p>` : ""}
       <div class="detail-section-heading">
         <h4>Status</h4>
         <span>${owned ? "Owned position" : "Radar idea"}</span>
@@ -607,9 +608,11 @@ function syncTrackedCardPrice(item, card) {
   if (nextPrice === null) return;
 
   item.currentPrice = nextPrice;
+  item.prices = card.prices;
   item.priceUpdatedAt = new Date().toISOString();
   updatePL();
   updateTotals();
+  refreshValuationViews();
 }
 
 function getCardMovement(cardId) {

@@ -19,6 +19,7 @@ function buildTrackedCard(card, overrides = {}) {
     collector_number: card.collector_number || overrides.collector_number || "",
     foil: Boolean(card.foil || overrides.foil),
     currentPrice: price,
+    prices: card.prices,
     plannedQty: Math.max(1, Number(overrides.plannedQty || 1)),
     entryTarget: Number(overrides.entryTarget || 0),
     exitTarget: Number(overrides.exitTarget || 0),
