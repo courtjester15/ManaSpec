@@ -168,3 +168,38 @@ This actual repair applies specifically to the accessible native origin/profile 
 - **81 React tests** pass, including an explicit regression that unsupported historical nonfoil prices are preserved and never become verified foil history. Existing exact selection, conflicts/collisions, nullable prices, rollback, persistence and backup checks remain passing.
 - Vanilla correction/startup, quote valuation and price-history checks pass. Source/format checks and normal/Pages/portable builds pass; generated artifact integrity passes. Existing build warnings remain as recorded earlier.
 - Actual native browser: both corrected rows, quantities/basis, current P/L, history count, Dashboard/header/Positions totals, full reload, persisted raw after-state comparison and absence of special Admin controls verified. Final console returned no warnings/errors. No broad price audit or trade was run against live data, preserving unrelated records.
+
+
+## 2026-10-23 actual Edge / GitHub Pages completion
+
+The owner subsequently identified the everyday environment as **Microsoft Edge Personal → https://courtjester15.github.io/ManaSpec/**, then explicitly authorized controlling that tab, backing up and repairing its two confirmed Positions. This resolves the previous origin/profile limitation for that specific Pages store. The earlier local-origin repair was real but did not affect Edge Pages; the distinction was explained and corrected in the handoff.
+
+### Fresh source and preservation
+
+Used the computer-use skill against the observed Edge ManaSpec window/tab. No external-browser filesystem database editing, profile copying, remote-debugging workaround, merge or deployment was performed. The actual Pages store had newer activity: **38 Positions, 16 Radar records, 65 transactions, 8 notes, 4,651 snapshots and 33 market checks**. Both target Positions were still nonfoil at $0. The older local 40-Position copy was not imported or used to replace this dataset.
+
+Exported native Admin backup `manaspec-backup-2026-10-23-1930.json` first (SHA-256 `329af76d088d5f1009dbd983ca880ea73fa3733ff942ea115bf51f8cb857bdaf`), then downloaded an untouched raw-string backup `manaspec-edge-pages-raw-before-issue20.json` (SHA-256 `d7837ed49d011a6982f96d3f0ee379af36490cbc284d5646be8f7f6e09e4cb1b`). Both were copied privately under `.tmp/issue20/`; no user backup or screenshot is committed.
+
+Rehearsed the exact guarded command against that fresh raw backup. The first attempt to additionally retain a second full dataset inside localStorage failed at the backup write with `QuotaExceededError`, **before any Position/transaction/snapshot write**. Existing disk backups were already verified. Used a separately rehearsed external-backup variant with the same per-key input hashes and rollback, retaining only a small recovery receipt in the browser that names the verified disk backups. It did not clear or delete storage to free space. The command ran through the explicitly authorized Edge tab's native developer console, changing only the two target records/references and appending two independently verified observations.
+
+Scryfall exact-ID quotes were rechecked at `2026-10-23T23:32:59Z` (19:32 EDT): Steam Vents UNF #534 is foil-only, USD foil **$181.01**; Godless Shrine UNF #533 is foil-only, USD foil **$158.46**. Nonfoil/etched remain unavailable. Quantities remain 1 each; respective unit bases remain $163.27 and $157.95. Target unrealized P/L is +$17.74 and +$0.51. IDs, explicit finishes and BUY/backfill references now agree on foil. All 65 transaction IDs, quantities, amounts, dates, fees and notes remain unchanged. No matching Radar/notes/market-check references required relinking.
+
+### Actual Pages results after full reload
+
+| Metric | Before | After |
+| --- | --- | --- |
+| Cash | $7,043.39 | $7,043.39 |
+| Open basis | $2,769.02 | $2,769.02 |
+| Positions | 38 | 38 |
+| Marked value | $2,536.06 | $2,875.53 |
+| Unrealized P/L | -$232.96 | +$106.51 |
+| Equity | $9,579.45 | $9,918.92 |
+| Snapshots | 4,651 | 4,653 |
+
+The +$339.47 change equals the two previously zero-valued exact foil quotes. The actual Pages header, Dashboard and Positions context/filtered UNF rows agree after Ctrl+R. Both rows retain quantity/basis and each now has one current foil history observation. Preserved the old bulk-audit timestamp to avoid implying an unrelated full price audit occurred.
+
+Independent SHA-256 comparison of every captured native app key matched the rehearsed expected after-state **both before and after reload**, reporting `allSavedKeysMatchExpected: true`, no mismatches, 38 Positions, 65 transactions, 4,653 snapshots and unchanged cash. Every unrelated record and every one of the 4,651 prior snapshots remains identical. The 76 unsupported legacy target snapshots remain untouched; none is promoted to historical foil evidence, repriced or backdated.
+
+An optional automatic after-export triggered Edge's multiple-download permission prompt. No browser security/privacy setting was changed or permission granted. Verification instead used read-only per-key cryptographic comparisons before/after reload; the two initial backups remain intact. The earlier quota error and pre-existing third-party CSS tracking-prevention warnings were observed, rather than claiming a clean historical console. The repair and persisted-data verification completed successfully.
+
+Left the owner's Edge window maximized on Positions filtered to UNF, with both repaired rows and portfolio totals visible. A private screenshot and read-only post-reload verification transcript are retained locally. This is a completed targeted repair of the actual Pages data; ongoing automatic synchronization between local/Pages/browser profiles is not implemented. Future dataset transfers must preserve newer destination activity rather than overwrite it from stale fixtures.

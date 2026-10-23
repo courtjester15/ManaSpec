@@ -6,6 +6,10 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ## Unreleased
 
+### Fixed — 2026-10-23
+
+- Completed the owner-authorized repair in the actual Microsoft Edge GitHub Pages store: the two confirmed UNF foil Positions recover exact current prices and P/L after reload. Preserved the newer 38-Position dataset, quantities, basis, cash, all transaction facts and prior history; verified every saved app key against the rehearsed result. No merge/deployment or ongoing cross-browser sync.
+
 ### Fixed — 2026-10-22
 
 - Issue #20: exact Scryfall finishes now constrain vanilla/React additions; sole finishes are locked, multi-finish printings require a valid selection, and etched identities remain exact.
