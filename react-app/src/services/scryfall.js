@@ -1,4 +1,5 @@
 import { getSingleFinish, getSingleScryfallId } from "../domain/assetIdentity.js";
+import { finishPolicy } from "../domain/finishPolicy.js";
 
 const API = "https://api.scryfall.com";
 
@@ -48,14 +49,17 @@ export function getCardPrice(card, foil = false) {
 }
 
 export function toTrackedCard(card, options = {}) {
-  const foil = Boolean(options.foil);
+  const requested = options.finish || (Object.hasOwn(options, "foil") ? options.foil ? "foil" : "nonfoil" : "");
+  const finish = finishPolicy.selectFinish(card, requested);
+  const foil = finish === "foil";
+  const baseId = getSingleScryfallId(card);
   return {
-    id: foil ? `${card.id}|foil` : card.id, scryfall_id: card.id, oracle_id: card.oracle_id, name: card.name,
+    id: finish === "nonfoil" ? baseId : `${baseId}|${finish}`, scryfall_id: baseId, finish, trackedPrintingKey: `${baseId}|${finish}`, oracle_id: card.oracle_id, name: card.name,
     set_code: card.set?.toUpperCase?.() || card.set, set_name: card.set_name,
-    collector_number: card.collector_number, foil, currentPrice: getCardPrice(card, foil),
+    collector_number: card.collector_number, foil, currentPrice: getCardPrice(card, finish),
     entryTarget: Number(options.entryTarget || 0), exitTarget: Number(options.exitTarget || 0),
     plannedQty: Math.max(1, Number(options.plannedQty || 1)), holdTime: options.holdTime || "",
-    addedDate: new Date().toISOString(), priceUpdatedAt: getCardPrice(card, foil) === null ? null : new Date().toISOString(),
+    addedDate: new Date().toISOString(), priceUpdatedAt: getCardPrice(card, finish) === null ? null : new Date().toISOString(),
     rarity: card.rarity, released_at: card.released_at, type_line: card.type_line,
     oracle_text: card.oracle_text, colors: card.colors, color_identity: card.color_identity,
     mana_cost: card.mana_cost, cmc: card.cmc, edhrec_rank: card.edhrec_rank,

@@ -3,7 +3,7 @@ const fs = require("node:fs");
 const vm = require("node:vm");
 const { execFileSync } = require("node:child_process");
 const baseline = process.argv.find(arg => arg.startsWith("--baseline="))?.slice(11);
-const readSource = file => baseline
+const readSource = file => baseline && file !== "js/core/finish-policy.js"
   ? execFileSync("git", ["show", `${baseline}:${file}`], { encoding: "utf8" })
   : fs.readFileSync(file, "utf8");
 
@@ -15,7 +15,7 @@ async function main() {
     syncCardMetadata() {}, save() {}, saveRadarState() {}, savePriceRefreshStatus() {},
     saveDailyPriceSnapshots(observations) { context.observations = observations; return { saved: observations.length }; },
   });
-  for (const file of ["js/core/data-foundation.js", "js/modules/card-details/comparable-printings.js", "js/modules/portfolio/pricing.js", "js/ui/summary.js", "js/modules/portfolio/portfolio.js", "js/modules/dashboard/dashboard.js", "js/modules/card-metadata/card-metadata.js"]) {
+  for (const file of ["js/core/data-foundation.js", "js/core/finish-policy.js", "js/modules/card-details/comparable-printings.js", "js/modules/portfolio/pricing.js", "js/ui/summary.js", "js/modules/portfolio/portfolio.js", "js/modules/dashboard/dashboard.js", "js/modules/card-metadata/card-metadata.js"]) {
     vm.runInContext(readSource(file), context);
   }
   vm.runInContext(readSource("js/core/app.js").replace(/initApp\(\);\s*$/, ""), context);
@@ -27,7 +27,7 @@ async function main() {
   assert.equal(context.getScryfallUsdPrice({ prices: { usd: "0.00" } }, { foil: false }), 0);
   assert.equal(context.getScryfallUsdPrice({ prices: { usd: "9", usd_etched: "7" } }, { finish: "etched" }), 7);
   assert.equal(context.getPricingScryfallId({ id: "a|etched" }), "a");
-  assert.equal(context.buildTrackedCard({ id: "a", foil: true, prices: { usd: "99", usd_foil: null } }).currentPrice, null);
+  assert.equal(context.buildTrackedCard({ id: "a", foil: true, finishes: ["foil"], prices: { usd: "99", usd_foil: null } }).currentPrice, null);
   assert.equal(context.tableMoney(null), "-");
   assert.equal(context.tableMoney(0), "$0.00");
   context.specs = [

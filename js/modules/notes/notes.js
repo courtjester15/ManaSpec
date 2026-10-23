@@ -19,7 +19,7 @@ function addCardNote(item, text) {
     cardKey,
     cardId: item.id || "",
     scryfall_id: item.scryfall_id || String(item.id || "").replace(/\|(foil|nonfoil)$/i, ""),
-    finish: item.foil ? "foil" : "nonfoil",
+    finish: ManaSpecFinishPolicy.recordFinish(item),
     cardName: item.name || "",
     set_code: item.set_code || item.set?.toUpperCase() || "",
     set_name: item.set_name || "",

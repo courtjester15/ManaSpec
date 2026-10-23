@@ -1,5 +1,6 @@
 import { dataFoundation } from "../domain/dataFoundation.js";
 import { normalizeSealedAsset } from "../domain/assetIdentity.js";
+import { finishPolicy } from "../domain/finishPolicy.js";
 
 export const BACKUP_SCHEMA = "manaspec-localstorage-backup";
 export const BACKUP_SCHEMA_VERSION = 1;
@@ -249,12 +250,24 @@ export function createStorageAdapter(storageInput) {
     }
   }
 
+  function previewFinishCorrection(cards) {
+    const captured = finishPolicy.capture(storage);
+    return { raw: captured.raw, original: captured.data, plan: finishPolicy.planCorrection(captured.data, cards) };
+  }
+  function applyFinishCorrection(preview) {
+    finishPolicy.commit(storage, preview, createBackup());
+    return loadState();
+  }
+
   return Object.freeze({
     persistent,
     loadState,
     saveSlice,
     createBackup,
     restoreBackup,
+    previewFinishCorrection,
+    applyFinishCorrection,
+    correctionBackup: () => readJson(storage, finishPolicy.BACKUP_KEY, null)?.backup || null,
     parseBackupText,
     raw: storage,
   });

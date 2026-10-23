@@ -338,7 +338,7 @@ function buildSignalAttentionRow(item) {
 }
 
 function getSignalFinishLabel(item) {
-  return item.foil ? "Foil" : "Nonfoil";
+  return { nonfoil: "Nonfoil", foil: "Foil", etched: "Etched" }[ManaSpecFinishPolicy.recordFinish(item)] || "Unknown";
 }
 
 function getSignalActionLabel(item, status, buckets, state) {

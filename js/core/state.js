@@ -40,6 +40,8 @@ let cash = loadCash(startingCash);
 
 function getTransactionMetadata(position) {
   return {
+    finish: getDataFoundation()?.normalizeFinish(position),
+    trackedPrintingKey: getDataFoundation()?.getTrackedPrintingKey(position),
     rarity: position.rarity || "",
     released_at: position.released_at || "",
     type_line: position.type_line || "",

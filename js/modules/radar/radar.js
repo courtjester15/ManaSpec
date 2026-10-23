@@ -266,9 +266,6 @@ function updateRadarCount(shownCount = 0, filteredCount = shownCount) {
 }
 
 function addRadarItem(card, options = {}) {
-  const existing = radar.find(item => item.id === card.id);
-  if (existing) return false;
-
   const item = buildTrackedCard(card, {
     addedDate: new Date().toISOString(),
     plannedQty: options.plannedQty,
@@ -276,6 +273,7 @@ function addRadarItem(card, options = {}) {
     holdTime: options.holdTime,
   });
 
+  if (radar.some(row => row.id === item.id)) return false;
   radar.push(item);
   if (options.initialNote) {
     addCardNote(item, options.initialNote);
@@ -378,6 +376,8 @@ function removeRadarItem(id) {
 function buyRadarItem(id) {
   const item = radar.find(radarItem => radarItem.id === id);
   if (!item) return;
+  try { if (Array.isArray(item.finishes)) ManaSpecFinishPolicy.selectFinish(item, ManaSpecFinishPolicy.recordFinish(item)); }
+  catch (error) { showAppNotice(error.message, "warning"); return; }
 
   const price = Number(item.currentPrice || 0);
   if (!price) {

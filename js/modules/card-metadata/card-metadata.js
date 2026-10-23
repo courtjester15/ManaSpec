@@ -8,7 +8,9 @@ Shared Scryfall metadata for Radar ideas and owned Positions.
 */
 
 function buildTrackedCard(card, overrides = {}) {
-  const price = getScryfallUsdPrice(card, { ...card, ...overrides });
+  const finish = ManaSpecFinishPolicy.selectFinish(card, overrides.finish || card.finish);
+  const baseId = String(card.scryfall_id || card.id).replace(/\|(foil|nonfoil|etched)$/i, "");
+  const price = ManaSpecFinishPolicy.exactPrice(card, finish);
 
   return {
     id: card.id,
@@ -26,6 +28,8 @@ function buildTrackedCard(card, overrides = {}) {
     holdTime: overrides.holdTime || "",
     ...extractCardMetadata(card),
     ...overrides,
+    id: finish === "nonfoil" ? baseId : `${baseId}|${finish}`,
+    scryfall_id: baseId, finish, foil: finish === "foil", trackedPrintingKey: `${baseId}|${finish}`,
   };
 }
 
@@ -33,12 +37,10 @@ function getTrackedPrintingKey(item) {
   if (!item) return "";
 
   const rawId = String(item.scryfall_id || item.id || "");
-  const baseId = rawId.replace(/\|(foil|nonfoil)$/i, "");
+  const baseId = rawId.replace(/\|(foil|nonfoil|etched)$/i, "");
   if (!baseId) return "";
 
-  const finish = item.foil || /\|foil$/i.test(String(item.id || ""))
-    ? "foil"
-    : "nonfoil";
+  const finish = ManaSpecFinishPolicy.recordFinish(item) || "nonfoil";
 
   return `${baseId}|${finish}`;
 }

@@ -10,8 +10,8 @@ test("exact quotes distinguish unknown, invalid and genuine zero", () => {
   assert.equal(getCardPrice({ prices: { usd: "5", usd_etched: "7" } }, "etched"), 7);
   assert.equal(getCardPrice({ prices: { usd: "5" } }, true), null);
   assert.equal(getCardPrice({ prices: { usd: "5" } }, null), null);
-  assert.equal(toTrackedCard({ id: "a", prices: { usd: null } }).currentPrice, null);
-  assert.equal(toTrackedCard({ id: "a", prices: { usd: null } }).priceUpdatedAt, null);
+  assert.equal(toTrackedCard({ id: "a", finishes: ["nonfoil"], prices: { usd: null } }).currentPrice, null);
+  assert.equal(toTrackedCard({ id: "a", finishes: ["nonfoil"], prices: { usd: null } }).priceUpdatedAt, null);
 });
 
 test("audit applies only quotes across shared Radar/Position identity", () => {

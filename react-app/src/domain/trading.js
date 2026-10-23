@@ -1,5 +1,6 @@
 import { dataFoundation } from "./dataFoundation.js";
 import { getAssetKey, getAssetType } from "./assetIdentity.js";
+import { finishPolicy } from "./finishPolicy.js";
 
 function id() {
   return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -36,6 +37,7 @@ function transaction(position, type, quantity, price, balanceAfter) {
   return {
     ...base,
     foil: Boolean(position.foil),
+    ...(finishPolicy.recordFinish(position) ? { finish: finishPolicy.recordFinish(position), trackedPrintingKey: `${position.scryfall_id || String(position.id).replace(/\|.*$/, "")}|${finishPolicy.recordFinish(position)}` } : {}),
     scryfall_id: position.scryfall_id || position.id,
     oracle_id: position.oracle_id,
     rarity: position.rarity,
@@ -53,6 +55,7 @@ function assetStores(item) {
 }
 
 export function buyFromRadar(state, item, quantity, price) {
+  if (getAssetType(item) === "single" && Array.isArray(item.finishes)) finishPolicy.selectFinish(item, finishPolicy.recordFinish(item));
   const qty = Math.max(1, Number(quantity || 1));
   const unitPrice = Math.max(0, Number(price || 0));
   const total = qty * unitPrice;

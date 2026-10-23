@@ -23,14 +23,21 @@ if args.unf_finish:
         "qty": 1, "buyPrice": 100, "buyDate": "2026-07-01T12:00:00Z", "currentPrice": 0,
         "priceUpdatedAt": "2020-01-01T00:00:00Z", "exitTarget": 200, "holdTime": "12 mo"
     } for card in evidence["cards"]]}
+if args.unf_finish == "nonfoil":
+    fixture["radar"] = [{**fixture["specs"][0], "plannedQty": 3, "entryTarget": 120}]
+    fixture["transactions"] = [{"id": "qa-buy-" + str(i), "cardId": row["id"], "backfilledFromPositionId": row["id"], "foil": False, "type": "BUY", "quantity": 1, "price": 100, "date": row["buyDate"]} for i,row in enumerate(fixture["specs"])]
+    fixture["cardNotes"] = [{"id": "qa-note", "cardId": fixture["specs"][0]["id"], "cardKey": fixture["specs"][0]["id"] + "|nonfoil", "finish": "nonfoil", "text": "Synthetic correction note", "createdAt": "2026-07-01"}]
 storage = {key: json.dumps(value) for key, value in fixture.items()}
 storage["priceRefreshStatus"] = json.dumps({"checkedAt": datetime.now(timezone.utc).isoformat() if args.unf_finish else "2020-01-01", "updatedCount": 0})
 bootstrap = """<script>
-const fixtureStorage = new Map(Object.entries(STORAGE));
+const qaKey = 'issue20-finish-qa:' + location.pathname;
+if (new URLSearchParams(location.search).has('reset')) sessionStorage.removeItem(qaKey);
+const fixtureStorage = new Map(Object.entries(JSON.parse(sessionStorage.getItem(qaKey) || 'null') || STORAGE));
+const persistFixture = () => sessionStorage.setItem(qaKey, JSON.stringify(Object.fromEntries(fixtureStorage)));
 Object.defineProperty(window, 'localStorage', {value: {
   getItem: key => fixtureStorage.get(key) ?? null,
-  setItem: (key, value) => fixtureStorage.set(key, String(value)),
-  removeItem: key => fixtureStorage.delete(key)
+  setItem: (key, value) => { fixtureStorage.set(key, String(value)); persistFixture(); },
+  removeItem: key => { fixtureStorage.delete(key); persistFixture(); }
 }});
 const nativeFetch = window.fetch.bind(window);
 window.fetch = async (url, options) => {

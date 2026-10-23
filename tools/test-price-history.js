@@ -43,7 +43,8 @@ assert.equal(legacy.setCode, "TST");
 assert.equal(history.normalizePriceSnapshot(snapshot({ price: 0 })), null);
 assert.equal(history.normalizePriceSnapshot(snapshot({ price: "nope" })), null);
 assert.equal(history.normalizePriceSnapshot(snapshot({ date: "2026-02-31" })), null);
-assert.equal(history.normalizePriceSnapshot(snapshot({ finish: "etched", printingKey: "card-a|etched" })), null);
+assert.equal(history.normalizePriceSnapshot(snapshot({ finish: "etched", printingKey: "card-a|etched" })).printingKey, "card-a|etched");
+assert.equal(history.createPriceSnapshot({ id: "card-a|etched", foil: false }, 7).finish, "etched");
 
 const first = history.upsertDailyPriceSnapshot([], snapshot());
 assert.equal(first.saved, 1);
