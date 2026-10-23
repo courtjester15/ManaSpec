@@ -163,3 +163,21 @@ test("portfolio summary matches the vanilla calculation for trusted Positions", 
   assert.equal(summary.invalidPositionCount, 1);
   assert.equal(summary.unpricedPositionCount, 0);
 });
+test("null and zero single quotes survive reload and backup without writes or migration", () => {
+  const specs = [null, 0].map((currentPrice, index) => ({
+    id: `quote-${index}`, scryfall_id: `quote-${index}`, foil: false,
+    qty: 2, buyPrice: 5, buyDate: "2026-01-15T12:00:00.000Z", currentPrice,
+    priceUpdatedAt: "2020-01-01T00:00:00Z", futureField: { keep: true },
+  }));
+  const storage = memoryStorage({ specs: JSON.stringify(specs) });
+  const before = storage.snapshot();
+  const adapter = createStorageAdapter(storage);
+  const loaded = adapter.loadState();
+  assert.deepEqual(storage.snapshot(), before);
+  assert.deepEqual(loaded.specs.map(row => row.currentPrice), [null, 0]);
+  adapter.saveSlice("specs", loaded.specs);
+  assert.equal(storage.getItem("specs"), before.specs);
+  const backup = normalizeBackup(adapter.createBackup(loaded));
+  assert.equal(backup.ok, true);
+  assert.deepEqual(backup.backup.data.specs.map(row => row.currentPrice), [null, 0]);
+});

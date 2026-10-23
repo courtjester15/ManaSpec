@@ -252,6 +252,7 @@ function renderPrintingPriceCell(printing, finish) {
 }
 
 function buildPrintingFinishCard(printing, finish) {
+  finish = ManaSpecFinishPolicy.selectFinish(printing, finish);
   if (finish === "nonfoil") return { ...printing, finish, foil: false };
 
   return {

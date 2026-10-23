@@ -6,6 +6,25 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ## Unreleased
 
+### Fixed — 2026-10-23
+
+- Completed the owner-authorized repair in the actual Microsoft Edge GitHub Pages store: the two confirmed UNF foil Positions recover exact current prices and P/L after reload. Preserved the newer 38-Position dataset, quantities, basis, cash, all transaction facts and prior history; verified every saved app key against the rehearsed result. No merge/deployment or ongoing cross-browser sync.
+
+### Fixed — 2026-10-22
+
+- Issue #20: exact Scryfall finishes now constrain vanilla/React additions; sole finishes are locked, multi-finish printings require a valid selection, and etched identities remain exact.
+- Repaired the two confirmed foil UNF Positions directly in the accessible native browser store after backing it up; verified exact prices, P/L and reload persistence. Quantities, basis, cash, transaction amounts, unrelated records and all prior history remain unchanged. Added only verified current foil snapshots. Removed the special-purpose Admin correction exercise per owner override; PR #21 remains unmerged and undeployed.
+
+### Fixed — 2026-10-21
+
+- Issue #20 follow-up: flag suspicious saved zero valuations across vanilla/React summaries and Position detail without changing values, calculations, or identity. Exact cached genuine-zero quotes remain unflagged. Verified live UNF #534/#533 are foil-only with no nonfoil USD quotes; saved nonfoil records require review rather than price substitution.
+- Vanilla quote recovery now refreshes open Signals rows, Dashboard metrics, and Position context tiles together; successful exact quotes retain their provider-price cache so genuine zero stays distinguishable after reload.
+
+### Fixed — 2026-10-20
+
+- Issue #20: preserve unavailable single quotes and stale timestamps instead of creating zero valuations; keep genuine zero distinct across Positions, Card Detail, Signals, and portfolio calculations in vanilla and React.
+- React price audits now update only quote fields across shared Radar/Position identities and record history only from successful observations. Buy/sell valuation handling preserves unknown quotes without changing transaction or weighted-cost math. Storage keys, backup schema, sealed identity, and existing stored zeros remain compatible.
+
 ### Added
 
 - Aligned ManaSpec's agent/contributor workflow with issue-led P/E readiness, short MTD handoffs, branch/PR review authority, autonomous browser/data-regression QA, safe-fixture recovery checks, and change-scoped documentation closure; clarified React integration promotion versus deployed vanilla and recorded missing-price-not-zero correctness rules.

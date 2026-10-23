@@ -3,7 +3,7 @@
 PRICE SNAPSHOT SYSTEM
 ====================================
 
-Stores one local daily Scryfall observation per exact F/NF printing.
+Stores one local daily Scryfall observation per exact printing and finish.
 Legacy snapshot records are normalized at read time and preserved.
 ====================================
 */
@@ -15,7 +15,7 @@ Legacy snapshot records are normalized at read time and preserved.
 })(typeof globalThis !== "undefined" ? globalThis : this, function createPriceSnapshots() {
   const PRICE_SNAPSHOT_KEY = "priceSnapshots";
   const PRICE_SNAPSHOT_SOURCE = "scryfall";
-  const SUPPORTED_HISTORY_FINISHES = new Set(["nonfoil", "foil"]);
+  const SUPPORTED_HISTORY_FINISHES = new Set(["nonfoil", "foil", "etched"]);
   const DAY_MS = 86400000;
 
   function getSnapshotDate(now = new Date()) {
@@ -29,7 +29,7 @@ Legacy snapshot records are normalized at read time and preserved.
     const explicit = String(record.finish || "").toLowerCase();
     if (SUPPORTED_HISTORY_FINISHES.has(explicit)) return explicit;
     const suffix = String(record.printingKey || record.cardId || record.id || "")
-      .match(/\|(nonfoil|foil)$/i)?.[1]?.toLowerCase();
+      .match(/\|(nonfoil|foil|etched)$/i)?.[1]?.toLowerCase();
     if (SUPPORTED_HISTORY_FINISHES.has(suffix)) return suffix;
     if (record.foil === true) return "foil";
     if (record.foil === false) return "nonfoil";
@@ -38,7 +38,7 @@ Legacy snapshot records are normalized at read time and preserved.
 
   function getSnapshotScryfallId(record = {}) {
     const raw = record.scryfallId || record.scryfall_id || record.cardId || record.id || "";
-    return String(raw).trim().replace(/\|(nonfoil|foil)$/i, "") || null;
+    return String(raw).trim().replace(/\|(nonfoil|foil|etched)$/i, "") || null;
   }
 
   function normalizePriceSnapshot(snapshot) {

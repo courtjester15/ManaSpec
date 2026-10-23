@@ -27,7 +27,7 @@ function requestCardIntentModal(options = {}) {
   const showEntry = options.showEntry !== false;
   const showHold = options.showHold !== false;
   const finishOptions = options.finishOptions || [];
-  const selectedFinish = options.selectedFinish || finishOptions[0]?.value || "";
+  const selectedFinish = options.selectedFinish || (finishOptions.length === 1 ? finishOptions[0].value : "");
 
   return requestAppConfirmation({
     title,
@@ -128,6 +128,7 @@ function bindIntentKeyboardSubmit(dialog) {
 
 function requestRadarAddIntent(card) {
   const finishOptions = getIntentFinishOptions(card);
+  if (!finishOptions.length) { showAppNotice("Supported finishes are unavailable. Reload the exact printing.", "warning"); return Promise.resolve(null); }
   const selectedFinish = getIntentSelectedFinish(card, finishOptions);
   const price = getIntentCardPrice(card, selectedFinish);
   return requestCardIntentModal({
@@ -147,7 +148,7 @@ function requestRadarAddIntent(card) {
       entryTarget: result.entryTarget,
       holdTime: result.holdTime,
       initialNote: result.initialNote,
-      finish: result.finish || selectedFinish,
+      finish: ManaSpecFinishPolicy.selectFinish(card, result.finish || selectedFinish),
     };
   });
 }
@@ -173,16 +174,17 @@ function requestRadarBuyIntent(item, options = {}) {
 }
 
 function renderIntentFinishChoice(finishOptions, selectedFinish) {
-  if (!finishOptions || finishOptions.length <= 1) return "";
+  if (!finishOptions?.length) return "";
+  if (finishOptions.length === 1) return `<p>Finish: <strong>${escapeHtml(finishOptions[0].label)}</strong> (only supported finish)</p>`;
 
   return `
     <fieldset class="intent-finish-choice">
       <legend>Version</legend>
       ${finishOptions.map(option => `
         <label>
-          <input type="radio" name="intentFinish" value="${escapeAttribute(option.value)}" data-price="${escapeAttribute(option.price || "")}" ${option.value === selectedFinish ? "checked" : ""}>
+          <input type="radio" name="intentFinish" value="${escapeAttribute(option.value)}" data-price="${escapeAttribute(option.price ?? "")}" ${option.value === selectedFinish ? "checked" : ""}>
           <span>${escapeHtml(option.label)}</span>
-          <strong>${option.price ? money(option.price) : "?"}</strong>
+          <strong>${option.price !== null ? money(option.price) : "?"}</strong>
         </label>
       `).join("")}
     </fieldset>
@@ -195,9 +197,13 @@ function bindIntentFinishChoice(dialog) {
 
   const entry = dialog.querySelector("#intentEntry");
   let lastDefault = entry?.value || "";
+  const confirm = dialog.querySelector("[data-confirm-action=\"confirm\"]");
+  const validate = () => { if (confirm) confirm.disabled = !dialog.querySelector("input[name=\"intentFinish\"]:checked"); };
+  validate();
 
   choices.forEach(choice => {
     choice.addEventListener("change", () => {
+      validate();
       if (!entry) return;
       const nextDefault = choice.dataset.price ? String(Math.round(Number(choice.dataset.price || 0))) : "";
       if (!entry.value || entry.value === lastDefault) {
@@ -218,37 +224,17 @@ function formatIntentModalCardLine(item) {
 }
 
 function getIntentCardPrice(card, finish = "") {
-  const prices = card.prices || {};
-  if (finish === "foil") return Number(prices.usd_foil || prices.usd || 0);
-  if (finish === "nonfoil") return Number(prices.usd || prices.usd_foil || 0);
-  return Number(card.foil ? prices.usd_foil || prices.usd : prices.usd || prices.usd_foil || 0);
+  return finish ? ManaSpecFinishPolicy.exactPrice(card, finish) : null;
 }
 
 function getIntentFinishOptions(card) {
-  const finishes = Array.isArray(card.finishes) ? card.finishes : [];
-  const options = [];
-
-  if (!finishes.length || finishes.includes("nonfoil")) {
-    options.push({
-      value: "nonfoil",
-      label: "Nonfoil",
-      price: Number(card.prices?.usd || 0),
-    });
-  }
-
-  if (finishes.includes("foil")) {
-    options.push({
-      value: "foil",
-      label: "Foil",
-      price: Number(card.prices?.usd_foil || 0),
-    });
-  }
-
-  return options.length ? options : [{ value: "nonfoil", label: "Nonfoil", price: Number(card.prices?.usd || 0) }];
+  return ManaSpecFinishPolicy.supportedFinishes(card).map(value => ({
+    value, label: { nonfoil: "Nonfoil", foil: "Foil", etched: "Etched" }[value],
+    price: ManaSpecFinishPolicy.exactPrice(card, value),
+  }));
 }
 
 function getIntentSelectedFinish(card, finishOptions) {
-  if (card.foil && finishOptions.some(option => option.value === "foil")) return "foil";
-  if (finishOptions.some(option => option.value === "nonfoil")) return "nonfoil";
-  return finishOptions[0]?.value || "nonfoil";
+  if (card.finish && finishOptions.some(option => option.value === card.finish)) return card.finish;
+  return finishOptions.length === 1 ? finishOptions[0].value : "";
 }

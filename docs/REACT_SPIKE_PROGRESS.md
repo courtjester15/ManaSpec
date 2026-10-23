@@ -2,6 +2,14 @@
 
 This document records implementation milestones and evidence for the React reconstruction and likely forward frontend candidate. It does not redefine current vanilla behavior or authorize production cutover.
 
+## 2026-10-20: Issue #20 valuation investigation
+
+Corrected missing-price coercion, exact-finish refresh, quote-only Radar/Position updates, cached-price history fabrication, and missing-price detail/Signals display. Preserved null/zero through trading, reload, and backup. The 70-test React suite, source/format checks, normal/Pages/portable builds, and committed artifact integrity check passed. In-app browser evidence covers both frontends with isolated memory fixtures, desktop/laptop and React phone layouts, Admin audit, Positions, Dashboard, Signals, and detail. Direct portable `file://` opening was blocked by in-app URL policy; hosted portable smoke is separate evidence, not a direct-file pass. See [investigation and QA record](audits/issue-20-position-valuations-2026-10-20.md) for scope, root causes, impact, and exact limits. No merge, deployment, or promotion is authorized by this work.
+
+## 2026-10-21: Issue #20 exact UNF quote recovery and zero review
+
+Verified live Scryfall set/number and exact-ID collection responses for Steam Vents UNF #534 and Godless Shrine UNF #533: both are foil-only; nonfoil USD is unavailable. Added read-only suspicious-zero warnings in the shell and detail, retained legitimate zeros and existing calculations, and tested unavailable nonfoil vs successful foil recovery. Fixed vanilla derived surfaces remaining stale after detail recovery. React now passes 73 tests plus source/format checks and all three builds; artifact integrity passes. Browser replay of the captured live responses confirms the warnings and math across Positions, Dashboard, Signals, and detail. See [follow-up evidence and identity decision](audits/issue-20-position-valuations-2026-10-20.md#2026-10-21-follow-up-exact-unf-quotes-and-recovery). No original browser data was changed; no merge or deployment occurred.
+
 The point-in-time [Vanilla vs React Workflow and CSS Audit](audits/vanilla-react-workflow-css-audit-2026-07-21.md) records the blockers visible on that date. Later milestone entries supersede its implementation status. The final Issue #15 entry below owns the current alpha-readiness evidence and recommendation; earlier entries remain historical rather than current release guidance.
 
 ## 2026-07-16: Workspace And Build Foundation

@@ -8,9 +8,9 @@ Shared Scryfall metadata for Radar ideas and owned Positions.
 */
 
 function buildTrackedCard(card, overrides = {}) {
-  const price = card.foil
-    ? parseFloat(card.prices?.usd_foil || card.prices?.usd || overrides.currentPrice || 0)
-    : parseFloat(card.prices?.usd || overrides.currentPrice || 0);
+  const finish = ManaSpecFinishPolicy.selectFinish(card, overrides.finish || card.finish);
+  const baseId = String(card.scryfall_id || card.id).replace(/\|(foil|nonfoil|etched)$/i, "");
+  const price = ManaSpecFinishPolicy.exactPrice(card, finish);
 
   return {
     id: card.id,
@@ -20,13 +20,16 @@ function buildTrackedCard(card, overrides = {}) {
     set_name: card.set_name || overrides.set_name || "",
     collector_number: card.collector_number || overrides.collector_number || "",
     foil: Boolean(card.foil || overrides.foil),
-    currentPrice: Number.isFinite(price) ? price : Number(overrides.currentPrice || 0),
+    currentPrice: price,
+    prices: card.prices,
     plannedQty: Math.max(1, Number(overrides.plannedQty || 1)),
     entryTarget: Number(overrides.entryTarget || 0),
     exitTarget: Number(overrides.exitTarget || 0),
     holdTime: overrides.holdTime || "",
     ...extractCardMetadata(card),
     ...overrides,
+    id: finish === "nonfoil" ? baseId : `${baseId}|${finish}`,
+    scryfall_id: baseId, finish, foil: finish === "foil", trackedPrintingKey: `${baseId}|${finish}`,
   };
 }
 
@@ -34,12 +37,10 @@ function getTrackedPrintingKey(item) {
   if (!item) return "";
 
   const rawId = String(item.scryfall_id || item.id || "");
-  const baseId = rawId.replace(/\|(foil|nonfoil)$/i, "");
+  const baseId = rawId.replace(/\|(foil|nonfoil|etched)$/i, "");
   if (!baseId) return "";
 
-  const finish = item.foil || /\|foil$/i.test(String(item.id || ""))
-    ? "foil"
-    : "nonfoil";
+  const finish = ManaSpecFinishPolicy.recordFinish(item) || "nonfoil";
 
   return `${baseId}|${finish}`;
 }

@@ -330,3 +330,12 @@ function saveTransactionsState(transactions) {
 function saveMarketObservations(observations) {
   localStorage.setItem("marketObservations", JSON.stringify(observations));
 }
+
+function previewUnfFinishCorrection(cards) {
+  const captured = ManaSpecFinishPolicy.capture(localStorage);
+  return { raw: captured.raw, original: captured.data, plan: ManaSpecFinishPolicy.planCorrection(captured.data, cards) };
+}
+
+function applyUnfFinishCorrection(preview) {
+  ManaSpecFinishPolicy.commit(localStorage, preview, createManaSpecBackup());
+}

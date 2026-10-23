@@ -1,3 +1,6 @@
+import { getSingleFinish, getSingleScryfallId } from "../domain/assetIdentity.js";
+import { finishPolicy } from "../domain/finishPolicy.js";
+
 const API = "https://api.scryfall.com";
 
 async function request(path, signal) {
@@ -37,18 +40,26 @@ export async function fetchPrintings(card, signal) {
 }
 
 export function getCardPrice(card, foil = false) {
-  return Number(foil ? card.prices?.usd_foil : card.prices?.usd) || 0;
+  if (foil === null) return null;
+  const finish = typeof foil === "string" ? foil : foil ? "foil" : "nonfoil";
+  const value = card.prices?.[{ nonfoil: "usd", foil: "usd_foil", etched: "usd_etched" }[finish]];
+  if (!["string", "number"].includes(typeof value) || String(value).trim() === "") return null;
+  const price = Number(value);
+  return Number.isFinite(price) && price >= 0 ? price : null;
 }
 
 export function toTrackedCard(card, options = {}) {
-  const foil = Boolean(options.foil);
+  const requested = options.finish || (Object.hasOwn(options, "foil") ? options.foil ? "foil" : "nonfoil" : "");
+  const finish = finishPolicy.selectFinish(card, requested);
+  const foil = finish === "foil";
+  const baseId = getSingleScryfallId(card);
   return {
-    id: foil ? `${card.id}|foil` : card.id, scryfall_id: card.id, oracle_id: card.oracle_id, name: card.name,
+    id: finish === "nonfoil" ? baseId : `${baseId}|${finish}`, scryfall_id: baseId, finish, trackedPrintingKey: `${baseId}|${finish}`, oracle_id: card.oracle_id, name: card.name,
     set_code: card.set?.toUpperCase?.() || card.set, set_name: card.set_name,
-    collector_number: card.collector_number, foil, currentPrice: getCardPrice(card, foil),
+    collector_number: card.collector_number, foil, currentPrice: getCardPrice(card, finish),
     entryTarget: Number(options.entryTarget || 0), exitTarget: Number(options.exitTarget || 0),
     plannedQty: Math.max(1, Number(options.plannedQty || 1)), holdTime: options.holdTime || "",
-    addedDate: new Date().toISOString(), priceUpdatedAt: new Date().toISOString(),
+    addedDate: new Date().toISOString(), priceUpdatedAt: getCardPrice(card, finish) === null ? null : new Date().toISOString(),
     rarity: card.rarity, released_at: card.released_at, type_line: card.type_line,
     oracle_text: card.oracle_text, colors: card.colors, color_identity: card.color_identity,
     mana_cost: card.mana_cost, cmc: card.cmc, edhrec_rank: card.edhrec_rank,
@@ -60,23 +71,34 @@ export function toTrackedCard(card, options = {}) {
 }
 
 export async function refreshTrackedPrices(items) {
-  if (!items.length) return { items, updated: 0 };
+  if (!items.length) return { items, updated: 0, observations: [] };
   const byId = new Map();
   for (let index = 0; index < items.length; index += 75) {
     const response = await fetch(`${API}/cards/collection`, {
       method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ identifiers: items.slice(index, index + 75).map(item => ({ id: item.scryfall_id || item.id })) }),
+      body: JSON.stringify({ identifiers: items.slice(index, index + 75).map(item => ({ id: getSingleScryfallId(item) })) }),
     });
     const body = await response.json();
     if (!response.ok) throw new Error(body.details || "Price refresh failed.");
     body.data.forEach(card => byId.set(card.id, card));
   }
   const now = new Date().toISOString();
-  return {
-    updated: byId.size,
-    items: items.map(item => {
-      const card = byId.get(item.scryfall_id || item.id);
-      return card ? { ...item, currentPrice: getCardPrice(card, item.foil), prices: card.prices, priceUpdatedAt: now } : item;
-    }),
-  };
+  const observations = [];
+  const refreshed = items.map(item => {
+      const card = byId.get(getSingleScryfallId(item));
+      const price = card ? getCardPrice(card, getSingleFinish(item)) : null;
+      if (price === null) return item;
+      const updated = { ...item, currentPrice: price, prices: card.prices, priceUpdatedAt: now };
+      observations.push(updated);
+      return updated;
+    });
+  return { items: refreshed, updated: observations.length, observations };
+}
+
+// A watched row and an owned row can share identity, but never ownership/plan fields.
+export function applyPriceObservations(items, observations) {
+  const quotes = new Map(observations.map(item => [item.id, {
+    currentPrice: item.currentPrice, prices: item.prices, priceUpdatedAt: item.priceUpdatedAt,
+  }]));
+  return items.map(item => quotes.has(item.id) ? { ...item, ...quotes.get(item.id) } : item);
 }

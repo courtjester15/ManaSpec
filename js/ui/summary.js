@@ -13,16 +13,22 @@ Handles:
 */
 
 function updateTotals() {
+  renderZeroValuationWarnings();
   let invested = 0;
   let value = 0;
+  let pricedInvested = 0;
+  let unpriced = 0;
 
   specs.forEach(s => {
     invested += toFiniteNumber(s.buyPrice) * toFiniteNumber(s.qty);
-    value += toFiniteNumber(s.currentPrice) * toFiniteNumber(s.qty);
+    const price = getMarketPriceOrNull(s.currentPrice);
+    if (price === null) { unpriced += 1; return; }
+    value += price * toFiniteNumber(s.qty);
+    pricedInvested += toFiniteNumber(s.buyPrice) * toFiniteNumber(s.qty);
   });
 
-  const pl = value - invested;
-  const plPercent = invested > 0 ? (pl / invested) * 100 : 0;
+  const pl = value - pricedInvested;
+  const plPercent = pricedInvested > 0 ? (pl / pricedInvested) * 100 : 0;
 
   const totalEquity = toFiniteNumber(cash) + value;
 
@@ -38,6 +44,8 @@ function updateTotals() {
     eqEl.innerText = formatNumber(totalEquity, summaryNumberOptions);
   }
 
+  document.getElementById("value").title = `${unpriced} unpriced Positions excluded; cost basis retained`;
+
   // P/L
   const plEl = document.getElementById("totalPL");
   if (plEl) {
@@ -46,9 +54,17 @@ function updateTotals() {
   }
 }
 
+function renderZeroValuationWarnings() {
+  const banner = document.getElementById("valuationWarning");
+  if (!banner) return;
+  const rows = specs.filter(item => getZeroValuationWarning(item));
+  banner.hidden = rows.length === 0;
+  banner.textContent = rows.length ? `Review ${rows.length} zero-valued Positions. Value, equity and P/L still include these saved zeros. Open Position details for a live exact-price check; unavailable quotes keep the warning. No values or finishes are changed by this warning. ${rows.map(item => `${item.name} ${item.set_code || ""} #${item.collector_number || ""}: ${getZeroValuationWarning(item)}`).join(" ")}` : "";
+}
+
 function updatePL() {
   specs.forEach(s => {
-    s.pl = ((toFiniteNumber(s.currentPrice) - toFiniteNumber(s.buyPrice)) * toFiniteNumber(s.qty)).toFixed(2);
+    s.pl = getMarketPriceOrNull(s.currentPrice) === null ? null : ((toFiniteNumber(s.currentPrice) - toFiniteNumber(s.buyPrice)) * toFiniteNumber(s.qty)).toFixed(2);
   });
 }
 

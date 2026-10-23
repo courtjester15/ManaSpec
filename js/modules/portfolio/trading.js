@@ -14,6 +14,8 @@ Handles:
 function buySpec(positionOrEvent, maybeCell) {
   const s = getSpec(positionOrEvent, maybeCell);
   if (!s) return;
+  try { if (Array.isArray(s.finishes)) ManaSpecFinishPolicy.selectFinish(s, ManaSpecFinishPolicy.recordFinish(s)); }
+  catch (error) { showAppNotice(error.message, "warning"); return; }
   const price = getTradeNumber(s.currentPrice);
 
   if (!price) {

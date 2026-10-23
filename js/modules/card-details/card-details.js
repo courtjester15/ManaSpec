@@ -148,17 +148,18 @@ function renderCardDetail(item, card, source, options = {}, requestToken = activ
 function renderOverviewSection(item, movement, owned) {
   return `
     <section class="detail-command-section detail-overview-section">
+      ${getZeroValuationWarning(owned || item) ? `<p class="valuation-warning">Valuation review: ${escapeHtml(getZeroValuationWarning(owned || item))} Value and P/L include the saved zero until an exact quote is available.</p>` : ""}
       <div class="detail-section-heading">
         <h4>Status</h4>
         <span>${owned ? "Owned position" : "Radar idea"}</span>
       </div>
       <div class="detail-grid overview-grid">
-        ${renderDetailMetric("Scryfall", money(item.currentPrice))}
+        ${renderDetailMetric("Scryfall", getMarketPriceOrNull(item.currentPrice) === null ? "-" : money(item.currentPrice))}
         ${renderDetailMetric("Movement", movement.label)}
         ${renderDetailMetric("Qty", owned ? Number(owned.qty || 0) : "0")}
-        ${renderDetailMetric("P/L", owned ? formatDetailMoney(Number(owned.pl || 0)) : "-")}
+        ${renderDetailMetric("P/L", owned && getMarketPriceOrNull(owned.currentPrice) !== null ? formatDetailMoney(Number(owned.pl || 0)) : "-")}
         ${renderDetailMetric("Buy", owned ? money(owned.buyPrice) : "-")}
-        ${renderDetailMetric("Value", owned ? money(Number(owned.currentPrice || 0) * Number(owned.qty || 0)) : "-")}
+        ${renderDetailMetric("Value", owned && getMarketPriceOrNull(owned.currentPrice) !== null ? money(getPositionValue(owned)) : "-")}
       </div>
     </section>
   `;
@@ -604,12 +605,14 @@ function syncTrackedCardPrice(item, card) {
     ? getScryfallUsdPrice(card, item)
     : Number(card.prices?.usd || item.currentPrice || 0);
 
-  if (!nextPrice) return;
+  if (nextPrice === null) return;
 
   item.currentPrice = nextPrice;
+  item.prices = card.prices;
   item.priceUpdatedAt = new Date().toISOString();
   updatePL();
   updateTotals();
+  refreshValuationViews();
 }
 
 function getCardMovement(cardId) {

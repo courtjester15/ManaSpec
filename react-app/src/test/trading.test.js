@@ -133,3 +133,16 @@ test("sealed deletion guard uses sealed transactions without changing singles", 
   assert.equal(currentState.sealedSpecs.length, 1);
   assert.equal(currentState.specs.length, 0);
 });
+test("buy and partial sell preserve unknown quotes and real zero without substituting cost", () => {
+  for (const currentPrice of [null, 0]) {
+    const item = { ...watched, currentPrice };
+    const bought = buyFromRadar(state(), item, 2, 5);
+    assert.equal(bought.specs[0].currentPrice, currentPrice);
+    assert.equal(bought.specs[0].pl, currentPrice === null ? null : -10);
+    const sold = sellPosition(bought, bought.specs[0], 1, 7);
+    assert.equal(sold.specs[0].currentPrice, currentPrice);
+    assert.equal(sold.specs[0].pl, currentPrice === null ? null : -5);
+    assert.equal(sold.transactions[0].realizedPL, 2);
+    assert.equal(sold.cash, 97);
+  }
+});

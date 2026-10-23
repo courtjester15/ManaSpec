@@ -1,0 +1,39 @@
+{
+  "verifiedAt": "2026-10-23T03:16:36.479523+00:00",
+  "cards": [
+    {
+      "id": "be874189-b715-4e7c-85d7-e887328b9d3f",
+      "name": "Steam Vents",
+      "set": "unf",
+      "collector_number": "534",
+      "finishes": [
+        "foil"
+      ],
+      "prices": {
+        "usd": null,
+        "usd_foil": "181.01",
+        "usd_etched": null,
+        "eur": null,
+        "eur_foil": "149.37",
+        "tix": null
+      }
+    },
+    {
+      "id": "0f1296cc-59aa-412d-9115-99fdc9ada754",
+      "name": "Godless Shrine",
+      "set": "unf",
+      "collector_number": "533",
+      "finishes": [
+        "foil"
+      ],
+      "prices": {
+        "usd": null,
+        "usd_foil": "158.46",
+        "usd_etched": null,
+        "eur": null,
+        "eur_foil": "208.17",
+        "tix": null
+      }
+    }
+  ]
+}

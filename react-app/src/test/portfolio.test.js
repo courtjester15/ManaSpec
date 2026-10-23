@@ -112,6 +112,18 @@ test("unpriced valid Positions retain cost basis but do not fabricate marked val
   assert.equal(summary.profitLoss, 6);
 });
 
+test("genuine zero remains priced while null retains basis without a fabricated loss", () => {
+  const summary = calculatePortfolioSummary([
+    { ...positionFixtures.valid, currentPrice: 0 },
+    { ...positionFixtures.valid, currentPrice: null },
+  ], 100);
+  assert.equal(summary.invested, 20);
+  assert.equal(summary.pricedInvested, 10);
+  assert.equal(summary.value, 0);
+  assert.equal(summary.profitLoss, -10);
+  assert.equal(summary.unpricedPositionCount, 1);
+});
+
 test("portfolio summary separates recorded realized P/L and reports missing SELL coverage", () => {
   const summary = calculatePortfolioSummary([positionFixtures.valid], 100, {
     transactions: [

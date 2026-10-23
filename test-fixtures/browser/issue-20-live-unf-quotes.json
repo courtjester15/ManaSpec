@@ -1,0 +1,90 @@
+{
+  "checkedAt": "2026-10-22T02:31:08.586477+00:00",
+  "cards": [
+    {
+      "id": "be874189-b715-4e7c-85d7-e887328b9d3f",
+      "name": "Steam Vents",
+      "set": "unf",
+      "set_name": "Unfinity",
+      "collector_number": "534",
+      "lang": "en",
+      "finishes": [
+        "foil"
+      ],
+      "prices": {
+        "usd": null,
+        "usd_foil": "180.42",
+        "usd_etched": null,
+        "eur": null,
+        "eur_foil": "149.37",
+        "tix": null
+      },
+      "scryfall_uri": "https://scryfall.com/card/unf/534/steam-vents?utm_source=api",
+      "foil": true,
+      "nonfoil": false,
+      "requestUrl": "https://api.scryfall.com/cards/unf/534"
+    },
+    {
+      "id": "0f1296cc-59aa-412d-9115-99fdc9ada754",
+      "name": "Godless Shrine",
+      "set": "unf",
+      "set_name": "Unfinity",
+      "collector_number": "533",
+      "lang": "en",
+      "finishes": [
+        "foil"
+      ],
+      "prices": {
+        "usd": null,
+        "usd_foil": "158.60",
+        "usd_etched": null,
+        "eur": null,
+        "eur_foil": "208.17",
+        "tix": null
+      },
+      "scryfall_uri": "https://scryfall.com/card/unf/533/godless-shrine?utm_source=api",
+      "foil": true,
+      "nonfoil": false,
+      "requestUrl": "https://api.scryfall.com/cards/unf/533"
+    }
+  ],
+  "errors": [],
+  "collectionCheckedAt": "2026-10-22T02:41:27.204888+00:00",
+  "collectionRequestUrl": "https://api.scryfall.com/cards/collection",
+  "collectionCards": [
+    {
+      "id": "be874189-b715-4e7c-85d7-e887328b9d3f",
+      "name": "Steam Vents",
+      "set": "unf",
+      "collector_number": "534",
+      "finishes": [
+        "foil"
+      ],
+      "prices": {
+        "usd": null,
+        "usd_foil": "180.42",
+        "usd_etched": null,
+        "eur": null,
+        "eur_foil": "149.37",
+        "tix": null
+      }
+    },
+    {
+      "id": "0f1296cc-59aa-412d-9115-99fdc9ada754",
+      "name": "Godless Shrine",
+      "set": "unf",
+      "collector_number": "533",
+      "finishes": [
+        "foil"
+      ],
+      "prices": {
+        "usd": null,
+        "usd_foil": "158.60",
+        "usd_etched": null,
+        "eur": null,
+        "eur_foil": "208.17",
+        "tix": null
+      }
+    }
+  ]
+}

@@ -48,12 +48,14 @@ async function runPriceRefresh() {
         `https://api.scryfall.com/cards/${getPricingScryfallId(s)}`
       );
 
+      if (!res.ok) throw new Error(`Scryfall request failed (${res.status})`);
       const data = await res.json();
       const nextPrice = getScryfallUsdPrice(data, s);
       syncCardMetadata(s, data);
 
-      if (nextPrice) {
+      if (nextPrice !== null) {
         s.currentPrice = nextPrice;
+        s.prices = data.prices;
         s.priceUpdatedAt = startedAt.toISOString();
         updatedCount += 1;
         successfulObservations.push({ item: s, price: nextPrice, savedAt: startedAt.toISOString() });
@@ -69,12 +71,14 @@ async function runPriceRefresh() {
         `https://api.scryfall.com/cards/${getPricingScryfallId(item)}`
       );
 
+      if (!res.ok) throw new Error(`Scryfall request failed (${res.status})`);
       const data = await res.json();
       const nextPrice = getScryfallUsdPrice(data, item);
       syncCardMetadata(item, data);
 
-      if (nextPrice) {
+      if (nextPrice !== null) {
         item.currentPrice = nextPrice;
+        item.prices = data.prices;
         item.priceUpdatedAt = startedAt.toISOString();
         updatedCount += 1;
         successfulObservations.push({ item, price: nextPrice, savedAt: startedAt.toISOString() });
@@ -97,6 +101,7 @@ async function runPriceRefresh() {
   saveRadarState(radar);
   savePriceRefreshStatus(startedAt, updatedCount);
   updateTotals();
+  refreshValuationViews();
 
   return {
     skipped: false,
@@ -110,17 +115,12 @@ function getScryfallUsdPrice(card, position) {
   const finish = typeof getTrackedPrintingFinish === "function"
     ? getTrackedPrintingFinish(position)
     : (position.foil ? "foil" : "nonfoil");
-  const price = finish === "foil"
-    ? parseFloat(prices.usd_foil)
-    : finish === "nonfoil"
-      ? parseFloat(prices.usd)
-      : NaN;
-
-  return Number.isFinite(price) && price > 0 ? price : 0;
+  const field = { nonfoil: "usd", foil: "usd_foil", etched: "usd_etched" }[finish];
+  return getMarketPriceOrNull(prices[field]);
 }
 
 function getPricingScryfallId(item) {
-  return item.scryfall_id || String(item.id || "").replace(/\|(foil|nonfoil)$/i, "");
+  return item.scryfall_id || String(item.id || "").replace(/\|(foil|nonfoil|etched)$/i, "");
 }
 
 function savePriceRefreshStatus(date, updatedCount) {
@@ -146,4 +146,22 @@ function isPriceRefreshFresh(now = Date.now()) {
   if (!Number.isFinite(checkedAt)) return false;
 
   return now - checkedAt < PRICE_REFRESH_FRESH_MS;
+}
+
+// Quote parsing must preserve genuine zero without coercing unavailable values.
+function getMarketPriceOrNull(value) {
+  if (!["string", "number"].includes(typeof value) || String(value).trim() === "") return null;
+  const price = Number(value);
+  return Number.isFinite(price) && price >= 0 ? price : null;
+}
+
+function getZeroValuationWarning(record = {}) {
+  if (record.assetType === "sealed" || record.mtgjson_uuid || !(Number(record.qty) > 0) || getMarketPriceOrNull(record.currentPrice) !== 0) return "";
+  const finish = getTrackedPrintingFinish(record);
+  const raw = record.prices?.[{ nonfoil: "usd", foil: "usd_foil", etched: "usd_etched" }[finish]];
+  if (getMarketPriceOrNull(raw) === 0) return "";
+  if (finish && Array.isArray(record.finishes) && record.finishes.length && !record.finishes.includes(finish)) {
+    return `Saved ${finish} finish is not offered for this printing. Refresh cannot substitute another finish.`;
+  }
+  return "Saved $0 has no matching zero quote in the cached provider data. Refresh the exact printing and finish; the value may be valid or unavailable.";
 }

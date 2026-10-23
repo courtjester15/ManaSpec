@@ -1,5 +1,6 @@
 import { dataFoundation } from "./dataFoundation.js";
 import { getAssetKey, getAssetType } from "./assetIdentity.js";
+import { finishPolicy } from "./finishPolicy.js";
 
 function id() {
   return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -36,6 +37,7 @@ function transaction(position, type, quantity, price, balanceAfter) {
   return {
     ...base,
     foil: Boolean(position.foil),
+    ...(finishPolicy.recordFinish(position) ? { finish: finishPolicy.recordFinish(position), trackedPrintingKey: `${position.scryfall_id || String(position.id).replace(/\|.*$/, "")}|${finishPolicy.recordFinish(position)}` } : {}),
     scryfall_id: position.scryfall_id || position.id,
     oracle_id: position.oracle_id,
     rarity: position.rarity,
@@ -53,25 +55,25 @@ function assetStores(item) {
 }
 
 export function buyFromRadar(state, item, quantity, price) {
+  if (getAssetType(item) === "single" && Array.isArray(item.finishes)) finishPolicy.selectFinish(item, finishPolicy.recordFinish(item));
   const qty = Math.max(1, Number(quantity || 1));
   const unitPrice = Math.max(0, Number(price || 0));
   const total = qty * unitPrice;
   if (!unitPrice) throw new Error("Enter a buy price before buying.");
   if (state.cash < total) throw new Error("Not enough cash for this buy.");
   const stores = assetStores(item);
-  const isSealed = getAssetType(item) === "sealed";
   const specs = [...(state[stores.positions] || [])];
   let position = specs.find(row => row.id === item.id);
   if (!position) {
     const explicitCurrentPrice = item.currentPrice === null || item.currentPrice === undefined || item.currentPrice === "" ? null : Number(item.currentPrice);
-    position = { ...item, qty: 0, buyPrice: 0, currentPrice: isSealed ? explicitCurrentPrice : Number(item.currentPrice || unitPrice), pl: isSealed && explicitCurrentPrice === null ? null : 0, buyDate: null };
+    position = { ...item, qty: 0, buyPrice: 0, currentPrice: explicitCurrentPrice, pl: explicitCurrentPrice === null ? null : 0, buyDate: null };
     specs.push(position);
   } else position = { ...position };
   const previousQty = Number(position.qty || 0);
   position.qty = previousQty + qty;
   position.buyPrice = ((Number(position.buyPrice || 0) * previousQty) + total) / position.qty;
   position.buyDate ||= new Date().toISOString();
-  position.pl = isSealed && (position.currentPrice === null || position.currentPrice === undefined)
+  position.pl = (position.currentPrice === null || position.currentPrice === undefined)
     ? null
     : (Number(position.currentPrice || 0) - position.buyPrice) * position.qty;
   specs[specs.findIndex(row => row.id === position.id)] = position;
@@ -100,7 +102,7 @@ export function sellPosition(state, item, quantity, price) {
   const stores = assetStores(item);
   const positions = state[stores.positions] || [];
   const specs = remaining
-    ? positions.map(row => row.id === item.id ? { ...row, qty: remaining, pl: Number.isFinite(Number(row.currentPrice)) ? (Number(row.currentPrice) - Number(row.buyPrice || 0)) * remaining : null } : row)
+    ? positions.map(row => row.id === item.id ? { ...row, qty: remaining, pl: row.currentPrice !== null && row.currentPrice !== undefined && Number.isFinite(Number(row.currentPrice)) ? (Number(row.currentPrice) - Number(row.buyPrice || 0)) * remaining : null } : row)
     : positions.filter(row => row.id !== item.id);
   return {
     ...state,

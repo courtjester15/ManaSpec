@@ -8,6 +8,7 @@ const printingsSource = fs.readFileSync("js/modules/portfolio/printings.js", "ut
 const previewedCards = [];
 const context = {
   console,
+  ManaSpecFinishPolicy: require("../js/core/finish-policy.js"),
   Map,
   escapeHtml: value => String(value),
   escapeDetailAttribute: value => String(value),
@@ -89,8 +90,8 @@ assert.ok(foilActions.includes("Printing=Foil"), "comparable printing links shou
 context.openComparablePrintingArtPreview(currentRow);
 assert.strictEqual(previewedCards[0], currentRow.card, "art preview should receive the exact Scryfall printing object");
 assert.deepStrictEqual(
-  JSON.parse(JSON.stringify(context.buildPrintingFinishCard({ id: "etched-card" }, "etched"))),
-  { id: "etched-card|etched", scryfall_id: "etched-card", finish: "etched", foil: false },
+  JSON.parse(JSON.stringify(context.buildPrintingFinishCard({ id: "etched-card", finishes: ["etched"] }, "etched"))),
+  { finishes: ["etched"], id: "etched-card|etched", scryfall_id: "etched-card", finish: "etched", foil: false },
   "Radar handoff should preserve an exact etched identity"
 );
 

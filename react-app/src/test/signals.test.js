@@ -104,6 +104,15 @@ test("sealed assets reuse target and stale-check signals without invented price"
   const unpricedRows = deriveSignalRows({ ...signalFixtureState, sealedRadar: [{ ...sealed, qty: undefined, buyDate: undefined, currentPrice: null, entryTarget: 100 }], sealedSpecs: [] }, { now: SIGNAL_NOW });
   const unpriced = unpricedRows.find(item => item.id === sealed.id);
   assert.equal(unpriced.targetState, "none");
-  assert.equal(unpriced.currentPrice, 0);
+  assert.equal(unpriced.currentPrice, null);
   assert.equal(unpriced.status, "Market check");
+});
+test("Signals keep unknown prices distinct from genuine zero", () => {
+  const spec = { ...signalFixtureState.specs[0], currentPrice: null };
+  const unknown = deriveSignalRows({ ...signalFixtureState, specs: [spec], radar: [] }, { now: SIGNAL_NOW });
+  const zero = deriveSignalRows({ ...signalFixtureState, specs: [{ ...spec, currentPrice: 0 }], radar: [] }, { now: SIGNAL_NOW });
+  assert.equal(unknown[0].currentPrice, null);
+  assert.equal(zero[0].currentPrice, 0);
+  assert.equal(unknown[0].targetState, "none");
+  assert.equal(unknown[0].change, null);
 });
