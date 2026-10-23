@@ -10,7 +10,7 @@
     { id: "0f1296cc-59aa-412d-9115-99fdc9ada754", name: "Godless Shrine", number: "533" },
   ];
   const ARRAY_KEYS = ["specs", "radar", "transactions", "cardNotes", "thesisNotes", "signals", "priceSnapshots", "marketObservations", "sealedSpecs", "sealedRadar", "sealedTransactions"];
-  const RELATED_KEYS = ["transactions", "cardNotes", "thesisNotes", "signals", "priceSnapshots", "marketObservations"];
+  const RELATED_KEYS = ["transactions", "cardNotes", "thesisNotes", "signals", "marketObservations"];
   const STORAGE_KEYS = [...ARRAY_KEYS, "cash", "priceRefreshStatus"];
   const recordLabels = { specs: "Positions", radar: "Radar ideas", transactions: "Transactions", cardNotes: "Card notes", thesisNotes: "Archived theses", signals: "Signals", priceSnapshots: "Price history", marketObservations: "Market checks" };
   const BACKUP_KEY = "manaspec_finish_correction_backup";
@@ -66,6 +66,8 @@
     }
     return true;
   }
+  // Unsupported legacy price snapshots are evidence, not verified foil quotes.
+  // Preserve them byte-for-byte; only independently supported observations may be added.
   function planCorrection(data, cards, now = new Date().toISOString()) {
     const next = { ...data };
     const changedKeys = [];

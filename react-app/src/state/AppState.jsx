@@ -32,11 +32,6 @@ export function AppStateProvider({ children, adapter: adapterInput }) {
   }, [adapter]);
 
   const reload = useCallback(() => setState(adapter.loadState()), [adapter]);
-  const applyFinishCorrection = useCallback(preview => {
-    const corrected = adapter.applyFinishCorrection(preview);
-    setState(corrected);
-    return corrected;
-  }, [adapter]);
 
   const value = useMemo(() => ({
     state,
@@ -47,10 +42,7 @@ export function AppStateProvider({ children, adapter: adapterInput }) {
     restoreBackup,
     reload,
     storagePersistent: adapter.persistent,
-    previewFinishCorrection: adapter.previewFinishCorrection,
-    applyFinishCorrection,
-    correctionBackup: adapter.correctionBackup,
-  }), [adapter, applyFinishCorrection, reload, restoreBackup, state, updateSlice, updateState]);
+  }), [adapter, reload, restoreBackup, state, updateSlice, updateState]);
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 }

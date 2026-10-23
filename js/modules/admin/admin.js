@@ -32,12 +32,6 @@ function renderAdminView() {
           <input type="file" id="adminImportBackupFile" accept=".json,application/json" hidden>
         </section>
 
-        <section class="admin-panel">
-          <h4>Confirmed UNF Foil Correction</h4>
-          <p>Owner-confirmed Steam Vents #534 and Godless Shrine #533 only. Preview live foil identity while preserving quantities, basis and history. A backup is retained before applying.</p>
-          <button type="button" id="previewUnfCorrection">Preview UNF foil correction</button>
-          <button type="button" id="downloadUnfCorrectionBackup">Download correction backup</button>
-        </section>
         <section class="admin-panel muted">
           <h4>Prices</h4>
           <p>Manual refresh jobs, source health, and stale-price checks are planned here.</p>
@@ -53,8 +47,6 @@ function renderAdminView() {
     </section>
   `;
 
-  document.getElementById("previewUnfCorrection").onclick = previewAdminUnfCorrection;
-  document.getElementById("downloadUnfCorrectionBackup").onclick = downloadAdminUnfCorrectionBackup;
   document.getElementById("adminResetCash").onclick = confirmAdminResetCash;
 
   document.getElementById("adminExportBackup").onclick = exportAdminBackup;
@@ -228,35 +220,4 @@ function showAdminBackupNotice(message, tone) {
   }
 
   window.alert(message);
-}
-
-async function previewAdminUnfCorrection() {
-  const button = document.getElementById("previewUnfCorrection");
-  button.disabled = true;
-  try {
-    const cards = [];
-    for (const target of ManaSpecFinishPolicy.TARGETS) {
-      const response = await fetch(`https://api.scryfall.com/cards/${target.id}`);
-      if (!response.ok) throw new Error("Exact-printing check failed; no data was changed.");
-      cards.push(await response.json());
-    }
-    const preview = previewUnfFinishCorrection(cards);
-    if (!preview.plan.corrections.length) { showAppNotice("No eligible legacy UNF records remain."); return; }
-    const confirmed = await requestAppConfirmation({
-      title: "Confirm targeted foil correction", confirmLabel: "Apply confirmed foil correction",
-      message: "Correct only the owner-confirmed UNF printings and their linked references. Quantities, cost basis, cash and transaction amounts stay unchanged. A downloadable pre-correction backup is retained.",
-      bodyHtml: `<ul>${preview.plan.corrections.map(item => `<li>${escapeHtml(item.name)} UNF #${item.number}: Nonfoil to Foil - ${item.price === null ? "Live quote unavailable" : money(item.price)}</li>`).join("")}</ul><p>${Object.entries(preview.plan.counts).map(([key, count]) => `${escapeHtml(ManaSpecFinishPolicy.recordLabels[key] || key)}: ${count}`).join("; ")}. Duplicate foil rows or changed saved data block application.</p>`,
-    });
-    if (!confirmed) return;
-    applyUnfFinishCorrection(preview);
-    window.location.reload();
-  } catch (error) { showAppNotice(error.message, "warning"); }
-  finally { if (button.isConnected) button.disabled = false; }
-}
-
-function downloadAdminUnfCorrectionBackup() {
-  const record = loadJsonValue(ManaSpecFinishPolicy.BACKUP_KEY, null);
-  if (!record?.backup) { showAppNotice("No correction backup is stored yet.", "warning"); return; }
-  const url = URL.createObjectURL(new Blob([JSON.stringify(record.backup, null, 2)], { type: "application/json" }));
-  const link = document.createElement("a"); link.href = url; link.download = "manaspec-before-unf-finish-correction.json"; link.click(); URL.revokeObjectURL(url);
 }

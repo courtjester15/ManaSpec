@@ -120,3 +120,51 @@ Duplicate/existing foil holdings in the same store, conflicting references/finis
 - Layout: vanilla laptop screenshot remains aligned; React tables retain their existing contained horizontal scrolling at the actual 1280×720 available viewport. Requested 1366×768/1920×1080 overrides did not consistently apply across in-app tabs (DOM measured 1280×720 on React); do not interpret requested dimensions as verified viewport coverage. No new table columns/CSS were introduced. Direct portable file-origin QA remains blocked by the in-app browser policy; no external browser/desktop fallback was used. New etched browser-specific selection was not separately exercised; shared/domain and history regressions cover it.
 
 No current user data was repaired during QA and no deployment occurred. Merging alone does not rewrite the legacy records: after authorized delivery, run the explicit Admin correction in the browser that owns the records, download its backup, and verify holdings and current totals. A normal refresh alone cannot fix saved nonfoil identity.
+
+
+## 2026-10-22 owner override: actual native Position repair completed
+
+**Current completion record; supersedes the Admin exercise and synthetic-only completion boundary above.** [Owner override](https://github.com/courtjester15/ManaSpec/pull/21#issuecomment-6356465430) authorizes direct repair, supported historical recovery, backup first, no merge/deploy. The special UNF Admin panels/modals and AppState wiring are removed from vanilla and React. No user-operated migration or new automatic startup migration is required.
+
+### Actual environment, backup and safeguards
+
+The only initially open in-app tab was the old memory-backed portable QA fixture; it was not used as live evidence. The stopped local origin was checked through a temporary, loopback-only, read-only native-storage page **before app startup**. Native `http://127.0.0.1:8000` storage actually contained 40 Positions, 16 Radar records, 65 transactions, 8 card notes, 1,537 snapshots and 33 market checks. Both named records matched the exact confirmed IDs and were marked nonfoil. Contrary to the earlier zero report, this accessible store retained $163.27/$157.95 current prices, with old June quote times. This distinction is recorded rather than claiming a zero recovery that was not observed.
+
+The untouched raw strings were downloaded first and copied privately under `.tmp/issue20/actual-owner-before-2026-10-22.json`; a standard compatible backup envelope is retained locally as `actual-owner-before-standard-backup.json`. Raw-backup SHA-256: `467a02edad2e1319306ee4d0106e1ea13b3faf0b1c75c439097921fe6cb86e15`. These private data files are not committed. An additional pre-correction backup containing original raw strings remains in the origin's `manaspec_finish_correction_backup` key.
+
+A private one-time developer command reused the tested correction policy. It verified every native input key against the downloaded backup's SHA-256 before any write, required exactly the two confirmed targets and fresh exact foil quotes, retained the browser backup first, then changed only `specs`, `transactions` and `priceSnapshots`. It was rehearsed against an in-memory copy of the actual backup, asserting all financial facts, unrelated records and prior snapshots unchanged. This was a local authorized data operation, not a shipped Admin workflow or deployment. The temporary command is removed after execution.
+
+### Actual results and reload
+
+Live Scryfall exact-ID observations captured at **2026-10-23T03:16:36Z / October 22, 23:16 EDT** confirm foil-only support, Steam Vents $181.01 and Godless Shrine $158.46; nonfoil/etched quotes are null. The public response is committed separately; no current quote is backdated. The owner-origin Positions now contain:
+
+| Position | Quantity | Preserved unit basis | Exact foil quote | Current unrealized P/L |
+| --- | --- | --- | --- | --- |
+| Steam Vents UNF #534 | 1 | $163.27 | $181.01 | +$17.74 |
+| Godless Shrine UNF #533 | 1 | $157.95 | $158.46 | +$0.51 |
+
+Both IDs now end `|foil`, with explicit foil finish, canonical Scryfall ID and tracked printing key. Their two BUY/backfill references follow those IDs; transaction IDs, quantity, price, fees, dates and notes are unchanged. No matching Radar, notes or market-check references existed to alter. All unrelated 38 Positions and 63 transactions remain structurally identical. Position count remains 40 and transaction count remains 65.
+
+| Native portfolio | Before | After reload |
+| --- | --- | --- |
+| Cash | $7,043.39 | $7,043.39 |
+| Open basis | $2,870.02 | $2,870.02 |
+| Marked value | $2,969.52 | $2,987.77 |
+| Unrealized P/L | +$99.50 | +$117.75 |
+| Equity | $10,012.91 | $10,031.16 |
+
+The +$18.25 change equals the two exact quote deltas. Header, Positions context/rows and Dashboard agree after full reload on the native origin using the local React review artifact (no fixture bootstrap or storage override). Each target shows one new current foil history point. The last **bulk** refresh status was deliberately preserved; it is not rewritten to imply all unrelated quotes were freshly audited. Per-record quote timestamps reflect the exact live observation. Existing missing realized-cost provenance on older unrelated SELLs remains untouched.
+
+A new native export after reload exactly matches the rehearsed expected state. Only the three intended storage keys differ; every other captured key is byte-identical. Every old snapshot and unrelated record is identical. After-export SHA-256: `a5997fa470bae00f717c8ecba99eb29a17917357f2200a79cfcaacf415817705`. Backup/after exports and the actual recovery screenshot remain private local artifacts.
+
+### Historical evidence and limits
+
+All 76 existing target snapshots (38 each, May 20–June 30) claim nonfoil and repeat exactly the respective acquisition costs. No saved exact foil field, archived provider response or corroborating market observation supports treating those values as historical foil prices. The original buggy fallback can explain that pattern, but its existence is not independent proof of a historical quote. **None of the 76 records is repriced, redated, deleted or promoted to verified foil history.** They remain original evidence under their prior nonfoil keys. Two newly verified current foil snapshots are appended, for 1,539 total snapshots. No historical portfolio P/L is fabricated from today's quote or acquisition cost. Further historical repair would require dated exact-printing foil quote evidence; none was available in this store.
+
+This actual repair applies specifically to the accessible native origin/profile `http://127.0.0.1:8000`. Browser storage is origin/profile-specific: this does not establish that a separate GitHub Pages, file-origin or external-browser profile has also changed. No external-browser/desktop access, merge, deployment or React promotion occurred.
+
+### Final verification
+
+- **81 React tests** pass, including an explicit regression that unsupported historical nonfoil prices are preserved and never become verified foil history. Existing exact selection, conflicts/collisions, nullable prices, rollback, persistence and backup checks remain passing.
+- Vanilla correction/startup, quote valuation and price-history checks pass. Source/format checks and normal/Pages/portable builds pass; generated artifact integrity passes. Existing build warnings remain as recorded earlier.
+- Actual native browser: both corrected rows, quantities/basis, current P/L, history count, Dashboard/header/Positions totals, full reload, persisted raw after-state comparison and absence of special Admin controls verified. Final console returned no warnings/errors. No broad price audit or trade was run against live data, preserving unrelated records.

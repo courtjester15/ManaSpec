@@ -76,7 +76,8 @@ test("targeted correction preserves acquisition/history facts and exact Radar/Po
   assert.equal(plan.data.priceSnapshots[0].date, "2026-07-01");
   assert.equal(plan.data.marketObservations[0].marketPrice, 160);
   assert.equal(getRelatedRecordsForPrinting(plan.data.cardNotes, plan.data.specs[0], plan.data.specs).length, 1);
-  assert.equal(getRelatedRecordsForPrinting(plan.data.priceSnapshots, plan.data.specs[0], plan.data.specs).length, 1);
+  assert.deepEqual(plan.data.priceSnapshots, before.priceSnapshots);
+  assert.equal(getRelatedRecordsForPrinting(plan.data.priceSnapshots, plan.data.specs[0], plan.data.specs).length, 0);
   assert.equal(policy.planCorrection(plan.data, cards).corrections.length, 0);
 });
 
@@ -150,4 +151,15 @@ test("unsupported legacy buy is blocked and etched trades preserve finish refere
   assert.equal(bought.specs[0].id, "etch|etched");
   assert.equal(bought.transactions[0].finish, "etched");
   assert.equal(bought.transactions[0].trackedPrintingKey, "etch|etched");
+});
+
+test("wrong-finish historical quote labels are never promoted to verified foil history", () => {
+  const data = fixture();
+  data.priceSnapshots[0].price = data.specs[0].buyPrice;
+  const before = clone(data.priceSnapshots);
+  const plan = policy.planCorrection(data, cards, "2026-10-23T03:16:36Z");
+  assert.deepEqual(plan.data.priceSnapshots, before);
+  assert.equal(plan.changedKeys.includes("priceSnapshots"), false);
+  assert.equal(plan.data.specs[0].currentPrice, 180.42);
+  assert.equal(plan.data.specs[0].priceUpdatedAt, "2026-10-23T03:16:36Z");
 });

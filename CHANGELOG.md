@@ -9,7 +9,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 ### Fixed — 2026-10-22
 
 - Issue #20: exact Scryfall finishes now constrain vanilla/React additions; sole finishes are locked, multi-finish printings require a valid selection, and etched identities remain exact.
-- Added owner-approved Admin preview/correction for the two confirmed foil UNF Positions and their linked references, with retained backup, provenance, conflict checks and rollback. Quantities, cost basis, transaction amounts and historical quote values are preserved. Verified recovery and reload in synthetic browser workflows; PR #21 remains unmerged and undeployed.
+- Repaired the two confirmed foil UNF Positions directly in the accessible native browser store after backing it up; verified exact prices, P/L and reload persistence. Quantities, basis, cash, transaction amounts, unrelated records and all prior history remain unchanged. Added only verified current foil snapshots. Removed the special-purpose Admin correction exercise per owner override; PR #21 remains unmerged and undeployed.
 
 ### Fixed — 2026-10-21
 
