@@ -6,6 +6,11 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ## Unreleased
 
+### Fixed — 2026-10-29
+
+- React trade failures stay in the dialog instead of crashing the app; missing execution prices require entry, invalid quantities/prices and oversells are rejected, and Sell all plus Positions filter recovery simplify the tracking loop.
+- Shared React tables isolate control clicks and clone vendor-mutated sort configuration. Synthetic browser trade/reload/backup evidence and remaining limits are recorded in `docs/audits/react-workflow-usability-2026-10-29.md`.
+
 ### Fixed — 2026-10-23
 
 - Completed the owner-authorized repair in the actual Microsoft Edge GitHub Pages store: the two confirmed UNF foil Positions recover exact current prices and P/L after reload. Preserved the newer 38-Position dataset, quantities, basis, cash, all transaction facts and prior history; verified every saved app key against the rehearsed result. No merge/deployment or ongoing cross-browser sync.

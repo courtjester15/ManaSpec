@@ -146,3 +146,32 @@ test("buy and partial sell preserve unknown quotes and real zero without substit
     assert.equal(sold.cash, 97);
   }
 });
+
+
+test("invalid trade inputs reject without changing singles or sealed state", () => {
+  for (const item of [watched, sealed]) {
+    const positions = item.assetType === "sealed" ? "sealedSpecs" : "specs";
+    const current = { ...item, qty: 2, buyPrice: 10 };
+    const before = state({ [positions]: [current] });
+    const snapshot = JSON.stringify(before);
+    for (const [qty, price] of [[0, 8], [-1, 8], [1.5, 8], [NaN, 8], [Infinity, 8], [1, 0], [1, -2], [1, NaN], [1, Infinity], [1, ""], [1, null]]) {
+      assert.throws(() => buyFromRadar(before, item, qty, price), /quantity|price/);
+      assert.throws(() => sellPosition(before, current, qty, price), /quantity|price/);
+      assert.equal(JSON.stringify(before), snapshot);
+    }
+    assert.throws(() => sellPosition(before, current, 3, 8), /exceeds/);
+    assert.throws(() => buyFromRadar(before, item, 2, 100), /Not enough cash/);
+    assert.equal(JSON.stringify(before), snapshot);
+  }
+});
+
+test("sale uses current ownership and basis rather than stale dialog data", () => {
+  const stale = { ...watched, qty: 3, buyPrice: 5 };
+  const current = { ...stale, qty: 1, buyPrice: 7 };
+  const before = state({ specs: [current] });
+  assert.throws(() => sellPosition(before, stale, 2, 10), /exceeds/);
+  const sold = sellPosition(before, stale, 1, 10);
+  assert.equal(sold.specs.length, 0);
+  assert.equal(sold.transactions[0].realizedPL, 3);
+  assert.throws(() => sellPosition(sold, stale, 1, 10), /exceeds/);
+});

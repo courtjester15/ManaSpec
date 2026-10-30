@@ -54,12 +54,18 @@ function assetStores(item) {
     : { positions: "specs", transactions: "transactions" };
 }
 
+export function validateTrade(quantity, price) {
+  const qty = Number(quantity);
+  const unitPrice = Number(price);
+  if (!Number.isSafeInteger(qty) || qty < 1) throw new Error("Enter a whole quantity of at least 1.");
+  if (!Number.isFinite(unitPrice) || unitPrice <= 0 || !Number.isFinite(qty * unitPrice)) throw new Error("Enter a valid price greater than zero.");
+  return { qty, unitPrice };
+}
+
 export function buyFromRadar(state, item, quantity, price) {
   if (getAssetType(item) === "single" && Array.isArray(item.finishes)) finishPolicy.selectFinish(item, finishPolicy.recordFinish(item));
-  const qty = Math.max(1, Number(quantity || 1));
-  const unitPrice = Math.max(0, Number(price || 0));
+  const { qty, unitPrice } = validateTrade(quantity, price);
   const total = qty * unitPrice;
-  if (!unitPrice) throw new Error("Enter a buy price before buying.");
   if (state.cash < total) throw new Error("Not enough cash for this buy.");
   const stores = assetStores(item);
   const specs = [...(state[stores.positions] || [])];
@@ -91,15 +97,16 @@ export function buyPosition(state, item, quantity, price) {
 }
 
 export function sellPosition(state, item, quantity, price) {
-  const owned = Number(item.qty || 0);
-  const qty = Math.min(owned, Math.max(1, Number(quantity || 1)));
-  const unitPrice = Math.max(0, Number(price || item.currentPrice || item.buyPrice || 0));
-  if (!qty || !unitPrice) throw new Error("Enter a valid quantity and sale price.");
+  const stores = assetStores(item);
+  const current = (state[stores.positions] || []).find(row => row.id === item.id);
+  const owned = Number(current?.qty || 0);
+  const { qty, unitPrice } = validateTrade(quantity, price);
+  if (!Number.isSafeInteger(owned) || qty > owned) throw new Error("Sale quantity exceeds the current holding. Review the quantity before selling.");
+  item = current;
   const total = qty * unitPrice;
   const remaining = owned - qty;
   const cash = state.cash + total;
   const tx = transaction(item, "SELL", qty, unitPrice, cash);
-  const stores = assetStores(item);
   const positions = state[stores.positions] || [];
   const specs = remaining
     ? positions.map(row => row.id === item.id ? { ...row, qty: remaining, pl: row.currentPrice !== null && row.currentPrice !== undefined && Number.isFinite(Number(row.currentPrice)) ? (Number(row.currentPrice) - Number(row.buyPrice || 0)) * remaining : null } : row)

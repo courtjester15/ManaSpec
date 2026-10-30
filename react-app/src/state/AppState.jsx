@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import { createStorageAdapter } from "../persistence/storage.js";
 
 const AppStateContext = createContext(null);
@@ -7,31 +7,40 @@ export function AppStateProvider({ children, adapter: adapterInput }) {
   const adapter = useMemo(() => adapterInput || createStorageAdapter(), [adapterInput]);
   const [state, setState] = useState(() => adapter.loadState());
 
-  const updateSlice = useCallback((key, update) => {
-    setState(previous => {
-      const value = typeof update === "function" ? update(previous[key], previous) : update;
-      adapter.saveSlice(key, value);
-      return { ...previous, [key]: value };
+  const stateRef = useRef(state);
+
+  const commitState = useCallback(next => {
+    const previous = stateRef.current;
+    Object.keys(next).forEach(key => {
+      if (next[key] !== previous[key]) adapter.saveSlice(key, next[key]);
     });
+    stateRef.current = next;
+    setState(next);
   }, [adapter]);
 
+  const updateSlice = useCallback((key, update) => {
+    const previous = stateRef.current;
+    const value = typeof update === "function" ? update(previous[key], previous) : update;
+    commitState({ ...previous, [key]: value });
+  }, [commitState]);
+
   const updateState = useCallback(update => {
-    setState(previous => {
-      const next = typeof update === "function" ? update(previous) : update;
-      Object.keys(next).forEach(key => {
-        if (next[key] !== previous[key]) adapter.saveSlice(key, next[key]);
-      });
-      return next;
-    });
-  }, [adapter]);
+    const previous = stateRef.current;
+    commitState(typeof update === "function" ? update(previous) : update);
+  }, [commitState]);
 
   const restoreBackup = useCallback(backup => {
     const restored = adapter.restoreBackup(backup);
+    stateRef.current = restored;
     setState(restored);
     return restored;
   }, [adapter]);
 
-  const reload = useCallback(() => setState(adapter.loadState()), [adapter]);
+  const reload = useCallback(() => {
+    const restored = adapter.loadState();
+    stateRef.current = restored;
+    setState(restored);
+  }, [adapter]);
 
   const value = useMemo(() => ({
     state,

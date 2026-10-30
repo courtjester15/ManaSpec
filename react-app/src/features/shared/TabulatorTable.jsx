@@ -131,6 +131,11 @@ export function TabulatorTable({
         host.className = "ms-tabulator-cell-content";
         const root = createRoot(host);
         rootsRef.current.add(root);
+        // React controls own these clicks; do not let Tabulator inspect a row
+        // that a trade/filter action may replace during the same event.
+        host.addEventListener("click", event => {
+          if (event.target.closest(INTERACTIVE_SELECTOR)) event.stopPropagation();
+        });
         root.render(currentColumn(column.key)?.render?.(cell.getRow().getData(), cell));
         cell.getElement().dataset.label = column.label;
         return host;
@@ -176,7 +181,8 @@ export function TabulatorTable({
       layout: "fitColumns",
       layoutColumnsOnNewData: true,
       placeholder: empty,
-      initialSort: defaultSort,
+      // Tabulator mutates sorter objects; never pass React-owned props through.
+      initialSort: defaultSort.map(sorter => ({ ...sorter })),
       rowHeight: 27,
       columnHeaderVertAlign: "middle",
       movableColumns: false,
