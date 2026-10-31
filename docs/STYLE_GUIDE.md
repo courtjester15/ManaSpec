@@ -338,3 +338,11 @@ Avoid:
 - Robotic empty states when a shorter human phrase says the same thing.
 
 Help can explain workflows. Primary app surfaces should let the workflow be used.
+
+## React Module Controls
+
+React module tops share a header, metric/panel anatomy and component-owned control sizing. Radar/Positions use the same CardFilterPanel; Transactions/History use its underlying FilterToolbar. Discovery has its own explicitly submitted SearchField and scope; local filtering does not call discovery. Asset scope controls share selected/focus behavior without owning their placement.
+
+Filter Reset clears local fields, asset scope and deep-link focus together while preserving the current route's page size. Matching counts and the native shown-row counter distinguish filtered totals from the current page. Static metrics do not use action hover treatment. Attention rows share identity, readable reason text and focus treatment; Dashboard opens detail, while Signals filters. Show full bucket totals separately from capped previews. Let tool content determine height rather than forcing all modules to one table start position.
+
+Use compact dates/timestamps, rarity and hold labels in dense tables, with exact finishes visible and full metadata available where needed. Preserve stored strings and financial precision. Keep essential values and actions readable, use controlled wrapping in toolbars, and anchor discovery results in a bounded dismissible list instead of stretching summary tiles.

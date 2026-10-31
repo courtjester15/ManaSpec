@@ -34,29 +34,29 @@
       "bytes": 1502661,
       "sha256": "370f1a5a04dea94918374cb3d71739ede556f89703c235d57f2498d24a5a146a"
     },
-    "assets/index-COiMfVAC.css": {
-      "bytes": 129110,
-      "sha256": "ce609951a8d0c55f7fd58ccedc9eec47a487c702b5e887212b172656db8413e8"
+    "assets/index-B8MXVtYT.css": {
+      "bytes": 135095,
+      "sha256": "17c84a5a021c19a52a71511ef4addb9af73a88303c347ad29efb2e520f1856d0"
     },
-    "assets/index-DCcQVt-m.js": {
-      "bytes": 613173,
-      "sha256": "bdf1ddf69b06e9dacab1984aa7acbcaff9f10f2448e9729b8e87c04830341874"
+    "assets/index-Cs2auUFh.js": {
+      "bytes": 613489,
+      "sha256": "b339389c824267acd666b2b521ad5dd54bb013a08914f6d2d10ac610e63fb9ed"
     },
-    "assets/index-DCcQVt-m.js.map": {
-      "bytes": 2716353,
-      "sha256": "a1c1c7060969dccbc6e13fb9b8436486f6446f28647cc2653af858086a4cf0b7"
+    "assets/index-Cs2auUFh.js.map": {
+      "bytes": 2722455,
+      "sha256": "d4c6e58437041c39e27bfaeac2f28b8abbe2e53a175ffff781432dd7535abe8a"
     },
     "assets/manaspec-mark-C1H8lgsP.png": {
       "bytes": 222812,
       "sha256": "f64369da5823d28735c0c185d4553b2838a22387b91dfb992f32c212b3c31498"
     },
-    "assets/PriceHistory-D51Um_EG.js": {
+    "assets/PriceHistory-CCt4QHgl.js": {
       "bytes": 174536,
-      "sha256": "66d45c10197016ee088e5634bca1da0e0eed7536679a9bb328cc6302958630de"
+      "sha256": "eefb5f6196e55aea19700a6f55cf779a3894ca4170a89d8dd162b07da365dd72"
     },
-    "assets/PriceHistory-D51Um_EG.js.map": {
-      "bytes": 777739,
-      "sha256": "2c301c5c8f25a1fee9672a9a1cdb975ef06d53db44a41e8de8b499062f79d851"
+    "assets/PriceHistory-CCt4QHgl.js.map": {
+      "bytes": 778281,
+      "sha256": "12751c462c2ede01ae4fdc3c4f6a426ae0a3dc15009b0828b2a7efd56d09abde"
     },
     "assets/sealed-catalog-dPJfWl6u.js": {
       "bytes": 1735786,
@@ -68,7 +68,7 @@
     },
     "index.html": {
       "bytes": 857,
-      "sha256": "83549fc2bbb1ea73e66df1c40c16d727bb7a20f488c332750dbf0ba61c025245"
+      "sha256": "b054f2ef3ee018aa040b888f98be4e9731bc638fe77b6f829d36c11b91920f86"
     }
   }
 }

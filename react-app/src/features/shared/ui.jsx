@@ -7,24 +7,47 @@ export function ViewHeader({ title, description, actions }) {
   return <div className="view-heading"><h3>{title}</h3><p>{description}</p>{actions && <div className="view-actions">{actions}</div>}</div>;
 }
 
-export function MetricBand({ items }) {
-  return <section className="module-context-band" aria-label="View summary">{items.map(item => <article className="module-context-card" key={item.label}><span>{item.label}</span><strong className={item.tone || ""}>{item.value}</strong><small>{item.detail}</small>{item.preview && <em>{item.preview}</em>}</article>)}</section>;
+export function MetricTile({ item }) {
+  const Tag = item.onActivate ? "button" : "article";
+  return <Tag className="workspace-metric" type={item.onActivate ? "button" : undefined} onClick={item.onActivate}><span>{item.label}</span><strong className={item.tone || ""}>{item.value}</strong><small>{item.detail}</small>{item.preview && <em title={item.preview}>{item.preview}</em>}</Tag>;
 }
 
-export function FilterBar({ value, onChange, placeholder = "Filter cards, sets, or notes", children }) {
-  return <section className="react-filter-bar"><label><span>Search</span><input value={value} onChange={event => onChange(event.target.value)} placeholder={placeholder} /></label>{children}</section>;
+export function MetricBand({ items, leading, className = "" }) {
+  return <section className={`workspace-context ${className}`} aria-label="View summary">{leading && <div className="workspace-discovery">{leading}</div>}{items.map(item => <MetricTile item={item} key={item.label} />)}</section>;
 }
 
-export function TableFilterPanel({ title, countText, value, onChange, placeholder, pageSize, onPageSizeChange, onReset, children }) {
-  return <section className="card-filter-panel table-route-filter-panel"><div className="panel-heading compact-heading"><h4>{title}</h4><span className="filter-meta">{countText}</span></div><div className="ledger-filter-bar compact-filter-controls"><label className="filter-control"><span>Search</span><input aria-label={title} value={value} onChange={event => onChange(event.target.value)} placeholder={placeholder} /></label>{children}<label className="table-page-size-control"><span>Rows</span><select aria-label="Rows per page" value={pageSize} onChange={event => onPageSizeChange(Number(event.target.value))}><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label><button type="button" className="filter-reset-btn" onClick={onReset}>Reset</button></div></section>;
+export function SearchField({ label, value, onChange, placeholder, hideLabel = false, className = "" }) {
+  return <label className={`workspace-search ${className}`}><span className={hideLabel ? "workspace-sr-only" : "workspace-field-label"}>{label}</span><input aria-label={label} value={value} onChange={event => onChange(event.target.value)} placeholder={placeholder} type="search" /></label>;
 }
+
+export function WorkspacePanel({ title, className = "", children }) {
+  return <section className={`workspace-panel ${className}`}><h4>{title}</h4>{children}</section>;
+}
+
+export function FilterToolbar({ title, countText, value, onChange, placeholder, pageSize, onPageSizeChange, onReset, scope, children }) {
+  return <section className="workspace-toolbar" aria-label={title}><header><h4>{title}</h4><span role="status">{countText}</span></header><div className="workspace-toolbar-controls"><SearchField label={title} value={value} onChange={onChange} placeholder={placeholder} hideLabel />{scope && <div className="workspace-toolbar-scope">{scope}</div>}{children}{pageSize && <label className="workspace-page-size"><span className="workspace-sr-only">Rows per page</span><select aria-label="Rows per page" value={pageSize} onChange={event => onPageSizeChange(Number(event.target.value))}>{[25, 50, 100].map(size => <option key={size} value={size}>{size} rows</option>)}</select></label>}<button type="button" className="workspace-reset" onClick={onReset}>Reset</button></div></section>;
+}
+
+export const TableFilterPanel = FilterToolbar;
 
 export function Modal({ title, open, onClose, children, wide = false, compactDetail = false }) {
   const ref = useRef(null);
+  const openerRef = useRef(null);
   useEffect(() => {
     const dialog = ref.current;
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
+    if (!open) {
+      if (dialog.open) dialog.close();
+      return undefined;
+    }
+    if (!dialog.open) {
+      openerRef.current = document.activeElement;
+      dialog.showModal();
+    }
+    dialog.querySelector("[data-autofocus=\"true\"]")?.focus();
+    return () => {
+      const opener = openerRef.current;
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
+    };
   }, [open]);
   return <dialog ref={ref} className={`react-modal${wide ? " wide" : ""}${compactDetail ? " card-detail-dialog" : ""}`} onCancel={onClose} onClose={onClose}><header><h3>{title}</h3><button type="button" aria-label="Close" onClick={onClose}>×</button></header><div className="react-modal-body">{children}</div></dialog>;
 }
