@@ -80,6 +80,10 @@ export function TabulatorTable({
   const onRowClickRef = useRef(onRowClick);
   const rootsRef = useRef(new Set());
   const rowsRef = useRef(rows);
+  // Opening a dialog or changing unrelated view state must not rebuild all cells
+  // and detach the focused row action. Rows are plain serializable view data.
+  const rowSignature = JSON.stringify(rows);
+  const rowSignatureRef = useRef(rowSignature);
   const pageSizeRef = useRef(pageSize);
   const signature = useMemo(() => columnSignature(columns), [columns]);
   const signatureRef = useRef(signature);
@@ -187,7 +191,7 @@ export function TabulatorTable({
       columnHeaderVertAlign: "middle",
       movableColumns: false,
       reactiveData: false,
-      ...(pageSize ? { pagination: "local", paginationSize: pageSize, paginationCounter: false } : {}),
+      ...(pageSize ? { pagination: "local", paginationSize: pageSize, paginationCounter: "rows" } : {}),
     });
 
     const syncSortAria = sorters => {
@@ -200,6 +204,8 @@ export function TabulatorTable({
 
     table.on("rowClick", (event, row) => {
       if (!onRowClickRef.current || event.target.closest(INTERACTIVE_SELECTOR)) return;
+      const cell = event.target.closest(".tabulator-cell");
+      if (cell && currentColumn(cell.getAttribute("tabulator-field"))?.editor) return;
       onRowClickRef.current(row.getData());
     });
     tableRef.current = table;
@@ -212,11 +218,12 @@ export function TabulatorTable({
   }, []);
 
   useEffect(() => {
-    if (!tableRef.current || rowsRef.current === rows) return;
+    if (!tableRef.current || rowSignatureRef.current === rowSignature) return;
     rowsRef.current = rows;
+    rowSignatureRef.current = rowSignature;
     cleanupCellRoots();
     tableRef.current.replaceData(cloneRows(rows));
-  }, [rows]);
+  }, [rows, rowSignature]);
 
   useEffect(() => {
     if (!tableRef.current || signatureRef.current === signature) return;

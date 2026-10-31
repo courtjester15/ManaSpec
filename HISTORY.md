@@ -297,3 +297,7 @@ The main remaining priorities before broader beta are:
 - Keep data safety and backup/restore stable through every model change.
 
 The project has not finished its data-model migration, and it should not pretend otherwise. But it has crossed the important product threshold: it is no longer just a tracker prototype, and the solo core-loop testing phase should not be reopened for every future bug. It is a coherent speculation workflow system moving carefully toward beta through friend feedback and focused user-facing improvements.
+
+### 2026-10-30: shared React module behavior
+
+Following a populated vanilla/React comparison, Issue #24 consolidated module control and attention behavior instead of treating each route as an independent screen. Shared filters/search/metrics/attention presentation, consistent reset and page-size rules, and focused table parity corrections reduce the cost of future route changes. The work remains on the React candidate path; it does not promote React or replace the authoritative vanilla runtime.

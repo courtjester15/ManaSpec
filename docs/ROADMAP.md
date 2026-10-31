@@ -18,7 +18,13 @@ Status markers:
 - `[-]` Partially done
 - `[ ]` Not done
 
-## Active execution sequence — 20 Oct 2026
+## Current candidate — 30 Oct 2026
+
+- Issue #24's shared React module-control/table pass is implemented on `codex/shared-module-ui`, stacked on the unmerged workflow fixes. Shared behavior is now the default extension path; see [React architecture](REACT_SPIKE_ARCHITECTURE.md#shared-module-workspace) and the [implementation evidence](audits/shared-module-ui-2026-10-30.md).
+- [PR #23](https://github.com/courtjester15/ManaSpec/pull/23) contains the prior trade-entry fixes; [PR #21](https://github.com/courtjester15/ManaSpec/pull/21) contains the valuation/finish correction and recorded owner-data repair. Both remain unmerged. Do not restart their completed investigations as new work.
+- [PR #18](https://github.com/courtjester15/ManaSpec/pull/18) remains the integration-to-main review boundary. No merge, deployment or canonical frontend promotion is implied by these candidate milestones. Owned-spec backfill and ledger-authority migration remain separate decisions.
+
+## Prior sequencing — 20 Oct 2026 (context)
 
 1. **Review, do not auto-merge [PR #18](https://github.com/courtjester15/ManaSpec/pull/18).** React integration includes the completed #15 expansion/parity and #16 sealed vertical slice, but `main`/vanilla remains authoritative. Validate deployment artifact, storage compatibility, rollback, and owner acceptance before any merge/canonical promotion.
 2. **Investigate the reported unexpected $0.00 values on two owned positions.** This is an owner-reported regression, **not** a verified root cause or approval for a broad data migration. Reproduce safely; distinguish no market quote, a failed/mismatched exact printing/finish lookup, a true zero, and malformed stored data. Check summary propagation and protect with focused tests before proposing a bounded fix. Preserve live data; no zero-filling or fake prices. Classification: exploration first, implementation after the diagnosis supports a safe scope.

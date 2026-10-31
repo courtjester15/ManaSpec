@@ -142,6 +142,16 @@ Tables are a product-critical subsystem, not a generic component exercise. Phase
 
 A single primary table direction serves Radar, Positions, Signals, Transactions, and History through the adopted shared wrapper. The interim native `DataTable` was removed after the last three deliberate Phase 2 migrations. A second long-term table system requires a documented exception.
 
+## Shared Module Workspace
+
+Issue #24 gives module presentation and interaction one shared React boundary. `features/shared/ui.jsx` owns headers, metric tiles/bands, SearchField, FilterToolbar, WorkspacePanel and native-dialog focus restoration. `features/shared/workspace.jsx` owns layout-neutral asset scopes, the common Radar/Positions card-filter panel, attention rows/tiles and table indicators. Routes supply data, counts and callbacks; discovery, saved-data routing and local filters remain separate domains.
+
+`styles/workspace.css`, loaded after the inherited styles, owns these components' geometry and responsive behavior. Superseded React overrides are removed; inherited vanilla tokens and unrelated styles remain. `domain/display.js` owns compact date/time, rarity, hold and exact-finish printing labels without rewriting persisted values. Source-aware local filtering is shared across singles and sealed; unavailable quotes do not match numeric price or target filters.
+
+Reset clears a route's filters, asset scope and focused-row restriction while preserving its current page-size selection. Page size remains route-local, with no new persisted preference. Tabulator owns pagination and its shown-row counter. The wrapper avoids replacing equivalent serializable rows during unrelated dialog updates, isolates editable cells from row activation, and preserves action focus. Its row signature assumes plain serializable view data, as supplied by current selectors; large-scale performance has not been benchmarked.
+
+Dashboard and Signals use the same AttentionRow/AttentionTile presentation over existing shared selectors. Dashboard callbacks open work/detail; Signals callbacks select a bucket or exact asset. Bucket totals are separate from capped previews. Static metric tiles are passive; actionable tiles are native buttons. Modal close/unmount restores a still-connected opener, including React StrictMode replay.
+
 ## Forms, Dialogs, And Accessibility
 
 Shared primitives should own labels, validation messages, focus states, dialogs, confirmation, toasts, icon buttons, and loading/empty states. Every dialog must restore focus, trap focus when modal, close predictably, and remain usable at phone width. Labels must be programmatically associated with controls.

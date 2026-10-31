@@ -6,6 +6,12 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ## Unreleased
 
+### Changed — 2026-10-30
+
+- Standardized React module controls through shared search fields, filter toolbars, metric/panel anatomy, asset scopes and Dashboard/Signals attention rows. Reset clears route filters/scope/focus while retaining page size; discovery results stay bounded and dismissible.
+- Restored Positions card filters/pagination and direct note/history actions; compacted date/rarity/hold/finish displays, made History detail flexible and Transactions/History newest-first. Shared editors no longer open Detail; dialogs restore opener focus.
+- Unified source-aware singles/sealed filtering and retained unknown-versus-zero price semantics. No storage schema, trading arithmetic or frontend-promotion change.
+
 ### Fixed — 2026-10-29
 
 - React trade failures stay in the dialog instead of crashing the app; missing execution prices require entry, invalid quantities/prices and oversells are rejected, and Sell all plus Positions filter recovery simplify the tracking loop.
