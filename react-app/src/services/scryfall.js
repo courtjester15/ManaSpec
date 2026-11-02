@@ -1,5 +1,6 @@
 import { getSingleFinish, getSingleScryfallId } from "../domain/assetIdentity.js";
 import { finishPolicy } from "../domain/finishPolicy.js";
+import { parsePrice } from "../domain/quotes.js";
 
 const API = "https://api.scryfall.com";
 
@@ -43,9 +44,7 @@ export function getCardPrice(card, foil = false) {
   if (foil === null) return null;
   const finish = typeof foil === "string" ? foil : foil ? "foil" : "nonfoil";
   const value = card.prices?.[{ nonfoil: "usd", foil: "usd_foil", etched: "usd_etched" }[finish]];
-  if (!["string", "number"].includes(typeof value) || String(value).trim() === "") return null;
-  const price = Number(value);
-  return Number.isFinite(price) && price >= 0 ? price : null;
+  return parsePrice(value);
 }
 
 export function toTrackedCard(card, options = {}) {

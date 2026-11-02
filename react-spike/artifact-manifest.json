@@ -38,25 +38,25 @@
       "bytes": 135095,
       "sha256": "17c84a5a021c19a52a71511ef4addb9af73a88303c347ad29efb2e520f1856d0"
     },
-    "assets/index-Cs2auUFh.js": {
-      "bytes": 613489,
-      "sha256": "b339389c824267acd666b2b521ad5dd54bb013a08914f6d2d10ac610e63fb9ed"
+    "assets/index-DsdPUF4i.js": {
+      "bytes": 616995,
+      "sha256": "e4065aca293f42be7c742fc4354b9adfa8530c2599ba4d98dd30b7a8731169da"
     },
-    "assets/index-Cs2auUFh.js.map": {
-      "bytes": 2722455,
-      "sha256": "d4c6e58437041c39e27bfaeac2f28b8abbe2e53a175ffff781432dd7535abe8a"
+    "assets/index-DsdPUF4i.js.map": {
+      "bytes": 2732608,
+      "sha256": "744a233f427fdba11683cbaab62b16e23c230c2653bbec429f81c1e004e69fe0"
     },
     "assets/manaspec-mark-C1H8lgsP.png": {
       "bytes": 222812,
       "sha256": "f64369da5823d28735c0c185d4553b2838a22387b91dfb992f32c212b3c31498"
     },
-    "assets/PriceHistory-CCt4QHgl.js": {
-      "bytes": 174536,
-      "sha256": "eefb5f6196e55aea19700a6f55cf779a3894ca4170a89d8dd162b07da365dd72"
+    "assets/PriceHistory-CNFiq9Ic.js": {
+      "bytes": 174514,
+      "sha256": "8980c2f171b5e0da9edd0b7198d66d29c53532b3eae2c6fb2db8e62701734edd"
     },
-    "assets/PriceHistory-CCt4QHgl.js.map": {
-      "bytes": 778281,
-      "sha256": "12751c462c2ede01ae4fdc3c4f6a426ae0a3dc15009b0828b2a7efd56d09abde"
+    "assets/PriceHistory-CNFiq9Ic.js.map": {
+      "bytes": 778224,
+      "sha256": "2460949958c18f01d6148048d17dc0495c8438f307ca079da794149b431cab1b"
     },
     "assets/sealed-catalog-dPJfWl6u.js": {
       "bytes": 1735786,
@@ -67,8 +67,8 @@
       "sha256": "8f12707d14c14fcd91e99aec833079066e950fa0ce9e7c9830213c52f9da7757"
     },
     "index.html": {
-      "bytes": 857,
-      "sha256": "b054f2ef3ee018aa040b888f98be4e9731bc638fe77b6f829d36c11b91920f86"
+      "bytes": 819,
+      "sha256": "72dc77d7e165f6d1f6bbd63d378427d4db38a2595f50082f63ca7eb3fdb87ab1"
     }
   }
 }

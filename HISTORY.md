@@ -6,6 +6,10 @@ It is intentionally different from `CHANGELOG.md`. The changelog records meaning
 
 Dates before the Git history are reconstructed from archived notes and release snapshots. Some early dates are estimated.
 
+## 2026-10-31 to 2026-11-01: product execution handoff and safe React preparation
+
+Jason approved Epic #26's beginner-to-pro speculation direction and gave Pete and Dex normal product execution ownership. Issue #27 starts by preserving the complete React PR stack and recoverable vanilla source, with finance/data parity, actual browser checks and rollback ahead of cutover. The first preparation slice exposed non-recoverable separate-key saves, sealed backup normalization drift and incomplete vanilla rollback semantics; it adds recovery and explicit gates without declaring promotion complete. Controlled native schema-v2 React recovery passes; direct-file browser policy and fresh owner-origin evidence remain concrete blockers. [The dated report](docs/audits/issue-27-react-promotion-2026-11-01.md) owns proof and remaining work; deployed vanilla remains unchanged.
+
 ## Project Origin
 
 ### Early May 2026, estimated: from spreadsheet replacement to speculation terminal

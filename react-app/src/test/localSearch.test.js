@@ -16,6 +16,19 @@ const position = {
   buyDate: "2026-01-01T12:00:00.000Z",
   currentPrice: 6,
 };
+
+test("legacy note History resolves missing display context by exact identity and preserves zero search quotes", () => {
+  const note = { id: "legacy-note", cardId: position.id, finish: "nonfoil", text: "Exact thesis", createdAt: "2026-01-01" };
+  const current = { specs: [{ ...position, currentPrice: 0 }], cardNotes: [note] };
+  const event = buildHistoryEvents(current)[0];
+  assert.equal(event.name, position.name);
+  assert.equal(event.set_code, "ONE");
+  assert.equal(event.collector_number, "1");
+  assert.equal(buildLocalSearchIndex(current).find(row => row.category === "Positions").context.includes("$0.00"), true);
+  assert.equal(note.cardName, undefined);
+  const unlinked = buildHistoryEvents({ specs: [position], cardNotes: [{ ...note, cardId: "different|foil", finish: "foil" }] })[0];
+  assert.equal(unlinked.name, "Unlinked note");
+});
 const watchedFoil = {
   ...position,
   id: "shared-printing|foil",

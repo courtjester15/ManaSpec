@@ -1,0 +1,57 @@
+name: React candidate gates
+
+on:
+  pull_request:
+    paths:
+      - "react-app/**"
+      - "react-spike/**"
+      - "tools/**"
+      - "test-fixtures/migrations/**"
+      - ".github/workflows/react-candidate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: react-app/package-lock.json
+      - run: npm ci
+        working-directory: react-app
+      - name: Verify committed review artifact before rebuilding
+        run: node tools/check-react-spike-artifact.mjs
+      - name: Source, formatting and functional tests
+        working-directory: react-app
+        run: |
+          npm run lint
+          npm run format:check
+          npm test
+      - name: Vanilla compatibility and rollback syntax
+        run: |
+          node tools/validate-storage-boundary.js
+          node tools/test-position-valuations.js
+          node tools/test-finish-correction.js
+          node --check tools/vanilla-rollback-guard.js
+      - name: Build all candidate delivery modes
+        working-directory: react-app
+        run: |
+          npm run build
+          npm run build:pages
+          npm run build:portable
+          npm run build:canonical
+      - name: Require current generated release artifacts
+        run: git diff --exit-code -- react-spike react-app/dist-portable
+      - name: Package canonical and same-origin React recovery artifacts
+        run: node tools/prepare-react-release.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: react-candidate-release
+          path: .tmp/react-release-*/ManaSpec/
+          include-hidden-files: true

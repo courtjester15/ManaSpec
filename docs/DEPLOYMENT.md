@@ -4,6 +4,24 @@ This document defines the implemented dual-delivery model for the current vanill
 
 GitHub Pages currently publishes the repository root from `main`. The vanilla application is served at `/ManaSpec/`, and the committed React review artifact is served at `/ManaSpec/react-spike/`.
 
+## Issue #27 promotion gate — 2026-11-01
+
+GitHub API inspection confirms legacy branch publication from `main` / `/`, commit `74d7a279b2e80cf86f71bab5412e3dd506a5db6b`. GitHub reports `main` unprotected; operational no-merge discipline still applies. No Pages setting or deployed root changed in this work. Epic #26 supplies conditional promotion authority after #27's proof/review gates. The [gate report](audits/issue-27-react-promotion-2026-11-01.md) is current evidence: promotion remains blocked by direct-file and fresh owner-origin proof.
+
+`npm run build:canonical` in `react-app/` generates ignored `dist-canonical/` with `/ManaSpec/` assets. It previews the intended root without overwriting vanilla. `node tools/prepare-react-release.mjs` packages only that output plus the portable build as a labeled `/ManaSpec/recovery/` React copy, `.nojekyll` and a file-hash/source-commit manifest under a fresh `.tmp/react-release-*/ManaSpec/` directory. It never deploys. Normal, review-Pages and portable delivery remain supported. CI verifies tests/all builds/generated freshness and retains this review artifact without deployment. Dirty working-tree packages identify themselves as such; a release must use the clean reviewed commit.
+
+The recovery copy is incident-only, comes from the same vetted source, and preserves schema-v2 singles/sealed state at the same origin. Controlled native-browser testing imported a synthetic seven-trade backup into a confirmed-empty loopback origin, reloaded, opened recovery, recorded a sealed buy/sell, reloaded and returned to canonical/review paths: nine trades and identical totals. This proves local native storage and recovery packaging, not the owner's live Pages profile or direct-file behavior. Keep the accepted release tag/artifact immutable as the future recovery point; do not leave an unguarded vanilla writer as a second live frontend.
+
+### Preserved vanilla and guarded recovery
+
+- Remote `codex/vanilla-maintenance` and annotated tag `vanilla-before-react-promotion-2026-10-31` preserve `17787b6eace5d02182126aa214279fa42289e251`, including exact-finish repairs and all PR #25 history. Vanilla runtime is root `index.html`, `css/`, `js/`, `assets/`; no npm build is needed. Its existing Pico CDN remains a network dependency.
+- Tag `vanilla-pages-2026-10-31` separately preserves the deployed `74d7a27` source. Never move these tags; use new maintenance commits for future fixes.
+- Run `node tools/prepare-vanilla-rollback.mjs`. It reads the preserved tag and writes `.tmp/vanilla-rollback/ManaSpec/` plus a SHA-256 manifest. Serve `.tmp/vanilla-rollback/` with Python and open `/ManaSpec/`. The generated guard checks storage before loading any application script, preserving original parser-blocking script order.
+- The artifact starts on compatible singles-only stores but blocks sealed holdings/watch/history/notes, corrupt arrays/cash and unfinished React saves. The blocked screen offers an allowlisted private raw recovery archive without writing keys. Synthetic browser startup and blocked-sealed rehearsals pass. A guarded refusal protects data; it does not provide full vanilla availability for sealed portfolios. Use the retained schema-v2 React recovery copy for that case.
+- Do not restore an old backup over newer activity, clear localStorage, or deploy the original unguarded archive over a post-cutover store. Fresh destination backup/origin checks, all acceptance gates and real-root smoke are still mandatory before promotion. This preparation performs no owner-profile writes.
+
+For copied backups, `node tools/verify-backup-compatibility.mjs PATH` checks no-write loading, exact record/unknown-field preservation, backup round trip and portfolio-summary equality without printing private records. An older copy cannot certify current owner-origin state.
+
 ## Deployment Goals
 
 - Keep the vanilla ManaSpec application available at the existing GitHub Pages project root.

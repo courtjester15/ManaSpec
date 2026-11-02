@@ -1,6 +1,7 @@
 import { formatMoney } from "./portfolio.js";
 import { assetContextLabel, assetTypeLabel, getAssetKey } from "./assetIdentity.js";
 import { getRelatedRecordPrintingKey, resolveTrackedAsset } from "./relatedRecords.js";
+import { parsePrice } from "./quotes.js";
 
 export const LOCAL_SEARCH_CATEGORIES = Object.freeze([
   "Positions",
@@ -73,6 +74,7 @@ function result({ category, id, primary, secondary, context, record, fields, des
 }
 
 export function buildHistoryEvents(state = {}) {
+  const tracked = [...array(state.specs), ...array(state.radar), ...array(state.sealedSpecs), ...array(state.sealedRadar)];
   return [
     ...[...array(state.transactions), ...array(state.sealedTransactions)].map(transaction => ({
       ...transaction,
@@ -95,7 +97,9 @@ export function buildHistoryEvents(state = {}) {
       ...note,
       id: `note-${note.id}`,
       kind: "note",
-      name: note.cardName,
+      name: note.cardName || note.name || resolveTrackedAsset(note, tracked)?.name || "Unlinked note",
+      set_code: note.set_code || resolveTrackedAsset(note, tracked)?.set_code,
+      collector_number: note.collector_number || resolveTrackedAsset(note, tracked)?.collector_number,
       date: note.updatedAt || note.createdAt,
       eventType: "NOTE",
       summary: note.text,
@@ -130,8 +134,8 @@ function trackedResults(category, rows) {
     primary: item.name,
     secondary: printingLabel(item),
     context: category === "Positions"
-      ? `${item.qty ?? "?"} owned · ${item.currentPrice ? formatMoney(item.currentPrice) : "Price unavailable"}`
-      : `${item.plannedQty || 1} planned · ${item.currentPrice ? formatMoney(item.currentPrice) : "Price unavailable"}`,
+      ? `${item.qty ?? "?"} owned · ${parsePrice(item.currentPrice) !== null ? formatMoney(item.currentPrice) : "Price unavailable"}`
+      : `${item.plannedQty || 1} planned · ${parsePrice(item.currentPrice) !== null ? formatMoney(item.currentPrice) : "Price unavailable"}`,
     record: item,
     fields: [assetTypeLabel(item), item.set_name, item.type_line, item.oracle_text, item.artist, item.productType, item.category, item.subtype, item.notes, item.holdTime],
     destination: navigation(pathname, { focus: item.id, detail: "1" }),

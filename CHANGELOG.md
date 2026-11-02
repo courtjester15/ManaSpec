@@ -6,6 +6,13 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ## Unreleased
 
+### Changed — 2026-11-01
+
+- Began owner-approved #27 React promotion preparation from the complete PR #25 stack; preserved vanilla maintenance/deployed baselines in a remote branch and annotated tags. Canonical root preview and guarded vanilla recovery can be built without changing production.
+- Added recoverable multi-key saves, stale-tab rejection, fail-closed corrupt-state loading and private raw recovery export. Sealed reload/backup no longer adds selector defaults or drops ledger fields.
+- Kept explicit zero prices visible in manual checks, local search, target distances and verified new history; blank observations cannot create zeros. Historical unverified zeros remain unchanged. Exact legacy notes regain History display context.
+- Added full candidate CI and traceable parity/data/rollback evidence. Direct-file and fresh owner-origin gates remain open; controlled native schema-v2 React recovery passes; no merge/deployment/promotion occurred.
+
 ### Changed — 2026-10-30
 
 - Standardized React module controls through shared search fields, filter toolbars, metric/panel anatomy, asset scopes and Dashboard/Signals attention rows. Reset clears route filters/scope/focus while retaining page size; discovery results stay bounded and dismissible.

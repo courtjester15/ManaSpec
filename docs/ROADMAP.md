@@ -8,6 +8,10 @@ It is not a collection tracker, inventory nostalgia tool, or prediction engine.
 
 ## Ownership
 
+The owner-approved [Epic #26](https://github.com/courtjester15/ManaSpec/issues/26) supersedes old blanket deferrals of mobile, offline, large intake and backend work. Pete and Dex own execution order and product details within ready Issues. Active order: **#27 safe React baseline → #28 true purchase/sale cost → #29 lots and transaction-authoritative ledger**, then the ready progressive-workflow/journal/intelligence issues. #31 phone and #32 safe offline can advance independently when valuable; #35 waits for owner account setup. These are separate work orders, not permission to implement the entire epic at once.
+
+**2026-11-01:** #27 safety preparation is implemented, not complete promotion. Vanilla branch/tags are preserved; PR #25 is retained in full. The [gate report](audits/issue-27-react-promotion-2026-11-01.md) records direct-file, fresh origin and schema-v2 rollback limits. Hold merges/deployment; #28 becomes active after the baseline gate is established. Historical sequencing below remains reference only.
+
 This is **directional sequencing**, not an executable work-order list. The active queue and approved GitHub Issues own current action; the older phases/checklists below provide context but are not standing instructions to build every unchecked item. Completed milestone detail lives in `REACT_SPIKE_PROGRESS.md`, PRs, and Git history.
 
 Use [PARKING_LOT.md](PARKING_LOT.md) for promising ideas that still need validation, workflow testing, prioritization, or a product decision.

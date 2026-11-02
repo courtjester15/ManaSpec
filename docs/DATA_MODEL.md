@@ -6,6 +6,10 @@ It is a conceptual model, not a storage schema. Current localStorage keys are me
 
 ## Model Principles
 
+React promotion preparation adds a raw undo journal (`manaspec_pending_commit_v1`) around compatible multi-key saves. Journal allocation must succeed before application-key writes; failed/interrupted saves restore original raw values before loading, or block recovery without discarding the journal. Corrupt arrays/cash no longer silently become empty state/default cash. A raw recovery export is available from the startup error screen and is deliberately distinct from Admin backup/import. Existing separate keys and schema-v2 backups remain; Transactions is still not authoritative. This is crash recovery and stale-tab detection, not a claim of cross-tab serializability or an IndexedDB migration. Close competing writers before a future cutover.
+
+Loaded sealed defaults/identity validation remain selector metadata: no-op saves and backups preserve the original sealed record fields, unknown fields and ledger IDs. Explicit new verified zero observations can enter Price History; old unverified stored zeros remain unchanged and are not promoted to verified history.
+
 ManaSpec tracks speculation workflow, not general collection inventory.
 
 Data model rules:

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { parsePrice, priceDistance } from "../domain/quotes.js";
 import { calculatePriceHistoryMetrics, choosePriceHistoryRange, filterPriceHistoryRange, getPriceHistoryCoverage, getPriceHistoryRangeState, normalizePriceHistory } from "../domain/priceHistory.js";
 
 const sparseHistory = [
@@ -7,6 +8,30 @@ const sparseHistory = [
   { date: "2026-01-15", price: 12, source: "scryfall", savedAt: "2026-01-15T12:00:00Z" },
   { date: "2026-03-20", price: 9, source: "scryfall", savedAt: "2026-03-20T12:00:00Z" },
 ];
+
+test("price parsing separates explicit zero from absent, malformed and negative observations", () => {
+  for (const input of [null, undefined, "", "  ", false, [], {}, "bad", -1, Infinity]) assert.equal(parsePrice(input), null);
+  assert.equal(parsePrice("0"), 0);
+  assert.equal(parsePrice(0), 0);
+  assert.equal(parsePrice("12.50"), 12.5);
+  assert.equal(priceDistance(0, 10), -100);
+  assert.equal(priceDistance(null, 10), null);
+  assert.equal(priceDistance(10, 0), null);
+});
+
+test("verified zero history remains visible without promoting legacy zeros or dividing by zero", () => {
+  const input = [
+    { date: "2026-01-01", price: 0 },
+    { date: "2026-01-02", price: 0, verified: true, source: "scryfall" },
+    { date: "2026-01-03", price: 2, verified: true, source: "scryfall" },
+  ];
+  assert.deepEqual(normalizePriceHistory(input).map(row => row.price), [0, 2]);
+  const metrics = calculatePriceHistoryMetrics(input);
+  assert.equal(metrics.changeAmount, 2);
+  assert.equal(metrics.changePercent, null);
+  assert.equal(metrics.low, 0);
+  assert.equal(input[0].verified, undefined);
+});
 
 test("price history keeps only valid recorded daily observations without interpolation", () => {
   const rows = normalizePriceHistory([

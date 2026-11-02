@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Chart, Filler, Legend, LineController, LineElement, LinearScale, PointElement, Tooltip } from "chart.js";
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, Filler, Legend, Tooltip);
+import { parsePrice } from "../../domain/quotes.js";
 import { formatMoney } from "../../domain/portfolio.js";
 import { calculatePriceHistoryMetrics, choosePriceHistoryRange, filterPriceHistoryRange, getPriceHistoryCoverage, getPriceHistoryRangeState, normalizePriceHistory } from "../../domain/priceHistory.js";
 
@@ -11,7 +12,7 @@ function positiveNumber(value) {
 }
 
 function moneyOrDash(value) {
-  return positiveNumber(value) === null ? "-" : formatMoney(value);
+  return parsePrice(value) === null ? "-" : formatMoney(value);
 }
 
 function formatDate(value) {
@@ -49,7 +50,7 @@ function PriceHistoryChart({ points, references, label }) {
         x: observation.timestamp,
         y: observation.price,
         date: observation.date,
-        previousChange: index ? ((observation.price - points[index - 1].price) / points[index - 1].price) * 100 : null,
+        previousChange: index && points[index - 1].price > 0 ? ((observation.price - points[index - 1].price) / points[index - 1].price) * 100 : null,
       })),
       borderColor: "#a78bfa",
       backgroundColor: "rgba(167, 139, 250, 0.13)",
@@ -128,7 +129,7 @@ export function PriceHistory({ rows = [], item, references = [] }) {
   const validReferences = useMemo(() => references
     .map(reference => ({ ...reference, value: positiveNumber(reference.value) }))
     .filter(reference => reference.value !== null), [references]);
-  const currentPrice = positiveNumber(item?.currentPrice);
+  const currentPrice = parsePrice(item?.currentPrice);
   const observedSpan = coverage.observationCount
     ? `${formatDate(coverage.oldest)}–${formatDate(coverage.newest)}`
     : "No recorded range";

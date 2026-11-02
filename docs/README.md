@@ -1,5 +1,7 @@
 # ManaSpec Docs
 
+Current product authority is [Epic #26](https://github.com/courtjester15/ManaSpec/issues/26); [Issue #27](https://github.com/courtjester15/ManaSpec/issues/27) is first in the execution queue. Pete and Dex own normal product/UX/engineering decisions. The [promotion report](audits/issue-27-react-promotion-2026-11-01.md) distinguishes actual proof from remaining cutover blockers. React is the selected forward direction; vanilla remains deployed until those gates pass.
+
 This folder holds ManaSpec's canonical product and technical truth. **For work:** start with [AGENTS.md](../AGENTS.md), then [WORKFLOW.md](WORKFLOW.md) and the approved Issue; read only the relevant owning docs. The roadmap is directional, not a blanket assignment.
 
 The `dev notes/` folder contains raw daily notes and historical planning memory. Use `dev notes/inbox/` for current brainstorming and beta observations, and `dev notes/archive/` for older reference notes. Do not treat dev notes as active instructions.
