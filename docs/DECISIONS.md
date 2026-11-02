@@ -6,6 +6,10 @@ Add decisions here only when they affect product direction, architecture, data m
 
 ## Product
 
+### 2026-10-31 — Engineering-led beginner-to-pro execution
+
+The owner approved [Epic #26](https://github.com/courtjester15/ManaSpec/issues/26): one truthful speculation model for first small specs and experienced finance workflows, progressive disclosure, intentional phone interactions, useful offline snapshots without queued trades, optional inventory intake as an on-ramp, and later hosted private data/auth. Pete and Dex own normal execution and prioritization. React is the chosen forward application after #27's objective parity, data, portable and rollback gates; this is conditional authority, not immediate cutover or a declaration that planned capabilities exist. Existing owner data, credentials, spending and unsafe exposure remain protected boundaries.
+
 ### ManaSpec is a trading terminal
 
 ManaSpec is focused on MTG speculation workflow, not collection management.

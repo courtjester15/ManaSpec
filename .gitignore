@@ -18,6 +18,7 @@ temp/
 # Dependency and build output
 node_modules/
 dist/
+dist-canonical/
 build/
 coverage/
 /lib/

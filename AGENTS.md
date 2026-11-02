@@ -2,6 +2,8 @@
 
 This is the short entry point for Dex and other contributors. `docs/WORKFLOW.md` owns the full contributor lifecycle; the assigned GitHub Issue owns executable scope.
 
+**Product execution authority (owner-approved 2026-10-31):** [Epic #26](https://github.com/courtjester15/ManaSpec/issues/26) owns the new beginner-to-pro speculation direction. Pete and Dex own ready-Issue ordering, normal product/UX and architecture decisions, implementation, self-QA and queue hygiene. [Issue #27](https://github.com/courtjester15/ManaSpec/issues/27) is first; React promotion is conditional on proven parity, data safety, portable behavior and rollback. Current gates remain open; do not merge, deploy or claim React canonical while they are unproven. Account setup, spending, unsafe exposure and irreversible owner-data changes still require owner involvement.
+
 - **Read in order:** this file → `docs/WORKFLOW.md` → the approved Issue/work order → only directly relevant canonical docs and source/tests. Do not recursively consume archives, old audits, `dev notes/`, or the entire roadmap by default.
 - **Implementation authority:** the vanilla root is still the production/beta and behavioral reference. The React app in `react-app/` is an advanced candidate on the integration/PR #18 path, **not an automatically approved production replacement**. Confirm the current branch, Issue, and PR state before choosing a target.
 - **Data invariants:** local-first user state and backup compatibility; exact single printing + finish or exact sealed-product identity; Radar plans, Positions manages ownership, Transactions currently records events but is not yet the universal ownership source of truth. Missing/invalid/stale price is **not** a verified $0 market price. Never fabricate valuations or investment recommendations.
@@ -27,7 +29,7 @@ This is the short entry point for Dex and other contributors. `docs/WORKFLOW.md`
 
 ## Git, documentation, and review boundary
 
-- Work on the correct approved branch/worktree; commit and push an **approved PR-bound** change and open/update a reviewable PR. Keep `main` protected: **only Jason authorizes merge, deployment cutover, or canonical frontend promotion**. Do not merge just because checks pass.
+- Work on the correct approved branch/worktree; commit and push an **approved PR-bound** change and open/update a reviewable PR. Protect `main` operationally. Owner-approved #26/#27 provide a conditional promotion mandate, not permission to bypass their proof/review gates. Other merges/deployments require the applicable owner authorization; passing CI alone is insufficient.
 - Never push an unapproved exploratory local task solely because a branch exists. For an approved `OPEN PR` work order, branch push and PR creation are authorized; merge is not.
 - Docs own durable truth; Issues own current work/feedback; PRs and Git own delivered evidence/history. Audit findings belong in a reviewable Markdown artifact/PR, not only in chat. Historical plans/audits are not active instructions.
 - Reconcile affected `docs/README.md`, `docs/ROADMAP.md`, `docs/DECISIONS.md`, or other owning documents **in the same PR** when implementation changes their truth. Do not update every doc for routine fixes. Milestones warrant a dated progress/HISTORY check.

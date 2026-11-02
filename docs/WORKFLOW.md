@@ -4,10 +4,12 @@ The canonical contributor process. `../AGENTS.md` is the concise agent entry poi
 
 ## Roles and authority
 
-- **Jason:** product/workflow owner, material scope and final acceptance, sole merge/deployment/React-promotion authority.
+- **Jason:** owner, material scope/final acceptance, irreversible data changes, external accounts, credentials and spending.
 - **Pete:** architecture and Issue review, prioritization, PR review, workflow/documentation reconciliation.
 - **Dex:** bounded investigation/implementation, independent QA and routine corrections, tests, documentation closure, branches/PRs within the approved work order.
 - Dex resolves reversible engineering/UI decisions independently. Escalate ambiguous domain semantics, data loss, incompatible migrations, unapproved scope, deployment/canonical promotion.
+
+The owner's 2026-10-31 handoff and [Epic #26](https://github.com/courtjester15/ManaSpec/issues/26) give Pete and Dex product execution ownership: ready-Issue order, routine feature details, architecture, UX and first-pass acceptance. #27 grants conditional React promotion authority after objective parity/data-safety/portable/rollback gates and review. That specific mandate supersedes older requirements to re-ask routine product questions or obtain a second generic promotion decision. Gates remain unproven; no merge or deployment is authorized yet. See the [current gate report](audits/issue-27-react-promotion-2026-11-01.md). Do not ask Jason to perform routine UI QA.
 
 ## Source-of-truth order
 
@@ -56,7 +58,7 @@ For affected financial/data logic also test exact singles printing + finish and 
 - PR: concise changed behavior, root cause when relevant, actual validation/results, risks and remaining owner decisions. Material audit findings belong in a reviewable repository Markdown artifact/PR, not chat only.
 - Update only materially changed owning docs in the same PR, and reconcile a finished slice named 'next/open' in the relevant roadmap/tracker. Do not mirror full Issue acceptance/history into README/Roadmap/Decisions.
 - A milestone calls for a **change-scoped** contradiction check and a decision whether HISTORY needs an entry; routine fixes should not churn documentation.
-- Review-ready does not authorize merge. Jason must explicitly authorize merges, public deployment cutovers, and canonical React promotion. Single main agent by default; at most two bounded non-overlapping subagents without explicit approval, never nested.
+- Review-ready does not itself authorize merge. Apply the owner's specific work-order authority and conditional promotion gates above; do not merge or cut over while a gate is unproven. Single main agent by default; at most two bounded non-overlapping subagents without explicit approval, never nested.
 
 ## Pasted Notes Workflow
 
@@ -285,7 +287,7 @@ Before reporting completion, verify what applies and explicitly identify any exc
 - Relevant browser, console, keyboard/table/viewport/sibling checks completed for changed UI—or specific untested surfaces called out.
 - Existing shared implementation reused; no unrelated cleanup or new incompatible data model slipped in.
 - Owning canonical docs/tracker reconciled only where project truth changed; meaningful milestones checked for HISTORY relevance.
-- Approved branch committed/pushed and reviewable PR updated when requested. **No merge or deployment without Jason.**
+- Approved branch committed/pushed and reviewable PR updated when requested. **No merge or deployment beyond the owner's applicable authorization or before its gates pass.**
 - PR/handoff contains actual evidence, limits, outstanding decisions and exact preview instructions only when needed; no material finding exists only in chat.
 
 ## Table Contract Verification

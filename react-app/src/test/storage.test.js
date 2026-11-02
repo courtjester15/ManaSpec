@@ -66,7 +66,7 @@ test("sealed state loads, saves, and round-trips through schema version two back
   const backup = adapter.createBackup(state);
   assert.equal(backup.dataSchemaVersion, 2);
   assert.equal(backup.counts.sealedPositions, 1);
-  assert.deepEqual(backup.data.sealedSpecs[0], state.sealedSpecs[0]);
+  assert.deepEqual(backup.data.sealedSpecs[0], sealed);
 
   const restoredStorage = memoryStorage();
   const restoredAdapter = createStorageAdapter(restoredStorage);
@@ -74,6 +74,22 @@ test("sealed state loads, saves, and round-trips through schema version two back
   assert.equal(restored.sealedSpecs[0].assetKey, sealed.assetKey);
   assert.equal(restored.sealedTransactions[0].id, "sealed-buy-1");
   assert.equal(JSON.parse(restoredStorage.getItem("sealedSpecs"))[0].name, sealed.name);
+});
+
+test("sealed reload and actual edits retain raw records and avoid adding selector defaults to history", () => {
+  const record = { id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3", assetType: "sealed", mtgjson_uuid: "d575bd23-ebd6-586e-af7b-04924db4f1c3", name: "Synthetic sealed", qty: 2, buyPrice: 20, currentPrice: null, futureField: { keep: true } };
+  const transaction = { ...record, id: "sealed-buy", cardId: record.id, type: "BUY", quantity: 2, price: 20 };
+  delete transaction.currentPrice;
+  const storage = memoryStorage({ sealedSpecs: JSON.stringify([record]), sealedTransactions: JSON.stringify([transaction]) });
+  const before = storage.snapshot();
+  const adapter = createStorageAdapter(storage);
+  const state = adapter.loadState();
+  assert.equal(state.sealedSpecs[0].identityValid, true);
+  adapter.saveSlices({ sealedSpecs: state.sealedSpecs, sealedTransactions: state.sealedTransactions });
+  assert.deepEqual(storage.snapshot(), before);
+  assert.deepEqual(adapter.createBackup(state).data.sealedTransactions, [transaction]);
+  adapter.saveSlice("sealedSpecs", [{ ...state.sealedSpecs[0], qty: 3, exitTarget: 50 }]);
+  assert.deepEqual(JSON.parse(storage.getItem("sealedSpecs")), [{ ...record, qty: 3, exitTarget: 50 }]);
 });
 
 test("adapter loads current backup records with normalized printing identity", async () => {

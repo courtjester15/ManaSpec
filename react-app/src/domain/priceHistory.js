@@ -1,4 +1,5 @@
 const DAY_MS = 86_400_000;
+import { parsePrice } from "./quotes.js";
 
 export const PRICE_HISTORY_RANGES = Object.freeze([
   { key: "1w", label: "1W", days: 7 },
@@ -7,11 +8,6 @@ export const PRICE_HISTORY_RANGES = Object.freeze([
   { key: "1y", label: "1Y", days: 365 },
   { key: "all", label: "All", days: null },
 ]);
-
-function positiveNumber(value) {
-  const number = Number(value);
-  return Number.isFinite(number) && number > 0 ? number : null;
-}
 
 export function getPriceHistoryTimestamp(value) {
   const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -29,8 +25,10 @@ export function normalizePriceHistory(rows = []) {
   const observations = new Map();
   rows.forEach((row, index) => {
     const timestamp = getPriceHistoryTimestamp(row?.date);
-    const price = positiveNumber(row?.price);
-    if (timestamp === null || price === null) return;
+    const price = parsePrice(row?.price);
+    // Legacy zeros have uncertain provenance. Only newly verified provider
+    // observations can establish zero history; never relabel stored zeros.
+    if (timestamp === null || price === null || (price === 0 && row.verified !== true)) return;
     const date = new Date(timestamp).toISOString().slice(0, 10);
     const observation = { ...row, date, price, timestamp, source: row.source || "scryfall", sourceIndex: index };
     const current = observations.get(date);
@@ -100,7 +98,7 @@ export function calculatePriceHistoryMetrics(rows = []) {
     latest,
     prior,
     changeAmount: prior ? latest.price - prior.price : null,
-    changePercent: prior ? ((latest.price - prior.price) / prior.price) * 100 : null,
+    changePercent: prior?.price > 0 ? ((latest.price - prior.price) / prior.price) * 100 : null,
     high: Math.max(...prices),
     low: Math.min(...prices),
     oldest: history[0].date,

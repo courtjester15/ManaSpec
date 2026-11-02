@@ -11,9 +11,8 @@ export function AppStateProvider({ children, adapter: adapterInput }) {
 
   const commitState = useCallback(next => {
     const previous = stateRef.current;
-    Object.keys(next).forEach(key => {
-      if (next[key] !== previous[key]) adapter.saveSlice(key, next[key]);
-    });
+    adapter.saveSlices(Object.fromEntries(Object.keys(next)
+      .filter(key => next[key] !== previous[key]).map(key => [key, next[key]])));
     stateRef.current = next;
     setState(next);
   }, [adapter]);

@@ -56,9 +56,11 @@ Observed friction beats imagined requirements. Prefer solving problems found thr
 
 ManaSpec is a working terminal. The interface should favor fast scanning, compact context, and decision support over visual spectacle. Whitespace is useful when it improves understanding, not when it hides work.
 
-## Laptop-First
+## Beginner To Pro, Desktop And Phone
 
-The primary experience should work well around a normal laptop viewport. Larger screens can provide breathing room, but they should not require different workflows to make the product feel complete.
+The same truthful model should support a first $10 spec and premium singles, lots, expenses and planned exits. Use clear defaults and progressive disclosure rather than separate beginner/expert apps. Desktop 1920×1080 is primary; 1366×768 remains supported. Phone workflows should intentionally prioritize checking, search, Signals, compact holdings and notes rather than shrinking the desktop table. These are the approved direction in Epic #26, not a claim that every future capability is implemented.
+
+Offline snapshots should remain useful with honest stale-price labels. The initial offline design must not execute or queue financial BUY/SELL actions. Large inventory intake may be an on-ramp to speculation; it must not fabricate cash expenditure or investment returns. Cloud/auth and new market intelligence follow explicit Issues and do not block useful local-first work.
 
 ## Small, Reversible Improvements
 

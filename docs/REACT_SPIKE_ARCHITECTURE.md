@@ -6,6 +6,8 @@ For current behavior and ownership, use [README](README.md), [ARCHITECTURE](ARCH
 
 ## Status And Boundaries
 
+The owner-approved forward direction is now Epic #26. Issue #27 prepares conditional canonical promotion while vanilla remains deployed. React commits use a raw write-ahead undo journal over existing compatible keys; sealed selector defaults remain out of unchanged backups. Corrupt startup state fails closed and offers a private raw recovery download. This adds recovery, not transaction authority or cross-tab serializability. See [Deployment](DEPLOYMENT.md) and the [current gate report](audits/issue-27-react-promotion-2026-11-01.md); older spike descriptions below do not override those gates.
+
 - The vanilla app at the repository root remains the production/beta source of truth.
 - React is implemented on a dedicated spike branch and in the isolated `react-app/` workspace.
 - The spike is in active implementation/stabilization mode and is the likely forward frontend path, subject to an explicit promotion decision.
