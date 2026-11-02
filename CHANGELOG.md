@@ -8,6 +8,8 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ### Changed — 2026-11-01
 
+- Completed the remaining desktop visual/discovery QA independently; selecting a discovery result now dismisses its dropdown so saved-row actions remain reachable. Normalized build-source line endings for Windows/Linux artifact consistency.
+
 - Began owner-approved #27 React promotion preparation from the complete PR #25 stack; preserved vanilla maintenance/deployed baselines in a remote branch and annotated tags. Canonical root preview and guarded vanilla recovery can be built without changing production.
 - Added recoverable multi-key saves, stale-tab rejection, fail-closed corrupt-state loading and private raw recovery export. Sealed reload/backup no longer adds selector defaults or drops ledger fields.
 - Kept explicit zero prices visible in manual checks, local search, target distances and verified new history; blank observations cannot create zeros. Historical unverified zeros remain unchanged. Exact legacy notes regain History display context.

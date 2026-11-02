@@ -78,9 +78,14 @@ function validateEntryPoint(manifest) {
     if (!manifest.files[path]) fail(`index.html references an untracked artifact file: ${path}`);
   }
 
-  for (const path of localReferences.filter((path) => path.endsWith(".js"))) {
-    const result = spawnSync(process.execPath, ["--check", join(artifactRoot, path)], {
+  for (const path of Object.keys(manifest.files).filter((path) => path.endsWith(".js"))) {
+    // Vite's Pages output is ESM. Explicit stdin/module mode avoids implicit
+    // filesystem module detection and keeps a stuck child from hanging CI.
+    const result = spawnSync(process.execPath, ["--input-type=module", "--check"], {
+      input: readFileSync(join(artifactRoot, path), "utf8"),
       encoding: "utf8",
+      timeout: 30_000,
+      killSignal: "SIGKILL",
     });
     if (result.error) fail(`could not validate ${path}: ${result.error.message}`);
     if (result.status !== 0) fail(`${path} is not valid JavaScript\n${result.stderr?.trim() ?? ""}`);
