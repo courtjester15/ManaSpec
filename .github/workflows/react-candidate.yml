@@ -40,13 +40,28 @@ jobs:
           node tools/test-position-valuations.js
           node tools/test-finish-correction.js
           node --check tools/vanilla-rollback-guard.js
-      - name: Build all candidate delivery modes
+      - name: Build normal candidate
+        timeout-minutes: 2
         working-directory: react-app
+        run: npm run build
+      - name: Build Pages candidate
+        timeout-minutes: 2
+        working-directory: react-app
+        run: npm run build -- --mode pages
+      - name: Assemble and verify Pages artifact
+        timeout-minutes: 2
         run: |
-          npm run build
-          npm run build:pages
-          npm run build:portable
-          npm run build:canonical
+          node react-app/tools/sync-pages.mjs
+          node tools/check-react-spike-artifact.mjs --write
+          node tools/check-react-spike-artifact.mjs
+      - name: Build portable candidate
+        timeout-minutes: 2
+        working-directory: react-app
+        run: npm run build:portable
+      - name: Build canonical candidate
+        timeout-minutes: 2
+        working-directory: react-app
+        run: npm run build:canonical
       - name: Require current generated release artifacts
         run: git diff --exit-code -- react-spike react-app/dist-portable
       - name: Package canonical and same-origin React recovery artifacts

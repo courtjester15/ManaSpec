@@ -79,6 +79,7 @@ function validateEntryPoint(manifest) {
   }
 
   for (const path of Object.keys(manifest.files).filter((path) => path.endsWith(".js"))) {
+    console.log(`Checking JavaScript syntax: ${path}`);
     // Vite's Pages output is ESM. Explicit stdin/module mode avoids implicit
     // filesystem module detection and keeps a stuck child from hanging CI.
     const result = spawnSync(process.execPath, ["--input-type=module", "--check"], {
