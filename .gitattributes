@@ -1,0 +1,5 @@
+# The Windows authoring checkout and Linux CI must feed identical source bytes
+# into Vite, including sourcesContent in generated source maps.
+react-app/index.html text eol=lf
+react-app/src/** text=auto eol=lf
+js/core/finish-policy.js text eol=lf

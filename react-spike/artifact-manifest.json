@@ -38,37 +38,37 @@
       "bytes": 135095,
       "sha256": "17c84a5a021c19a52a71511ef4addb9af73a88303c347ad29efb2e520f1856d0"
     },
-    "assets/index-DsdPUF4i.js": {
-      "bytes": 616995,
-      "sha256": "e4065aca293f42be7c742fc4354b9adfa8530c2599ba4d98dd30b7a8731169da"
+    "assets/index-CwZRkWof.js": {
+      "bytes": 617083,
+      "sha256": "c17f8c9c3bc8fd7c17d1437c05706b4a1d3a974423490490eb66ee6b403cd8a9"
     },
-    "assets/index-DsdPUF4i.js.map": {
-      "bytes": 2732608,
-      "sha256": "744a233f427fdba11683cbaab62b16e23c230c2653bbec429f81c1e004e69fe0"
+    "assets/index-CwZRkWof.js.map": {
+      "bytes": 2725697,
+      "sha256": "c21868fe031b9867fd80efb7ad55b4cbc98252b4833cf6fc3d06a88efd4e4626"
     },
     "assets/manaspec-mark-C1H8lgsP.png": {
       "bytes": 222812,
       "sha256": "f64369da5823d28735c0c185d4553b2838a22387b91dfb992f32c212b3c31498"
     },
-    "assets/PriceHistory-CNFiq9Ic.js": {
+    "assets/PriceHistory-BQYIIA3Y.js": {
       "bytes": 174514,
-      "sha256": "8980c2f171b5e0da9edd0b7198d66d29c53532b3eae2c6fb2db8e62701734edd"
+      "sha256": "498d0d20a03dc3d3767a9dd8d509b4751ff442823540b5640f862b9a1b46fd27"
     },
-    "assets/PriceHistory-CNFiq9Ic.js.map": {
-      "bytes": 778224,
-      "sha256": "2460949958c18f01d6148048d17dc0495c8438f307ca079da794149b431cab1b"
+    "assets/PriceHistory-BQYIIA3Y.js.map": {
+      "bytes": 777892,
+      "sha256": "2c3279dd622b906e91e46bb73509e8190c15121fc07e405adc6a3407fcf2e48f"
     },
     "assets/sealed-catalog-dPJfWl6u.js": {
       "bytes": 1735786,
       "sha256": "6f35e966166daedcdd152feeca0085be1008eacce37d681be46d14f1ab214b19"
     },
     "assets/sealed-catalog-dPJfWl6u.js.map": {
-      "bytes": 2039993,
-      "sha256": "8f12707d14c14fcd91e99aec833079066e950fa0ce9e7c9830213c52f9da7757"
+      "bytes": 2039991,
+      "sha256": "0d8b2099217ad2a6825e4ea59d728a15f884a4d180e919f6bbab0ec8ad6e7ba6"
     },
     "index.html": {
-      "bytes": 819,
-      "sha256": "72dc77d7e165f6d1f6bbd63d378427d4db38a2595f50082f63ca7eb3fdb87ab1"
+      "bytes": 818,
+      "sha256": "1d14f4dcf4788be4f44b00df67ff6e1a097824405f02f59239cfdebbff4dc8e6"
     }
   }
 }
