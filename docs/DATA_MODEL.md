@@ -589,3 +589,13 @@ Future reconciliation events use explicit, append-only semantics:
 Every reconciliation event requires a reason, occurrence time, and provenance. Corrections are reversed by another event, never by deleting history. These event types are contracts only in Batch 3; the current BUY/SELL projector does not execute them yet.
 
 Current Position deletion is blocked when Transactions still project an open holding. A real exit must use Sell. A future approved reconciliation workflow will handle inventory corrections. Radar Remove remains independent because Radar is watched state, not ownership.
+
+## True-cost trade events in the React candidate
+
+Issue #28 writes version 1 of the additive transaction `trade` payload inside the existing schema-v2 backup. It preserves the trade ID, exact printing and finish or sealed UUID, actual unit price, quantity, occurred date, recording timestamp, cash balance, and legacy realized P/L fields. The payload records gross, cash movement, allocated sale basis and itemized charges in integer USD cents. Blank charges remain null and contribute nothing to the calculation. Source, order reference, and notes preserve provenance. For an invoice covering multiple assets, enter each line's allocated share of the actual charges and reuse the order reference.
+
+Buys add the all-in cost to open weighted basis. Sells allocate the proportional basis rounded half up to cents and leave the residual with the remaining holding. The final exit consumes the remaining basis. Positions and cash are committed with the receipt using the existing recovery journal. Legacy positions start from their saved average basis, rounded to cents when trading; legacy receipt provenance stays unknown. The UI presents marked prices separately from actual cash received.
+
+A reasoned reversal offsets cash and restores the preceding holding, with a new immutable event linked to the original ID. It is available for the latest active true-cost trade on that exact asset while the holding's financial state still matches. Reversed activity remains in History and Transactions. It is excluded from active totals and the reconciliation projection. The occurred date is informational for historical entry. The transitional projection uses recording order for new trades.
+
+Issue #29 can consume the same event amounts and allocation helper for acquisition lots, opening balances and transaction-authoritative holdings. It owns migration and reconciliation of incomplete legacy history. The guarded vanilla rollback pauses on true-cost data because vanilla cannot interpret the itemized cash flows or reversal events.

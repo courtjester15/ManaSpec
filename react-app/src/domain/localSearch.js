@@ -2,6 +2,7 @@ import { formatMoney } from "./portfolio.js";
 import { assetContextLabel, assetTypeLabel, getAssetKey } from "./assetIdentity.js";
 import { getRelatedRecordPrintingKey, resolveTrackedAsset } from "./relatedRecords.js";
 import { parsePrice } from "./quotes.js";
+import { transactionCashAmount } from "./tradeEconomics.js";
 
 export const LOCAL_SEARCH_CATEGORIES = Object.freeze([
   "Positions",
@@ -80,7 +81,9 @@ export function buildHistoryEvents(state = {}) {
       ...transaction,
       kind: "transaction",
       eventType: clean(transaction.type).toUpperCase() || "TRADE",
-      summary: `${clean(transaction.type).toUpperCase() === "BUY" ? "Bought" : "Sold"} ${transaction.quantity ?? "?"} at ${formatMoney(transaction.price)}${Number.isFinite(Number(transaction.balanceAfter)) ? ` / Balance ${formatMoney(transaction.balanceAfter)}` : ""}`,
+      summary: transaction.type === "REVERSAL"
+        ? `Reversed trade · ${formatMoney(transactionCashAmount(transaction))} cash adjustment · ${transaction.notes}`
+        : `${clean(transaction.type).toUpperCase() === "BUY" ? "Bought" : "Sold"} ${transaction.quantity ?? "?"}${transaction.trade ? ` · ${formatMoney(transactionCashAmount(transaction))} ${transaction.type === "BUY" ? "all-in" : "net"}` : ` at ${formatMoney(transaction.price)}`}${transaction.trade?.source ? ` · ${transaction.trade.source}` : ""}`,
     })),
     ...[...array(state.radar), ...array(state.sealedRadar)]
       .filter(item => item.addedDate || item.createdAt)

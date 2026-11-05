@@ -26,7 +26,7 @@ test("a quota failure at each trade write restores every prior raw value", () =>
     const storage = store(initial);
     const adapter = createStorageAdapter(storage);
     const state = adapter.loadState();
-    const next = buyFromRadar(state, state.radar[0], 2, 5);
+    const next = buyFromRadar(state, state.radar[0], 2, 5, { source: "LGS", taxPaid: 1 });
     let failed = false;
     storage.fail(key => key === failedKey && !failed && (failed = true));
     assert.throws(() => adapter.saveSlices({ specs: next.specs, cash: next.cash, transactions: next.transactions }));
@@ -92,7 +92,7 @@ test("successful buys, add-on buys and partial/full sales survive reload and bac
   let state = adapter.loadState();
   for (const operation of [
     current => buyFromRadar(current, watched, 2, 5),
-    current => buyFromRadar(current, watched, 1, 8),
+    current => buyFromRadar(current, watched, 1, 7, { taxPaid: 1, source: "LGS", reference: "Synthetic-28" }),
     current => sellPosition(current, current.specs[0], 1, 10),
     current => sellPosition(current, current.specs[0], 2, 10),
   ]) {
@@ -102,6 +102,8 @@ test("successful buys, add-on buys and partial/full sales survive reload and bac
     assert.equal(storage.getItem(COMMIT_KEY), null);
   }
   assert.equal(state.cash, 112);
+  assert.equal(state.transactions[2].trade.charges.taxPaid, 100);
+  assert.equal(state.transactions[2].trade.reference, "Synthetic-28");
   assert.equal(state.specs.length, 0);
   assert.equal(state.transactions.length, 4);
   assert.equal(state.transactions.filter(row => row.type === "SELL").reduce((sum, row) => sum + row.realizedPL, 0), 12);

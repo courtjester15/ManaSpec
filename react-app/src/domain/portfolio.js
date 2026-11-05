@@ -1,4 +1,5 @@
 import { getAssetKey, getAssetType, getSingleFinish } from "./assetIdentity.js";
+import { activeTransactions, positionBasisCents } from "./tradeEconomics.js";
 
 // Read-only review signal: old zero quotes have ambiguous provenance.
 export function getZeroValuationWarning(record = {}) {
@@ -42,7 +43,7 @@ function isCanonicalPositionRow(value) {
 export function buildPositionRow(spec, options = {}) {
   const sourceRecord = spec && typeof spec === "object" ? spec : {};
   const quantity = positiveOrNull(sourceRecord.qty);
-  const averageBuyPrice = positiveOrNull(sourceRecord.buyPrice);
+  const averageBuyPrice = positionBasisCents(sourceRecord) === 0 ? 0 : positiveOrNull(sourceRecord.buyPrice);
   const acquiredAt = validDateOrNull(sourceRecord.buyDate);
   const currentPrice = finiteOrNull(sourceRecord.currentPrice);
   const trackedPrintingKey = typeof sourceRecord.trackedPrintingKey === "string"
@@ -101,7 +102,7 @@ export function buildPositionRow(spec, options = {}) {
 export function buildSealedPositionRow(spec, options = {}) {
   const sourceRecord = spec && typeof spec === "object" ? spec : {};
   const quantity = positiveOrNull(sourceRecord.qty);
-  const averageBuyPrice = positiveOrNull(sourceRecord.buyPrice);
+  const averageBuyPrice = positionBasisCents(sourceRecord) === 0 ? 0 : positiveOrNull(sourceRecord.buyPrice);
   const acquiredAt = validDateOrNull(sourceRecord.buyDate);
   const currentPrice = finiteOrNull(sourceRecord.currentPrice);
   const assetKey = getAssetKey(sourceRecord);
@@ -207,7 +208,7 @@ export function calculatePortfolioSummary(specs = [], cash = 0, options = {}) {
       value: outcome.value,
       sharePercent: value > 0 ? (outcome.value / value) * 100 : 0,
     }));
-  const sellTransactions = [...(options.transactions || []), ...(options.sealedTransactions || [])]
+  const sellTransactions = [...activeTransactions(options.transactions || []), ...activeTransactions(options.sealedTransactions || [])]
     .filter(transaction => String(transaction?.type || "").toUpperCase() === "SELL");
   const realizedTransactions = sellTransactions.filter(transaction => finiteOrNull(transaction.realizedPL) !== null);
   const realizedProfitLoss = realizedTransactions.reduce((total, transaction) => total + finite(transaction.realizedPL), 0);

@@ -34,29 +34,29 @@
       "bytes": 1502661,
       "sha256": "370f1a5a04dea94918374cb3d71739ede556f89703c235d57f2498d24a5a146a"
     },
-    "assets/index-B8MXVtYT.css": {
-      "bytes": 135095,
-      "sha256": "17c84a5a021c19a52a71511ef4addb9af73a88303c347ad29efb2e520f1856d0"
+    "assets/index-DA7qTH4E.js": {
+      "bytes": 627942,
+      "sha256": "0567e6b8806ea168f5323abaf7216361ccaffc3dcf200609f08981712feb91d7"
     },
-    "assets/index-CwZRkWof.js": {
-      "bytes": 617083,
-      "sha256": "c17f8c9c3bc8fd7c17d1437c05706b4a1d3a974423490490eb66ee6b403cd8a9"
+    "assets/index-DA7qTH4E.js.map": {
+      "bytes": 2755594,
+      "sha256": "b325a88b151c3c913ca0b20e1b98a68ee5dbbd303e3645c3254c30be1669c2f2"
     },
-    "assets/index-CwZRkWof.js.map": {
-      "bytes": 2725697,
-      "sha256": "c21868fe031b9867fd80efb7ad55b4cbc98252b4833cf6fc3d06a88efd4e4626"
+    "assets/index-Z7zZmaOC.css": {
+      "bytes": 135781,
+      "sha256": "94a0b125ed51a7b0592a38d54df72a35ae197ec628804d47e78bdbd0cf9d030b"
     },
     "assets/manaspec-mark-C1H8lgsP.png": {
       "bytes": 222812,
       "sha256": "f64369da5823d28735c0c185d4553b2838a22387b91dfb992f32c212b3c31498"
     },
-    "assets/PriceHistory-BQYIIA3Y.js": {
+    "assets/PriceHistory-BgPEP_DT.js": {
       "bytes": 174514,
-      "sha256": "498d0d20a03dc3d3767a9dd8d509b4751ff442823540b5640f862b9a1b46fd27"
+      "sha256": "26032afed57c99a3f613e65b641102f497b8aa731377993637b112d5c27ac04a"
     },
-    "assets/PriceHistory-BQYIIA3Y.js.map": {
+    "assets/PriceHistory-BgPEP_DT.js.map": {
       "bytes": 777892,
-      "sha256": "2c3279dd622b906e91e46bb73509e8190c15121fc07e405adc6a3407fcf2e48f"
+      "sha256": "d23abb974ebe06855a689c7a833e4074ece38ec068f0905215dde4a0dfe72468"
     },
     "assets/sealed-catalog-dPJfWl6u.js": {
       "bytes": 1735786,
@@ -68,7 +68,7 @@
     },
     "index.html": {
       "bytes": 818,
-      "sha256": "1d14f4dcf4788be4f44b00df67ff6e1a097824405f02f59239cfdebbff4dc8e6"
+      "sha256": "75825ef83b11026bcdd177fde79ffddbad08e2684ca060cc0ab2e07f5df5431a"
     }
   }
 }
