@@ -1,8 +1,9 @@
+import { getAssetKey } from "../domain/assetIdentity.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { COMMIT_KEY } from "../persistence/commit.js";
 import { createStorageAdapter } from "../persistence/storage.js";
-import { buyFromRadar, sellPosition } from "../domain/trading.js";
+import { buyFromRadar, reverseTrade, sellPosition } from "../domain/trading.js";
 
 function store(initial = {}) {
   const values = new Map(Object.entries(initial));
@@ -26,7 +27,7 @@ test("a quota failure at each trade write restores every prior raw value", () =>
     const storage = store(initial);
     const adapter = createStorageAdapter(storage);
     const state = adapter.loadState();
-    const next = buyFromRadar(state, state.radar[0], 2, 5);
+    const next = buyFromRadar(state, state.radar[0], 2, 5, { source: "LGS", taxPaid: 1 });
     let failed = false;
     storage.fail(key => key === failedKey && !failed && (failed = true));
     assert.throws(() => adapter.saveSlices({ specs: next.specs, cash: next.cash, transactions: next.transactions }));
@@ -92,7 +93,7 @@ test("successful buys, add-on buys and partial/full sales survive reload and bac
   let state = adapter.loadState();
   for (const operation of [
     current => buyFromRadar(current, watched, 2, 5),
-    current => buyFromRadar(current, watched, 1, 8),
+    current => buyFromRadar(current, watched, 1, 7, { taxPaid: 1, source: "LGS", reference: "Synthetic-28" }),
     current => sellPosition(current, current.specs[0], 1, 10),
     current => sellPosition(current, current.specs[0], 2, 10),
   ]) {
@@ -102,6 +103,8 @@ test("successful buys, add-on buys and partial/full sales survive reload and bac
     assert.equal(storage.getItem(COMMIT_KEY), null);
   }
   assert.equal(state.cash, 112);
+  assert.equal(state.transactions[2].trade.charges.taxPaid, 100);
+  assert.equal(state.transactions[2].trade.reference, "Synthetic-28");
   assert.equal(state.specs.length, 0);
   assert.equal(state.transactions.length, 4);
   assert.equal(state.transactions.filter(row => row.type === "SELL").reduce((sum, row) => sum + row.realizedPL, 0), 12);
@@ -129,5 +132,33 @@ test("invalid stored arrays, JSON and cash fail closed without startup rewrite",
     const before = storage.snapshot();
     assert.throws(() => createStorageAdapter(storage).loadState(), /Saved/);
     assert.deepEqual(storage.snapshot(), before);
+  }
+});
+
+test("receipt reversals retain identity and economics through reload and restore", () => {
+  for (const item of [watched, {
+    id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3", assetType: "sealed",
+    assetKey: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    mtgjson_uuid: "d575bd23-ebd6-586e-af7b-04924db4f1c3", name: "Synthetic sealed", currentPrice: null,
+  }]) {
+    const storage = store({ cash: "100" });
+    const adapter = createStorageAdapter(storage);
+    const positionKey = item.assetType === "sealed" ? "sealedSpecs" : "specs";
+    const txKey = item.assetType === "sealed" ? "sealedTransactions" : "transactions";
+    let current = buyFromRadar(adapter.loadState(), item, 3, 10, { shippingPaid: 1, source: "LGS" });
+    adapter.saveSlices({ [positionKey]: current[positionKey], [txKey]: current[txKey], cash: current.cash });
+    current = adapter.loadState();
+    current = sellPosition(current, current[positionKey][0], 1, 15, { marketplaceFee: 1 });
+    adapter.saveSlices({ [positionKey]: current[positionKey], [txKey]: current[txKey], cash: current.cash });
+    const copy = createStorageAdapter(store());
+    const restored = copy.restoreBackup(adapter.createBackup(adapter.loadState()));
+    const receipt = restored[txKey][0];
+    assert.equal(getAssetKey(receipt), getAssetKey(item));
+    assert.equal(receipt.trade.cashCents, 1400);
+    const reversed = reverseTrade(restored, receipt, "Invoice correction");
+    assert.equal(reversed.cash, 69);
+    assert.equal(reversed[positionKey][0].openBasisCents, 3100);
+    assert.equal(reversed[positionKey][0].qty, 3);
+    assert.equal(getAssetKey(reversed[txKey][0]), getAssetKey(item));
   }
 });

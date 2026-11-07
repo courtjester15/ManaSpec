@@ -1,5 +1,5 @@
 /* A guarded archive may read a v1 singles store, but must never start the
- * vanilla writer over sealed/schema-v2 data or an interrupted React commit. */
+ * vanilla writer over React-only trade data or an interrupted React commit. */
 (function () {
   const keys = ["specs", "radar", "transactions", "cardNotes", "thesisNotes", "signals", "priceSnapshots", "marketObservations", "sealedSpecs", "sealedRadar", "sealedTransactions", "cash", "priceRefreshStatus", "manaspec_pending_commit_v1", "manaspec_pre_import_backup"];
   let raw = {};
@@ -11,6 +11,9 @@
       if (raw[key] === null) continue;
       const records = JSON.parse(raw[key]);
       if (!Array.isArray(records)) throw new Error("Invalid saved list");
+      if (key === "transactions" && records.some(record => record?.trade?.version === 1 || record?.type === "REVERSAL")) {
+        reason = "This store includes true-cost trades. Vanilla cannot represent itemized cash flows, cent allocations, or reversals.";
+      }
       if ((key.startsWith("sealed") && records.length) || records.some(record => record.assetType === "sealed" || String(record.assetKey || "").startsWith("sealed:"))) {
         reason = "This store includes sealed product data. Vanilla cannot represent its holdings, history or full account totals.";
       }

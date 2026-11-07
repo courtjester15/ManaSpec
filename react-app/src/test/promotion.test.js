@@ -65,6 +65,7 @@ test("guarded vanilla rollback starts only on compatible singles data and never 
   const guard = readFileSync(new URL("../../../tools/vanilla-rollback-guard.js", import.meta.url), "utf8");
   for (const [initial, safe] of [
     [{ cash: "100", specs: "[]" }, true],
+    [{ transactions: '[{"type":"BUY","trade":{"version":1}}]' }, false],
     [{ cash: "100", sealedSpecs: '[{"assetType":"sealed"}]' }, false],
     [{ sealedTransactions: '[{"type":"SELL"}]' }, false],
     [{ cardNotes: '[{"assetKey":"sealed:old-product"}]' }, false],

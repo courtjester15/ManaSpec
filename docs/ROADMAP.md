@@ -12,6 +12,8 @@ The owner-approved [Epic #26](https://github.com/courtjester15/ManaSpec/issues/2
 
 **2026-11-01:** #27 safety preparation is implemented, not complete promotion. Vanilla branch/tags are preserved; PR #25 is retained in full. The [gate report](audits/issue-27-react-promotion-2026-11-01.md) records direct-file, fresh origin and schema-v2 rollback limits. Hold merges/deployment; #28 becomes active after the baseline gate is established. Historical sequencing below remains reference only.
 
+**2026-11-04:** #28 is implemented on a dependent React branch for review. [Verification and limits](audits/issue-28-true-cost-2026-11-04.md). #29 owns the subsequent lots and ownership migration.
+
 This is **directional sequencing**, not an executable work-order list. The active queue and approved GitHub Issues own current action; the older phases/checklists below provide context but are not standing instructions to build every unchecked item. Completed milestone detail lives in `REACT_SPIKE_PROGRESS.md`, PRs, and Git history.
 
 Use [PARKING_LOT.md](PARKING_LOT.md) for promising ideas that still need validation, workflow testing, prioritization, or a product decision.

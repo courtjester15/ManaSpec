@@ -328,3 +328,14 @@ footer {
   background: #0284c7;
   color: #fff;
 }
+
+.trade-form .trade-owned, .detail-trade-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.detail-trade-actions { margin-block:6px; }
+.trade-form input, .trade-form textarea { min-width:0; width:100%; }
+.trade-options { border:1px solid var(--border); border-radius:var(--radius-sm); padding:9px 12px; }
+.trade-options summary { cursor:pointer; font-weight:600; }
+.trade-options>label { margin-top:10px; }
+.trade-amounts { display:grid; gap:5px; margin:0; padding:10px 12px; background:var(--surface-2); border-radius:var(--radius-sm); }
+.trade-amounts div { display:flex; justify-content:space-between; gap:12px; }
+.trade-amounts dd { margin:0; text-align:right; font-weight:600; overflow-wrap:anywhere; }
+.trade-error { margin:0; }

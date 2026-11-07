@@ -1,4 +1,6 @@
 /* Pure compatibility helpers ported from the vanilla source of truth. */
+import { activeTransactions, allocateBasis, transactionCashCents } from "./tradeEconomics.js";
+
 export const dataFoundation = (() => {
   const COMPATIBILITY_META = typeof Symbol === "function"
     ? Symbol("manaspecCompatibilityMeta")
@@ -262,13 +264,14 @@ export const dataFoundation = (() => {
   }
 
   function transactionOrder(left, right) {
-    const leftTime = left.date ? new Date(left.date).getTime() : Number.POSITIVE_INFINITY;
-    const rightTime = right.date ? new Date(right.date).getTime() : Number.POSITIVE_INFINITY;
-    return leftTime - rightTime || left.__inputIndex - right.__inputIndex;
+    const leftTime = Date.parse(left.recordedAt || left.date || "");
+    const rightTime = Date.parse(right.recordedAt || right.date || "");
+    const order = (Number.isFinite(leftTime) ? leftTime : Infinity) - (Number.isFinite(rightTime) ? rightTime : Infinity);
+    return order || (left.recordedAt && right.recordedAt ? right.__inputIndex - left.__inputIndex : left.__inputIndex - right.__inputIndex);
   }
 
   function projectPositionsFromTransactions(records = []) {
-    const normalized = records.map(normalizeTransaction);
+    const normalized = activeTransactions(records).map(normalizeTransaction);
     const groups = new Map();
     const invalidTransactions = [];
 
@@ -295,7 +298,7 @@ export const dataFoundation = (() => {
       let stopped = false;
 
       for (let index = 1; index < transactions.length; index += 1) {
-        if (transactions[index].date && transactions[index - 1].date
+        if (!transactions[index].recordedAt && !transactions[index - 1].recordedAt && transactions[index].date && transactions[index - 1].date
           && transactions[index].date === transactions[index - 1].date) {
           issues.push({ type: "ambiguous_event_order", transactionIds: [transactions[index - 1].id, transactions[index].id] });
         }
@@ -321,11 +324,12 @@ export const dataFoundation = (() => {
           issues.push({ type: "uncertain_backfill_value", transactionId: transaction.id });
         }
 
+        const cashCents = transactionCashCents(transaction);
         const value = transaction.quantity * transaction.price;
         const friction = transaction.fees + transaction.shipping + transaction.extraCosts;
         if (transaction.type === "BUY") {
           quantity += transaction.quantity;
-          deployedCostBasis += value + friction;
+          deployedCostBasis += cashCents === null ? value + friction : cashCents / 100;
           continue;
         }
         if (transaction.quantity > quantity) {
@@ -339,8 +343,10 @@ export const dataFoundation = (() => {
           continue;
         }
         const averageCost = quantity > 0 ? deployedCostBasis / quantity : 0;
-        const soldBasis = averageCost * transaction.quantity;
-        realizedPL += value - friction - soldBasis;
+        const soldBasis = cashCents === null || !Number.isSafeInteger(quantity) || !Number.isSafeInteger(transaction.quantity)
+          || !Number.isSafeInteger(Math.round(deployedCostBasis * 100))
+          ? averageCost * transaction.quantity : allocateBasis(Math.round(deployedCostBasis * 100), transaction.quantity, quantity) / 100;
+        realizedPL += (cashCents === null ? value - friction : cashCents / 100) - soldBasis;
         quantity -= transaction.quantity;
         deployedCostBasis -= soldBasis;
         if (quantity === 0) deployedCostBasis = 0;

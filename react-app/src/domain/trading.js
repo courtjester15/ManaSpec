@@ -1,23 +1,36 @@
 import { dataFoundation } from "./dataFoundation.js";
-import { getAssetKey, getAssetType } from "./assetIdentity.js";
+import { getAssetKey, getAssetType, getSingleFinish, getSingleScryfallId } from "./assetIdentity.js";
 import { finishPolicy } from "./finishPolicy.js";
+import { activeTransactions, positionBasisCents, tradeEconomics } from "./tradeEconomics.js";
 
 function id() {
   return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function transaction(position, type, quantity, price, balanceAfter) {
-  const averageCost = Number(position.buyPrice || 0);
-  const isSell = type === "SELL";
-  const total = quantity * price;
+function transaction(position, type, values, details, balanceAfter, trade) {
+  const recordedAt = new Date().toISOString();
+  const timestamp = details.date ? new Date(details.date).getTime() : Date.parse(recordedAt);
+  if (!Number.isFinite(timestamp)) throw new Error("Enter a valid trade date and time.");
+  if (timestamp > Date.parse(recordedAt)) throw new Error("Enter a trade date and time that has already passed.");
   const base = {
     id: id(), cardId: position.id, name: position.name, set_code: position.set_code,
     set_name: position.set_name, collector_number: position.collector_number,
-    type, quantity, price, fees: 0,
-    date: new Date().toISOString(), notes: "", balanceAfter,
-    costBasisPerUnit: isSell && averageCost > 0 ? averageCost : null,
-    costBasisTotal: isSell && averageCost > 0 ? averageCost * quantity : null,
-    realizedPL: isSell && averageCost > 0 ? total - (averageCost * quantity) : null,
+    type, quantity: values.qty, price: values.unitCents / 100,
+    date: new Date(timestamp).toISOString(), recordedAt, balanceAfter,
+    notes: String(details.notes ?? "").trim(),
+    costBasisPerUnit: values.basisCents === null ? null : values.basisCents / 100 / values.qty,
+    costBasisTotal: values.basisCents === null ? null : values.basisCents / 100,
+    realizedPL: values.realizedCents === null ? null : values.realizedCents / 100,
+    trade: {
+      version: 1,
+      source: String(details.source ?? "").trim() || null,
+      reference: String(details.reference ?? "").trim() || null,
+      grossCents: values.grossCents,
+      cashCents: values.cashCents,
+      basisCents: values.basisCents,
+      charges: values.charges,
+      ...trade,
+    },
   };
   if (getAssetType(position) === "sealed") {
     return {
@@ -54,75 +67,145 @@ function assetStores(item) {
     : { positions: "specs", transactions: "transactions" };
 }
 
-export function validateTrade(quantity, price) {
-  const qty = Number(quantity);
-  const unitPrice = Number(price);
-  if (!Number.isSafeInteger(qty) || qty < 1) throw new Error("Enter a whole quantity of at least 1.");
-  if (!Number.isFinite(unitPrice) || unitPrice <= 0 || !Number.isFinite(qty * unitPrice)) throw new Error("Enter a valid price greater than zero.");
-  return { qty, unitPrice };
+function findPosition(positions, item) {
+  const key = getAssetKey(item);
+  const matches = positions.filter(row => key && getAssetKey(row) ? getAssetKey(row) === key : row.id === item.id);
+  if (matches.length > 1) throw new Error("Reconcile duplicate holdings for this exact asset before trading.");
+  return matches[0];
 }
 
-export function buyFromRadar(state, item, quantity, price) {
+function adjustedCash(cash, deltaCents) {
+  const cents = Math.round(Number(cash) * 100) + deltaCents;
+  if (!Number.isSafeInteger(cents)) throw new Error("Cash balance is outside the supported range.");
+  if (cents < 0) throw new Error("Not enough cash for this operation.");
+  return cents / 100;
+}
+
+function financialState(position) {
+  return position ? {
+    qty: position.qty, buyPrice: position.buyPrice, buyDate: position.buyDate ?? null,
+    openBasisCents: position.openBasisCents ?? null,
+  } : null;
+}
+
+function withPositionProfit(position) {
+  const quote = position.currentPrice;
+  return { ...position, pl: positionBasisCents(position) === null || quote == null || quote === "" || !Number.isFinite(Number(quote)) || Number(quote) < 0
+    ? null : (Number(quote) - Number(position.buyPrice)) * position.qty };
+}
+
+function replacePosition(positions, current, next) {
+  if (!current) return [...positions, next];
+  if (!next) return positions.filter(row => row !== current);
+  return positions.map(row => row === current ? next : row);
+}
+
+export function buyFromRadar(state, item, quantity, price, details = {}) {
   if (getAssetType(item) === "single" && Array.isArray(item.finishes)) finishPolicy.selectFinish(item, finishPolicy.recordFinish(item));
-  const { qty, unitPrice } = validateTrade(quantity, price);
-  const total = qty * unitPrice;
-  if (state.cash < total) throw new Error("Not enough cash for this buy.");
   const stores = assetStores(item);
-  const specs = [...(state[stores.positions] || [])];
-  let position = specs.find(row => row.id === item.id);
-  if (!position) {
-    const explicitCurrentPrice = item.currentPrice === null || item.currentPrice === undefined || item.currentPrice === "" ? null : Number(item.currentPrice);
-    position = { ...item, qty: 0, buyPrice: 0, currentPrice: explicitCurrentPrice, pl: explicitCurrentPrice === null ? null : 0, buyDate: null };
-    specs.push(position);
-  } else position = { ...position };
-  const previousQty = Number(position.qty || 0);
-  position.qty = previousQty + qty;
-  position.buyPrice = ((Number(position.buyPrice || 0) * previousQty) + total) / position.qty;
-  position.buyDate ||= new Date().toISOString();
-  position.pl = (position.currentPrice === null || position.currentPrice === undefined)
-    ? null
-    : (Number(position.currentPrice || 0) - position.buyPrice) * position.qty;
-  specs[specs.findIndex(row => row.id === position.id)] = position;
-  const cash = state.cash - total;
+  const positions = state[stores.positions] || [];
+  const current = findPosition(positions, item);
+  const values = tradeEconomics("BUY", quantity, price, details);
+  const cash = adjustedCash(state.cash, -values.cashCents);
+  const openBasis = current ? positionBasisCents(current) : 0;
+  const qty = Number(current?.qty ?? 0) + values.qty;
+  if (openBasis === null || !Number.isSafeInteger(qty) || !Number.isSafeInteger(openBasis + values.cashCents)) {
+    throw new Error("Reconcile the existing holding and its cost basis before adding to it.");
+  }
+  const openBasisCents = openBasis + values.cashCents;
+  const finish = getSingleFinish(item);
+  const scryfallId = getSingleScryfallId(item);
+  const identity = !current && finish && scryfallId
+    ? { scryfall_id: scryfallId, finish, trackedPrintingKey: `${scryfallId}|${finish}` }
+    : {};
+  const tx = transaction(current || { ...item, ...identity }, "BUY", values, details, cash);
+  const next = withPositionProfit({
+    ...(current || item), ...identity, qty, openBasisCents, buyPrice: openBasisCents / 100 / qty,
+    buyDate: current?.buyDate || tx.date,
+  });
+  Object.assign(tx.trade, { before: financialState(current), after: financialState(next) });
   return {
     ...state,
-    [stores.positions]: specs,
+    [stores.positions]: replacePosition(positions, current, next),
     cash,
-    [stores.transactions]: [transaction(position, "BUY", qty, unitPrice, cash), ...(state[stores.transactions] || [])],
+    [stores.transactions]: [tx, ...(state[stores.transactions] || [])],
   };
 }
 
-export function buyPosition(state, item, quantity, price) {
-  return buyFromRadar(state, item, quantity, price);
+export function buyPosition(state, item, quantity, price, details) {
+  return buyFromRadar(state, item, quantity, price, details);
 }
 
-export function sellPosition(state, item, quantity, price) {
+export function sellPosition(state, item, quantity, price, details = {}) {
   const stores = assetStores(item);
-  const current = (state[stores.positions] || []).find(row => row.id === item.id);
-  const owned = Number(current?.qty || 0);
-  const { qty, unitPrice } = validateTrade(quantity, price);
-  if (!Number.isSafeInteger(owned) || qty > owned) throw new Error("Sale quantity exceeds the current holding. Review the quantity before selling.");
-  item = current;
-  const total = qty * unitPrice;
-  const remaining = owned - qty;
-  const cash = state.cash + total;
-  const tx = transaction(item, "SELL", qty, unitPrice, cash);
   const positions = state[stores.positions] || [];
-  const specs = remaining
-    ? positions.map(row => row.id === item.id ? { ...row, qty: remaining, pl: row.currentPrice !== null && row.currentPrice !== undefined && Number.isFinite(Number(row.currentPrice)) ? (Number(row.currentPrice) - Number(row.buyPrice || 0)) * remaining : null } : row)
-    : positions.filter(row => row.id !== item.id);
+  const current = findPosition(positions, item);
+  const values = tradeEconomics("SELL", quantity, price, details, current);
+  const cash = adjustedCash(state.cash, values.cashCents);
+  const qty = Number(current.qty) - values.qty;
+  const basis = positionBasisCents(current);
+  const openBasisCents = basis === null ? null : basis - values.basisCents;
+  const next = qty ? withPositionProfit({
+    ...current, qty, openBasisCents, buyPrice: openBasisCents === null ? current.buyPrice : openBasisCents / 100 / qty,
+  }) : null;
+  const tx = transaction(current, "SELL", values, details, cash, {
+    before: financialState(current), after: financialState(next),
+    ...(next ? {} : { closedPosition: dataFoundation.serializeCompatibleRecord(current) }),
+  });
   return {
     ...state,
-    [stores.positions]: specs,
+    [stores.positions]: replacePosition(positions, current, next),
     cash,
     [stores.transactions]: [tx, ...(state[stores.transactions] || [])],
+  };
+}
+
+function reversalContext(state, item) {
+  const stores = assetStores(item);
+  const transactions = state[stores.transactions] || [];
+  const tx = transactions.find(row => row.id === item.id);
+  if (tx?.trade?.version !== 1 || !["BUY", "SELL"].includes(tx.type)) return null;
+  const key = getAssetKey(tx);
+  if (!key || activeTransactions(transactions).find(row => getAssetKey(row) === key)?.id !== tx.id) return null;
+  const positions = state[stores.positions] || [];
+  const matching = positions.filter(row => getAssetKey(row) === key);
+  const current = matching[0];
+  if (matching.length > 1 || JSON.stringify(financialState(current)) !== JSON.stringify(tx.trade.after)) return null;
+  if (!Number.isSafeInteger(tx.trade.cashCents) || (tx.trade.before && !current && !tx.trade.closedPosition)) return null;
+  return { stores, transactions, tx, positions, current };
+}
+
+export function canReverseTrade(state, tx) {
+  return Boolean(reversalContext(state, tx));
+}
+
+export function reverseTrade(state, item, reason) {
+  const notes = String(reason ?? "").trim();
+  if (!notes) throw new Error("Enter a reason for reversing this trade.");
+  const context = reversalContext(state, item);
+  if (!context) throw new Error("Only the latest active true-cost trade for an unchanged holding can be reversed.");
+  const { stores, transactions, tx, positions, current } = context;
+  const { before, closedPosition, cashCents } = tx.trade;
+  const deltaCents = tx.type === "BUY" ? cashCents : -cashCents;
+  const cash = adjustedCash(state.cash, deltaCents);
+  const next = before ? withPositionProfit({ ...(current || closedPosition), ...before }) : null;
+  const now = new Date().toISOString();
+  const reversal = {
+    ...tx, id: id(), type: "REVERSAL", reversesId: tx.id, date: now, recordedAt: now,
+    notes, balanceAfter: cash, costBasisTotal: null, costBasisPerUnit: null, realizedPL: null,
+    trade: { version: 1, cashCents: deltaCents },
+  };
+  return {
+    ...state, cash,
+    [stores.positions]: replacePosition(positions, current, next),
+    [stores.transactions]: [reversal, ...transactions],
   };
 }
 
 export function deletePosition(state, item) {
   if (getAssetType(item) === "sealed") {
     const key = getAssetKey(item);
-    const openQuantity = (state.sealedTransactions || [])
+    const openQuantity = activeTransactions(state.sealedTransactions || [])
       .filter(row => getAssetKey(row) === key)
       .reduce((total, row) => total + (String(row.type).toUpperCase() === "BUY" ? 1 : -1) * Number(row.quantity || 0), 0);
     if (openQuantity > 0) {

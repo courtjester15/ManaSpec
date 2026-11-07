@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { validateTrade } from "../../domain/trading.js";
-import { formatMoney } from "../../domain/portfolio.js";
 import { assetContextLabel, assetTypeLabel, getAssetType } from "../../domain/assetIdentity.js";
 
 export function ViewHeader({ title, description, actions }) {
@@ -49,25 +47,10 @@ export function Modal({ title, open, onClose, children, wide = false, compactDet
       if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
     };
   }, [open]);
-  return <dialog ref={ref} className={`react-modal${wide ? " wide" : ""}${compactDetail ? " card-detail-dialog" : ""}`} onCancel={onClose} onClose={onClose}><header><h3>{title}</h3><button type="button" aria-label="Close" onClick={onClose}>×</button></header><div className="react-modal-body">{children}</div></dialog>;
-}
-
-export function TradeForm({ item, mode, onSubmit, onCancel, defaultQuantity = 1 }) {
-  const [quantity, setQuantity] = useState(defaultQuantity);
-  const quote = item.currentPrice;
-  const [price, setPrice] = useState(quote !== null && quote !== undefined && quote !== "" && Number.isFinite(Number(quote)) && Number(quote) > 0 ? String(quote) : "");
-  const [error, setError] = useState("");
-  const max = mode === "sell" ? Number(item.qty || 1) : undefined;
-  function submit(event) {
-    event.preventDefault();
-    try {
-      validateTrade(quantity, price);
-      onSubmit(Number(quantity), Number(price));
-    } catch (failure) {
-      setError(failure.message);
-    }
+  function closeOwnDialog(event) {
+    if (event.target === event.currentTarget) onClose();
   }
-  return <form className="react-form" onSubmit={submit}><div className="trade-card-line"><strong>{item.name}</strong><span>{assetTypeLabel(item)} · {assetContextLabel(item)}</span></div>{mode === "sell" && <p>Owned: {max}. Enter the quantity sold, or <button type="button" className="secondary" onClick={() => setQuantity(max)}>Sell all {max}</button>.</p>}<div className="form-grid"><label><span>Quantity</span><input required type="number" min="1" max={max} step="1" value={quantity} onChange={event => { setQuantity(event.target.value); setError(""); }} /></label><label><span>Price per unit</span><input required type="number" min="0.01" step="0.01" value={price} placeholder="Enter execution price" onChange={event => { setPrice(event.target.value); setError(""); }} /></label></div>{price === "" && <p className="muted">Enter the actual {mode === "sell" ? "sale" : "purchase"} price per unit.</p>}<p className="trade-total">{mode === "sell" ? "Sale proceeds" : "Purchase total"} <strong>{price !== "" && Number.isFinite(Number(quantity) * Number(price)) ? formatMoney(Number(quantity) * Number(price)) : "—"}</strong></p>{error && <p role="alert">{error}</p>}<div className="modal-actions"><button type="button" className="secondary" onClick={onCancel}>Cancel</button><button type="submit">{mode === "sell" ? "Confirm sale" : "Confirm buy"}</button></div></form>;
+  return <dialog ref={ref} aria-label={title} className={`react-modal${wide ? " wide" : ""}${compactDetail ? " card-detail-dialog" : ""}`} onCancel={closeOwnDialog} onClose={closeOwnDialog}><header><h3>{title}</h3><button type="button" aria-label="Close" onClick={onClose}>×</button></header><div className="react-modal-body">{children}</div></dialog>;
 }
 
 export function Notice({ notice, onDismiss }) {

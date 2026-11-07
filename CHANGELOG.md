@@ -225,3 +225,7 @@ This file is intentionally higher level than Git history. Add user-visible workf
 ### Notes
 
 - ManaSpec remains in alpha stabilization. The current priority is to stabilize the singles workflow, preserve local data safety, and draft the ledger migration path before changing the storage model.
+
+## 2026-11-04
+
+- Added the React candidate's shared Buy, Buy More and Sell workflow for exact singles and sealed products, with itemized costs, receipts and auditable reversals.

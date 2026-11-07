@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buyFromRadar, deletePosition, sellPosition } from "../domain/trading.js";
+import { buyFromRadar, deletePosition, reverseTrade, sellPosition } from "../domain/trading.js";
 import { parseSetNumberQuery, toTrackedCard } from "../services/scryfall.js";
 
 const watched = {
@@ -174,4 +174,57 @@ test("sale uses current ownership and basis rather than stale dialog data", () =
   assert.equal(sold.specs.length, 0);
   assert.equal(sold.transactions[0].realizedPL, 3);
   assert.throws(() => sellPosition(sold, stale, 1, 10), /exceeds/);
+});
+
+test("true-cost beginner receipt, weighted exit, and reversal reconcile cash and basis", () => {
+  const item = { ...watched, finish: "nonfoil", foil: false };
+  const bought = buyFromRadar(state(), item, 2, 10, { shippingPaid: 3, taxPaid: 2, source: "LGS" });
+  assert.equal(bought.cash, 75);
+  assert.equal(bought.specs[0].trackedPrintingKey, "printing-1|nonfoil");
+  assert.equal(bought.specs[0].buyPrice, 12.5);
+  const sold = sellPosition(bought, item, 1, 22, { marketplaceFee: 3, shippingPaid: 1 });
+  assert.equal(sold.cash, 93);
+  assert.equal(sold.transactions[0].trade.cashCents, 1800);
+  assert.equal(sold.transactions[0].realizedPL, 5.5);
+  const reversed = reverseTrade(sold, sold.transactions[0], "Wrong invoice");
+  assert.equal(reversed.cash, 75);
+  assert.equal(reversed.specs[0].qty, 2);
+  assert.equal(reversed.transactions[0].reversesId, sold.transactions[0].id);
+  assert.throws(() => reverseTrade(reversed, sold.transactions[0], "Duplicate"), /latest active/);
+});
+
+test("premium costs, shipping collected, credits and commissions use exact cents", () => {
+  const item = { ...watched, id: "printing-1|foil", finish: "foil", foil: true };
+  const bought = buyFromRadar(state({ cash: 2500 }), item, 2, 500, { shippingPaid: 12, taxPaid: 40, discount: 1 });
+  const sold = sellPosition(bought, item, 1, 620, {
+    shippingCharged: 8, shippingPaid: 12, commission: 26, marketplaceFee: 14, otherCosts: 2, refund: 5,
+  });
+  assert.equal(bought.cash, 1449);
+  assert.equal(sold.cash, 2018);
+  assert.equal(sold.specs[0].openBasisCents, 52550);
+  assert.equal(sold.transactions[0].realizedPL, 43.5);
+  assert.throws(() => sellPosition(bought, item, 1, 620, { commission: -1 }), /nonnegative/);
+  assert.throws(() => buyFromRadar(state(), item, 1, 99, { shippingPaid: 2 }), /Not enough cash/);
+});
+
+test("partial allocations consume the original basis to the cent", () => {
+  const bought = buyFromRadar(state(), watched, 3, 1, { discount: 0.02 });
+  const partial = sellPosition(bought, watched, 1, 2);
+  const closed = sellPosition(partial, watched, 2, 2);
+  assert.equal(partial.transactions[0].trade.basisCents, 99);
+  assert.equal(closed.transactions[0].trade.basisCents, 199);
+  assert.equal(closed.cash, 103.02);
+});
+
+test("authoritative cents survive fractional averages and repeated exits", () => {
+  const item = { ...watched, qty: 7, buyPrice: 99, openBasisCents: 1000 };
+  let current = state({ specs: [item] });
+  let allocated = 0;
+  for (let remaining = 7; remaining > 0; remaining--) {
+    current = sellPosition(current, item, 1, 2);
+    allocated += current.transactions[0].trade.basisCents;
+    if (remaining > 1) assert.equal(current.specs[0].openBasisCents, 1000 - allocated);
+  }
+  assert.equal(allocated, 1000);
+  assert.equal(current.specs.length, 0);
 });
