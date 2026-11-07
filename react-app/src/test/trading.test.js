@@ -215,3 +215,16 @@ test("partial allocations consume the original basis to the cent", () => {
   assert.equal(closed.transactions[0].trade.basisCents, 199);
   assert.equal(closed.cash, 103.02);
 });
+
+test("authoritative cents survive fractional averages and repeated exits", () => {
+  const item = { ...watched, qty: 7, buyPrice: 99, openBasisCents: 1000 };
+  let current = state({ specs: [item] });
+  let allocated = 0;
+  for (let remaining = 7; remaining > 0; remaining--) {
+    current = sellPosition(current, item, 1, 2);
+    allocated += current.transactions[0].trade.basisCents;
+    if (remaining > 1) assert.equal(current.specs[0].openBasisCents, 1000 - allocated);
+  }
+  assert.equal(allocated, 1000);
+  assert.equal(current.specs.length, 0);
+});

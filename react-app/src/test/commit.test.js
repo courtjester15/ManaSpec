@@ -1,8 +1,9 @@
+import { getAssetKey } from "../domain/assetIdentity.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { COMMIT_KEY } from "../persistence/commit.js";
 import { createStorageAdapter } from "../persistence/storage.js";
-import { buyFromRadar, sellPosition } from "../domain/trading.js";
+import { buyFromRadar, reverseTrade, sellPosition } from "../domain/trading.js";
 
 function store(initial = {}) {
   const values = new Map(Object.entries(initial));
@@ -131,5 +132,33 @@ test("invalid stored arrays, JSON and cash fail closed without startup rewrite",
     const before = storage.snapshot();
     assert.throws(() => createStorageAdapter(storage).loadState(), /Saved/);
     assert.deepEqual(storage.snapshot(), before);
+  }
+});
+
+test("receipt reversals retain identity and economics through reload and restore", () => {
+  for (const item of [watched, {
+    id: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3", assetType: "sealed",
+    assetKey: "sealed:d575bd23-ebd6-586e-af7b-04924db4f1c3",
+    mtgjson_uuid: "d575bd23-ebd6-586e-af7b-04924db4f1c3", name: "Synthetic sealed", currentPrice: null,
+  }]) {
+    const storage = store({ cash: "100" });
+    const adapter = createStorageAdapter(storage);
+    const positionKey = item.assetType === "sealed" ? "sealedSpecs" : "specs";
+    const txKey = item.assetType === "sealed" ? "sealedTransactions" : "transactions";
+    let current = buyFromRadar(adapter.loadState(), item, 3, 10, { shippingPaid: 1, source: "LGS" });
+    adapter.saveSlices({ [positionKey]: current[positionKey], [txKey]: current[txKey], cash: current.cash });
+    current = adapter.loadState();
+    current = sellPosition(current, current[positionKey][0], 1, 15, { marketplaceFee: 1 });
+    adapter.saveSlices({ [positionKey]: current[positionKey], [txKey]: current[txKey], cash: current.cash });
+    const copy = createStorageAdapter(store());
+    const restored = copy.restoreBackup(adapter.createBackup(adapter.loadState()));
+    const receipt = restored[txKey][0];
+    assert.equal(getAssetKey(receipt), getAssetKey(item));
+    assert.equal(receipt.trade.cashCents, 1400);
+    const reversed = reverseTrade(restored, receipt, "Invoice correction");
+    assert.equal(reversed.cash, 69);
+    assert.equal(reversed[positionKey][0].openBasisCents, 3100);
+    assert.equal(reversed[positionKey][0].qty, 3);
+    assert.equal(getAssetKey(reversed[txKey][0]), getAssetKey(item));
   }
 });

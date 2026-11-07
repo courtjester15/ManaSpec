@@ -17,6 +17,9 @@ export function toCents(value) {
 }
 
 export function positionBasisCents(position) {
+  if (position?.openBasisCents !== null && position?.openBasisCents !== undefined) {
+    return Number.isSafeInteger(position.openBasisCents) && position.openBasisCents >= 0 ? position.openBasisCents : null;
+  }
   const basis = Math.round(Number(position?.buyPrice) * Number(position?.qty) * 100);
   if (basis === 0 && position?.openBasisCents === 0 && position.buyPrice === 0) return 0;
   return Number.isSafeInteger(basis) && basis > 0 ? basis : null;
