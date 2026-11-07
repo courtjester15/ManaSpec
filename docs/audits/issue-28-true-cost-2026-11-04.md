@@ -21,3 +21,5 @@ Both direct-file and fresh HTTP in-app browser attempts timed out after 30 secon
 2. Build a read-only reconciliation report against current holdings and cash. Identify incomplete legacy history, duplicate IDs and exact-identity conflicts. Cover $10/$500, foil isolation, sealed unknown valuations, exits, rebuy and reversals.
 3. Prepare explicit opening-balance events linked to original records with unknown provenance. Opening holdings must not debit cash again. Implement preview/export, restartable atomic migration and rollback, with authorization before owner-data writes.
 4. Switch existing shared selectors to the verified projection across Dashboard, Positions, Signals, Transactions and History. Keep trade entry and receipts from #38. Prove reload, backup restore, failure recovery and invariant equality before promotion.
+
+Follow-up local verification passed all 107 tests, source/format checks and normal, Pages, portable and canonical builds. Linux CI run 42316506190 passed the previously failing generated-artifact freshness step and release packaging.
