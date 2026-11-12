@@ -4,7 +4,8 @@ import { parsePrice } from "./quotes.js";
 export function researchIdentity(item) {
   const assetKey = getAssetKey(item);
   if (!assetKey) throw new Error("Exact asset identity is required.");
-  return { assetKey, assetType: getAssetType(item), cardKey: getAssetType(item) === "single" ? assetKey.slice(7) : undefined, cardId: item.id, scryfall_id: getAssetType(item) === "single" ? getSingleScryfallId(item) : undefined, mtgjson_uuid: item.mtgjson_uuid, finish: getSingleFinish(item), name: item.name, set_code: item.set_code, collector_number: item.collector_number };
+  const identity = getAssetType(item) === "sealed" ? { mtgjson_uuid: item.mtgjson_uuid || assetKey.slice(7) } : { cardKey: assetKey.slice(7), scryfall_id: getSingleScryfallId(item), finish: getSingleFinish(item) };
+  return { assetKey, assetType: getAssetType(item), ...identity, cardId: item.id, name: item.name, set_code: item.set_code, ...(getAssetType(item) === "single" ? { collector_number: item.collector_number } : {}) };
 }
 
 export function safeResearchUrl(value) {
@@ -27,7 +28,9 @@ export function marketEvidence(rows, item, now = Date.now()) {
   const low = parsePrice(latest?.nmLow);
   const age = observationAge(latest?.checkedAt, now);
   const previous = observations.find(row => row !== latest && parsePrice(row.marketPrice) !== null);
+  const prices = observations.map(row => parsePrice(row.marketPrice)).filter(value => value !== null);
   return { observations, latest, market, low, age,
+    range: prices.length ? { count: prices.length, low: Math.min(...prices), high: Math.max(...prices) } : null,
     spread: market !== null && low !== null ? low - market : null,
     change: !age.stale && market !== null && parsePrice(previous?.marketPrice) > 0 ? (market / Number(previous.marketPrice) - 1) * 100 : null,
   };

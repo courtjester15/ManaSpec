@@ -7,6 +7,10 @@ export function AssetModeControl({ value, onChange, label = "Asset type", option
   return <div className="workspace-scope" role="group" aria-label={label}>{options.map(([mode, text]) => <button key={mode} type="button" aria-pressed={value === mode} onClick={() => onChange(mode)}>{text}</button>)}</div>;
 }
 
+export function WorkflowViewControl({ value, onChange, positions = false }) {
+  return <div className="workflow-view-control"><label><span>Table view</span><select value={value} onChange={event => onChange(event.target.value)}><option value="essentials">Essentials</option><option value="plan">Plan and review</option><option value="research">{positions ? "Performance and history" : "Market research"}</option><option value="all">All columns</option></select></label><small>{positions ? "Marked P/L excludes future exit costs. Compare exits for estimated net; open a row for full basis and notes." : "Reference prices are not all-in purchase costs. Open a row for source, observation age and research."}</small></div>;
+}
+
 export function AttentionRow({ item, reason, bucketId, onActivate, selected }) {
   const title = item.title || `${item.name} · ${assetContextLabel(item)}`;
   const why = reason || attentionReason(item, bucketId);

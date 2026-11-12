@@ -164,6 +164,6 @@ test("sealed assets join saved-data search and History with exact destinations",
   assert.ok(results.some(result => result.category === "Notes" && result.exactAssetKey === sealed.assetKey));
   assert.deepEqual(results.find(result => result.category === "Positions").destination, { pathname: "/positions", search: `?focus=${encodeURIComponent(sealed.id)}&detail=1` });
   const history = buildHistoryEvents(sealedState);
-  assert.equal(history.find(event => event.eventType === "VALUE").summary, "Manual market check at $135.00 / 12 sellers");
+  assert.equal(history.find(event => event.eventType === "VALUE").summary, "Manual market check at $135.00 · Source unknown / 12 sellers");
   assert.equal(history.find(event => event.eventType === "RADAR").price, null);
 });

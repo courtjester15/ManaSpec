@@ -56,7 +56,7 @@ function HelpDrawer({ open, onClose, returnFocusRef }) {
           <h4>3. Review signals</h4><p>Entry and exit targets drive the attention queue. Signals are computed from your saved plan and current prices.</p>
           <h4>4. Value honestly</h4><p>Singles use Scryfall pricing. Sealed products start unpriced because the verified MTGJSON feed has no sealed prices; save a timestamped manual TCGplayer check from product detail.</p>
           <h4>5. Search saved work</h4><p>The toolbar searches saved ManaSpec data across both asset classes. Use Radar search to discover and add a new single or sealed product.</p>
-          <h4>6. Exit and preserve history</h4><p>Selling reduces or closes a Position, increases cash, logs realized P/L, and remains visible in Transactions and History.</p>
+          <h4>6. Exit and preserve history</h4><p>Compare exits on a Position to estimate cash or store-credit outcomes after costs. Research does not record a sale. Record an actual cash sale to reduce the holding and log realized P/L; review its receipt in Transactions.</p>
           <h4>Protect your work</h4><p>ManaSpec stores data in this browser. Export a JSON backup from Admin before browser cleanup or moving devices.</p>
         </section>
       </aside>

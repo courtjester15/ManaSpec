@@ -27,3 +27,14 @@
 .exit-route .trade-amounts dt { white-space: normal; }
 .exit-route p { font-size: .8rem; overflow-wrap: anywhere; }
 @media (max-width: 600px) { .exit-route .form-grid { grid-template-columns: 1fr; } }
+
+.workflow-view-control { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; margin: .5rem 0; }
+.workflow-view-control label { display: flex; gap: .5rem; align-items: center; font-size: .8rem; margin: 0; }
+.workflow-view-control select { width: auto; margin: 0; font-size: .8rem; }
+.workflow-view-control small { color: var(--muted-color, #a8b3c3); max-width: 52rem; font-size: .75rem; }
+.workflow-empty { padding: .8rem 1rem; border: 1px solid #334155; border-radius: .4rem; font-size: .85rem; margin: .7rem 0; }
+.workflow-empty p { margin: .4rem 0 .7rem; }
+.signals-action-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (min-width: 1700px) { .signals-action-tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (max-width: 1000px) { .signals-action-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 639px) { .signals-action-tiles { grid-template-columns: 1fr; } .workflow-view-control label, .workflow-view-control select { width: 100%; } }
