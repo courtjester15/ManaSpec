@@ -11,6 +11,7 @@ async function walk(url) {
     else if ([".js", ".jsx", ".mjs", ".css"].includes(extname(entry.name))) {
       const text = await readFile(child, "utf8");
       if (!text.endsWith("\n")) problems.push(`${child.pathname}: missing final newline`);
+      if (child.pathname.includes("/src/") && /\r/.test(text)) problems.push(`${child.pathname}: use LF source bytes for reproducible build maps`);
       if (/\r(?!\n)/.test(text)) problems.push(`${child.pathname}: invalid line endings`);
     }
   }
