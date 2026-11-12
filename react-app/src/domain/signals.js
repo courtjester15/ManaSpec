@@ -1,3 +1,4 @@
+import { marketEvidence } from "./marketIntelligence.js";
 import { assetTypeLabel, getExternalMarketUrl } from "./assetIdentity.js";
 import { getRelatedRecordsForAsset } from "./relatedRecords.js";
 
@@ -8,6 +9,7 @@ export const SIGNAL_BUCKETS = Object.freeze([
   { id: "targetsHit", label: "Targets Hit", detail: "Immediate buy/sell review" },
   { id: "approaching", label: "Approaching", detail: "Near or closest target" },
   { id: "noPlan", label: "No Plan", detail: "Missing required fields" },
+  { id: "evidenceReview", label: "Evidence Review", detail: "Changed quote or release review" },
   { id: "staleChecks", label: "Stale Checks", detail: "Missing or 30+ days old" },
 ]);
 
@@ -89,7 +91,7 @@ function getPriceAgeDays(item, now) {
 
 function getMarketState(item, observations, trackedItems, now) {
   const observation = getRelatedRecordsForAsset(observations, item, trackedItems)
-    .filter(row => !row.source || String(row.source).startsWith("tcgplayer"))
+    .filter(row => row.researchType !== "exit" && (row.researchType === "market" || !row.source || String(row.source).startsWith("tcgplayer")))
     .sort((a, b) => new Date(b.checkedAt || 0) - new Date(a.checkedAt || 0))[0];
   const checkedAt = observation?.checkedAt ? new Date(observation.checkedAt) : null;
   const ageDays = checkedAt && !Number.isNaN(checkedAt.getTime())
@@ -222,6 +224,13 @@ function buildSignalRow(item, observations, trackedItems, now) {
   const plan = getPlanState(item);
   const targetValue = getTarget(item);
   const buckets = getBuckets(target, plan, market);
+  const evidence = marketEvidence(observations, item, now);
+  const reviewReasons = [
+    evidence.change !== null && Math.abs(evidence.change) >= 10 ? `${evidence.change.toFixed(1)}% since prior manual check` : "",
+    evidence.latest?.releaseReviewAt && Date.parse(evidence.latest.releaseReviewAt) <= now ? "Release review due" : "",
+    !evidence.age.stale && evidence.market > 0 && evidence.spread !== null && Math.abs(evidence.spread / evidence.market) >= .25 ? "Large observed listing / market spread; verify condition" : "",
+  ].filter(Boolean);
+  if (reviewReasons.length) buckets.push("evidenceReview");
   const state = { hasPlan: !plan.missing.length, hasTarget: Boolean(targetValue), market, plan };
   const source = item.owned ? "portfolio" : "radar";
   const currentPrice = item.currentPrice === null || item.currentPrice === undefined || item.currentPrice === "" ? null : number(item.currentPrice);
@@ -234,7 +243,7 @@ function buildSignalRow(item, observations, trackedItems, now) {
     sourceLabel: item.owned ? "Position" : "Radar",
     status: getStatusLabel(target.status, buckets),
     actionLabel: getActionLabel(item, target.status, buckets, state),
-    reasonLabel: getReasonLabel(item, target.status, buckets, state),
+    reasonLabel: reviewReasons.length ? reviewReasons.join(" · ") : getReasonLabel(item, target.status, buckets, state),
     reasonDetail: getReasonDetail(item, target.status, buckets, state),
     buckets,
     detail: formatTargetDetail(item, target.status, buckets),
@@ -315,7 +324,7 @@ export function filterSignalRows(rows, filters = {}) {
 export function getSignalSourceNavigation(row) {
   return {
     pathname: row.source === "radar" ? "/radar" : "/positions",
-    search: `?focus=${encodeURIComponent(row.id)}`,
+    search: `?focus=${encodeURIComponent(row.id)}${row.buckets?.includes("evidenceReview") ? "&detail=evidence" : ""}`,
   };
 }
 

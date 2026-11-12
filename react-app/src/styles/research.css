@@ -1,0 +1,11 @@
+.evidence-panel p { overflow-wrap: anywhere; }
+.evidence-panel header { flex-wrap: wrap; gap: .5rem; }
+.evidence-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin: .7rem 0; }
+.evidence-metrics dt { font-size: .76rem; color: var(--muted-color, #a8b3c3); }
+.evidence-metrics dd { margin: .2rem 0; font-weight: 650; font-variant-numeric: tabular-nums; }
+.evidence-history { border-top: 1px solid #334155; padding: .6rem 0; }
+.evidence-history small, .comparable-evidence small { display: block; }
+.comparable-evidence { display: grid; gap: .5rem; padding: 1rem; border: 1px solid #334155; border-radius: .5rem; min-width: 0; }
+.comparable-evidence a { overflow-wrap: anywhere; }
+.comparables .comparable-evidence a { display: block; padding: 0; border: 0; }
+@media (max-width: 600px) { .evidence-metrics { grid-template-columns: 1fr; } }
