@@ -14,6 +14,8 @@ The owner-approved [Epic #26](https://github.com/courtjester15/ManaSpec/issues/2
 
 **2026-11-04:** #28 is implemented on a dependent React branch for review. [Verification and limits](audits/issue-28-true-cost-2026-11-04.md). #29 owns the subsequent lots and ownership migration.
 
+**2026-11-11 owner-authorized sprint:** #36 market intelligence → #43 exit comparison → #30 progressive workflow now have a dependent React implementation on PR #38 ancestry. Manual evidence, exact printing research, route-level net/break-even and direct sale handoff, optional discovery thesis/direct buy and Essentials/detail table views are implemented. [Evidence and outstanding UI acceptance](audits/market-exit-workflow-2026-11-11.md). These Issues remain open; browser attachment blocks interactive desktop/mobile/keyboard proof. No #29 ledger migration or #27/#38 gate bypass.
+
 This is **directional sequencing**, not an executable work-order list. The active queue and approved GitHub Issues own current action; the older phases/checklists below provide context but are not standing instructions to build every unchecked item. Completed milestone detail lives in `REACT_SPIKE_PROGRESS.md`, PRs, and Git history.
 
 Use [PARKING_LOT.md](PARKING_LOT.md) for promising ideas that still need validation, workflow testing, prioritization, or a product decision.

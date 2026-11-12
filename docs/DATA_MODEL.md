@@ -368,6 +368,14 @@ Market Evaluation
 
 Snapshots are not a full pricing database. They are lightweight local history that begins when ManaSpec successfully refreshes a tracked Radar item or open Position. No external historical series or missed-day values are fetched or fabricated.
 
+## Typed React research observations
+
+The #36/#43 candidate adds records to the existing `marketObservations` array without changing storage keys or backup/data schema versions. `researchType: "market"` carries exact asset identity, manual `source`, `checkedAt`, optional `marketPrice`/`nmLow` (null means unavailable), URL, confidence, notes, thesis/reprint assessment and release-review date. It is research, not a holding valuation write. The separate sealed **Set portfolio valuation** action retains the existing explicit valuation behavior.
+
+`researchType: "exit"`, `source: "exit-research"` carries exact identity, comparison quantity and up to three route assumptions. Routes retain per-unit quote, cash/credit payout, asking/known-offer distinction, condition, valid quantity/time/source and batch costs. These records contain no authoritative market price or cash event. Market and Signals selectors exclude exit research; History labels it EXIT. Reopening recomputes basis from current Positions; saved research is not an immutable sale receipt. Only confirmed #28 trade flows change holdings/cash/transactions.
+
+Unknown observation fields survive existing backup/reload/restore. Older vanilla code cannot interpret typed research semantics, so the generated rollback guard refuses typed research as well as true-cost/sealed stores. This is data protection, not permission to promote React or declare cross-client writing safe.
+
 ## Market Observation
 
 A Market Observation is a saved user market check.

@@ -32,13 +32,14 @@ test("$500 premium partial exit matches actual #28 receipt and residual basis", 
   }
 });
 
-test("24-copy buylist batch allocates costs once and rejects condition/quantity mismatch", () => {
+test("24-copy buylist batch retains condition, allocates costs once and enforces valid quantity", () => {
   const batch = { ...position, qty: 24, openBasisCents: 24000 };
   const offer = route({ price: "11", quoteType: "offer", availableQty: "24", feePercent: "0", shippingPaid: "6", condition: "NM only" });
   const result = compareExit(batch, 24, offer);
   assert.equal(result.grossCents, 26400);
   assert.equal(result.cashCents, 25800);
   assert.equal(result.basisCents, 24000);
+  assert.equal(compareExit(batch, 24, { ...offer, condition: "LP only", price: "9" }).cashCents, 21000);
   assert.throws(() => compareExit(batch, 24, { ...offer, availableQty: "12" }), /valid quantity/);
   assert.equal(createExitResearch(batch, 24, [offer]).routes[0].condition, "NM only");
 });
