@@ -46,7 +46,14 @@ export function createMarketObservation(item, fields, now = new Date().toISOStri
   if (!fields.source?.trim()) throw new Error("Name the source of this manual observation.");
   if (!Number.isFinite(Date.parse(fields.checkedAt)) || Date.parse(fields.checkedAt) > Date.parse(now)) throw new Error("Enter the actual observation time, no later than now.");
   if (fields.url && !safeResearchUrl(fields.url)) throw new Error("Use an http or https source URL.");
-  return { ...researchIdentity(item), id: crypto.randomUUID(), researchType: "market", source: fields.source.trim(), enteredManually: true, checkedAt: new Date(fields.checkedAt).toISOString(), savedAt: now, marketPrice, nmLow, url: safeResearchUrl(fields.url), confidence: fields.confidence || "unknown", rawText: fields.rawText?.trim() || "", thesis: fields.thesis?.trim() || "", reprintRisk: fields.reprintRisk?.trim() || "", releaseReviewAt: fields.releaseReviewAt || "" };
+  const counts = {};
+  for (const key of ["currentSellers", "currentQuantity"]) {
+    const raw = fields[key];
+    const count = raw == null || raw === "" ? null : Number(raw);
+    if (count !== null && (!Number.isSafeInteger(count) || count < 0)) throw new Error("Observed seller and listing quantities must be nonnegative whole counts or blank.");
+    counts[key] = count;
+  }
+  return { ...researchIdentity(item), id: crypto.randomUUID(), researchType: "market", source: fields.source.trim(), enteredManually: true, checkedAt: new Date(fields.checkedAt).toISOString(), savedAt: now, marketPrice, nmLow, ...counts, url: safeResearchUrl(fields.url), confidence: fields.confidence || "unknown", rawText: fields.rawText?.trim() || "", thesis: fields.thesis?.trim() || "", reprintRisk: fields.reprintRisk?.trim() || "", releaseReviewAt: fields.releaseReviewAt || "" };
 }
 
 export function comparableJudgment(item, card) {

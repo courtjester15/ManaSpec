@@ -12,6 +12,9 @@ test("manual evidence keeps exact finish and unknown listing distinct from zero"
   const record = createMarketObservation(item, { ...fields, nmLow: "" }, now);
   assert.equal(record.nmLow, null);
   assert.equal(record.marketPrice, 500);
+  assert.equal(record.currentSellers, null);
+  assert.equal(createMarketObservation(item, { ...fields, currentSellers: "0", currentQuantity: "24" }, now).currentQuantity, 24);
+  assert.throws(() => createMarketObservation(item, { ...fields, currentSellers: "1.5" }, now), /whole counts/);
   assert.equal(marketEvidence([record], { ...item, finish: "etched", id: "exact|etched" }).latest, undefined);
   assert.equal(marketEvidence([record], item, Date.parse(now)).spread, null);
   assert.throws(() => createMarketObservation(item, { ...fields, checkedAt: "2027-01-01" }, now), /observation time/);
