@@ -9,3 +9,21 @@
 .comparable-evidence a { overflow-wrap: anywhere; }
 .comparables .comparable-evidence a { display: block; padding: 0; border: 0; }
 @media (max-width: 600px) { .evidence-metrics { grid-template-columns: 1fr; } }
+
+.exit-desk-toolbar { display: flex; gap: .7rem; align-items: end; flex-wrap: wrap; margin: 1rem 0; }
+.exit-desk-toolbar label { max-width: 12rem; }
+.exit-route-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 1rem; align-items: start; }
+.exit-route { border: 1px solid #334155; border-radius: .5rem; padding: 1rem; min-width: 0; display: grid; gap: .7rem; }
+.exit-route header { display: flex; justify-content: space-between; gap: .7rem; align-items: center; }
+.exit-route label { display: grid; gap: .3rem; min-width: 0; }
+.exit-route input, .exit-route select, .exit-route textarea { width: 100%; min-width: 0; margin: 0; }
+.exit-route label > span { font-size: .78rem; }
+.exit-route .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.exit-route details { border-top: 1px solid #334155; padding-top: .6rem; }
+.exit-route details[open] summary { margin-bottom: .7rem; }
+.exit-route .trade-amounts > div { grid-template-columns: minmax(0, 1fr) auto; gap: .6rem; }
+.exit-route .trade-amounts { font-size: .8rem; }
+.exit-route .trade-amounts dd { white-space: nowrap; }
+.exit-route .trade-amounts dt { white-space: normal; }
+.exit-route p { font-size: .8rem; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .exit-route .form-grid { grid-template-columns: 1fr; } }

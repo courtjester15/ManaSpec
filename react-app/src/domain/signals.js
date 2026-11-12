@@ -243,7 +243,7 @@ function buildSignalRow(item, observations, trackedItems, now) {
     sourceLabel: item.owned ? "Position" : "Radar",
     status: getStatusLabel(target.status, buckets),
     actionLabel: getActionLabel(item, target.status, buckets, state),
-    reasonLabel: reviewReasons.length ? reviewReasons.join(" · ") : getReasonLabel(item, target.status, buckets, state),
+    reasonLabel: reviewReasons.length ? reviewReasons.join(" Â· ") : getReasonLabel(item, target.status, buckets, state),
     reasonDetail: getReasonDetail(item, target.status, buckets, state),
     buckets,
     detail: formatTargetDetail(item, target.status, buckets),

@@ -4,6 +4,7 @@ import { formatMoney } from "../../domain/portfolio.js";
 import { TRADE_CHARGES, tradeEconomics } from "../../domain/tradeEconomics.js";
 import { buyFromRadar, sellPosition } from "../../domain/trading.js";
 import { useAppState } from "../../state/AppState.jsx";
+import { ExitComparison } from "./ExitComparison.jsx";
 import { Modal } from "./ui.jsx";
 
 function localTime() {
@@ -24,11 +25,11 @@ export function TradeDialog({ trade, onClose, onSaved }) {
   </Modal>;
 }
 
-function TradeForm({ item, mode = "BUY", defaultQuantity = 1, onSaved, onCancel }) {
+function TradeForm({ item, mode = "BUY", defaultQuantity = 1, initialFields = {}, onSaved, onCancel }) {
   const { state, updateState } = useAppState();
   const selling = mode === "SELL";
   const sourceExamples = useId();
-  const [fields, setFields] = useState(() => ({ quantity: defaultQuantity, price: "", date: localTime(), source: "" }));
+  const [fields, setFields] = useState(() => ({ quantity: defaultQuantity, price: "", date: localTime(), source: "", ...initialFields }));
   const [error, setError] = useState("");
   const change = key => event => {
     setFields(previous => ({ ...previous, [key]: event.target.value }));
@@ -97,10 +98,13 @@ function TradeForm({ item, mode = "BUY", defaultQuantity = 1, onSaved, onCancel 
 export function DetailTradeActions({ item, owned, watched }) {
   const [trade, setTrade] = useState(null);
   const [status, setStatus] = useState("");
+  const [comparing, setComparing] = useState(false);
   const buyItem = owned || watched || item;
   return <div className="detail-trade-actions">
     <button type="button" onClick={() => setTrade({ item: buyItem, more: Boolean(owned), defaultQuantity: owned ? 1 : watched?.plannedQty || 1 })}>{owned ? "Buy more" : "Record buy"}</button>
     {owned && <button type="button" className="danger" onClick={() => setTrade({ item: owned, mode: "SELL" })}>Sell</button>}
+    {owned && <button type="button" className="secondary" onClick={() => setComparing(true)}>Compare exits</button>}
+    <ExitComparison position={comparing ? owned : null} onClose={() => setComparing(false)} onRecordSale={draft => { setComparing(false); setTrade(draft); }} />
     {status && <span role="status">{status}</span>}
     <TradeDialog trade={trade} onClose={() => setTrade(null)} onSaved={qty => setStatus(`${trade.mode === "SELL" ? "Sold" : "Bought"} ${qty}.`)} />
   </div>;

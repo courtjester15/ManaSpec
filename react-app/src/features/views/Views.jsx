@@ -128,7 +128,7 @@ function SealedProductDetail({ item, source, onClose }) {
   const watched = state.sealedRadar.find(row => getAssetKey(row) === getAssetKey(canonical));
   const target = source === "radar" ? watched || canonical : owned || canonical;
   const notes = getRelatedRecordsForAsset(state.cardNotes, canonical, trackedItems).sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
-  const observations = getRelatedRecordsForAsset(state.marketObservations, canonical, trackedItems).sort((a, b) => new Date(b.checkedAt) - new Date(a.checkedAt));
+  const observations = getRelatedRecordsForAsset(state.marketObservations, canonical, trackedItems).filter(row => row.researchType !== "exit").sort((a, b) => new Date(b.checkedAt) - new Date(a.checkedAt));
   const latestMarket = observations.filter(row => row.researchType !== "exit")[0];
   const marketUrl = getExternalMarketUrl(canonical);
   const assetKey = getAssetKey(canonical);
@@ -157,7 +157,7 @@ function SealedProductDetail({ item, source, onClose }) {
     }));
     setMarket({ marketPrice: "", currentSellers: "", currentQuantity: "", rawText: "" });
   }
-  const currentPrice = target.currentPrice ?? latestMarket?.marketPrice;
+  const currentPrice = target.currentPrice;
   const targetValue = source === "positions" ? owned?.exitTarget : target.entryTarget;
   const targetDistance = priceDistance(currentPrice, targetValue);
   const showingPosition = source === "positions" && owned;
