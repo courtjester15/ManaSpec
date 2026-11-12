@@ -34,6 +34,7 @@ jobs:
           npm run lint
           npm run format:check
           npm test
+          node tools/check-sprint-render.mjs
       - name: Vanilla compatibility and rollback syntax
         run: |
           node tools/validate-storage-boundary.js

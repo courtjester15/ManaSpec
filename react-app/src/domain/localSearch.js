@@ -114,8 +114,8 @@ export function buildHistoryEvents(state = {}) {
       name: observation.name || observation.cardName,
       date: observation.checkedAt,
       price: observation.marketPrice,
-      eventType: "VALUE",
-      summary: `Manual market check at ${formatMoney(observation.marketPrice)}${observation.currentSellers ? ` / ${observation.currentSellers} sellers` : ""}`,
+      eventType: observation.researchType === "exit" ? "EXIT" : "VALUE",
+      summary: observation.researchType === "exit" ? `Exit research · ${observation.quantity} units · ${observation.routes?.length || 0} routes · no sale recorded` : `Manual market check ${observation.marketPrice == null ? "(market unavailable)" : `at ${formatMoney(observation.marketPrice)}`} · ${observation.source || "Source unknown"}${observation.currentSellers ? ` / ${observation.currentSellers} sellers` : ""}`,
     })),
     ...array(state.thesisNotes).map(note => ({
       ...note,

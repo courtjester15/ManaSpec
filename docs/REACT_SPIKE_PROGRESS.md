@@ -2,6 +2,10 @@
 
 This document records implementation milestones and evidence for the React reconstruction and likely forward frontend candidate. It does not redefine current vanilla behavior or authorize production cutover.
 
+## 2026-11-11: #36 / #43 / #30 dependent product sprint
+
+Built on PR #38's exact head with its full ancestry: source/time-aware manual evidence and premium printing research; partial/full route exit comparison with #28 math and actual-cash-sale confirmation; optional discovery thesis/direct buy, calm table defaults and full detail views. 119 tests, static React route/receipt rendering, source/format checks and all four builds pass; Pages manifest validates 17 files. In-app attachment times out even against a host HTTP-200 preview. Keyboard/focus, mobile, 1366×768/1920×1080 and direct-file acceptance remain unverified. The [dated sprint record](audits/market-exit-workflow-2026-11-11.md) owns benchmarks, cases, exact entry points and remaining work. No production or owner data changed; no merge/deploy/promotion.
+
 ## 2026-10-20: Issue #20 valuation investigation
 
 Corrected missing-price coercion, exact-finish refresh, quote-only Radar/Position updates, cached-price history fabrication, and missing-price detail/Signals display. Preserved null/zero through trading, reload, and backup. The 70-test React suite, source/format checks, normal/Pages/portable builds, and committed artifact integrity check passed. In-app browser evidence covers both frontends with isolated memory fixtures, desktop/laptop and React phone layouts, Admin audit, Positions, Dashboard, Signals, and detail. Direct portable `file://` opening was blocked by in-app URL policy; hosted portable smoke is separate evidence, not a direct-file pass. See [investigation and QA record](audits/issue-20-position-valuations-2026-10-20.md) for scope, root causes, impact, and exact limits. No merge, deployment, or promotion is authorized by this work.

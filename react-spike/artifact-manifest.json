@@ -34,29 +34,29 @@
       "bytes": 1502661,
       "sha256": "370f1a5a04dea94918374cb3d71739ede556f89703c235d57f2498d24a5a146a"
     },
-    "assets/index-DEJmFv4V.js": {
-      "bytes": 628087,
-      "sha256": "f9f45c6a1fbc94d58d8c7450eb4dc8a37878509c494a18c76de0b107cd7b7f4d"
+    "assets/index-d2n3CQwS.js": {
+      "bytes": 655149,
+      "sha256": "796a88e9faaa328beda18767a55930c7722ebf342f3474c49f03eb4120f73823"
     },
-    "assets/index-DEJmFv4V.js.map": {
-      "bytes": 2755899,
-      "sha256": "065660074d7195b47b8846b95c70b02f878e1a2c925ffd3217add9dfa67e14f5"
+    "assets/index-d2n3CQwS.js.map": {
+      "bytes": 2811231,
+      "sha256": "e7af7df9ed9839230cc6045ecdfff7139adf191ca24513df81d4a3d03f1c88cf"
     },
-    "assets/index-Z7zZmaOC.css": {
-      "bytes": 135781,
-      "sha256": "94a0b125ed51a7b0592a38d54df72a35ae197ec628804d47e78bdbd0cf9d030b"
+    "assets/index-D8FwzYwg.css": {
+      "bytes": 138649,
+      "sha256": "35276c8713f017b73e99664e403a257004623ad5ef13c3c2fa936314d275696b"
     },
     "assets/manaspec-mark-C1H8lgsP.png": {
       "bytes": 222812,
       "sha256": "f64369da5823d28735c0c185d4553b2838a22387b91dfb992f32c212b3c31498"
     },
-    "assets/PriceHistory-8kRXMCv9.js": {
+    "assets/PriceHistory-BC7fchoG.js": {
       "bytes": 174514,
-      "sha256": "522b5e2c68a58607d1050fca2b3368d444311f22a8ca032d1255353238a70a47"
+      "sha256": "06eb5585506988d7d26c55cb3975ba5bfc5df610d0911534e39057c71a1429d9"
     },
-    "assets/PriceHistory-8kRXMCv9.js.map": {
+    "assets/PriceHistory-BC7fchoG.js.map": {
       "bytes": 777892,
-      "sha256": "5c812095e9a7312ce5f33ef1ded4b19de4512ea1c0c714e18677deb9de1b1dc7"
+      "sha256": "da614cbeb699929f66afd74a550da8e9466c322751c343fed113992e208b5433"
     },
     "assets/sealed-catalog-dPJfWl6u.js": {
       "bytes": 1735786,
@@ -68,7 +68,7 @@
     },
     "index.html": {
       "bytes": 818,
-      "sha256": "d99a66b2cb12101bf1dc7d9a031729f8e5c3a187a50d53bfbc37104537b012df"
+      "sha256": "7a0c3fc503ee7abe4d745f69cd92f20ef6df5bd4c7f80b7feb30a9272bda6a07"
     }
   }
 }

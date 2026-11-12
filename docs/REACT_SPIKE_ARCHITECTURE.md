@@ -4,6 +4,14 @@ This document defines the implemented architecture and remaining validation cont
 
 For current behavior and ownership, use [README](README.md), [ARCHITECTURE](ARCHITECTURE.md), and [DATA_MODEL](DATA_MODEL.md). For scope and parity gates, use [REACT_MIGRATION_NOTES](REACT_MIGRATION_NOTES.md). For dependency evaluation, use [LIBRARIES](LIBRARIES.md). For local and Pages delivery, use [DEPLOYMENT](DEPLOYMENT.md).
 
+## Market research and progressive workflow
+
+`marketIntelligence.js` owns exact-asset evidence identity, manual observation validation, age, sparse ranges and comparable quality. `MarketEvidence` uses the existing state/persistence boundary for provenance, optional thesis/release context and historical checks. Recent same-card printings expose independently saved exact-finish evidence. `signals.js` derives Evidence Review without treating exit research as market truth.
+
+`exitComparison.js` derives route terms, cent-rounded break-even and confirmation drafts from shared `tradeEconomics.js`; `ExitComparison` holds at most three user-authored route assumptions and saves typed research in the existing observations array. `TradeDialog` accepts initial terms but retains actual confirmation and canonical trade validation. Credit face value is separate from cash and cannot prefill a cash receipt.
+
+`workflowViews.js` selects small groups of existing Radar/Positions columns; shared filters/table implementation stay intact. Essentials is the default; Plan, Research/Performance and All Columns expose the retained detail. Exact discovery can atomically save a watch and optional note, then open actual-buy confirmation. Detail resolves canonical rows on subsequent state updates. See [verification](audits/market-exit-workflow-2026-11-11.md); browser acceptance remains unproven.
+
 ## Status And Boundaries
 
 The owner-approved forward direction is now Epic #26. Issue #27 prepares conditional canonical promotion while vanilla remains deployed. React commits use a raw write-ahead undo journal over existing compatible keys; sealed selector defaults remain out of unchanged backups. Corrupt startup state fails closed and offers a private raw recovery download. This adds recovery, not transaction authority or cross-tab serializability. See [Deployment](DEPLOYMENT.md) and the [current gate report](audits/issue-27-react-promotion-2026-11-01.md); older spike descriptions below do not override those gates.

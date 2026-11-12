@@ -14,6 +14,9 @@
       if (key === "transactions" && records.some(record => record?.trade?.version === 1 || record?.type === "REVERSAL")) {
         reason = "This store includes true-cost trades. Vanilla cannot represent itemized cash flows, cent allocations, or reversals.";
       }
+      if (key === "marketObservations" && records.some(record => ["market", "exit"].includes(record?.researchType))) {
+        reason = "This store includes typed market or exit research. Vanilla cannot distinguish unknown research quotes, market values and cash/store-credit exit assumptions.";
+      }
       if ((key.startsWith("sealed") && records.length) || records.some(record => record.assetType === "sealed" || String(record.assetKey || "").startsWith("sealed:"))) {
         reason = "This store includes sealed product data. Vanilla cannot represent its holdings, history or full account totals.";
       }

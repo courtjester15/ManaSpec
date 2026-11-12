@@ -6,6 +6,10 @@ This folder holds ManaSpec's canonical product and technical truth. **For work:*
 
 The `dev notes/` folder contains raw daily notes and historical planning memory. Use `dev notes/inbox/` for current brainstorming and beta observations, and `dev notes/archive/` for older reference notes. Do not treat dev notes as active instructions.
 
+## React research and exit workflows — candidate only
+
+The dependent #36/#43/#30 candidate adds exact-asset manual market evidence and premium-print research, a three-route exit comparison desk using #28 true-cost math, and progressive Radar/Positions table views. Start on Radar for an optional thesis/target and Watch & record buy; open a Position's Compare exits for partial/full batch net outcomes and a confirmed cash-sale handoff. Research never changes holdings or market valuation. See the [sprint evidence and precise review paths](audits/market-exit-workflow-2026-11-11.md) for implemented scope and blocked interactive checks. Vanilla remains deployed; #27/#38 gates remain open.
+
 ## Start Here
 
 - [Agent map](../AGENTS.md): short work orders, autonomy, safety and PR authority.

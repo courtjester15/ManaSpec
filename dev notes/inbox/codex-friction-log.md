@@ -259,3 +259,9 @@ Classification: repeat risk for encoded patch anchors, image-format mismatch, my
 Screenshot guidance: keep externally sourced screenshots cropped and free of personal/private information. Frame marketplace screenshots as manually gathered examples, never as official integration, scraping, or verified price data. Refresh screenshots only when the pictured workflow materially changes.
 
 Promote to Workflow: later, if these frictions recur or affect QA confidence.
+
+### In-app attachment timeout during #36/#43/#30 sprint
+
+Date: 2026-11-11
+
+The in-app browser timed out creating tabs and reset its kernel. Sandbox-loopback requests were also inaccessible. A normal terminal-hosted Vite preview outside the network sandbox returned HTTP 200 at 127.0.0.1:5175; one fresh in-app attempt still timed out. No desktop/external-browser fallback was used. Continue domain/storage/build work and actual React static-render checks, and record keyboard, screenshots, viewport and portable-browser acceptance as unverified. Do not repeatedly restart servers or change application code for this attachment failure. The dated sprint audit owns this run's details.

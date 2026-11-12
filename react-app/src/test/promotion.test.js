@@ -66,6 +66,9 @@ test("guarded vanilla rollback starts only on compatible singles data and never 
   for (const [initial, safe] of [
     [{ cash: "100", specs: "[]" }, true],
     [{ transactions: '[{"type":"BUY","trade":{"version":1}}]' }, false],
+    [{ marketObservations: '[{"researchType":"exit","routes":[]}]' }, false],
+    [{ marketObservations: '[{"researchType":"market","marketPrice":null}]' }, false],
+    [{ marketObservations: '[{"source":"tcgplayer","marketPrice":10}]' }, true],
     [{ cash: "100", sealedSpecs: '[{"assetType":"sealed"}]' }, false],
     [{ sealedTransactions: '[{"type":"SELL"}]' }, false],
     [{ cardNotes: '[{"assetKey":"sealed:old-product"}]' }, false],

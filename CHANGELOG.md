@@ -6,6 +6,12 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ## Unreleased
 
+### Added — 2026-11-11
+
+- React candidate: exact-asset manual Market/NM-listing evidence with source/time/confidence, thesis/release review, sparse history and premium-print research; source-aware review signals.
+- Compare up to three user-entered exit routes for partial/full quantities with #28 fees, cent basis, net/break-even, credit-versus-cash labels and actual-sale confirmation handoff. Research saves without trading or repricing holdings.
+- Optional thesis and direct buy from discovery; Essentials/Plan/Research or Performance/All Columns table views and guided empty states. Typed research is protected by the vanilla rollback guard. Interactive acceptance remains blocked; no merge/deployment/promotion.
+
 ### Changed — 2026-11-01
 
 - Completed the remaining desktop visual/discovery QA independently; selecting a discovery result now dismisses its dropdown so saved-row actions remain reachable. Normalized build-source line endings for Windows/Linux artifact consistency.
