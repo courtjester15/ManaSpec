@@ -37,3 +37,10 @@ This is the short entry point for Dex and other contributors. `docs/WORKFLOW.md`
 - Default to one main agent. Delegate only bounded, non-overlapping tasks; at most two subagents without explicit approval, no nested agents.
 
 For detailed lifecycle, realistic-data validation, safe fixture handling, browser commands, table contracts, QA and deployment requirements, follow `docs/WORKFLOW.md`.
+
+## Repository skills
+
+- [ManaSpec code health](.agents/skills/manaspec-code-health/SKILL.md) for React lint findings and dependency boundaries.
+- [ManaSpec browser QA](.agents/skills/manaspec-browser-qa/SKILL.md) for isolated task walkthroughs and UI evidence.
+- [ManaSpec data validation](.agents/skills/manaspec-data-validation/SKILL.md) for exact assets, trade math and persistence changes.
+- [ManaSpec release validation](.agents/skills/manaspec-release-validation/SKILL.md) for candidate builds, recovery and promotion evidence.

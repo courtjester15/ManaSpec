@@ -3,6 +3,10 @@ name: React candidate gates
 on:
   pull_request:
     paths:
+      - "AGENTS.md"
+      - ".agents/skills/**"
+      - "docs/WORKFLOW.md"
+      - "docs/DEPLOYMENT.md"
       - "react-app/**"
       - "react-spike/**"
       - "tools/**"
@@ -26,6 +30,8 @@ jobs:
           cache-dependency-path: react-app/package-lock.json
       - run: npm ci
         working-directory: react-app
+      - name: Repository skill and workflow references
+        run: node tools/check-engineering-docs.mjs
       - name: Verify committed review artifact before rebuilding
         run: node tools/check-react-spike-artifact.mjs
       - name: Source, formatting and functional tests
@@ -33,7 +39,11 @@ jobs:
         run: |
           npm run lint
           npm run format:check
+          npm run lint:js
           npm test
+      - name: Render synthetic React workflows
+        working-directory: react-app
+        run: node tools/check-sprint-render.mjs
           node tools/check-sprint-render.mjs
       - name: Vanilla compatibility and rollback syntax
         run: |

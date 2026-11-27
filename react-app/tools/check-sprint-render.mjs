@@ -6,7 +6,12 @@ import { MemoryRouter } from "react-router-dom";
 
 // Static rendering catches runtime/component contracts while browser attachment
 // is unavailable. It does not certify layout, keyboard interaction or focus.
-const server = await createServer({ server: { middlewareMode: true, watch: null, ws: false }, appType: "custom" });
+const server = await createServer({
+  // Server-side rendering does not need the browser entry scanner.
+  optimizeDeps: { noDiscovery: true, include: [] },
+  server: { middlewareMode: true, watch: null, ws: false },
+  appType: "custom",
+});
 try {
   const { AppStateProvider } = await server.ssrLoadModule("/src/state/AppState.jsx");
   const { createStorageAdapter } = await server.ssrLoadModule("/src/persistence/storage.js");
