@@ -6,6 +6,10 @@ This file is intentionally higher level than Git history. Add user-visible workf
 
 ## Unreleased
 
+### Changed — 2026-11-26
+
+- Added ManaSpec contributor skills, React lint and domain import checks, and synthetic route rendering to the candidate PR workflow. The release artifact pipeline and production deployment are unchanged.
+
 ### Added — 2026-11-11
 
 - React candidate: exact-asset manual Market/NM-listing evidence with source/time/confidence, thesis/release review, sparse history and premium-print research; source-aware review signals.

@@ -192,6 +192,22 @@ Avoid duplicating the same truth across multiple active docs. If a topic belongs
 
 Audit docs are allowed to be more diagnostic and time-bound than active docs. They can propose work, but they do not define current behavior until their findings are promoted into README, Architecture, Data Model, Style Guide, Roadmap, Workflow, or Decisions.
 
+## Engineering checks
+
+Use Node 24 and install the pinned development dependencies with `npm ci` from `react-app/`. Iterate with `node --test --test-isolation=none src/test/<suite>.test.js` from that directory.
+
+| Command | Evidence |
+| --- | --- |
+| `npm run lint` and `npm run format:check` | Source policy and reproducible source bytes |
+| `npm run lint:js` | JS/JSX syntax, correctness warnings, and domain import boundaries |
+| `npm test` | Functional, financial and storage regression coverage |
+| `node tools/check-sprint-render.mjs` from `react-app/` | Static React render checks over synthetic routes and receipts |
+| `node tools/check-engineering-docs.mjs` from the repository root | Skill map, metadata and local references |
+
+ESLint warnings are advisory and should be checked against the affected workflow. Parsing failures and forbidden domain imports fail the command. Keep formatting changes limited to the issue. Use `node tools/check-engineering-docs.mjs --staged` to check the index before committing skill changes.
+
+The React candidate PR workflow exercises these checks alongside vanilla compatibility, all four React builds, generated artifact freshness and release packaging. The workflow produces review artifacts. Interactive UI acceptance and live-origin release gates still use the evidence required below and in [Deployment](DEPLOYMENT.md).
+
 ## Browser Testing
 
 When performing UI QA, browser inspection, console debugging, or regression testing against the current vanilla application:
